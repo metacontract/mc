@@ -9,7 +9,7 @@ import {UsePredicates} from "../../src/UsePredicates.sol";
 // storage
 import {StorageLib} from "../../src/StorageLib.sol";
 
-contract GetOwner is UsePredicates {
+contract Initialize is UsePredicates {
     /// NO DIRECT STORAGE USAGE !!!
 
     function __pre_conditions__() internal view override {
@@ -20,8 +20,7 @@ contract GetOwner is UsePredicates {
         console2.log("AFTER execution...");
     }
 
-    function getOwner() public predicates returns (address owner) {
-        owner = StorageLib.getOwnerStorage().owner;
-        console2.log("Executing getOwner...");
+    function initialize(address newOwner) public predicates {
+        StorageLib.getOwnerStorage().owner = newOwner;
     }
 }
