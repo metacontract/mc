@@ -3,8 +3,8 @@ pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC7546Proxy} from "ucs/proxy/ERC7546Proxy.sol";
-import {Dictionary} from "ucs/dictionary/Dictionary.sol";
+import {ERC7546Proxy} from "@ucs/proxy/ERC7546Proxy.sol";
+import {Dictionary} from "@ucs/dictionary/Dictionary.sol";
 import {ProposeOp} from "../src/ops/consensus/ProposeOp.sol";
 import {InitializeOp} from "../src/ops/initialize/InitializeOp.sol";
 
