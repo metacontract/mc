@@ -12,21 +12,18 @@ import {console2} from "forge-std/console2.sol";
 contract ProposeOp {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
-    modifier checkValidity() {
+    modifier requires() {
         MsgSender.shouldBeOwner();
         console2.log("Before execution...");
         _;
     }
 
-    modifier checkIntent() {
+    modifier intents() {
         _;
         console2.log("AFTER execution...");
     }
 
-    function propose() public
-        checkValidity
-        checkIntent
-    {
+    function propose() public requires intents {
         console2.log("Executing propose...");
     }
 }
