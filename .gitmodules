@@ -4,3 +4,6 @@
 [submodule "lib/ucs-lib"]
 	path = lib/ucs-lib
 	url = https://github.com/ecdysisxyz/ucs-lib
+[submodule "lib/ucs-contracts"]
+	path = lib/ucs-contracts
+	url = https://github.com/ecdysisxyz/ucs-contracts
