@@ -8,7 +8,7 @@ contract InitializeOp {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     function initialize(address owner) public {
-        StorageLib.$Owner().owner = owner;
+        StorageLib.$Member().members.push(owner);
 
     }
 }

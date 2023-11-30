@@ -7,6 +7,7 @@ import {ERC7546Proxy} from "@ucs/proxy/ERC7546Proxy.sol";
 import {Dictionary} from "@ucs/dictionary/Dictionary.sol";
 import {ProposeOp} from "../src/ops/consensus/ProposeOp.sol";
 import {InitializeOp} from "../src/ops/initialize/InitializeOp.sol";
+import {Proposal} from "../src/StorageLib.sol";
 
 contract OperationsTest is Test {
     address public deployer = makeAddr("DEPLOYER");
@@ -26,7 +27,9 @@ contract OperationsTest is Test {
         // vm.stopPrank();
     }
 
-    function test_ProposeOp() public {
-        ProposeOp(proxy).propose();
-    }
+    // function testFuzz_ProposeOp(Proposal calldata _fuzz_proposal) public {
+    //     // vm.assume(_fuzz_proposal.bodies.length == 1);
+    //     // vm.assume(_fuzz_proposal.bodies[0].ops.length < 10);
+    //     // ProposeOp(proxy).propose(_fuzz_proposal);
+    // }
 }

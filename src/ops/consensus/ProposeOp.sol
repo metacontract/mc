@@ -5,7 +5,7 @@ pragma solidity ^0.8.22;
 import {MsgSender} from "../../predicates/MsgSender.sol";
 
 // storage
-// import {StorageLib} from "predicates-lib/StorageLib.sol";
+import {StorageLib, Proposal} from "../../StorageLib.sol";
 
 import {console2} from "forge-std/console2.sol";
 
@@ -13,7 +13,7 @@ contract ProposeOp {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     modifier requires() {
-        MsgSender.shouldBeOwner();
+        MsgSender.shouldBeMember();
         console2.log("Before execution...");
         _;
     }
@@ -23,7 +23,7 @@ contract ProposeOp {
         console2.log("AFTER execution...");
     }
 
-    function propose() public requires intents {
-        console2.log("Executing propose...");
+    function propose(Proposal calldata proposal) public requires intents {
+        StorageLib.$Proposal().proposals.push(proposal);
     }
 }
