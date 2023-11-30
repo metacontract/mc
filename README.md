@@ -2,6 +2,20 @@
 
 A library for standard operation contracts used in UDS.
 
+- ***Operations (Ops)***
+    - are registered in the Dictionary.
+    - are properly processed by ***Predicates***, ensuring the fulfillment of *Requires* and *Intents*.
+
+```mermaid
+erDiagram
+    Dictionary {
+        mapping ops
+    }
+    Dictionary ||--o{ Op : registered
+    Op {
+    }
+```
+
 ## Contracts
 - ### Operations
     ```
