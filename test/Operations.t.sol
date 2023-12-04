@@ -3,27 +3,27 @@ pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
 
-import {ERC7546Proxy} from "@ucs/proxy/ERC7546Proxy.sol";
-import {Dictionary} from "@ucs/dictionary/Dictionary.sol";
-import {ProposeOp} from "../src/ops/consensus/ProposeOp.sol";
-import {InitializeOp} from "../src/ops/initialize/InitializeOp.sol";
+import {ERC7546Proxy} from "@ucs-contracts/proxy/ERC7546Proxy.sol";
+import {Dictionary} from "@ucs-contracts/dictionary/Dictionary.sol";
+import {ProposeOp} from "../src/ops/ProposeOp.sol";
+import {SetAdminOp} from "../src/ops/SetAdminOp.sol";
 import {Proposal} from "../src/StorageLib.sol";
 
 contract OperationsTest is Test {
     address public deployer = makeAddr("DEPLOYER");
     Dictionary public dictionary;
     ProposeOp public proposeOp;
-    InitializeOp public initializeOp;
+    SetAdminOp public setAdminOp;
     address public proxy;
 
     function setUp() public {
         vm.startPrank(deployer);
         proposeOp = new ProposeOp();
-        initializeOp = new InitializeOp();
+        setAdminOp = new SetAdminOp();
         dictionary = new Dictionary(deployer);
         Dictionary(dictionary).setImplementation(ProposeOp.propose.selector, address(proposeOp));
-        Dictionary(dictionary).setImplementation(InitializeOp.initialize.selector, address(initializeOp));
-        proxy = address(new ERC7546Proxy(address(dictionary), abi.encodeWithSelector(InitializeOp.initialize.selector, deployer)));
+        Dictionary(dictionary).setImplementation(SetAdminOp.setAdmin.selector, address(setAdminOp));
+        proxy = address(new ERC7546Proxy(address(dictionary), abi.encodeWithSelector(SetAdminOp.setAdmin.selector, deployer)));
         // vm.stopPrank();
     }
 

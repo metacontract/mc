@@ -4,9 +4,9 @@ pragma solidity ^0.8.22;
 import {StorageLib} from "../StorageLib.sol";
 
 library MsgSender {
-    error NotOwner();
-    function shouldBeOwner() internal view {
-        if (msg.sender != StorageLib.$Owner().owner) revert NotOwner();
+    error NotAdmin();
+    function shouldBeAdmin() internal view {
+        if (msg.sender != StorageLib.$Admin().admin) revert NotAdmin();
     }
 
     error NotMember();

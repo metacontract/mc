@@ -2,14 +2,16 @@
 pragma solidity ^0.8.22;
 
 // predicates
-import {MsgSender} from "../../predicates/MsgSender.sol";
+import {MsgSender} from "../predicates/MsgSender.sol";
 
 // storage
-import {StorageLib, Proposal} from "../../StorageLib.sol";
+import {StorageLib, Proposal} from "../StorageLib.sol";
+
+import {IProposeOp} from "../interfaces/ops/IProposeOp.sol";
 
 import {console2} from "forge-std/console2.sol";
 
-contract ProposeOp {
+contract ProposeOp is IProposeOp {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     modifier requires() {

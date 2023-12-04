@@ -9,7 +9,7 @@ contract PredicatesTest is Test {
     function setUp() public {}
 
     function test_MsgSender() public {
-        vm.expectRevert(MsgSender.NotOwner.selector);
-        MsgSender.shouldBeOwner();
+        vm.expectRevert(MsgSender.NotAdmin.selector);
+        MsgSender.shouldBeAdmin();
     }
 }
