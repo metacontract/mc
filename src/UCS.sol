@@ -9,7 +9,7 @@ import {InitSetAdminOp} from "./ops/InitSetAdminOp.sol";
 /**
  * UCS Create Contract v0.1.0
  */
-contract UCSCreate {
+contract UCS {
     enum OpsType {
         CloneOps,
         DAOOps
@@ -23,29 +23,29 @@ contract UCSCreate {
     mapping(OpsType => OpsData[]) public ops;
 
     /// @custom:storage-location erc7201:UCS.Create
-    struct UCSCreateStorage {
+    struct UCSStorage {
         address dictionaryImpl;
         address setAdminImpl;
     }
 
-    bytes32 constant UCSCREATE_STORAGE_LOCATION = 0xf41184843362f551510bc0981514a9c4fd04b0389ced9eaf31ab37d09f68f95d;
+    bytes32 constant UCS_STORAGE_LOCATION = 0xf41184843362f551510bc0981514a9c4fd04b0389ced9eaf31ab37d09f68f95d;
 
-    function $UCSCreate() internal pure returns (UCSCreateStorage storage $) {
+    function $UCS() internal pure returns (UCSStorage storage $) {
         assembly {
-            $.slot := UCSCREATE_STORAGE_LOCATION
+            $.slot := UCS_STORAGE_LOCATION
         }
     }
 
     constructor(address dictionaryImpl, address setAdminImpl) {
-        $UCSCreate().dictionaryImpl = dictionaryImpl;
-        $UCSCreate().setAdminImpl = setAdminImpl;
+        $UCS().dictionaryImpl = dictionaryImpl;
+        $UCS().setAdminImpl = setAdminImpl;
     }
 
     function create(OpsType[] calldata opsTypes, address admin) public returns (address dictionary, address proxy) {
         // Deploy dictionary
-        dictionary = address(new ERC1967Proxy($UCSCreate().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
+        dictionary = address(new ERC1967Proxy($UCS().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
 
-        DictionaryUpgradeable(dictionary).setImplementation(InitSetAdminOp.initSetAdmin.selector, $UCSCreate().setAdminImpl);
+        DictionaryUpgradeable(dictionary).setImplementation(InitSetAdminOp.initSetAdmin.selector, $UCS().setAdminImpl);
 
         for (uint i; i < opsTypes.length; ++i) {
             if (opsTypes[i] == OpsType.CloneOps) {

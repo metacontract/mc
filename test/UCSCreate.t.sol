@@ -3,17 +3,17 @@ pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
 
-import {UCSCreate} from "../src/UCSCreate.sol";
+import {UCS} from "../src/UCS.sol";
 import {DictionaryUpgradeable} from "@ucs-contracts/dictionary/DictionaryUpgradeable.sol";
 
 import {Dictionary} from "@ucs-contracts/dictionary/Dictionary.sol";
 import {InitSetAdminOp} from "../src/ops/InitSetAdminOp.sol";
 
-contract UCSCreateTest is Test {
+contract UCSTest is Test {
     address public deployer = makeAddr("DEPLOYER");
 
     DictionaryUpgradeable public dictionaryImpl;
-    UCSCreate public ucsCreate;
+    UCS public ucs;
     InitSetAdminOp public initSetAdminOp;
 
     function setUp() public {
@@ -21,16 +21,16 @@ contract UCSCreateTest is Test {
 
         dictionaryImpl = new DictionaryUpgradeable();
         initSetAdminOp = new InitSetAdminOp();
-        ucsCreate = new UCSCreate(address(dictionaryImpl), address(initSetAdminOp));
+        ucs = new UCS(address(dictionaryImpl), address(initSetAdminOp));
 
         // vm.stopPrank();
     }
 
     function test_create() public {
-        UCSCreate.OpsType[] memory _opsTypes = new UCSCreate.OpsType[](1);
-        _opsTypes[0] = UCSCreate.OpsType.CloneOps;
+        UCS.OpsType[] memory _opsTypes = new UCS.OpsType[](1);
+        _opsTypes[0] = UCS.OpsType.CloneOps;
 
-        ucsCreate.create(_opsTypes, deployer);
+        ucs.create(_opsTypes, deployer);
     }
 
     // function testFuzz_ProposeOp(Proposal calldata _fuzz_proposal) public {
