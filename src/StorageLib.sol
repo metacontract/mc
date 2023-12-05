@@ -7,7 +7,7 @@ pragma solidity ^0.8.22;
 library StorageLib {
     /*********************
      *  AdminStorage
-     *  @custom:storage-location erc7201:UDS.Operation.Admin
+     *  @custom:storage-location erc7201:UCS.Operation.Admin
      ********************/
     struct AdminStorage {
         address admin;
@@ -20,7 +20,7 @@ library StorageLib {
 
     /*********************
      *  ClonesStorage
-     *  @custom:storage-location erc7201:UDS.Operation.Clones
+     *  @custom:storage-location erc7201:UCS.Operation.Clones
      ********************/
     struct ClonesStorage {
         address dictionary;
@@ -33,7 +33,7 @@ library StorageLib {
 
     /*********************
      *  ProposalStorage
-     *  @custom:storage-location erc7201:UDS.Operation.Proposal
+     *  @custom:storage-location erc7201:UCS.Operation.Proposal
      ********************/
     struct ProposalStorage {
         Proposal[] proposals;
@@ -46,7 +46,7 @@ library StorageLib {
 
     /*********************
      *  MemberStorage
-     *  @custom:storage-location erc7201:UDS.Operation.Member
+     *  @custom:storage-location erc7201:UCS.Operation.Member
      ********************/
     struct MemberStorage {
         address[] members;
@@ -55,6 +55,19 @@ library StorageLib {
 
     function $Member() internal pure returns (MemberStorage storage $) {
         assembly { $.slot := MEMBER_STORAGE_LOCATION }
+    }
+
+    /*********************
+     *  FeatureToggleStorage
+     *  @custom:storage-location erc7201:UCS.Operation.FeatureToggle
+     ********************/
+    struct FeatureToggleStorage {
+        mapping(bytes4 selector => bool) disabledFeature;
+    }
+    bytes32 internal constant FEATURE_TOGGLE_STORAGE_LOCATION = 0x501a2d5d628b3d6714a6d2932702eac8cd8f79453fd30edc5b468f858f7f5be8;
+
+    function $FeatureToggle() internal pure returns (FeatureToggleStorage storage $) {
+        assembly { $.slot := FEATURE_TOGGLE_STORAGE_LOCATION }
     }
 }
 
