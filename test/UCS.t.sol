@@ -41,7 +41,7 @@ contract UCSTest is Test {
         UCS.OpsType[] memory _opsTypes = new UCS.OpsType[](1);
         _opsTypes[0] = UCS.OpsType.CloneOps;
 
-        (,proxy) = ucs.create(_opsTypes, deployer);
+        proxy = ucs.create(_opsTypes, deployer);
     }
 
     function test_clone() public {

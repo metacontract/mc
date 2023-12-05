@@ -42,22 +42,22 @@ contract UCS {
         $UCS().setAdminImpl = setAdminImpl;
     }
 
-    function create(OpsType[] calldata opsTypes, address admin) public returns (address dictionary, address proxy) {
+    function create(OpsType[] calldata opsTypes, address admin) public returns (address proxy) {
         // Deploy dictionary
-        dictionary = address(new ERC1967Proxy($UCS().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
+        address _dictionary = address(new ERC1967Proxy($UCS().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
 
-        DictionaryUpgradeable(dictionary).setImplementation(InitSetAdminOp.initSetAdmin.selector, $UCS().setAdminImpl);
+        DictionaryUpgradeable(_dictionary).setImplementation(InitSetAdminOp.initSetAdmin.selector, $UCS().setAdminImpl);
 
         for (uint i; i < opsTypes.length; ++i) {
             if (opsTypes[i] == OpsType.CloneOps) {
                 for (uint j; j < ops[OpsType.CloneOps].length; ++j) {
-                    DictionaryUpgradeable(dictionary).setImplementation(ops[OpsType.CloneOps][j].selector, ops[OpsType.CloneOps][j].implementation);
+                    DictionaryUpgradeable(_dictionary).setImplementation(ops[OpsType.CloneOps][j].selector, ops[OpsType.CloneOps][j].implementation);
                 }
             }
         }
 
         proxy = ERC7546Clones.clone({
-            _dictionary: dictionary,
+            _dictionary: _dictionary,
             _initData: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, admin)
         });
     }
