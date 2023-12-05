@@ -8,6 +8,7 @@ import {MsgSender} from "../predicates/MsgSender.sol";
 import {StorageLib} from "../StorageLib.sol";
 
 import {ERC7546Clones} from "@ucs-contracts/ERC7546Clones.sol";
+import {ERC7546Utils} from "@ucs-contracts/proxy/ERC7546Utils.sol";
 
 import {ICloneOp} from "../interfaces/ops/ICloneOp.sol";
 
@@ -28,7 +29,7 @@ contract CloneOp is ICloneOp {
     }
 
     function clone(bytes calldata initData) external returns (address) {
-        return ERC7546Clones.clone(StorageLib.$Clones().dictionary, initData);
+        return ERC7546Clones.clone(ERC7546Utils.getDictionary(), initData);
     }
 
 }

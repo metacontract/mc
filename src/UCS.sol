@@ -5,6 +5,7 @@ import {ERC7546Clones} from "@ucs-contracts/ERC7546Clones.sol";
 import {DictionaryUpgradeable} from "@ucs-contracts/dictionary/DictionaryUpgradeable.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {InitSetAdminOp} from "./ops/InitSetAdminOp.sol";
+import {CloneOp} from "./ops/CloneOp.sol";
 
 /**
  * UCS Create Contract v0.1.0
@@ -59,5 +60,19 @@ contract UCS {
             _dictionary: dictionary,
             _initData: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, admin)
         });
+    }
+
+    struct SetOpsArgs {
+        OpsType opsType;
+        bytes4 selector;
+        address implementation;
+    }
+    function setOps(SetOpsArgs[] calldata args) public {
+        for (uint i; i < args.length; ++i) {
+            ops[args[i].opsType].push(OpsData({
+                selector: args[i].selector,
+                implementation: args[i].implementation
+            }));
+        }
     }
 }
