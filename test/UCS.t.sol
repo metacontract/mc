@@ -8,6 +8,7 @@ import {DictionaryUpgradeable} from "@ucs-contracts/dictionary/DictionaryUpgrade
 
 import {Dictionary} from "@ucs-contracts/dictionary/Dictionary.sol";
 import {InitSetAdminOp} from "../src/ops/InitSetAdminOp.sol";
+import {SetImplementationOp} from "../src/ops/SetImplementationOp.sol";
 import {CloneOp} from "../src/ops/CloneOp.sol";
 
 contract UCSTest is Test {
@@ -17,6 +18,7 @@ contract UCSTest is Test {
     UCS public ucs;
     InitSetAdminOp public initSetAdminOp;
     CloneOp public cloneOp;
+    SetImplementationOp public setImplementationOp;
     address public proxy;
 
     function setUp() public {
@@ -24,8 +26,10 @@ contract UCSTest is Test {
 
         dictionaryImpl = new DictionaryUpgradeable();
         initSetAdminOp = new InitSetAdminOp();
+        setImplementationOp = new SetImplementationOp();
+
         cloneOp = new CloneOp();
-        ucs = new UCS(address(dictionaryImpl), address(initSetAdminOp));
+        ucs = new UCS(address(dictionaryImpl), address(initSetAdminOp), address(setImplementationOp));
 
         UCS.SetOpsArgs[] memory _setOpsArgsList = new UCS.SetOpsArgs[](1);
         _setOpsArgsList[0] = UCS.SetOpsArgs({

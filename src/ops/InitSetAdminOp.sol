@@ -3,7 +3,7 @@ pragma solidity ^0.8.22;
 
 // storage
 import {StorageLib} from "../StorageLib.sol";
-import {ISetAdminOp} from "../interfaces/ops/ISetAdmin.sol";
+import {ISetAdminOp} from "../interfaces/ops/ISetAdminOp.sol";
 
 // predicates
 import {MsgSender} from "../predicates/MsgSender.sol";
