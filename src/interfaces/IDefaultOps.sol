@@ -2,11 +2,11 @@
 pragma solidity ^0.8.22;
 
 import {ICloneOp} from "./ops/ICloneOp.sol";
-import {ISetAdminOp} from "./ops/ISetAdminOp.sol";
+import {IInitSetAdminOp} from "./ops/IInitSetAdminOp.sol";
 import {ISetImplementationOp} from "./ops/ISetImplementationOp.sol";
 
-interface IDAO is
+interface IDefaultOps is
     ICloneOp,
-    ISetAdminOp,
+    IInitSetAdminOp,
     ISetImplementationOp
 {}

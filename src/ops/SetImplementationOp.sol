@@ -24,5 +24,6 @@ contract SetImplementationOp is ISetImplementationOp {
 
     function setImplementation(bytes4 selector, address implementation) external requires intents {
         IDictionary(ERC7546Utils.getDictionary()).setImplementation(selector, implementation);
+        emit ImplementationSet(selector, implementation);
     }
 }

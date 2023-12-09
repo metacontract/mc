@@ -69,6 +69,24 @@ library StorageLib {
     function $FeatureToggle() internal pure returns (FeatureToggleStorage storage $) {
         assembly { $.slot := FEATURE_TOGGLE_STORAGE_LOCATION }
     }
+
+    /*********************
+     *  InitializerStorage
+     *  @custom:storage-location erc7201:UCS.Operation.Initializer
+     ********************/
+    struct InitializationStorage {
+        uint64 initialized;
+        bool initializing;
+    }
+
+    bytes32 internal constant INITIALIZATION_STORAGE_LOCATION = 0x9b5a46b29adc296bf9a225bc6a292e7b88c920214080bb7231257f97a0bf3899;
+
+    function $Initialization() internal pure returns (InitializationStorage storage $) {
+        assembly { $.slot := INITIALIZATION_STORAGE_LOCATION }
+    }
+
+
+
 }
 
 struct Proposal {

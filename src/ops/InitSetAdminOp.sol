@@ -3,24 +3,27 @@ pragma solidity ^0.8.22;
 
 // storage
 import {StorageLib} from "../StorageLib.sol";
-import {ISetAdminOp} from "../interfaces/ops/ISetAdminOp.sol";
+import {IInitSetAdminOp} from "../interfaces/ops/IInitSetAdminOp.sol";
 
 // predicates
-import {MsgSender} from "../predicates/MsgSender.sol";
+import {Initialization} from "../predicates/Initialization.sol";
 
-contract InitSetAdminOp {
+contract InitSetAdminOp is IInitSetAdminOp {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     modifier requires() {
+        Initialization.shouldNotBeCompleted();
         _;
     }
 
-    modifier intents() {
+    modifier intents(address admin) {
         _;
+        assert(StorageLib.$Admin().admin == admin);
+        Initialization.willBeCompleted();
     }
 
-    function initSetAdmin(address admin) external requires intents {
+    function initSetAdmin(address admin) external requires intents(admin) {
         StorageLib.$Admin().admin = admin;
-
+        emit AdminSet(admin);
     }
 }
