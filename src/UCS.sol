@@ -3,6 +3,7 @@ pragma solidity ^0.8.22;
 
 import {ERC7546Clones} from "@ucs-contracts/src/ERC7546Clones.sol";
 import {DictionaryUpgradeable} from "@ucs-contracts/src/dictionary/DictionaryUpgradeable.sol";
+import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {InitSetAdminOp} from "./ops/InitSetAdminOp.sol";
 import {SetImplementationOp} from "./ops/SetImplementationOp.sol";
@@ -90,10 +91,14 @@ contract UCS {
     }
 
     function _deployProxy(address _dictionary, address _admin) internal returns (address) {
-        return ERC7546Clones.clone({
+        return address(new ERC7546Proxy({
             dictionary: _dictionary,
-            initData: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
-        });
+            _data: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
+        }));
+        // return ERC7546Clones.clone({
+        //     dictionary: _dictionary,
+        //     initData: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
+        // });
     }
 
     function _transferDictionaryOwnership(address _dictionary, address _newAdmin) internal {
