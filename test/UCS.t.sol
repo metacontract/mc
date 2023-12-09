@@ -4,9 +4,9 @@ pragma solidity ^0.8.22;
 import {Test} from "forge-std/Test.sol";
 
 import {UCS} from "../src/UCS.sol";
-import {DictionaryUpgradeable} from "@ucs-contracts/dictionary/DictionaryUpgradeable.sol";
+import {DictionaryUpgradeable} from "@ucs-contracts/src/dictionary/DictionaryUpgradeable.sol";
 
-import {Dictionary} from "@ucs-contracts/dictionary/Dictionary.sol";
+import {Dictionary} from "@ucs-contracts/src/dictionary/Dictionary.sol";
 import {InitSetAdminOp} from "../src/ops/InitSetAdminOp.sol";
 import {SetImplementationOp} from "../src/ops/SetImplementationOp.sol";
 import {CloneOp} from "../src/ops/CloneOp.sol";

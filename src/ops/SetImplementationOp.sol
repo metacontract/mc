@@ -4,8 +4,8 @@ pragma solidity ^0.8.22;
 // storage
 import {StorageLib} from "../StorageLib.sol";
 import {ISetImplementationOp} from "../interfaces/ops/ISetImplementationOp.sol";
-import {IDictionary} from "@ucs-contracts/dictionary/IDictionary.sol";
-import {ERC7546Utils} from "@ucs-contracts/proxy/ERC7546Utils.sol";
+import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
+import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
 // predicates
 import {MsgSender} from "../predicates/MsgSender.sol";

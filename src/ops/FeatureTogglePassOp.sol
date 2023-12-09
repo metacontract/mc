@@ -7,8 +7,8 @@ import {MsgSender} from "../predicates/MsgSender.sol";
 // storage
 import {StorageLib} from "../StorageLib.sol";
 
-import {ERC7546Clones} from "@ucs-contracts/ERC7546Clones.sol";
-import {ERC7546Utils} from "@ucs-contracts/proxy/ERC7546Utils.sol";
+import {ERC7546Clones} from "@ucs-contracts/src/ERC7546Clones.sol";
+import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
 import {ICloneOp} from "../interfaces/ops/ICloneOp.sol";
 
