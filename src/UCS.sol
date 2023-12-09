@@ -49,13 +49,13 @@ contract UCS {
         _opsTypes[0] = OpsType.CloneOps;
         address _admin = msg.sender;
 
-        create(_opsTypes, _admin);
+        return create(_opsTypes, _admin);
     }
 
     function create(OpsType[] memory opsTypes) public returns (address proxy) {
         address _admin = msg.sender;
 
-        create(opsTypes, _admin);
+        return create(opsTypes, _admin);
     }
 
     function create(OpsType[] memory opsTypes, address admin) public returns (address proxy) {
