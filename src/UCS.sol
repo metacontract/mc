@@ -39,6 +39,9 @@ contract UCS {
         }
     }
 
+    event DictionaryDeployed(address dictionary);
+    event ProxyDeployed(address proxy);
+
     constructor(address dictionaryImpl, address initSetAdminOp, address setImplementationOp) {
         $UCS().dictionaryImpl = dictionaryImpl;
         $UCS().initSetAdminOp = initSetAdminOp;
@@ -73,8 +76,9 @@ contract UCS {
         _transferDictionaryOwnership(_dictionary, proxy);
     }
 
-    function _deployDictionary() internal returns (address) {
-        return address(new ERC1967Proxy($UCS().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
+    function _deployDictionary() internal returns (address dictionary) {
+        dictionary = address(new ERC1967Proxy($UCS().dictionaryImpl, abi.encodeWithSelector(DictionaryUpgradeable.initialize.selector, address(this))));
+        emit DictionaryDeployed(dictionary);
     }
 
     function _setOps(address _dictionary, OpsType[] memory _opsTypes) internal {
@@ -90,11 +94,12 @@ contract UCS {
         }
     }
 
-    function _deployProxy(address _dictionary, address _admin) internal returns (address) {
-        return address(new ERC7546Proxy({
+    function _deployProxy(address _dictionary, address _admin) internal returns (address proxy) {
+        proxy = address(new ERC7546Proxy({
             dictionary: _dictionary,
             _data: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
         }));
+        emit ProxyDeployed(proxy);
         // return ERC7546Clones.clone({
         //     dictionary: _dictionary,
         //     initData: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
