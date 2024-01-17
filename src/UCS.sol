@@ -62,7 +62,7 @@ contract UCS {
         return create(opsTypes, _admin);
     }
 
-    function create(OpsType[] memory opsTypes, address admin) public returns (address proxy) {
+    function create(OpsType[] memory opsTypes, address admin) public virtual returns (address proxy) {
         // Deploy dictionary
         address _dictionary = _deployDictionary();
 
@@ -94,7 +94,7 @@ contract UCS {
         }
     }
 
-    function _deployProxy(address _dictionary, address _admin) internal returns (address proxy) {
+    function _deployProxy(address _dictionary, address _admin) internal virtual returns (address proxy) {
         proxy = address(new ERC7546Proxy({
             dictionary: _dictionary,
             _data: abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, _admin)
@@ -106,7 +106,7 @@ contract UCS {
         // });
     }
 
-    function _transferDictionaryOwnership(address _dictionary, address _newAdmin) internal {
+    function _transferDictionaryOwnership(address _dictionary, address _newAdmin) internal virtual {
         DictionaryUpgradeable(_dictionary).transferOwnership(_newAdmin);
     }
 
