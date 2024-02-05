@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.22;
+pragma solidity ^0.8.24;
 
 import {UCSScriptBase} from "../utils/UCSScriptBase.sol";
 
-contract UCSDeployScript is UCSScriptBase {
+contract DeployNewProxyScript is UCSScriptBase {
     function setUp() public startBroadcastWithDeployerPrivKey {}
+
+    function run() public {
+        address proxy = newProxy();
+    }
 }
