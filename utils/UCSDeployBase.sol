@@ -3,7 +3,6 @@ pragma solidity ^0.8.24;
 
 import {CommonBase} from "forge-std/Base.sol";
 
-import {DictionaryUpgradeable} from "@ucs-contracts/src/dictionary/DictionaryUpgradeable.sol";
 import {DictionaryUpgradeableEtherscan} from "@ucs-contracts/src/dictionary/DictionaryUpgradeableEtherscan.sol";
 import {DictionaryUpgradeableEtherscanProxy} from "@ucs-contracts/src/dictionary/DictionaryUpgradeableEtherscanProxy.sol";
 import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
@@ -13,20 +12,39 @@ import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEthers
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import {InitSetAdminOp} from "../src/ops/InitSetAdminOp.sol";
-import {SetImplementationOp} from "../src/ops/SetImplementationOp.sol";
-import {CloneOp} from "../src/ops/CloneOp.sol";
 import {GetDepsOp} from "../src/ops/GetDepsOp.sol";
+import {CloneOp} from "../src/ops/CloneOp.sol";
+import {SetImplementationOp} from "../src/ops/SetImplementationOp.sol";
+
 import {DefaultOpsFacade} from "../src/interfaces/facades/DefaultOpsFacade.sol";
 
 abstract contract UCSDeployBase is CommonBase {
+    enum OpName {
+        InitSetAdmin,
+        GetDeps,
+        Clone,
+        SetImplementation
+    }
+
     struct Op {
         bytes4 selector;
         address implementation;
     }
 
+    mapping(OpName => Op) public ops;
+    OpName[] public defaultOps;
+
     address deployer;
     uint256 deployerKey;
 
+    constructor() {
+        ops[OpName.InitSetAdmin] = getOrCreateInitSetAdminOp();
+        ops[OpName.GetDeps] = getOrCreateGetDepsOp();
+        ops[OpName.Clone] = getOrCreateCloneOp();
+        ops[OpName.SetImplementation] = getOrCreateSetImplementationOp();
+        defaultOps.push(OpName.InitSetAdmin);
+        defaultOps.push(OpName.GetDeps);
+    }
 
     /**************************************
         🛠 Environment Helper Functions
@@ -48,20 +66,18 @@ abstract contract UCSDeployBase is CommonBase {
     /**********************************
     🎁 Easy to use functions
         - newProxy() -> address proxy
-        - replicate(targetDictionary) -> address proxy, address dictionary
-        - upgradeOps(proxy, ops)
-        - upgradeFacade(proxy, newFacade)
+        - newProxyWithOwnedDictionary(targetDictionary) -> address proxy, address dictionary
+        - setOps(dictionary, opNames)
+        - upgradeFacade(dictionary, newFacade)
     **********************************/
     function newProxy() public returns(address) {
         return getOrDeployProxy();
     }
 
-    function replicate(address targetDictionary) public returns(address proxy, address dictionary) {
-        dictionary = replicateDictionaryUpgradeableEtherscan(targetDictionary);
+    function newProxyWithOwnedDictionary(address targetDictionary) public returns(address proxy, address dictionary) {
+        dictionary = cloneOwnedDictionaryUpgradeableEtherscan(targetDictionary);
         proxy = deployProxyWithDictionaryEtherscan(dictionary);
     }
-
-    function upgradeOps(address dictionary, Op[] memory ops) public {}
 
 
     /**********************************
@@ -97,7 +113,7 @@ abstract contract UCSDeployBase is CommonBase {
 
     function deployProxyEtherscan() public returns(address) {
         return address(new ERC7546ProxyEtherscan({
-            dictionary: deployDictionaryUpgradeableEtherscan(),
+            dictionary: getOrDeployDefaultDictionaryUpgradeableEtherscan(),
             _data: initSetAdminData(deployer)
         }));
     }
@@ -123,9 +139,10 @@ abstract contract UCSDeployBase is CommonBase {
              ** 4️⃣ Dictionary Upgradeable with Etherscan-compatibility (default)
                     - ERC1967Proxy
                     - Dictionary Upgradeable Etherscan Implementation
-        < Replicate >
+        < Clone Owned >
      */
 
+    /** < Deploy > */
     // 1️⃣
     function getOrDeployDictionary() public returns(address) {}
     function deployDictionary() internal returns(address) {}
@@ -146,7 +163,7 @@ abstract contract UCSDeployBase is CommonBase {
         return deployDictionaryUpgradeableEtherscan();
     }
 
-    // 4️⃣
+    // 4️⃣ Proxy
     function getOrDeployDictionaryUpgradeableEtherscan() public returns(address) {
         (bool success, address deployedContract) = tryGetDeployedContract("DICTIONARY_UPGRADEABLE_ETHERSCAN");
         if (success) return deployedContract;
@@ -158,11 +175,25 @@ abstract contract UCSDeployBase is CommonBase {
             implementation: getOrDeployDictionaryUpgradeableEtherscanImpl(),
             _data: initializeDictionaryUpgradeableEtherscanData(deployer)
         }));
-
-        setDefaultOps(dictionaryUpgradeableEtherscan);
-        setDefaultFacade(dictionaryUpgradeableEtherscan);
     }
 
+    function initializeDictionaryUpgradeableEtherscanData(address admin) public pure returns(bytes memory) {
+        return abi.encodeWithSelector(DictionaryUpgradeableEtherscan.initialize.selector, admin);
+    }
+
+    function getOrDeployDefaultDictionaryUpgradeableEtherscan() public returns(address) {
+        (bool success, address deployedContract) = tryGetDeployedContract("DEFAULT_DICTIONARY_UPGRADEABLE_ETHERSCAN");
+        if (success) return deployedContract;
+        return deployDeafultDictionaryUpgradeableEtherscan();
+    }
+
+    function deployDeafultDictionaryUpgradeableEtherscan() public returns(address dictionaryUpgradeableEtherscan) {
+        dictionaryUpgradeableEtherscan = deployDictionaryUpgradeableEtherscan();
+
+        setDefaultOpsAndFacade(dictionaryUpgradeableEtherscan);
+    }
+
+    // 4️⃣ Implementation
     function getOrDeployDictionaryUpgradeableEtherscanImpl() public returns(address) {
         (bool success, address deployedContract) = tryGetDeployedContract("DICTIONARY_UPGRADEABLE_ETHERSCAN_IMPL");
         if (success) return deployedContract;
@@ -173,8 +204,8 @@ abstract contract UCSDeployBase is CommonBase {
         return address(new DictionaryUpgradeableEtherscan());
     }
 
-    // Replicate
-    function replicateDictionaryUpgradeableEtherscan(address targetDictionary) public returns(address dictionary) {
+    // < Clone Owned >
+    function cloneOwnedDictionaryUpgradeableEtherscan(address targetDictionary) public returns(address dictionary) {
         dictionary = address(new DictionaryUpgradeableEtherscanProxy({
             implementation: getOrDeployDictionaryUpgradeableEtherscanImpl(),
             _data: initializeDictionaryUpgradeableEtherscanData(deployer)
@@ -198,52 +229,34 @@ abstract contract UCSDeployBase is CommonBase {
     /**----------------
         Ops
     -------------------
-        < Deploy >
-            - DefaultOps
-            - GetDepsOp
-            - CloneOp
+        < Enable Ops >
+        < Disable Ops >
         < Setup >
-            - SetOps
-                - SetDefaultOps
-                    - InitSetAdminOp
-                - SetEtherscanOps
-                    - GetDepsOp
-            - SetFacade (for etherscan-compatibility)
+            - SetDefaultOpsAndFacade
+        < Get or Create Standard Ops >
+            - InitSetAdmin
+            - GetDeps
+            - Clone
+            - SetImplementation
      */
 
     // SetOps
-    function setDefaultOps(address dictionary) public {
-        Op[] memory ops = new Op[](1);
-        ops[0] = getOrCreateInitSetAdminOp();
-        setOps(dictionary, ops);
-    }
-
-    function setEtherscanOps(address dictionary) public {
-        Op[] memory ops = new Op[](1);
-        ops[0] = getOrCreateGetDepsOp();
-        setOps(dictionary, ops);
-    }
-
-    function setOps(address dictionary, Op[] memory ops) public {
-        for (uint i; i < ops.length; ++i) {
-            DictionaryBase(dictionary).setImplementation(ops[i].selector, ops[i].implementation);
+    function setOps(address dictionary, OpName[] memory opNames) public {
+        for (uint i; i < opNames.length; ++i) {
+            Op memory _op = ops[opNames[i]];
+            DictionaryBase(dictionary).setImplementation(_op.selector, _op.implementation);
         }
     }
 
-    // Getter for initData
-    function initSetAdminData(address admin) internal pure returns(bytes memory) {
-        return abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, admin);
-    }
+    function setDefaultOpsAndFacade(address dictionary) public {
+        // Set default ops
+        setOps(dictionary, defaultOps);
 
-    function initializeDictionaryUpgradeableEtherscanData(address admin) public pure returns(bytes memory) {
-        return abi.encodeWithSelector(DictionaryUpgradeableEtherscan.initialize.selector, admin);
+        // Set default facade
+        upgradeFacade(dictionary, getOrCreateDefaultOpsFacade());
     }
 
     // Facade
-    function setDefaultFacade(address dictionary) public {
-        DictionaryUpgradeableEtherscan(dictionary).upgradeFacade(getOrCreateDefaultOpsFacade());
-    }
-
     function upgradeFacade(address dictionary, address newFacade) public {
         DictionaryUpgradeableEtherscan(dictionary).upgradeFacade(newFacade);
     }
@@ -256,28 +269,60 @@ abstract contract UCSDeployBase is CommonBase {
     }
 
     // Ops
+    // InitSetAdmin
     function getOrCreateInitSetAdminOp() internal returns(Op memory op) {
         string memory envKey = "INIT_SET_ADMIN_OP";
         op.selector = InitSetAdminOp.initSetAdmin.selector;
         op.implementation = vm.envOr(envKey, address(0));
         if (op.implementation.code.length != 0) return op;
-        op.implementation = address(new InitSetAdminOp());
+        op.implementation = createInitSetAdminOp();
     }
 
+    function createInitSetAdminOp() internal returns(address) {
+        return address(new InitSetAdminOp());
+    }
+
+    function initSetAdminData(address admin) internal pure returns(bytes memory) {
+        return abi.encodeWithSelector(InitSetAdminOp.initSetAdmin.selector, admin);
+    }
+
+    // GetDeps
     function getOrCreateGetDepsOp() internal returns(Op memory op) {
         string memory envKey = "GET_DEPS_OP";
         op.selector = GetDepsOp.getDeps.selector;
         op.implementation = vm.envOr(envKey, address(0));
         if (op.implementation.code.length != 0) return op;
-        op.implementation = address(new GetDepsOp());
+        op.implementation = createGetDepsOp();
     }
 
+    function createGetDepsOp() internal returns(address) {
+        return address(new GetDepsOp());
+    }
+
+    // Clone
+    function getOrCreateCloneOp() internal returns(Op memory op) {
+        string memory envKey = "CLONE_OP";
+        op.selector = CloneOp.clone.selector;
+        op.implementation = vm.envOr(envKey, address(0));
+        if (op.implementation.code.length != 0) return op;
+        op.implementation = createCloneOp();
+    }
+
+    function createCloneOp() internal returns(address) {
+        return address(new CloneOp());
+    }
+
+    // SetImplementation
     function getOrCreateSetImplementationOp() internal returns(Op memory op) {
         string memory envKey = "SET_IMPLEMENTATION_OP";
         op.selector = SetImplementationOp.setImplementation.selector;
         op.implementation = vm.envOr(envKey, address(0));
         if (op.implementation.code.length != 0) return op;
-        op.implementation = address(new SetImplementationOp());
+        op.implementation = createSetImplementation();
+    }
+
+    function createSetImplementation() internal returns(address) {
+        return address(new SetImplementationOp());
     }
 
 }
