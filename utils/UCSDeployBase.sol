@@ -6,6 +6,7 @@ import {CommonBase} from "forge-std/Base.sol";
 import {DictionaryUpgradeableEtherscan} from "@ucs-contracts/src/dictionary/DictionaryUpgradeableEtherscan.sol";
 import {DictionaryUpgradeableEtherscanProxy} from "@ucs-contracts/src/dictionary/DictionaryUpgradeableEtherscanProxy.sol";
 import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
+import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";
 import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEtherscan.sol";
 
@@ -33,6 +34,7 @@ abstract contract UCSDeployBase is CommonBase {
 
     mapping(OpName => Op) public ops;
     OpName[] public defaultOps;
+    OpName[] public opNames;
 
     address deployer;
     uint256 deployerKey;
@@ -67,6 +69,7 @@ abstract contract UCSDeployBase is CommonBase {
     🎁 Easy to use functions
         - newProxy() -> address proxy
         - newProxyWithOwnedDictionary(targetDictionary) -> address proxy, address dictionary
+        - getDictionary(proxy) -> address dictionary
         - setOps(dictionary, opNames)
         - upgradeFacade(dictionary, newFacade)
     **********************************/
@@ -79,6 +82,9 @@ abstract contract UCSDeployBase is CommonBase {
         proxy = deployProxyWithDictionaryEtherscan(dictionary);
     }
 
+    function getDictionary(address proxy) internal view returns(address) {
+        return address(uint160(uint256(vm.load(proxy, ERC7546Utils.DICTIONARY_SLOT))));
+    }
 
     /**********************************
         📃 Get or Deploy Contracts
