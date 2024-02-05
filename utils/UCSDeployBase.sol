@@ -16,7 +16,7 @@ import {InitSetAdminOp} from "../src/ops/InitSetAdminOp.sol";
 import {SetImplementationOp} from "../src/ops/SetImplementationOp.sol";
 import {CloneOp} from "../src/ops/CloneOp.sol";
 import {GetDepsOp} from "../src/ops/GetDepsOp.sol";
-import {DefaultOpsFacade, DefaultOpsFacadeV2} from "../src/interfaces/IDefaultOps.sol";
+import {DefaultOpsFacade} from "../src/interfaces/facades/DefaultOpsFacade.sol";
 
 abstract contract UCSDeployBase is CommonBase {
     struct Op {
@@ -61,8 +61,7 @@ abstract contract UCSDeployBase is CommonBase {
         proxy = deployProxyWithDictionaryEtherscan(dictionary);
     }
 
-    function upgradeOps(address proxy, Op[] memory ops) public {}
-    function upgradeFacade(address proxy, address newFacade) public {}
+    function upgradeOps(address dictionary, Op[] memory ops) public {}
 
 
     /**********************************
@@ -138,10 +137,14 @@ abstract contract UCSDeployBase is CommonBase {
     // 3️⃣
     /// @dev Until Etherscan supports UCS natively, we are deploying contracts with additional features for Etherscan compatibility by default.
     function getOrDeployDictionaryUpgradeable() public returns(address) {
-        return getOrDeployDictionaryUpgradeableEtherscan();
+        (bool success, address deployedContract) = tryGetDeployedContract("DICTIONARY_UPGRADEABLE");
+        if (success) return deployedContract;
+        return deployDictionaryUpgradeable();
     }
 
-    function deployDictionaryUpgradeable() public returns(address) {}
+    function deployDictionaryUpgradeable() public returns(address) {
+        return deployDictionaryUpgradeableEtherscan();
+    }
 
     // 4️⃣
     function getOrDeployDictionaryUpgradeableEtherscan() public returns(address) {
@@ -241,8 +244,8 @@ abstract contract UCSDeployBase is CommonBase {
         DictionaryUpgradeableEtherscan(dictionary).upgradeFacade(getOrCreateDefaultOpsFacade());
     }
 
-    function upgradeDefaultFacadeToV2(address dictionary) public {
-        DictionaryUpgradeableEtherscan(dictionary).upgradeFacade(getOrCreateDefaultOpsFacadeV2());
+    function upgradeFacade(address dictionary, address newFacade) public {
+        DictionaryUpgradeableEtherscan(dictionary).upgradeFacade(newFacade);
     }
 
     function getOrCreateDefaultOpsFacade() internal returns(address instance) {
@@ -250,13 +253,6 @@ abstract contract UCSDeployBase is CommonBase {
         instance = vm.envOr(envKey, address(0));
         if (instance.code.length != 0) return instance;
         instance = address(new DefaultOpsFacade());
-    }
-
-    function getOrCreateDefaultOpsFacadeV2() public returns(address instance) {
-        string memory envKey = "DEFAULT_OPS_FACADE_V2";
-        instance = vm.envOr(envKey, address(0));
-        if (instance.code.length != 0) return instance;
-        instance = address(new DefaultOpsFacadeV2());
     }
 
     // Ops
