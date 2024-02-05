@@ -1,18 +1,25 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.22;
 
-import {Test} from "forge-std/Test.sol";
+import {UCSTestBase} from "../../../utils/UCSTestBase.sol";
 
 import {CloneOp} from "../../../src/ops/CloneOp.sol";
 
-contract CloneOpSpecTest is Test {
-    function setUp() public {}
+contract CloneOpSpecTest is UCSTestBase {
+    address cloneOp;
 
-    // function test_clone() public {
-    //     test_create();
+    function setUp() public startPrankWithDeployer {
+        cloneOp = ops[OpName.Clone].implementation;
+    }
 
-    //     address _clonedProxy = CloneOp(proxy).clone("");
-    //     CloneOp(_clonedProxy).clone("");
-    // }
+    function test_Clone_Success(address dictionary, bytes memory newRuntimeBytecode) public {
+        // Setup Stub Dictionary
+        ignorePrecompiles(dictionary);
+        vm.assume(newRuntimeBytecode.length > 0);
+        vm.etch(dictionary, newRuntimeBytecode);
+        setDictionary(cloneOp, dictionary);
+
+        CloneOp(cloneOp).clone("");
+    }
 
 }
