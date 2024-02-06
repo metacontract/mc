@@ -35,9 +35,13 @@ abstract contract UCSDeployBase is CommonBase {
     mapping(OpName => Op) public ops;
     OpName[] public defaultOps;
     OpName[] public opNames;
+    Op[] public availableOps;
+
+    OpName[] public cloneOpName;
 
     address deployer;
     uint256 deployerKey;
+    address tester;
 
     constructor() {
         ops[OpName.InitSetAdmin] = getOrCreateInitSetAdminOp();
@@ -46,6 +50,7 @@ abstract contract UCSDeployBase is CommonBase {
         ops[OpName.SetImplementation] = getOrCreateSetImplementationOp();
         defaultOps.push(OpName.InitSetAdmin);
         defaultOps.push(OpName.GetDeps);
+        cloneOpName.push(OpName.Clone);
     }
 
     /**************************************
@@ -59,8 +64,8 @@ abstract contract UCSDeployBase is CommonBase {
         return vm.envOr(keyword, addr);
     }
 
-    function tryGetDeployedContract(string memory envKey) public returns(bool success, address deployedContract) {
-        deployedContract = vm.envOr(envKey, address(0));
+    function tryGetDeployedContract(string memory keyword) public returns(bool success, address deployedContract) {
+        deployedContract = vm.envOr(keyword, address(0));
         if (deployedContract.code.length != 0) success = true;
     }
 
@@ -268,8 +273,8 @@ abstract contract UCSDeployBase is CommonBase {
     }
 
     function getOrCreateDefaultOpsFacade() internal returns(address instance) {
-        string memory envKey = "DEFAULT_OPS_FACADE";
-        instance = vm.envOr(envKey, address(0));
+        string memory keyword = "DEFAULT_OPS_FACADE";
+        instance = vm.envOr(keyword, address(0));
         if (instance.code.length != 0) return instance;
         instance = address(new DefaultOpsFacade());
     }
@@ -277,9 +282,9 @@ abstract contract UCSDeployBase is CommonBase {
     // Ops
     // InitSetAdmin
     function getOrCreateInitSetAdminOp() internal returns(Op memory op) {
-        string memory envKey = "INIT_SET_ADMIN_OP";
+        string memory keyword = "INIT_SET_ADMIN_OP";
         op.selector = InitSetAdminOp.initSetAdmin.selector;
-        op.implementation = vm.envOr(envKey, address(0));
+        op.implementation = vm.envOr(keyword, address(0));
         if (op.implementation.code.length != 0) return op;
         op.implementation = createInitSetAdminOp();
     }
@@ -294,9 +299,9 @@ abstract contract UCSDeployBase is CommonBase {
 
     // GetDeps
     function getOrCreateGetDepsOp() internal returns(Op memory op) {
-        string memory envKey = "GET_DEPS_OP";
+        string memory keyword = "GET_DEPS_OP";
         op.selector = GetDepsOp.getDeps.selector;
-        op.implementation = vm.envOr(envKey, address(0));
+        op.implementation = vm.envOr(keyword, address(0));
         if (op.implementation.code.length != 0) return op;
         op.implementation = createGetDepsOp();
     }
@@ -307,9 +312,9 @@ abstract contract UCSDeployBase is CommonBase {
 
     // Clone
     function getOrCreateCloneOp() internal returns(Op memory op) {
-        string memory envKey = "CLONE_OP";
+        string memory keyword = "CLONE_OP";
         op.selector = CloneOp.clone.selector;
-        op.implementation = vm.envOr(envKey, address(0));
+        op.implementation = vm.envOr(keyword, address(0));
         if (op.implementation.code.length != 0) return op;
         op.implementation = createCloneOp();
     }
@@ -320,9 +325,9 @@ abstract contract UCSDeployBase is CommonBase {
 
     // SetImplementation
     function getOrCreateSetImplementationOp() internal returns(Op memory op) {
-        string memory envKey = "SET_IMPLEMENTATION_OP";
+        string memory keyword = "SET_IMPLEMENTATION_OP";
         op.selector = SetImplementationOp.setImplementation.selector;
-        op.implementation = vm.envOr(envKey, address(0));
+        op.implementation = vm.envOr(keyword, address(0));
         if (op.implementation.code.length != 0) return op;
         op.implementation = createSetImplementation();
     }
