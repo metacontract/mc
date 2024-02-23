@@ -2,3 +2,5 @@ ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
 @ucs-contracts/=lib/ucs-contracts/
 @openzeppelin/=lib/openzeppelin-contracts/
+src/=src/
+dev-env/=utils/dev-env/
