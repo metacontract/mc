@@ -10,12 +10,19 @@ library BundleOpsInfoUtils {
     /**
         Setter Methods
      */
+    function set(BundleOpsInfo storage bundleOpsInfo, string memory keyword) internal returns(BundleOpsInfo storage) {
+        DevUtils.assertNotEmpty(keyword);
+        bundleOpsInfo.keyword = keyword;
+        return bundleOpsInfo;
+    }
+
     function set(BundleOpsInfo storage bundleOpsInfo, OpInfo storage opInfo) internal returns(BundleOpsInfo storage) {
         opInfo  .assertNotEmpty()
                 .assertNotIncludedIn(bundleOpsInfo);
         bundleOpsInfo.opInfos.push(opInfo);
         return bundleOpsInfo;
     }
+
     function set(BundleOpsInfo storage bundleOpsInfo, address facade) internal returns(BundleOpsInfo storage) {
         DevUtils.assertContractExists(facade);
         bundleOpsInfo.facade = facade;
@@ -37,12 +44,16 @@ library BundleOpsInfoUtils {
         }
     }
 
-    // function toOp(OpInfo memory opInfo) internal returns(Op memory) {
-    //     return Op({
-    //         selector: opInfo.selector,
-    //         implementation: opInfo.deployedContract
-    //     });
-    // }
+    function toOps(BundleOpsInfo memory bundleOpsInfo) internal returns(Op[] memory) {
+        uint count = bundleOpsInfo.opInfos.length;
+        Op[] memory ops = new Op[](count);
+        for (uint i; i < count; ++i) {
+            bundleOpsInfo.opInfos[i].copyTo(ops[i]);
+            // ops[i].selector = bundleOpsInfo.opInfos[i].selecror;
+            // ops[i].implementation = bundleOpsInfo.opInfos[i].deployedContract;
+        }
+        return ops;
+    }
 
     // function exists(OpInfo storage opInfo) internal returns(bool) {
     //     return opInfo.deployedContract.code.length != 0;

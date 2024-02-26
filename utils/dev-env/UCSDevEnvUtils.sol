@@ -3,10 +3,15 @@ pragma solidity ^0.8.24;
 
 import {console2} from "dev-env/common/ForgeHelper.sol";
 import {DevUtils} from "dev-env/common/DevUtils.sol";
-import {UCSDevEnv, Dictionary, Proxy, Op, OpInfo, BundleOpsInfo} from "dev-env/UCSDevEnv.sol";
+import {UCSDevEnv, Dictionary, Proxy, Op, OpInfo, BundleOpsInfo, MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
 import {DictionaryUtils} from "dev-env/dictionary/DictionaryUtils.sol";
 import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
+// for Test
+import {MockUtils} from "dev-env/test/MockUtils.sol";
 
+/****************************************
+    UCS Development Environment Utils
+ */
 library UCSDevEnvUtils {
     /**
         🌟 General
@@ -200,7 +205,7 @@ library UCSDevEnvUtils {
 
 
 /********************************************
-    🏠 Proxy Primitive Utils
+    🏠 Proxy Global Utils
         🐣 Deploy Proxy
         🔧 Helper Methods for type Proxy
 *********************************************/
@@ -250,19 +255,63 @@ library UCSDevEnvUtils {
 
 
 /******************************************
-    🎭 Context Primitive Utils
+    🧪 Test Global Utils
+        🏠 Mocking Proxy
+        📚 Mocking Dictionary
+*******************************************/
+    /**---------------------
+        🏠 Mocking Proxy
+    -----------------------*/
+    function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, Op[] memory ops) internal returns(UCSDevEnv storage) {
+        ucs.test.createAndSetSimpleMockProxy(name, ops);
+        ucs.context.setCurrentProxy(ucs.test.getMockProxy(name));
+        return ucs;
+    }
+
+    function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.createSimpleMockProxy(name, bundleOpsInfo.toOps());
+    }
+
+    /// @notice Create with AllStdOps (bundle)
+    function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        return ucs.createSimpleMockProxy(name, ucs.getDefaultMockProxyOps());
+    }
+
+    function createSimpleMockProxy(UCSDevEnv storage ucs, Op[] memory ops) internal returns(UCSDevEnv storage) {
+        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), ops);
+    }
+
+    function createSimpleMockProxy(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), bundleOpsInfo.toOps());
+    }
+
+    function createSimpleMockProxy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), ucs.getDefaultMockProxyOps());
+    }
+
+    function getMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(MockProxy) {
+        return ucs.test.getMockProxy(name);
+    }
+
+    function getDefaultMockProxyOps(UCSDevEnv storage ucs) internal returns(Op[] memory ops) {
+        return ucs.ops.stdOps.allStdOps.toOps();
+    }
+
+
+    /**-------------------------
+        📚 Mocking Dictionary
+    ---------------------------*/
+
+
+
+/******************************************
+    🎭 Context Global Utils
         🏠 Current Context Proxy
         📚 Current Context Dictionary
 *******************************************/
     /**-----------------------------
         🏠 Current Context Proxy
     -------------------------------*/
-    function setCurrentProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ucs.getDeployedProxyBy(name);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
-    }
-
     function setCurrentProxy(UCSDevEnv storage ucs, Proxy proxy) internal returns(UCSDevEnv storage) {
         ucs.context.setCurrentProxy(proxy);
         return ucs;
@@ -272,16 +321,21 @@ library UCSDevEnvUtils {
         return ucs.context.getCurrentProxy();
     }
 
+    function getProxyAddress(UCSDevEnv storage ucs) internal returns(address) {
+        return ucs.getCurrentProxy().toAddress();
+    }
+
+    /// @notice Set named proxy as the current proxy
+    function setCurrentProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        Proxy proxy = ucs.getDeployedProxyBy(name);
+        ucs.setCurrentProxy(proxy);
+        return ucs;
+    }
+
 
     /**----------------------------------
         📚 Current Context Dictionary
     ------------------------------------*/
-    function setCurrentDictionaryBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getDeployedDictionaryBy(name);
-        ucs.setCurrentDictionary(dictionary);
-        return ucs;
-    }
-
     function setCurrentDictionary(UCSDevEnv storage ucs, Dictionary dictionary) internal returns(UCSDevEnv storage) {
         ucs.context.setCurrentDictionary(dictionary);
         return ucs;
@@ -291,4 +345,10 @@ library UCSDevEnvUtils {
         return ucs.context.getCurrentDictionary();
     }
 
+    /// @dev Set named dictionary as the current dictionary
+    function setCurrentDictionaryBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        Dictionary dictionary = ucs.getDeployedDictionaryBy(name);
+        ucs.setCurrentDictionary(dictionary);
+        return ucs;
+    }
 }

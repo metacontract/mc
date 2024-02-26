@@ -20,22 +20,13 @@ import {DictionaryEnvUtils} from "./dictionary/DictionaryEnvUtils.sol";
 import {ProxyUtils} from "./proxy/ProxyUtils.sol";
 import {ProxyEnvUtils} from "./proxy/ProxyEnvUtils.sol";
 /// for Testing
-import {UCSTestUtils} from "./test/UCSTestUtils.sol";
+import {UCSTestEnvUtils} from "./test/UCSTestEnvUtils.sol";
 import {MockUtils} from "./test/MockUtils.sol";
 /// for Context
 import {ContextUtils} from "./context/ContextUtils.sol";
 
 
-// ⚙ Ops Utils
-using DevUtils for UCSDevEnv global;
-// using StdOpsUtils for UCSDevEnv global;
-// using DeployUtils for UCSDevEnv global;
-using MockUtils for UCSDevEnv global;
-using DictionaryUtils for UCSDevEnv global;
-
 using UCSDevEnvUtils for UCSDevEnv global;
-// using UCSTestUtils for UCSDevEnv global;
-
 struct UCSDevEnv {
     /** Depenedent Contracts */
     UCSOpsEnv ops;
@@ -43,7 +34,7 @@ struct UCSDevEnv {
     UCSProxyEnv proxy;
 
     /** Environment */
-    UCSTest test;
+    UCSTestEnv test;
     UCSContext context;
     // UCSDevEnvSettings settings;
 }
@@ -74,9 +65,7 @@ struct UCSOpsEnv {
     }
 
         using OpInfoUtils for OpInfo global;
-        // using {OpInfoUtils.pushOpInfo} for OpInfo[] global;
-        // OpInfo may be different depending on the op version.
-        struct OpInfo {
+        struct OpInfo { /// @dev OpInfo may be different depending on the op version.
             string keyword;
             bytes4 selector;
             address deployedContract;
@@ -84,6 +73,7 @@ struct UCSOpsEnv {
 
         using BundleOpsInfoUtils for BundleOpsInfo global;
         struct BundleOpsInfo {
+            string keyword;
             OpInfo[] opInfos;
             address facade;
         }
@@ -122,7 +112,8 @@ struct UCSProxyEnv {
 /**********************************
     🧪 Utils for Testing
  */
-struct UCSTest {
+using UCSTestEnvUtils for UCSTestEnv global;
+struct UCSTestEnv {
     mapping(bytes32 nameHash => MockProxy) mockProxies;
     // mapping(bytes32 nameHash => uint256) namedMockProxyIndicesPlusOne; /// @dev To avoid retrieving a default zero value, we store values that are one greater than the actual index.
     // MockProxy[] mockProxies;

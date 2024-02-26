@@ -66,4 +66,8 @@ library ForgeHelper {
         (,msgSender,) = vm.readCallers();
     }
 
+    function concatWithUint(string memory str, uint num) internal returns(string memory) {
+        return string(abi.encodePacked(str, vm.toString(num)));
+    }
+
 }

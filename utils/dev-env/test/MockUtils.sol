@@ -10,55 +10,32 @@ import {UCSDevEnv, Op, MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
 
 // import "dev-env/UCSDevEnv.sol";
 
-import {MockProxy as MockProxyContract, MockProxyContractUtils} from "dev-env/test/mocks/MockProxy.sol";
+import {SimpleMockProxy, SimpleMockProxyUtils} from "dev-env/test/mocks/SimpleMockProxy.sol";
 import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
 
-using {MockUtils.asMockProxy} for address;
-using {MockUtils.asMockDictionary} for address;
-
 library MockUtils {
+    using {MockUtils.asMockProxy} for address;
+    using {MockUtils.asMockDictionary} for address;
+    using {DevUtils.exists} for address;
+
     /**
         🤖 Mock Proxy
      */
     error MockProxyIndexNotFound();
 
-    /**
-        Global
-     */
-    function createMockProxy(UCSDevEnv storage ucs) internal returns(MockProxy) {
-        Op[] memory ops;
-        MockProxy _newMockProxy = address(new MockProxyContract(ops)).asMockProxy();
-        // ucs.test.mockProxies.push(_newMockProxy);
-        return _newMockProxy;
-    }
-
-    function createMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(MockProxy) {
-        MockProxy _newMockProxy = ucs.createMockProxy();
-        bytes32 _nameHash = DevUtils.getHash(name);
-        // uint256 _mockProxyIndexPlusOne = ucs.test.mockProxies.length;
-        // ucs.test.namedMockProxyIndicesPlusOne[_nameHash] = _mockProxyIndexPlusOne;
-        ForgeHelper.assignLabel(_newMockProxy.toAddress(), name);
-        return _newMockProxy;
-    }
-
-    function findMockProxyBy(UCSDevEnv storage ucs, string memory name) internal view returns(MockProxy) {
-        // bytes32 _nameHash = DevUtils.getNameHash(name);
-        // uint256 _mockProxyIndexPlusOne = ucs.test.namedMockProxyIndicesPlusOne[_nameHash];
-        // if (_mockProxyIndexPlusOne == 0) revert MockProxyIndexNotFound();
-        // MockProxy _namedMockProxy = ucs.test.mockProxies[_mockProxyIndexPlusOne - 1];
-        // console2.log(_namedMockProxy.toAddress());
-        // return _namedMockProxy;
+    function createSimpleMockProxy(Op[] memory ops) internal returns(MockProxy) {
+        return address(new SimpleMockProxy(ops)).asMockProxy();
     }
 
     /**
         MockProxy
      */
-    function set(MockProxy mockProxy, Op memory op) internal returns(MockProxy) {
-        address _mockProxy = mockProxy.toAddress();
-        bytes32 _opAddressLocation = MockProxyContractUtils.getOpAddressLocation(op.selector);
-        vm.store(_mockProxy, _opAddressLocation, bytes32(uint256(uint160(op.implementation))));
-        return mockProxy;
-    }
+    // function set(MockProxy mockProxy, Op memory op) internal returns(MockProxy) {
+    //     address _mockProxy = mockProxy.toAddress();
+    //     bytes32 _opAddressLocation = SimpleMockProxyUtils.getOpAddressLocation(op.selector);
+    //     vm.store(_mockProxy, _opAddressLocation, bytes32(uint256(uint160(op.implementation))));
+    //     return mockProxy;
+    // }
 
     function toAddress(MockProxy proxy) internal pure returns(address) {
         return MockProxy.unwrap(proxy);
@@ -66,6 +43,15 @@ library MockUtils {
 
     function asMockProxy(address addr) internal pure returns(MockProxy) {
         return MockProxy.wrap(addr);
+    }
+
+    function assignLabel(MockProxy mockProxy, string memory name) internal returns(MockProxy) {
+        ForgeHelper.assignLabel(mockProxy.toAddress(), name);
+        return mockProxy;
+    }
+
+    function exists(MockProxy mockProxy) internal returns(bool) {
+        return mockProxy.toAddress().exists();
     }
 
 

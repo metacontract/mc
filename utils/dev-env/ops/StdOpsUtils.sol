@@ -118,7 +118,8 @@ library StdOpsUtils {
     }
 
     function setAllStdOps(StdOps storage stdOps) internal returns(StdOps storage) {
-        stdOps.allStdOps.set(stdOps.initSetAdmin)
+        stdOps.allStdOps.set("BUNDLE_ALL_STD_OPS")
+                        .set(stdOps.initSetAdmin)
                         .set(stdOps.getDeps)
                         .set(stdOps.clone)
                         .set(stdOps.setImplementation)
@@ -128,7 +129,8 @@ library StdOpsUtils {
     }
 
     function setDefaultOps(StdOps storage stdOps) internal returns(StdOps storage) {
-        stdOps.defaultOps   .set(stdOps.initSetAdmin)
+        stdOps.defaultOps   .set("BUNDLE_DEFAULT_OPS")
+                            .set(stdOps.initSetAdmin)
                             .set(stdOps.getDeps)
                             .set(address(new DefaultOpsFacade()))
                             .emitLog();

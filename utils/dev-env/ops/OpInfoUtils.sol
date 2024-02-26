@@ -74,6 +74,11 @@ library OpInfoUtils {
         return opInfo;
     }
 
+    function copyTo(OpInfo memory opInfo, Op memory op) internal {
+        op.selector = opInfo.selector;
+        op.implementation = opInfo.deployedContract;
+    }
+
     function emitLog(OpInfo storage opInfo) internal returns(OpInfo storage) {
         if (DevUtils.shouldLog()) {
             console2.log(
