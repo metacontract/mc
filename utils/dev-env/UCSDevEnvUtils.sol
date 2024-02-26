@@ -1,21 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {console2} from "dev-env/common/ForgeHelper.sol";
+import {ForgeHelper, console2} from "dev-env/common/ForgeHelper.sol";
 import {DevUtils} from "dev-env/common/DevUtils.sol";
 import {UCSDevEnv, Dictionary, Proxy, Op, OpInfo, BundleOpsInfo, MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
 import {DictionaryUtils} from "dev-env/dictionary/DictionaryUtils.sol";
 import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
-// for Test
-import {MockUtils} from "dev-env/test/MockUtils.sol";
 
-/****************************************
-    UCS Development Environment Utils
- */
+/***************************************
+🌟 UCS Development Environment Utils
+    🌐 General
+    🧩 Ops
+    📚 Dictionary
+    🏠 Proxy
+    🧪 Test
+    🎭 Context
+    📝 Settings
+****************************************/
 library UCSDevEnvUtils {
-    /**
-        🌟 General
-     */
+    /**********************************
+        🌐 General
+    **********************************/
     function deploy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
         return ucs.deploy("MyProxy");
     }
@@ -34,6 +39,11 @@ library UCSDevEnvUtils {
     function getProxy(UCSDevEnv storage ucs) internal returns(Proxy) {
         return ucs.context.currentProxy;
     }
+
+    function getDictionary(UCSDevEnv storage ucs) internal returns(Dictionary) {
+        return ucs.context.currentDictionary;
+    }
+
 
 
 /**********************************
@@ -62,11 +72,11 @@ library UCSDevEnvUtils {
         return ucs;
     }
 
-
     // function getDeployedFacadeBy(UCSDevEnv storage ucs, string memory bundleName) internal returns(address) {
     //     bytes32 _bundleNameHash = DevUtils.getNameHash(bundleName);
     //     return ucs.ops.bundleOps.infos[_bundleNameHash].facade;
     // }
+
 
 
 /*******************************************
@@ -262,45 +272,86 @@ library UCSDevEnvUtils {
     /**---------------------
         🏠 Mocking Proxy
     -----------------------*/
+    /**
+        @notice Creates a SimpleMockProxy as a MockProxy
+        @param name The name of the MockProxy, used as a key in the `ucs.test.mockProxies` mapping and as a label name in the Forge test runner. If not provided, sequential default names from `MockProxy0` to `MockProxy4` will be used.
+        @param ops The Ops to be registered with the SimpleMockProxy. A bundle can also be specified. Note that the SimpleMockProxy cannot have its Ops changed later. If no Ops are provided, defaultOps will be used.
+    */
     function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, Op[] memory ops) internal returns(UCSDevEnv storage) {
         ucs.test.createAndSetSimpleMockProxy(name, ops);
-        ucs.context.setCurrentProxy(ucs.test.getMockProxy(name));
+        ucs.context.setCurrentProxy(ucs.getMockProxy(name));
         return ucs;
     }
-
     function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
         return ucs.createSimpleMockProxy(name, bundleOpsInfo.toOps());
     }
-
-    /// @notice Create with AllStdOps (bundle)
     function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        return ucs.createSimpleMockProxy(name, ucs.getDefaultMockProxyOps());
+        return ucs.createSimpleMockProxy(name, ucs.defaultOps());
     }
-
     function createSimpleMockProxy(UCSDevEnv storage ucs, Op[] memory ops) internal returns(UCSDevEnv storage) {
-        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), ops);
+        return ucs.createSimpleMockProxy(ucs.defaultMockProxyName(), ops);
     }
-
     function createSimpleMockProxy(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
-        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), bundleOpsInfo.toOps());
+        return ucs.createSimpleMockProxy(ucs.defaultMockProxyName(), bundleOpsInfo.toOps());
     }
-
     function createSimpleMockProxy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        return ucs.createSimpleMockProxy(ucs.test.getDefaultMockProxyName(), ucs.getDefaultMockProxyOps());
+        return ucs.createSimpleMockProxy(ucs.defaultMockProxyName(), ucs.defaultOps());
     }
 
+    /**
+        @notice Get MockProxy by name
+     */
     function getMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(MockProxy) {
         return ucs.test.getMockProxy(name);
     }
 
-    function getDefaultMockProxyOps(UCSDevEnv storage ucs) internal returns(Op[] memory ops) {
-        return ucs.ops.stdOps.allStdOps.toOps();
-    }
 
 
     /**-------------------------
         📚 Mocking Dictionary
     ---------------------------*/
+    /**
+        @notice Creates a DictionaryEtherscan as a MockDictionary.
+        @param name The name of the `MockDictionary`, used as a key in the `ucs.test.mockDictionaries` mapping and as a label name in the Forge test runner. If not provided, sequential default names from `MockDictionary0` to `MockDictionary4` will be used.
+        @param owner The address to be set as the owner of the DictionaryEtherscan contract. If not provided, the DefaultOwner from the UCS environment settings is used.
+        @param ops The Ops to be registered with the `MockDictionary`. A bundle can also be specified. If no Ops are provided, defaultOps will be used.
+    */
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name, address owner, Op[] memory ops) internal returns(UCSDevEnv storage) {
+        ucs.test.createAndSetMockDictionary(name, owner, ops);
+        ucs.context.setCurrentDictionary(ucs.getMockDictionary(name));
+        return ucs;
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name, address owner, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(name, owner, bundleOpsInfo.toOps());
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name, address owner) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(name, owner, ucs.defaultOps());
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name, Op[] memory ops) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(name, ucs.defaultOwner(), ops);
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(name, ucs.defaultOwner(), bundleOpsInfo.toOps());
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(name, ucs.defaultOwner(), ucs.defaultOps());
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, Op[] memory ops) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(ucs.defaultMockDictionaryName(), ucs.defaultOwner(), ops);
+    }
+    function createMockDictionary(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(ucs.defaultMockDictionaryName(), ucs.defaultOwner(), bundleOpsInfo.toOps());
+    }
+    function createMockDictionary(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.createMockDictionary(ucs.defaultMockDictionaryName(), ucs.defaultOwner(), ucs.defaultOps());
+    }
+
+    /**
+        @notice Get MockDictionary by name
+     */
+    function getMockDictionary(UCSDevEnv storage ucs, string memory name) internal returns(MockDictionary) {
+        return ucs.test.getMockDictionary(name);
+    }
 
 
 
@@ -317,19 +368,19 @@ library UCSDevEnvUtils {
         return ucs;
     }
 
+    /// @notice Set named proxy as the current proxy
+    function setCurrentProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        Proxy proxy = ucs.getDeployedProxyBy(name);
+        ucs.setCurrentProxy(proxy);
+        return ucs;
+    }
+
     function getCurrentProxy(UCSDevEnv storage ucs) internal returns(Proxy) {
         return ucs.context.getCurrentProxy();
     }
 
     function getProxyAddress(UCSDevEnv storage ucs) internal returns(address) {
         return ucs.getCurrentProxy().toAddress();
-    }
-
-    /// @notice Set named proxy as the current proxy
-    function setCurrentProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ucs.getDeployedProxyBy(name);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
     }
 
 
@@ -341,14 +392,41 @@ library UCSDevEnvUtils {
         return ucs;
     }
 
-    function getCurrentDictionary(UCSDevEnv storage ucs) internal returns(Dictionary) {
-        return ucs.context.getCurrentDictionary();
-    }
-
     /// @dev Set named dictionary as the current dictionary
     function setCurrentDictionaryBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
         Dictionary dictionary = ucs.getDeployedDictionaryBy(name);
         ucs.setCurrentDictionary(dictionary);
         return ucs;
     }
+
+    function getCurrentDictionary(UCSDevEnv storage ucs) internal returns(Dictionary) {
+        return ucs.context.getCurrentDictionary();
+    }
+
+    function getDictionaryAddress(UCSDevEnv storage ucs) internal returns(address) {
+        return ucs.getCurrentDictionary().toAddress();
+    }
+
+
+
+/*******************************************************
+    📝 Settings
+        provide the Default Values of the UCS DevEnv
+********************************************************/
+    function defaultOwner(UCSDevEnv storage ucs) internal returns(address) {
+        return ForgeHelper.msgSender();
+    }
+
+    function defaultOps(UCSDevEnv storage ucs) internal returns(Op[] memory ops) {
+        return ucs.ops.stdOps.allStdOps.toOps();
+    }
+
+    function defaultMockProxyName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.test.getDefaultMockProxyName();
+    }
+
+    function defaultMockDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.test.getDefaultMockDictionaryName();
+    }
+
 }

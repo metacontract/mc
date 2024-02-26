@@ -21,7 +21,9 @@ import {ProxyUtils} from "./proxy/ProxyUtils.sol";
 import {ProxyEnvUtils} from "./proxy/ProxyEnvUtils.sol";
 /// for Testing
 import {UCSTestEnvUtils} from "./test/UCSTestEnvUtils.sol";
-import {MockUtils} from "./test/MockUtils.sol";
+// import {MockUtils} from "./test/MockUtils.sol";
+import {MockProxyUtils} from "dev-env/proxy/MockProxyUtils.sol";
+import {MockDictionaryUtils} from "dev-env/dictionary/MockDictionaryUtils.sol";
 /// for Context
 import {ContextUtils} from "./context/ContextUtils.sol";
 
@@ -115,18 +117,17 @@ struct UCSProxyEnv {
 using UCSTestEnvUtils for UCSTestEnv global;
 struct UCSTestEnv {
     mapping(bytes32 nameHash => MockProxy) mockProxies;
+    mapping(bytes32 nameHash => MockDictionary) mockDictionaries;
     // mapping(bytes32 nameHash => uint256) namedMockProxyIndicesPlusOne; /// @dev To avoid retrieving a default zero value, we store values that are one greater than the actual index.
     // MockProxy[] mockProxies;
     // stubs TODO
 }
     // Define Mock Proxy
     type MockProxy is address;
-    using MockUtils for MockProxy global;
-    using {MockUtils.asMockProxy} for address;
+    using MockProxyUtils for MockProxy global;
     // Define Mock Dictionary
     type MockDictionary is address;
-    using MockUtils for MockDictionary global;
-    using {MockUtils.asMockDictionary} for address;
+    using MockDictionaryUtils for MockDictionary global;
 
 
 /**********************************

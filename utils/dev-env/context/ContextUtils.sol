@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {DevUtils} from "dev-env/common/DevUtils.sol";
 import {UCSContext, Proxy, MockProxy, Dictionary, MockDictionary} from "dev-env/UCSDevEnv.sol";
 import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
+import {DictionaryUtils} from "dev-env/dictionary/DictionaryUtils.sol";
 
 /******************************************
     🎭 Context Primitive Utils
@@ -12,6 +13,7 @@ import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
 *******************************************/
 library ContextUtils {
     using {ProxyUtils.asProxy} for address;
+    using {DictionaryUtils.asDictionary} for address;
 
     /**-----------------------------
         🏠 Current Context Proxy
@@ -40,6 +42,10 @@ library ContextUtils {
         if (!dictionary.exists()) DevUtils.revertWithDevEnvError("SetCurrentDictionary_EmptyDictionary");
         context.currentDictionary = dictionary;
         return context;
+    }
+
+    function setCurrentDictionary(UCSContext storage context, MockDictionary mockDictionary) internal returns(UCSContext storage) {
+        return context.setCurrentDictionary(mockDictionary.toAddress().asDictionary());
     }
 
     function getCurrentDictionary(UCSContext storage context) internal returns(Dictionary) {
