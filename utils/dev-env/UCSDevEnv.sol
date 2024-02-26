@@ -1,50 +1,48 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Commons
-import {DevUtils} from "./common/DevUtils.sol";
-import {ForgeHelper, vm, console2} from "./common/ForgeHelper.sol";
-
-// Dev Environment
-/// for General
+// Dev Utils for Environments
+// 🌟 Global
 import {UCSDevEnvUtils} from "./UCSDevEnvUtils.sol";
-/// for Ops
+/// 🧩 Ops
 import {OpsEnvUtils} from "./ops/OpsEnvUtils.sol";
 import {StdOpsUtils} from "./ops/StdOpsUtils.sol";
+// import CustomOpsUtils TODO
 import {OpInfoUtils} from "./ops/OpInfoUtils.sol";
 import {BundleOpsInfoUtils} from "./ops/BundleOpsInfoUtils.sol";
-/// for Dictionary
+/// 📚 Dictionary
 import {DictionaryUtils} from "./dictionary/DictionaryUtils.sol";
 import {DictionaryEnvUtils} from "./dictionary/DictionaryEnvUtils.sol";
-/// for Proxy
+/// 🏠 Proxy
 import {ProxyUtils} from "./proxy/ProxyUtils.sol";
 import {ProxyEnvUtils} from "./proxy/ProxyEnvUtils.sol";
-/// for Testing
+/// 🧪 Test
 import {UCSTestEnvUtils} from "./test/UCSTestEnvUtils.sol";
-// import {MockUtils} from "./test/MockUtils.sol";
 import {MockProxyUtils} from "dev-env/proxy/MockProxyUtils.sol";
 import {MockDictionaryUtils} from "dev-env/dictionary/MockDictionaryUtils.sol";
-/// for Context
+/// 🎭 Context
 import {ContextUtils} from "./context/ContextUtils.sol";
 
 
+/******************************************
+🌟 UCS Development Environment for Global
+*******************************************/
 using UCSDevEnvUtils for UCSDevEnv global;
 struct UCSDevEnv {
-    /** Depenedent Contracts */
+    /** UCS Contracts */
     UCSOpsEnv ops;
     UCSDictionaryEnv dictionary;
     UCSProxyEnv proxy;
 
-    /** Environment */
     UCSTestEnv test;
     UCSContext context;
     // UCSDevEnvSettings settings;
 }
 
 
-/**********************************
-    🧩 Utils for Ops
- */
+/****************************
+    🧩 UCS Ops Environment
+*****************************/
 using OpsEnvUtils for UCSOpsEnv global;
 struct UCSOpsEnv {
     StdOps stdOps;
@@ -80,28 +78,23 @@ struct UCSOpsEnv {
             address facade;
         }
 
-        struct Op {
-            bytes4 selector;
-            address implementation;
-        }
 
-
-/**********************************
-    📚 Utils for Dictionary
- */
+/************************************
+    📚 UCS Dictionary Environment
+*************************************/
 using DictionaryEnvUtils for UCSDictionaryEnv global;
 struct UCSDictionaryEnv {
     mapping(bytes32 nameHash => Dictionary) deployed;
     address upgradeableImpl;
     address upgradeableEtherscanImpl;
 }
-    using DictionaryUtils for Dictionary global;
     type Dictionary is address;
+    using DictionaryUtils for Dictionary global;
 
 
-/**********************************
-    🏠 Utils for Proxy
- */
+/*******************************
+    🏠 UCS Proxy Environment
+********************************/
 using ProxyEnvUtils for UCSProxyEnv global;
 struct UCSProxyEnv {
     mapping(bytes32 nameHash => Proxy) deployed;
@@ -111,9 +104,9 @@ struct UCSProxyEnv {
     using {ProxyUtils.asProxy} for address;
 
 
-/**********************************
-    🧪 Utils for Testing
- */
+/******************************
+    🧪 UCS Test Environment
+*******************************/
 using UCSTestEnvUtils for UCSTestEnv global;
 struct UCSTestEnv {
     mapping(bytes32 nameHash => MockProxy) mockProxies;
@@ -130,9 +123,9 @@ struct UCSTestEnv {
     using MockDictionaryUtils for MockDictionary global;
 
 
-/**********************************
-    🎭 Utils for Context
- */
+/*****************************
+    🎭 UCS DevEnv Context
+******************************/
 using ContextUtils for UCSContext global;
 struct UCSContext {
     Proxy currentProxy;
@@ -140,10 +133,19 @@ struct UCSContext {
 }
 
 
-/**********************************
-    ⚙ Utils for Settings
- */
+/***********************
+    📝 UCS Settings
+************************/
 /// @dev We will utilize this struct after Solidity is updated to allow Structs to be applied to Transient Storage.
 // struct UCSDevEnvSettings {
 //     bool outputLogs;
 // }
+
+
+/****************************
+    🎨 General UCS Types
+*****************************/
+struct Op {
+    bytes4 selector;
+    address implementation;
+}

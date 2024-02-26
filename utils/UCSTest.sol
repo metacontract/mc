@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper} from "dev-env/UCSDevEnv.sol";
+import {ForgeHelper} from "dev-env/common/ForgeHelper.sol";
 import {DecodeErrorString} from "dev-env/common/DecodeErrorString.sol";
 
 // 💬 ABOUT
