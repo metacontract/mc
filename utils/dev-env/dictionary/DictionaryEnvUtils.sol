@@ -75,9 +75,24 @@ library DictionaryEnvUtils {
         return dictionaryEnv.deployed[DevUtils.getHash(name)].exists();
     }
 
+
     function findUnusedDictionaryName(UCSDictionaryEnv storage dictionaryEnv) internal returns(string memory name) {
+        return dictionaryEnv.findUnusedName("Dictionary");
+    }
+
+    function findUnusedDuplicatedDictionaryName(UCSDictionaryEnv storage dictionaryEnv) internal returns(string memory name) {
+        return dictionaryEnv.findUnusedName("DuplicatedDictionary");
+    }
+
+
+    /**-----------------------
+        🔧 Helper Methods
+    -------------------------*/
+    function findUnusedName(
+        UCSDictionaryEnv storage dictionaryEnv,
+        string memory baseName
+    ) internal returns(string memory name) {
         (uint start, uint end) = DevUtils.getScanRange();
-        string memory baseName = "Dictionary";
 
         for (uint i = start; i <= end; ++i) {
             name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
@@ -86,5 +101,4 @@ library DictionaryEnvUtils {
 
         DevUtils.revertUnusedNameNotFound();
     }
-
 }

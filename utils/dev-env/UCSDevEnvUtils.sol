@@ -376,7 +376,7 @@ library UCSDevEnvUtils {
     }
 
     function defaultDuplicatedDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
-        return "DUPLICATED_DICTIONARY"; // TODO
+        return ucs.dictionary.findUnusedDuplicatedDictionaryName();
     }
 
     function defaultMockProxyName(UCSDevEnv storage ucs) internal returns(string memory) {
