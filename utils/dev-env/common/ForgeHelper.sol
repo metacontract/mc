@@ -66,8 +66,11 @@ library ForgeHelper {
         (,msgSender,) = vm.readCallers();
     }
 
-    function concatWithUint(string memory str, uint num) internal returns(string memory) {
+    function appendNumberToName(string memory str, uint num) internal returns(string memory) {
         return string(abi.encodePacked(str, vm.toString(num)));
     }
 
+    function appendNumberToNameIfNotOne(string memory baseName, uint num) internal returns(string memory) {
+        return num == 1 ? baseName : appendNumberToName(baseName, num);
+    }
 }

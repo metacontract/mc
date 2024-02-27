@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {console2, StdStyle, vm} from "dev-env/common/ForgeHelper.sol";
+import {ForgeHelper, console2, StdStyle, vm} from "dev-env/common/ForgeHelper.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
+import {MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
+import {MockDictionaryUtils} from "dev-env/dictionary/MockDictionaryUtils.sol";
 
 //============================================
 //  📚 Development Utils
@@ -42,6 +44,7 @@ library DevUtils {
     function injectAddressToStorage(address target, bytes32 slot, address addr) internal {
         vm.store(target, slot, bytes32(uint256(uint160(addr))));
     }
+
 
 
     /**-------------------------
@@ -105,5 +108,16 @@ library DevUtils {
             revertWithDevEnvError("Contract does not exist");
         }
         return contractAddr;
+    }
+
+    function revertUnusedNameNotFound() internal {
+        string memory revertReason =
+            "Default names are automatically set up to 5. Please manually assign names beyond that.";
+        revertWithDevEnvError(revertReason);
+    }
+
+    // TODO move to settings
+    function getScanRange() internal returns(uint start, uint end) {
+        return (1, 5);
     }
 }

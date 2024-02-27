@@ -106,7 +106,7 @@ library DictionaryUtils {
         })).asDictionary();
     }
 
-    // 3️⃣ Etherscan-verifiable Dictionary
+    // 3️⃣🌟 Etherscan-verifiable Dictionary
     function deployDictionaryEtherscan(address owner) internal returns(Dictionary) {
         return address(new DictionaryEtherscan(owner)).asDictionary();
     }
@@ -120,10 +120,9 @@ library DictionaryUtils {
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    error DuplicateDictionary_CannotDuplicateEmptyDictionary();
     function duplicate(Dictionary dictionary, string memory name) internal returns(Dictionary) {
-        if (dictionary.toAddress().code.length == 0) revert DuplicateDictionary_CannotDuplicateEmptyDictionary();
-        return deployDictionary(name).duplicateOpsFrom(dictionary);
+        if (dictionary.toAddress().code.length == 0) DevUtils.revertWithDevEnvError("DuplicateDictionary_CannotDuplicateEmptyDictionary");
+        return deployDictionary(name).duplicateOpsFrom(dictionary).assignLabel(name);
     }
 
     function duplicateOpsFrom(Dictionary toDictionary, Dictionary fromDictionary) internal returns(Dictionary) {
@@ -148,19 +147,17 @@ library DictionaryUtils {
         🧩 Set Op
     ------------------*/
     function set(Dictionary dictionary, Op memory op) internal returns(Dictionary) {
-        address dictionaryAddr = dictionary.toAddress();
-        IDictionary(dictionaryAddr).setImplementation({
+        IDictionary(dictionary.toAddress()).setImplementation({
             functionSelector: op.selector,
             implementation: op.implementation
         });
-        return dictionaryAddr.asDictionary();
+        return dictionary;
     }
 
     function set(Dictionary dictionary, BundleOpsInfo memory bundleOpsInfo) internal returns(Dictionary) {
         OpInfo[] memory opInfos = bundleOpsInfo.opInfos;
         for (uint i; i < opInfos.length; ++i) {
-            Op memory op = Op(opInfos[i].selector, opInfos[i].deployedContract);
-            dictionary.set(op);
+            dictionary.set(Op(opInfos[i].selector, opInfos[i].deployedContract));
         }
         if (dictionary.isEtherscanVerifiable()) {
             dictionary.upgradeFacade(bundleOpsInfo.facade);
@@ -168,26 +165,12 @@ library DictionaryUtils {
         return dictionary;
     }
 
-    function setDefaultOpsAndFacade(Dictionary dictionary) internal returns(Dictionary) {
-        address _defaultOpsFacade;// = ucs.findFacade("defaultOps")
-        dictionary  .setDefaultOps()
-                    .upgradeFacade(_defaultOpsFacade);
-        return dictionary;
-    }
-
-    function setDefaultOps(Dictionary dictionary) internal returns(Dictionary) {
-        Op memory op;
-        dictionary.set(op);
-        return dictionary;
-    }
-
 
     /**----------------------
         🖼 Upgrade Facade
     ------------------------*/
-    error UpgradeFacade_NotEtherscanVerifiable();
     function upgradeFacade(Dictionary dictionary, address newFacade) internal returns(Dictionary) {
-        if (!dictionary.isEtherscanVerifiable()) revert UpgradeFacade_NotEtherscanVerifiable();
+        if (!dictionary.isEtherscanVerifiable()) DevUtils.revertWithDevEnvError("UpgradeFacade_NotEtherscanVerifiable");
         DictionaryUpgradeableEtherscanImpl(dictionary.toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }

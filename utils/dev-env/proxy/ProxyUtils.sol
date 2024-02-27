@@ -13,6 +13,7 @@ import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEthers
 import {InitSetAdminOp} from "../../../src/ops/InitSetAdminOp.sol";
 
 import {StdOpsUtils} from "dev-env/ops/StdOpsUtils.sol";
+import {StdOpsArgs} from "dev-env/ops/StdOpsArgs.sol";
 
 import {ForgeHelper, console2} from "dev-env/common/ForgeHelper.sol";
 import {DevUtils} from "dev-env/common/DevUtils.sol";
@@ -43,7 +44,8 @@ library ProxyUtils {
 
     function deployProxy(string memory name, Dictionary dictionary, address owner) internal returns(Proxy) {
         dictionary.assertSupports(InitSetAdminOp.initSetAdmin.selector);
-        bytes memory initData = StdOpsUtils.getCalldataInitSetAdmin(owner);
+        bytes memory initData = StdOpsArgs.initSetAdminBytes(owner);
+        // bytes memory initData = StdOpsUtils.getCalldataInitSetAdmin(owner);
         return deployProxy(name, dictionary, initData);
     }
 

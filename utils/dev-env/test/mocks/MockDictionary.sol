@@ -10,7 +10,7 @@ import {Op} from "dev-env/UCSDevEnv.sol";
 contract MockDictionary is DictionaryEtherscan {
     constructor (address owner, Op[] memory ops) DictionaryEtherscan(owner) {
         for (uint i; i < ops.length; ++i) {
-            this.setImplementation(ops[i].selector, ops[i].implementation);
+            setImplementation(ops[i].selector, ops[i].implementation);
         }
     }
 }

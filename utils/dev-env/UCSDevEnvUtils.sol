@@ -6,6 +6,7 @@ import {DevUtils} from "dev-env/common/DevUtils.sol";
 import {UCSDevEnv, Dictionary, Proxy, Op, OpInfo, BundleOpsInfo, MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
 import {DictionaryUtils} from "dev-env/dictionary/DictionaryUtils.sol";
 import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
+import {StdOpsArgs} from "dev-env/ops/StdOpsArgs.sol";
 
 /***************************************
 🌟 UCS Development Environment Utils
@@ -18,6 +19,8 @@ import {ProxyUtils} from "dev-env/proxy/ProxyUtils.sol";
     📝 Settings
 ****************************************/
 library UCSDevEnvUtils {
+    using StdOpsArgs for address;
+
     /**********************************
         🌐 General
     **********************************/
@@ -29,11 +32,6 @@ library UCSDevEnvUtils {
         return ucs  .deployDictionary()
                     .set(ucs.ops.stdOps.allStdOps)
                     .deployProxy(name);
-    }
-
-    function toggleLog(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        DevUtils.toggleLog();
-        return ucs;
     }
 
     function getProxy(UCSDevEnv storage ucs) internal returns(Proxy) {
@@ -79,129 +77,90 @@ library UCSDevEnvUtils {
 
 
 
-/*******************************************
+/************************************************
     📚 Dictionary Global Utils
         🐣 Deploy Dictionary
         🔂 Duplicate Dictionary
         🧩 Set Op
         🖼 Upgrade Facade
         🔧 Helper Methods for type Dictionary
-********************************************/
+*************************************************/
     /**-------------------------
         🐣 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = DictionaryUtils.deployDictionary();
-        ucs.dictionary.setDictionary("DICTIONARY", dictionary);
-        ucs.setCurrentDictionary(dictionary);
+    function deployDictionary(UCSDevEnv storage ucs, string memory name, address owner) internal returns(UCSDevEnv storage) {
+        ucs.dictionary.deployAndSetDictionary(name, owner);
+        ucs.context.setCurrentDictionary(ucs.getDeployedDictionaryBy(name));
         return ucs;
     }
-
     function deployDictionary(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
-        Dictionary dictionary = DictionaryUtils.deployDictionary(name);
-        ucs.dictionary.setDictionary(name, dictionary);
-        ucs.setCurrentDictionary(dictionary);
-        return ucs;
+        return ucs.deployDictionary(name, ucs.defaultOwner());
     }
-
-    function deployDictionary(UCSDevEnv storage ucs, string memory name, bool useEtherscanVerification, bool useUpgradeableDictionary) internal returns(UCSDevEnv storage) {
-        address implementation = ucs.dictionary.getDictionaryImpl(useEtherscanVerification);
-        Dictionary dictionary = DictionaryUtils.deployDictionary(name, useEtherscanVerification, useUpgradeableDictionary, implementation);
-        ucs.dictionary.setDictionary(name, dictionary);
-        ucs.setCurrentDictionary(dictionary);
-        return ucs;
-    }
-
-    function deployDictionary(UCSDevEnv storage ucs, string memory name, bool useEtherscanVerification, bool useUpgradeableDictionary, address owner) internal returns(UCSDevEnv storage) {
-        address implementation = ucs.dictionary.getDictionaryImpl(useEtherscanVerification);
-        Dictionary dictionary = DictionaryUtils.deployDictionary(name, useEtherscanVerification, useUpgradeableDictionary, implementation, owner);
-        ucs.dictionary.setDictionary(name, dictionary);
-        ucs.setCurrentDictionary(dictionary);
-        return ucs;
+    function deployDictionary(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.deployDictionary(ucs.defaultDictionaryName(), ucs.defaultOwner());
     }
 
 
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    function duplicateDictionary(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        string memory name = "DUPLICATED_DICTIONARY";
-        ucs.duplicateDictionary(name);
+    function duplicateDictionary(UCSDevEnv storage ucs, string memory name, Dictionary targetDictionary) internal returns(UCSDevEnv storage) {
+        ucs.dictionary.duplicateAndSetDictionary(name, targetDictionary);
+        ucs.context.setCurrentDictionary(ucs.getDeployedDictionaryBy(name));
         return ucs;
     }
-
     function duplicateDictionary(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Dictionary duplicatedDictionary = ucs.context.currentDictionary.duplicate(name);
-        ucs.dictionary.setDictionary(name, duplicatedDictionary);
-        ucs.setCurrentDictionaryBy(name);
-        return ucs;
+        return ucs.duplicateDictionary(name, ucs.getCurrentDictionary());
     }
-
-    function duplicateDictionary(UCSDevEnv storage ucs, Dictionary dictionary) internal returns(UCSDevEnv storage) {
-        string memory name = "DUPLICATED_DICTIONARY";
-        ucs.duplicateDictionary(name, dictionary);
-        return ucs;
+    function duplicateDictionary(UCSDevEnv storage ucs, Dictionary targetDictionary) internal returns(UCSDevEnv storage) {
+        return ucs.duplicateDictionary(ucs.defaultDuplicatedDictionaryName(), targetDictionary);
     }
-    function duplicateDictionary(UCSDevEnv storage ucs, string memory name, Dictionary dictionary) internal returns(UCSDevEnv storage) {
-        Dictionary duplicatedDictionary = dictionary.duplicate(name);
-        ucs.dictionary.setDictionary(name, duplicatedDictionary);
-        ucs.setCurrentDictionaryBy(name);
-        return ucs;
+    function duplicateDictionary(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.duplicateDictionary(ucs.defaultDuplicatedDictionaryName(), ucs.getCurrentDictionary());
     }
 
 
     /**----------------
         🧩 Set Op
     ------------------*/
-    function set(UCSDevEnv storage ucs, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getCurrentDictionary();
-        ucs.set(dictionary, opInfo);
-        return ucs;
-    }
-    function set(UCSDevEnv storage ucs, string memory dictionaryName, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getDeployedDictionaryBy(dictionaryName);
-        ucs.set(dictionary, opInfo);
-        return ucs;
-    }
-    function set(UCSDevEnv storage ucs, Dictionary dictionary, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        Op memory op = opInfo.toOp();
-        ucs.set(dictionary, op);
-        return ucs;
-    }
-    function set(UCSDevEnv storage ucs, Op memory op) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getCurrentDictionary();
-        ucs.set(dictionary, op);
-        return ucs;
-    }
-    function set(UCSDevEnv storage ucs, string memory dictionaryName, Op memory op) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getDeployedDictionaryBy(dictionaryName);
-        ucs.set(dictionary, op);
-        return ucs;
-    }
     function set(UCSDevEnv storage ucs, Dictionary dictionary, Op memory op) internal returns(UCSDevEnv storage) {
         dictionary.set(op);
         return ucs;
     }
+    function set(UCSDevEnv storage ucs, Dictionary dictionary, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.set(dictionary, opInfo.toOp());
+    }
+    function set(UCSDevEnv storage ucs, string memory dictionaryName, Op memory op) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getDeployedDictionaryBy(dictionaryName), op);
+    }
+    function set(UCSDevEnv storage ucs, string memory dictionaryName, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getDeployedDictionaryBy(dictionaryName), opInfo.toOp());
+    }
+    function set(UCSDevEnv storage ucs, Op memory op) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getCurrentDictionary(), op);
+    }
+    function set(UCSDevEnv storage ucs, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getCurrentDictionary(), opInfo.toOp());
+    }
 
-    function set(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getCurrentDictionary();
+    function set(UCSDevEnv storage ucs, Dictionary dictionary, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
         dictionary.set(bundleOpsInfo);
         return ucs;
+    }
+    function set(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getCurrentDictionary(), bundleOpsInfo);
     }
 
 
     /**----------------------
         🖼 Upgrade Facade
     ------------------------*/
-    function upgradeFacade(UCSDevEnv storage ucs, address newFacade) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getCurrentDictionary();
-        ucs.upgradeFacade(dictionary, newFacade);
-        return ucs;
-    }
     function upgradeFacade(UCSDevEnv storage ucs, Dictionary dictionary, address newFacade) internal returns(UCSDevEnv storage) {
         dictionary.upgradeFacade(newFacade);
         return ucs;
+    }
+    function upgradeFacade(UCSDevEnv storage ucs, address newFacade) internal returns(UCSDevEnv storage) {
+        return ucs.upgradeFacade(ucs.getCurrentDictionary(), newFacade);
     }
 
 
@@ -222,38 +181,23 @@ library UCSDevEnvUtils {
     /**---------------------
         🐣 Deploy Proxy
     -----------------------*/
-    function deployProxy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        string memory name = "PROXY";
-        return ucs.deployProxy(name);
-    }
-    function deployProxy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getCurrentDictionary();
-        Proxy proxy = ProxyUtils.deployProxy(name, dictionary);
-        ucs.proxy.setProxy(name, proxy);
-        ucs.setCurrentProxy(proxy);
+    function deployProxy(UCSDevEnv storage ucs, string memory name, Dictionary dictionary, bytes memory initData) internal returns(UCSDevEnv storage) {
+        ucs.proxy.deployAndSetProxy(name, dictionary, initData);
+        ucs.context.setCurrentProxy(ucs.getDeployedProxyBy(name));
         return ucs;
+    }
+    function deployProxy(UCSDevEnv storage ucs, string memory name, Dictionary dictionary, address owner) internal returns(UCSDevEnv storage) {
+        return ucs.deployProxy(name, dictionary, owner.initSetAdminBytes());
     }
     function deployProxy(UCSDevEnv storage ucs, string memory name, Dictionary dictionary) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ProxyUtils.deployProxy(name, dictionary);
-        ucs.proxy.setProxy(name, proxy);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
+        return ucs.deployProxy(name, dictionary, ucs.defaultOwner().initSetAdminBytes());
     }
-
-    function deployProxy(UCSDevEnv storage ucs, string memory name, Dictionary dictionary, address owner) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ProxyUtils.deployProxy(name, dictionary, owner);
-        ucs.proxy.setProxy(name, proxy);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
+    function deployProxy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        return ucs.deployProxy(name, ucs.getCurrentDictionary(), ucs.defaultOwner().initSetAdminBytes());
     }
-
-    function deployProxy(UCSDevEnv storage ucs, string memory name, Dictionary dictionary, bytes memory initData) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ProxyUtils.deployProxy(name, dictionary, initData);
-        ucs.proxy.setProxy(name, proxy);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
+    function deployProxy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.deployProxy(ucs.defaultProxyName(), ucs.getCurrentDictionary(), ucs.defaultOwner().initSetAdminBytes());
     }
-
 
     /**------------------------------------
         🔧 Helper Methods for type Proxy
@@ -279,7 +223,7 @@ library UCSDevEnvUtils {
     */
     function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, Op[] memory ops) internal returns(UCSDevEnv storage) {
         ucs.test.createAndSetSimpleMockProxy(name, ops);
-        ucs.context.setCurrentProxy(ucs.getMockProxy(name));
+        ucs.context.setCurrentProxy(ucs.getMockProxyBy(name));
         return ucs;
     }
     function createSimpleMockProxy(UCSDevEnv storage ucs, string memory name, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
@@ -301,8 +245,8 @@ library UCSDevEnvUtils {
     /**
         @notice Get MockProxy by name
      */
-    function getMockProxy(UCSDevEnv storage ucs, string memory name) internal returns(MockProxy) {
-        return ucs.test.getMockProxy(name);
+    function getMockProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(MockProxy) {
+        return ucs.test.getMockProxyBy(name);
     }
 
 
@@ -318,7 +262,7 @@ library UCSDevEnvUtils {
     */
     function createMockDictionary(UCSDevEnv storage ucs, string memory name, address owner, Op[] memory ops) internal returns(UCSDevEnv storage) {
         ucs.test.createAndSetMockDictionary(name, owner, ops);
-        ucs.context.setCurrentDictionary(ucs.getMockDictionary(name));
+        ucs.context.setCurrentDictionary(ucs.getMockDictionaryBy(name));
         return ucs;
     }
     function createMockDictionary(UCSDevEnv storage ucs, string memory name, address owner, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
@@ -349,8 +293,8 @@ library UCSDevEnvUtils {
     /**
         @notice Get MockDictionary by name
      */
-    function getMockDictionary(UCSDevEnv storage ucs, string memory name) internal returns(MockDictionary) {
-        return ucs.test.getMockDictionary(name);
+    function getMockDictionaryBy(UCSDevEnv storage ucs, string memory name) internal returns(MockDictionary) {
+        return ucs.test.getMockDictionaryBy(name);
     }
 
 
@@ -370,9 +314,7 @@ library UCSDevEnvUtils {
 
     /// @notice Set named proxy as the current proxy
     function setCurrentProxyBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Proxy proxy = ucs.getDeployedProxyBy(name);
-        ucs.setCurrentProxy(proxy);
-        return ucs;
+        return ucs.setCurrentProxy(ucs.getDeployedProxyBy(name));
     }
 
     function getCurrentProxy(UCSDevEnv storage ucs) internal returns(Proxy) {
@@ -394,9 +336,7 @@ library UCSDevEnvUtils {
 
     /// @dev Set named dictionary as the current dictionary
     function setCurrentDictionaryBy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        Dictionary dictionary = ucs.getDeployedDictionaryBy(name);
-        ucs.setCurrentDictionary(dictionary);
-        return ucs;
+        return ucs.setCurrentDictionary(ucs.getDeployedDictionaryBy(name));
     }
 
     function getCurrentDictionary(UCSDevEnv storage ucs) internal returns(Dictionary) {
@@ -411,8 +351,14 @@ library UCSDevEnvUtils {
 
 /*******************************************************
     📝 Settings
+        logging
         provide the Default Values of the UCS DevEnv
 ********************************************************/
+    function toggleLog(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        DevUtils.toggleLog();
+        return ucs;
+    }
+
     function defaultOwner(UCSDevEnv storage ucs) internal returns(address) {
         return ForgeHelper.msgSender();
     }
@@ -421,12 +367,24 @@ library UCSDevEnvUtils {
         return ucs.ops.stdOps.allStdOps.toOps();
     }
 
+    function defaultProxyName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.proxy.findUnusedProxyName();
+    }
+
+    function defaultDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.dictionary.findUnusedDictionaryName();
+    }
+
+    function defaultDuplicatedDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return "DUPLICATED_DICTIONARY"; // TODO
+    }
+
     function defaultMockProxyName(UCSDevEnv storage ucs) internal returns(string memory) {
-        return ucs.test.getDefaultMockProxyName();
+        return ucs.test.findUnusedMockProxyName();
     }
 
     function defaultMockDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
-        return ucs.test.getDefaultMockDictionaryName();
+        return ucs.test.findUnusedMockDictionaryName();
     }
 
 }

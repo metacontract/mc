@@ -137,12 +137,4 @@ library StdOpsUtils {
         return stdOps;
     }
 
-
-    /**--------------------------------------------
-        🔧 Helper Methods for each Standard Ops
-    ----------------------------------------------*/
-    function getCalldataInitSetAdmin(address admin) internal pure returns(bytes memory) {
-        return abi.encodeCall(InitSetAdminOp.initSetAdmin, admin);
-    }
-
 }

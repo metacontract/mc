@@ -15,6 +15,7 @@ import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
     🧪 Test Environment Utils
         🏠 for Mock Proxy
         📚 for Mock Dictionary
+
 *******************************************/
 library UCSTestEnvUtils {
     /**----------------------
@@ -32,36 +33,24 @@ library UCSTestEnvUtils {
         return test;
     }
 
-    function getMockProxy(UCSTestEnv storage test, string memory name) internal returns(MockProxy) {
+    function getMockProxyBy(UCSTestEnv storage test, string memory name) internal returns(MockProxy) {
         MockProxy mockProxy = test.mockProxies[DevUtils.getHash(name)];
         if (!mockProxy.exists()) DevUtils.revertWithDevEnvError("GetMockProxy_NotFound");
         return mockProxy;
     }
 
-    function getDefaultMockProxyName(UCSTestEnv storage test) internal returns(string memory) {
-        string memory baseName = "MockProxy";
-        string memory name;
+    function existsMockProxy(UCSTestEnv storage test, string memory name) internal returns(bool) {
+        return test.mockProxies[DevUtils.getHash(name)].exists();
+    }
 
-        for (uint i = 0; i < 5; ++i) {
-            name =  i == 0 ?
-                    baseName:
-                    ForgeHelper.concatWithUint(name, i);
-            bytes32 nameHash = DevUtils.getHash(name);
-            if (!test.mockProxies[nameHash].exists()) {
-                return name;
-            }
-        }
-
-        DevUtils.revertWithDevEnvError(
-            "Default names are automatically set up to 4. Please manually assign names beyond that."
-        );
-
+    function findUnusedMockProxyName(UCSTestEnv storage test) internal returns(string memory) {
+        return test.findUnusedName(existsMockProxy, "MockProxy");
     }
 
 
-    /**--------------------------
+    /**---------------------------
         📚 for Mock Dictionary
-    ----------------------------*/
+    -----------------------------*/
     function createAndSetMockDictionary(UCSTestEnv storage test, string memory name, address owner, Op[] memory ops) internal returns(UCSTestEnv storage) {
         MockDictionary mockDictionary = MockDictionaryUtils.createMockDictionary(owner, ops);
         test.setMockDictionary(name, mockDictionary);
@@ -74,28 +63,37 @@ library UCSTestEnvUtils {
         return test;
     }
 
-    function getMockDictionary(UCSTestEnv storage test, string memory name) internal returns(MockDictionary) {
+    function getMockDictionaryBy(UCSTestEnv storage test, string memory name) internal returns(MockDictionary) {
         MockDictionary mockDictionary = test.mockDictionaries[DevUtils.getHash(name)];
         if (!mockDictionary.exists()) DevUtils.revertWithDevEnvError("GetMockDictionary_NotFound");
         return mockDictionary;
     }
 
-    function getDefaultMockDictionaryName(UCSTestEnv storage test) internal returns(string memory) {
-        string memory baseName = "MockDictionary";
-        string memory name;
+    function existsMockDictionary(UCSTestEnv storage test, string memory name) internal returns(bool) {
+        return test.mockDictionaries[DevUtils.getHash(name)].exists();
+    }
 
-        for (uint i = 0; i < 5; ++i) {
-            name =  i == 0 ?
-                    baseName:
-                    ForgeHelper.concatWithUint(name, i);
-            if (!test.mockProxies[DevUtils.getHash(name)].exists()) {
-                return name;
-            }
+    function findUnusedMockDictionaryName(UCSTestEnv storage test) internal returns(string memory) {
+        return test.findUnusedName(existsMockDictionary, "MockDictionary");
+    }
+
+
+    /**-----------------------
+        🔧 Helper Methods
+    -------------------------*/
+    function findUnusedName(
+        UCSTestEnv storage test,
+        function(UCSTestEnv storage, string memory) returns(bool) existsFunc,
+        string memory baseName
+    ) internal returns(string memory name) {
+        (uint start, uint end) = DevUtils.getScanRange();
+
+        for (uint i = start; i <= end; ++i) {
+            name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
+            if (!existsFunc(test, name)) return name;
         }
 
-        DevUtils.revertWithDevEnvError(
-            "Default names are automatically set up to 4. Please manually assign names beyond that."
-        );
-
+        DevUtils.revertUnusedNameNotFound();
     }
+
 }
