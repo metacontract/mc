@@ -15,14 +15,14 @@ import {DefaultOpsFacade} from "src/interfaces/facades/DefaultOpsFacade.sol";
 
 /****************************************************
     🧩 Std Ops Primitive Utils
-        🗒 Set Deployed Standard Ops Info
+        📦 Set Deployed Standard Ops Info
         🐣 Deploy Standard Ops If Not Exists
         🔗 Set Standard Bundle Ops
         🔧 Helper Methods for each Standard Ops
 *****************************************************/
 library StdOpsUtils {
     /**-------------------------------------
-        🗒 Set Deployed Standard Ops Info
+        📦 Set Deployed Standard Ops Info
     ---------------------------------------*/
     function setStdOpsInfoAndTrySetDeployedOps(StdOps storage stdOps) internal returns(StdOps storage) {
         DevUtils.logProcess("Setting StdOpsInfo... & Tring to set Deployed Ops...");
@@ -33,6 +33,7 @@ library StdOpsUtils {
         return stdOps;
     }
 
+    /**----- Each Std Op -----*/
     function setInitSetAdminInfo(StdOps storage stdOps) internal returns(StdOps storage) {
         stdOps.initSetAdmin .set("OP_INIT_SET_ADMIN")
                             .set(InitSetAdminOp.initSetAdmin.selector)
@@ -78,6 +79,7 @@ library StdOpsUtils {
         return stdOps;
     }
 
+    /**----- Each Std Op -----*/
     function deployInitSetAdminIfNotExists(StdOps storage stdOps) internal returns(StdOps storage) {
         if (!stdOps.initSetAdmin.exists()) {
             stdOps.initSetAdmin.set(address(new InitSetAdminOp())).emitLog();
@@ -110,31 +112,43 @@ library StdOpsUtils {
     /**-------------------------------
         🔗 Set Standard Bundle Ops
     ---------------------------------*/
-    function setStdBundleOps(StdOps storage stdOps) internal returns(StdOps storage) {
+    function addStdBundleOps(StdOps storage stdOps) internal returns(StdOps storage) {
         DevUtils.logProcess("Setting StdBundleOps...");
-        stdOps  .setAllStdOps()
-                .setDefaultOps();
+        stdOps  .addAllStdOps()
+                .addDefaultOps();
         return stdOps;
     }
 
-    function setAllStdOps(StdOps storage stdOps) internal returns(StdOps storage) {
+    /**----- Each Std Ops Bundle -----*/
+    function addAllStdOps(StdOps storage stdOps) internal returns(StdOps storage) {
         stdOps.allStdOps.set("BUNDLE_ALL_STD_OPS")
-                        .set(stdOps.initSetAdmin)
-                        .set(stdOps.getDeps)
-                        .set(stdOps.clone)
-                        .set(stdOps.setImplementation)
+                        .add(stdOps.initSetAdmin)
+                        .add(stdOps.getDeps)
+                        .add(stdOps.clone)
+                        .add(stdOps.setImplementation)
                         .set(address(new StdOpsFacade()))
                         .emitLog();
         return stdOps;
     }
 
-    function setDefaultOps(StdOps storage stdOps) internal returns(StdOps storage) {
+    function addDefaultOps(StdOps storage stdOps) internal returns(StdOps storage) {
         stdOps.defaultOps   .set("BUNDLE_DEFAULT_OPS")
-                            .set(stdOps.initSetAdmin)
-                            .set(stdOps.getDeps)
+                            .add(stdOps.initSetAdmin)
+                            .add(stdOps.getDeps)
                             .set(address(new DefaultOpsFacade()))
                             .emitLog();
         return stdOps;
     }
+
+
+    /**--------------------------------------------
+        🔧 Helper Methods for each Standard Ops
+    ----------------------------------------------*/
+    // function getAllStdOpsFacade(StdOps storage stdOps) internal returns(address) {
+    //     return stdOps.allStdOps.facade;
+    // }
+    // function getDefaultStdOpsFacade(StdOps storage stdOps) internal returns(address) {
+    //     return stdOps.defaultOps.facade;
+    // }
 
 }

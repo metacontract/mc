@@ -7,65 +7,84 @@ import {DevUtils} from "dev-env/common/DevUtils.sol";
 import {OpInfo, Op, BundleOpsInfo} from "dev-env/UCSDevEnv.sol";
 
 library BundleOpsInfoUtils {
+    using DevUtils for string;
+    using DevUtils for bytes4;
+    using DevUtils for address;
+
     /**
         Setter Methods
      */
     function set(BundleOpsInfo storage bundleOpsInfo, string memory keyword) internal returns(BundleOpsInfo storage) {
-        DevUtils.assertNotEmpty(keyword);
-        bundleOpsInfo.keyword = keyword;
-        return bundleOpsInfo;
-    }
-
-    function set(BundleOpsInfo storage bundleOpsInfo, OpInfo storage opInfo) internal returns(BundleOpsInfo storage) {
-        opInfo  .assertNotEmpty()
-                .assertNotIncludedIn(bundleOpsInfo);
-        bundleOpsInfo.opInfos.push(opInfo);
+        bundleOpsInfo.keyword = keyword.assertNotEmpty();
         return bundleOpsInfo;
     }
 
     function set(BundleOpsInfo storage bundleOpsInfo, address facade) internal returns(BundleOpsInfo storage) {
-        DevUtils.assertContractExists(facade);
-        bundleOpsInfo.facade = facade;
+        bundleOpsInfo.facade = facade.assertContractExists();
+        return bundleOpsInfo;
+    }
+
+    function add(BundleOpsInfo storage bundleOpsInfo, OpInfo storage opInfo) internal returns(BundleOpsInfo storage) {
+        bundleOpsInfo.opInfos.push(opInfo.assertExists("add").assertNotIncludedIn(bundleOpsInfo).assignLabel());
+        return bundleOpsInfo;
+    }
+
+    function add(BundleOpsInfo storage bundleOpsInfo, OpInfo[] storage opInfos) internal returns(BundleOpsInfo storage) {
+        for (uint i; i < opInfos.length; ++i) {
+            bundleOpsInfo.add(opInfos[i]);
+        }
         return bundleOpsInfo;
     }
 
 
     /**
-        Helper Methods
+        Convert
      */
-    function exists(BundleOpsInfo storage bundleOpsInfo, OpInfo storage opInfo) internal returns(bool flag) {
-        OpInfo[] memory _opInfos = bundleOpsInfo.opInfos;
-        bytes32 opInfoHash = keccak256(abi.encode(opInfo));
-        for (uint i; i < _opInfos.length; ++i) {
-            if (DevUtils.isEqual(opInfo.keyword, _opInfos[i].keyword)) DevUtils.revertWithDevEnvError("Same Keyword");
-            if (opInfo.selector == _opInfos[i].selector) DevUtils.revertWithDevEnvError("Same Selector");
-            bytes32 _opInfoHash = keccak256(abi.encode(_opInfos[i]));
-            if (opInfoHash == _opInfoHash) flag = true;
-        }
-    }
-
     function toOps(BundleOpsInfo memory bundleOpsInfo) internal returns(Op[] memory) {
         uint count = bundleOpsInfo.opInfos.length;
         Op[] memory ops = new Op[](count);
         for (uint i; i < count; ++i) {
             bundleOpsInfo.opInfos[i].copyTo(ops[i]);
-            // ops[i].selector = bundleOpsInfo.opInfos[i].selecror;
-            // ops[i].implementation = bundleOpsInfo.opInfos[i].deployedContract;
         }
         return ops;
     }
 
-    // function exists(OpInfo storage opInfo) internal returns(bool) {
-    //     return opInfo.deployedContract.code.length != 0;
-    // }
+    /**
+        Inspections
+     */
+    function exists(BundleOpsInfo storage bundleOpsInfo) internal returns(bool) {
+        return !bundleOpsInfo.keyword.isEmpty();
+    }
 
-    // function assignLabel(OpInfo storage opInfo) internal returns(OpInfo storage) {
-    //     if (opInfo.exists()) {
-    //         ForgeHelper.assignLabel(opInfo.deployedContract, opInfo.keyword);
-    //     }
-    //     return opInfo;
-    // }
+    function has(BundleOpsInfo storage bundleOpsInfo, OpInfo storage opInfo) internal returns(bool flag) {
+        OpInfo[] memory _opInfos = bundleOpsInfo.opInfos;
+        bytes32 opInfoHash = keccak256(abi.encode(opInfo));
+        for (uint i; i < _opInfos.length; ++i) {
+            if (DevUtils.isEqual(opInfo.keyword, _opInfos[i].keyword)) DevUtils.revertWith("Same Keyword");
+            if (opInfo.selector == _opInfos[i].selector) DevUtils.revertWith("Same Selector");
+            bytes32 _opInfoHash = keccak256(abi.encode(_opInfos[i]));
+            if (opInfoHash == _opInfoHash) flag = true;
+        }
+    }
 
+    /**
+        Assertions
+     */
+    function assertExists(BundleOpsInfo storage bundleOpsInfo) internal returns(BundleOpsInfo storage) {
+        if (!bundleOpsInfo.exists()) {
+            DevUtils.revertWith("Bundle Ops Info does not exist.");
+        }
+        return bundleOpsInfo;
+    }
+
+    function assertNotExists(BundleOpsInfo storage bundleOpsInfo, string memory errorString) internal returns(BundleOpsInfo storage) {
+        if (bundleOpsInfo.exists()) DevUtils.revertWith(errorString, "BundleOpsInfo exists");
+        return bundleOpsInfo;
+    }
+
+    /**
+        Logging
+     */
     function emitLog(BundleOpsInfo storage bundleOpsInfo) internal returns(BundleOpsInfo storage) {
         if (DevUtils.shouldLog()) {
             console2.log("Facade Contract:", bundleOpsInfo.facade);

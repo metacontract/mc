@@ -85,7 +85,7 @@ library MockDictionaryUtils {
     function assertSupports(MockDictionary mockDictionary, bytes4 selector) internal returns(MockDictionary) {
         // TODO change to IDictionary
         if (!DictionaryBase(mockDictionary.toAddress()).supportsInterface(selector)) {
-            DevUtils.revertWithDevEnvError("Unsupport interface");
+            DevUtils.revertWith("Unsupport interface");
         }
         return mockDictionary;
     }

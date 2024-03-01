@@ -16,18 +16,10 @@ library OpInfoUtils {
     /**
         Setter Methods
      */
-    function set(OpInfo storage opInfo, string memory keyword, bytes4 selector) internal returns(OpInfo storage) {
-        address deployedContract = ForgeHelper.getAddressOrZero(keyword);
-        opInfo.set(keyword, selector, deployedContract);
-        return opInfo;
-    }
     function set(OpInfo storage opInfo, string memory keyword, bytes4 selector, address deployedContract) internal returns(OpInfo storage) {
-        DevUtils.assertNotEmpty(selector);
-        opInfo.keyword = keyword;
-        opInfo.selector = selector;
-        opInfo.deployedContract = deployedContract;
-        return opInfo;
+        return opInfo.set(keyword).set(selector).set(deployedContract).assignLabel();
     }
+
     function set(OpInfo storage opInfo, string memory keyword) internal returns(OpInfo storage) {
         opInfo.keyword = keyword.assertNotEmpty();
         return opInfo;
@@ -40,6 +32,7 @@ library OpInfoUtils {
         opInfo.deployedContract = deployedContract.assertContractExists();
         return opInfo;
     }
+
     function trySetDeployedContract(OpInfo storage opInfo) internal returns(OpInfo storage) {
         string memory keyword = opInfo.keyword;
         (bool success, address deployedContract) = keyword.tryGetDeployedContract();
@@ -63,8 +56,7 @@ library OpInfoUtils {
     }
 
     function exists(OpInfo memory opInfo) internal returns(bool) {
-        address deployedContract = opInfo.deployedContract;
-        return DevUtils.exists(deployedContract);
+        return DevUtils.exists(opInfo.deployedContract);
     }
 
     function assignLabel(OpInfo storage opInfo) internal returns(OpInfo storage) {
@@ -89,16 +81,23 @@ library OpInfoUtils {
         return opInfo;
     }
 
+    function assertExists(OpInfo storage opInfo, string memory errorLocation) internal returns(OpInfo storage) {
+        if (!opInfo.exists()) {
+            DevUtils.revertWith("OpInfo does not exists", errorLocation);
+        }
+        return opInfo;
+    }
+
     function assertNotEmpty(OpInfo storage opInfo) internal returns(OpInfo storage) {
         if (!opInfo.exists()) {
-            DevUtils.revertWithDevEnvError("Empty Deployed Contract in OpInfo");
+            DevUtils.revertWith("Empty Deployed Contract in OpInfo");
         }
         return opInfo;
     }
 
     function assertNotIncludedIn(OpInfo storage opInfo, BundleOpsInfo storage bundleOpsInfo) internal returns(OpInfo storage) {
-        if (bundleOpsInfo.exists(opInfo)) {
-            DevUtils.revertWithDevEnvError("Already exists in the BundelOp");
+        if (bundleOpsInfo.has(opInfo)) {
+            DevUtils.revertWith("Already exists in the BundelOp");
         }
         return opInfo;
     }

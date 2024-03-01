@@ -7,6 +7,7 @@ import {UCSDevEnvUtils} from "./UCSDevEnvUtils.sol";
 /// 🧩 Ops
 import {OpsEnvUtils} from "./ops/OpsEnvUtils.sol";
 import {StdOpsUtils} from "./ops/StdOpsUtils.sol";
+import {CustomOpsUtils} from "./ops/CustomOpsUtils.sol";
 // import CustomOpsUtils TODO
 import {OpInfoUtils} from "./ops/OpInfoUtils.sol";
 import {BundleOpsInfoUtils} from "./ops/BundleOpsInfoUtils.sol";
@@ -59,6 +60,7 @@ struct UCSOpsEnv {
         BundleOpsInfo defaultOps;
     }
 
+    using CustomOpsUtils for CustomOps global;
     struct CustomOps {
         mapping(bytes32 nameHash => OpInfo) ops;
         mapping(bytes32 nameHash => BundleOpsInfo) bundles;
@@ -130,6 +132,9 @@ using ContextUtils for UCSContext global;
 struct UCSContext {
     Proxy currentProxy;
     Dictionary currentDictionary;
+    string currentCustomBundleOpsName;
+    OpInfo currentOpInfo;
+    string currentName;
 }
 
 

@@ -121,7 +121,7 @@ library DictionaryUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicate(Dictionary dictionary, string memory name) internal returns(Dictionary) {
-        if (dictionary.toAddress().code.length == 0) DevUtils.revertWithDevEnvError("DuplicateDictionary_CannotDuplicateEmptyDictionary");
+        if (dictionary.toAddress().code.length == 0) DevUtils.revertWith("DuplicateDictionary_CannotDuplicateEmptyDictionary");
         return deployDictionary(name).duplicateOpsFrom(dictionary).assignLabel(name);
     }
 
@@ -155,13 +155,18 @@ library DictionaryUtils {
     }
 
     function set(Dictionary dictionary, BundleOpsInfo memory bundleOpsInfo) internal returns(Dictionary) {
+                console2.log("set bundle ops");
+
         OpInfo[] memory opInfos = bundleOpsInfo.opInfos;
         for (uint i; i < opInfos.length; ++i) {
             dictionary.set(Op(opInfos[i].selector, opInfos[i].deployedContract));
         }
+                console2.log("");
+
         if (dictionary.isEtherscanVerifiable()) {
             dictionary.upgradeFacade(bundleOpsInfo.facade);
         }
+                console2.log("fin set");
         return dictionary;
     }
 
@@ -170,7 +175,7 @@ library DictionaryUtils {
         🖼 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary dictionary, address newFacade) internal returns(Dictionary) {
-        if (!dictionary.isEtherscanVerifiable()) DevUtils.revertWithDevEnvError("UpgradeFacade_NotEtherscanVerifiable");
+        if (!dictionary.isEtherscanVerifiable()) DevUtils.revertWith("UpgradeFacade_NotEtherscanVerifiable");
         DictionaryUpgradeableEtherscanImpl(dictionary.toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }
@@ -208,7 +213,7 @@ library DictionaryUtils {
     function assertSupports(Dictionary dictionary, bytes4 selector) internal returns(Dictionary) {
         // TODO change to IDictionary
         if (!DictionaryBase(dictionary.toAddress()).supportsInterface(selector)) {
-            DevUtils.revertWithDevEnvError("Unsupport interface");
+            DevUtils.revertWith("Unsupport interface");
         }
         return dictionary;
     }

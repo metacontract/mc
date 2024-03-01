@@ -6,6 +6,8 @@ import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {MockProxy, MockDictionary} from "dev-env/UCSDevEnv.sol";
 import {MockDictionaryUtils} from "dev-env/dictionary/MockDictionaryUtils.sol";
 
+using DevUtils for address;
+using DevUtils for string;
 //============================================
 //  📚 Development Utils
 //      🔢 Utils for Primitives
@@ -26,6 +28,14 @@ library DevUtils {
 
     function exists(address addr) internal returns(bool) {
         return addr != address(0) && addr.code.length != 0;
+    }
+
+    function isEmpty(string memory str) internal returns(bool) {
+        return bytes(str).length == 0;
+    }
+
+    function append(string memory name, string memory str) internal returns(string memory) {
+        return string.concat(name, str);
     }
 
 
@@ -84,28 +94,38 @@ library DevUtils {
     /**-------------------------------------
         🚨 Utils for Errors & Assertions
     ---------------------------------------*/
-    function revertWithDevEnvError(string memory errorString) internal {
-        console2.log("UCS DevEnv Error:", errorString.red());
-        revert(errorString);
+    function revertWith(string memory errorBody) internal {
+        revertWith(errorBody, "");
     }
 
-    function assertNotEmpty(string memory keyword) internal returns(string memory) {
-        if (bytes(keyword).length == 0) {
-            revertWithDevEnvError("Empty Keyword");
-        }
-        return keyword;
+    function revertWith(string memory errorBody, string memory errorLocation) internal {
+        string memory errorString = string.concat(
+            "UCS DevEnv Error: ",
+            errorBody,
+            string.concat(" at ", errorLocation.isEmpty() ? "UnknownLocation" : errorLocation)
+        );
+        console2.log(errorString);
+        revert(errorString.bold());
+    }
+
+    function assertNotEmpty(string memory str, string memory errorLocation) internal returns(string memory) {
+        if (str.isEmpty()) revertWith("Empty String", errorLocation);
+        return str;
+    }
+    function assertNotEmpty(string memory str) internal returns(string memory) {
+        return str.assertNotEmpty("");
     }
 
     function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
         if (selector == bytes4(0)) {
-            revertWithDevEnvError("Empty Selector");
+            revertWith("Empty Selector");
         }
         return selector;
     }
 
     function assertContractExists(address contractAddr) internal returns(address) {
         if (!exists(contractAddr)) {
-            revertWithDevEnvError("Contract does not exist");
+            revertWith("Contract does not exist");
         }
         return contractAddr;
     }
@@ -113,7 +133,7 @@ library DevUtils {
     function revertUnusedNameNotFound() internal {
         string memory revertReason =
             "Default names are automatically set up to 5. Please manually assign names beyond that.";
-        revertWithDevEnvError(revertReason);
+        revertWith(revertReason);
     }
 
     // TODO move to settings

@@ -20,18 +20,33 @@ import {StdOpsArgs} from "dev-env/ops/StdOpsArgs.sol";
 ****************************************/
 library UCSDevEnvUtils {
     using StdOpsArgs for address;
+    using DevUtils for string;
 
     /**********************************
         🌐 General
     **********************************/
     function deploy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        return ucs.deploy("MyProxy");
+        // TODO gen and set facade
+        return ucs.deploy(string("MyProxy"));
     }
 
+    function deploy(UCSDevEnv storage ucs, bytes memory initData) internal returns(UCSDevEnv storage) {
+        return ucs  .deployAndSetDictionary(ucs.getCurrentBundleOps())
+                    .deployProxy(initData);
+    }
     function deploy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
-        return ucs  .deployDictionary()
-                    .set(ucs.ops.stdOps.allStdOps)
-                    .deployProxy(name);
+        return ucs.deploy(name, ucs.getCurrentBundleOps(), "");
+        // TODO defaultBundleOps --> current or allStd
+    }
+    function deploy(UCSDevEnv storage ucs, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.deploy(ucs.defaultName(), bundleOpsInfo, "");
+    }
+    function deploy(UCSDevEnv storage ucs, string memory name, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.deploy(name, bundleOpsInfo, "");
+    }
+    function deploy(UCSDevEnv storage ucs, string memory name, BundleOpsInfo storage bundleOpsInfo, bytes memory initData) internal returns(UCSDevEnv storage) {
+        return ucs  .deployAndSetDictionary(name.append("_Dictionary"), bundleOpsInfo)
+                    .deployProxy(name.append("_Proxy"), initData);
     }
 
     function getProxy(UCSDevEnv storage ucs) internal returns(Proxy) {
@@ -42,38 +57,123 @@ library UCSDevEnvUtils {
         return ucs.context.currentDictionary;
     }
 
+    function use(UCSDevEnv storage ucs, string memory keyword, bytes4 selector, address deployedContract) internal returns(UCSDevEnv storage) {
+        ucs .setCustomOp(keyword, selector, deployedContract)
+            .ensureExistsCustomBundleOps()
+            .add();
+        return ucs;
+    }
+    function use(UCSDevEnv storage ucs, bytes4 selector, address deployedContract) internal returns(UCSDevEnv storage) {
+        return ucs;
+    }
+    function use(UCSDevEnv storage ucs, OpInfo storage opInfo) internal returns(UCSDevEnv storage) {
+        return ucs;
+    }
+    function use(UCSDevEnv storage ucs, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs;
+    }
+    function use(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        return ucs;
+    }
+    function use(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs;
+    }
+
+    function setName() internal {}
 
 
 /**********************************
     🧩 Ops Global Utils
-        📦 Setup Standard Ops
-        - Deploy Dictionary
-        - Clone Dictionary
-        - SetOp
-        - UpgradeFacade
+        🌐 Setup Standard Ops
+        🐣 Deploy Standard Ops If Not Exists
+        🔗 Set Standard Bundle Ops
+        🔧 Helper Methods for each Standard Ops
 **********************************/
+    /**---------------------------
+        🌐 Setup Standard Ops
+    -----------------------------*/
+    function setupStdOps(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        ucs.ops.stdOps  .setStdOpsInfoAndTrySetDeployedOps()
+                        .deployStdOpsIfNotExists()
+                        .addStdBundleOps();
+        return ucs;
+    }
+
+
     /**--------------------------
-        📦 Setup Standard Ops
+        ✨ Custom Ops
     ----------------------------*/
-    function setStdOpsInfoAndTrySetDeployedOps(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        ucs.ops.setStdOpsInfoAndTrySetDeployedOps();
+    function setCustomOp(UCSDevEnv storage ucs, string memory keyword, bytes4 selector, address deployedContract) internal returns(UCSDevEnv storage) {
+        ucs.ops.customOps.setOpInfo(keyword, selector, deployedContract);
+        ucs.setCurrentOpInfo(ucs.getCustomOpInfo(keyword));
         return ucs;
     }
 
-    function deployStdOpsIfNotExists(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        ucs.ops.deployStdOpsIfNotExists();
+    function getCustomOpInfo(UCSDevEnv storage ucs, string memory name) internal returns(OpInfo storage) {
+        return ucs.ops.customOps.getRef_OpInfoBy(name);
+    }
+
+
+    /**
+        Create Custom Bundle Ops
+     */
+    function createCustomBundleOps(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        ucs.ops.customOps.createBundleOpsInfo(name);
+        ucs.setCurrentBundleOpsName(name);
+        return ucs;
+    }
+    function createCustomBundleOps(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.createCustomBundleOps(ucs.defaultCustomBundleOpsName());
+    }
+    function ensureExistsCustomBundleOps(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        if (!ucs.existsCurrentBundleOps()) ucs.createCustomBundleOps();
         return ucs;
     }
 
-    function setStdBundleOps(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
-        ucs.ops.setStdBundleOps();
+    /**
+        Add Op
+     */
+    function add(UCSDevEnv storage ucs, string memory name, OpInfo storage opInfo) internal returns(UCSDevEnv storage) {
+        ucs.ops.customOps.addToBundleOps(name, opInfo);
         return ucs;
     }
+    function add(UCSDevEnv storage ucs, OpInfo storage opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.add(ucs.getCurrentBundleOpsName(), opInfo);
+    }
 
-    // function getDeployedFacadeBy(UCSDevEnv storage ucs, string memory bundleName) internal returns(address) {
-    //     bytes32 _bundleNameHash = DevUtils.getNameHash(bundleName);
-    //     return ucs.ops.bundleOps.infos[_bundleNameHash].facade;
+    function add(UCSDevEnv storage ucs, string memory name, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        ucs.ops.customOps.addToBundleOps(name, bundleOpsInfo.opInfos);
+        return ucs;
+    }
+    function add(UCSDevEnv storage ucs, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.add(ucs.getCurrentBundleOpsName(), bundleOpsInfo);
+    }
+
+    function add(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        return ucs.add(ucs.getCurrentBundleOpsName(), ucs.getCurrentOpInfo());
+    }
+
+    /**
+        Set Facade
+     */
+    function set(UCSDevEnv storage ucs, string memory name, address facade) internal returns(UCSDevEnv storage) {
+        ucs.ops.customOps.set(name, facade);
+        return ucs;
+    }
+    function set(UCSDevEnv storage ucs, address facade) internal returns(UCSDevEnv storage) {
+        return ucs.set(ucs.getCurrentBundleOpsName(), facade);
+    }
+
+    /**
+        Getter
+     */
+    // function getExistingCustomBundleOps(UCSDevEnv storage ucs, string memory name) internal returns(BundleOpsInfo storage) {
+    //     return ucs.ops.customOps.getExistingBundleOpsInfoBy(name);
     // }
+
+    function getRef_CustomBundleOps(UCSDevEnv storage ucs, string memory name) internal returns(BundleOpsInfo storage) {
+        return ucs.ops.customOps.getRef_BundleOpsInfoBy(name);
+    }
 
 
 
@@ -100,6 +200,14 @@ library UCSDevEnvUtils {
         return ucs.deployDictionary(ucs.defaultDictionaryName(), ucs.defaultOwner());
     }
 
+    function deployAndSetDictionary(UCSDevEnv storage ucs, string memory name, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs  .deployDictionary(name)
+                    .setToDictionary(bundleOpsInfo);
+    }
+    function deployAndSetDictionary(UCSDevEnv storage ucs, BundleOpsInfo storage bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs  .deployAndSetDictionary(ucs.defaultDictionaryName() ,bundleOpsInfo);
+    }
+
 
     /**----------------------------
         🔂 Duplicate Dictionary
@@ -123,32 +231,35 @@ library UCSDevEnvUtils {
     /**----------------
         🧩 Set Op
     ------------------*/
-    function set(UCSDevEnv storage ucs, Dictionary dictionary, Op memory op) internal returns(UCSDevEnv storage) {
+    function setToDictionary(UCSDevEnv storage ucs, Dictionary dictionary, Op memory op) internal returns(UCSDevEnv storage) {
         dictionary.set(op);
         return ucs;
     }
-    function set(UCSDevEnv storage ucs, Dictionary dictionary, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        return ucs.set(dictionary, opInfo.toOp());
+    function setToDictionary(UCSDevEnv storage ucs, Dictionary dictionary, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(dictionary, opInfo.toOp());
     }
-    function set(UCSDevEnv storage ucs, string memory dictionaryName, Op memory op) internal returns(UCSDevEnv storage) {
-        return ucs.set(ucs.getDeployedDictionaryBy(dictionaryName), op);
+    function setToDictionary(UCSDevEnv storage ucs, string memory dictionaryName, Op memory op) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(ucs.getDeployedDictionaryBy(dictionaryName), op);
     }
-    function set(UCSDevEnv storage ucs, string memory dictionaryName, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        return ucs.set(ucs.getDeployedDictionaryBy(dictionaryName), opInfo.toOp());
+    function setToDictionary(UCSDevEnv storage ucs, string memory dictionaryName, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(ucs.getDeployedDictionaryBy(dictionaryName), opInfo.toOp());
     }
-    function set(UCSDevEnv storage ucs, Op memory op) internal returns(UCSDevEnv storage) {
-        return ucs.set(ucs.getCurrentDictionary(), op);
+    function setToDictionary(UCSDevEnv storage ucs, Op memory op) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(ucs.getCurrentDictionary(), op);
     }
-    function set(UCSDevEnv storage ucs, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
-        return ucs.set(ucs.getCurrentDictionary(), opInfo.toOp());
+    function setToDictionary(UCSDevEnv storage ucs, OpInfo memory opInfo) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(ucs.getCurrentDictionary(), opInfo.toOp());
     }
 
-    function set(UCSDevEnv storage ucs, Dictionary dictionary, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+    /**
+        Set Bundle Ops
+     */
+    function setToDictionary(UCSDevEnv storage ucs, Dictionary dictionary, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
         dictionary.set(bundleOpsInfo);
         return ucs;
     }
-    function set(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
-        return ucs.set(ucs.getCurrentDictionary(), bundleOpsInfo);
+    function setToDictionary(UCSDevEnv storage ucs, BundleOpsInfo memory bundleOpsInfo) internal returns(UCSDevEnv storage) {
+        return ucs.setToDictionary(ucs.getCurrentDictionary(), bundleOpsInfo);
     }
 
 
@@ -195,7 +306,15 @@ library UCSDevEnvUtils {
     function deployProxy(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
         return ucs.deployProxy(name, ucs.getCurrentDictionary(), ucs.defaultOwner().initSetAdminBytes());
     }
+
+    function deployProxy(UCSDevEnv storage ucs, string memory name, bytes memory initData) internal returns(UCSDevEnv storage) {
+        return ucs.deployProxy(name, ucs.getCurrentDictionary(), initData);
+    }
+    function deployProxy(UCSDevEnv storage ucs, bytes memory initData) internal returns(UCSDevEnv storage) {
+        return ucs.deployProxy(ucs.defaultProxyName(), ucs.getCurrentDictionary(), initData);
+    }
     function deployProxy(UCSDevEnv storage ucs) internal returns(UCSDevEnv storage) {
+        console2.log(ucs.getCurrentDictionary().toAddress());
         return ucs.deployProxy(ucs.defaultProxyName(), ucs.getCurrentDictionary(), ucs.defaultOwner().initSetAdminBytes());
     }
 
@@ -348,6 +467,40 @@ library UCSDevEnvUtils {
     }
 
 
+    /**----------------------------------
+        🧰 Current Context Bundle Ops
+    ------------------------------------*/
+    function setCurrentBundleOpsName(UCSDevEnv storage ucs, string memory name) internal returns(UCSDevEnv storage) {
+        ucs.context.setCurrentBundleOpsName(name);
+        return ucs;
+    }
+
+    function getCurrentBundleOpsName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.context.getCurrentBundleOpsName();
+    }
+
+    function getCurrentBundleOps(UCSDevEnv storage ucs) internal returns(BundleOpsInfo storage) {
+        return ucs.ops.customOps.bundles[ucs.context.getCurrentBundleOpsNameHash()];
+    }
+
+    function existsCurrentBundleOps(UCSDevEnv storage ucs) internal returns(bool) {
+        return ucs.getCurrentBundleOps().exists();
+    }
+
+
+    /**------------------------------
+        🧩 Current Context OpInfo
+    --------------------------------*/
+    function setCurrentOpInfo(UCSDevEnv storage ucs, OpInfo storage opInfo) internal returns(UCSDevEnv storage) {
+        ucs.context.setCurrentOpInfo(opInfo);
+        return ucs;
+    }
+
+    function getCurrentOpInfo(UCSDevEnv storage ucs) internal returns(OpInfo storage) {
+        return ucs.context.getCurrentOpInfo();
+    }
+
+
 
 /*******************************************************
     📝 Settings
@@ -367,6 +520,10 @@ library UCSDevEnvUtils {
         return ucs.ops.stdOps.allStdOps.toOps();
     }
 
+    function defaultName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return "ProjectName"; // TODO
+    }
+
     function defaultProxyName(UCSDevEnv storage ucs) internal returns(string memory) {
         return ucs.proxy.findUnusedProxyName();
     }
@@ -377,6 +534,10 @@ library UCSDevEnvUtils {
 
     function defaultDuplicatedDictionaryName(UCSDevEnv storage ucs) internal returns(string memory) {
         return ucs.dictionary.findUnusedDuplicatedDictionaryName();
+    }
+
+    function defaultCustomBundleOpsName(UCSDevEnv storage ucs) internal returns(string memory) {
+        return ucs.ops.customOps.findUnusedCustomBundleOpsName();
     }
 
     function defaultMockProxyName(UCSDevEnv storage ucs) internal returns(string memory) {

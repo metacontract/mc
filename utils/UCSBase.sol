@@ -15,7 +15,7 @@ abstract contract UCSCommonBase is CommonBase {
 
     constructor() {
         // ucs.toggleLog();
-        ucs.ops.stdOps.setStdOpsInfoAndTrySetDeployedOps().deployStdOpsIfNotExists().setStdBundleOps();
+        ucs.setupStdOps();
     }
 
     /**************************************

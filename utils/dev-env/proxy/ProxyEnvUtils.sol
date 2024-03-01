@@ -20,14 +20,14 @@ library ProxyEnvUtils {
     }
 
     function setProxy(UCSProxyEnv storage proxyEnv, string memory name, Proxy proxy) internal returns(UCSProxyEnv storage) {
-        if (!proxy.exists()) DevUtils.revertWithDevEnvError("SetProxy_EmptyProxy");
+        if (!proxy.exists()) DevUtils.revertWith("SetProxy_EmptyProxy");
         proxyEnv.deployed[DevUtils.getHash(name)] = proxy.assignLabel(name);
         return proxyEnv;
     }
 
     function getProxy(UCSProxyEnv storage proxyEnv, string memory name) internal returns(Proxy) {
         Proxy proxy = proxyEnv.deployed[DevUtils.getHash(name)];
-        if (!proxy.exists()) DevUtils.revertWithDevEnvError("GetProxy_NotFound");
+        if (!proxy.exists()) DevUtils.revertWith("GetProxy_NotFound");
         return proxy;
     }
 

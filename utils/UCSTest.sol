@@ -16,7 +16,9 @@ import {UCSTestBase} from "./UCSBase.sol";
 // ⭐️ UCS TEST
 abstract contract UCSTest is UCSTestBase, ForgeTest {
     modifier startPrankWithDeployer() {
-        startPrankWith("DEPLOYER");
+        string memory keyword = "DEPLOYER";
+        deployer = getAddressOr(keyword, makeAddr(keyword));
+        vm.startPrank(deployer);
         _;
     }
 

@@ -31,19 +31,19 @@ library DictionaryEnvUtils {
         🗒 Set Dictionary
     ---------------------------*/
     function setDictionary(UCSDictionaryEnv storage dictionaryEnv, string memory name, Dictionary dictionary) internal returns(UCSDictionaryEnv storage) {
-        if (!dictionary.exists()) DevUtils.revertWithDevEnvError("SetDictionary_EmptyDictionary");
+        if (!dictionary.exists()) DevUtils.revertWith("SetDictionary_EmptyDictionary");
         dictionaryEnv.deployed[DevUtils.getHash(name)] = dictionary.assignLabel(name);
         return dictionaryEnv;
     }
 
     function setDictionaryUpgradeableImpl(UCSDictionaryEnv storage dictionaryEnv, address dictionaryUpgradeableImpl) internal returns(UCSDictionaryEnv storage) {
-        if (dictionaryUpgradeableImpl.exists()) DevUtils.revertWithDevEnvError("SetDictionaryUpgradeableImpl_EmptyImpl");
+        if (dictionaryUpgradeableImpl.exists()) DevUtils.revertWith("SetDictionaryUpgradeableImpl_EmptyImpl");
         dictionaryEnv.upgradeableImpl = dictionaryUpgradeableImpl;
         return dictionaryEnv;
     }
 
     function setDictionaryUpgradeableEtherscanImpl(UCSDictionaryEnv storage dictionaryEnv, address dictionaryUpgradeableEtherscanImpl) internal returns(UCSDictionaryEnv storage) {
-        if (dictionaryUpgradeableEtherscanImpl.exists()) DevUtils.revertWithDevEnvError("SetDictionaryUpgradeableEtherscanImpl_EmptyImpl");
+        if (dictionaryUpgradeableEtherscanImpl.exists()) DevUtils.revertWith("SetDictionaryUpgradeableEtherscanImpl_EmptyImpl");
         dictionaryEnv.upgradeableEtherscanImpl = dictionaryUpgradeableEtherscanImpl;
         return dictionaryEnv;
     }
@@ -54,7 +54,7 @@ library DictionaryEnvUtils {
     ---------------------------*/
     function getDictionary(UCSDictionaryEnv storage dictionaryEnv, string memory name) internal returns(Dictionary) {
         Dictionary dictionary = dictionaryEnv.deployed[DevUtils.getHash(name)];
-        if (!dictionary.exists()) DevUtils.revertWithDevEnvError("GetDictionary_NotFound");
+        if (!dictionary.exists()) DevUtils.revertWith("GetDictionary_NotFound");
         return dictionary;
     }
 
@@ -67,7 +67,7 @@ library DictionaryEnvUtils {
             impl = dictionaryEnv.upgradeableImpl;
         }
 
-        if (impl.exists()) DevUtils.revertWithDevEnvError("GetDictionaryImpl_NotFound");
+        if (impl.exists()) DevUtils.revertWith("GetDictionaryImpl_NotFound");
         return impl;
     }
 

@@ -28,14 +28,14 @@ library UCSTestEnvUtils {
     }
 
     function setMockProxy(UCSTestEnv storage test, string memory name, MockProxy mockProxy) internal returns(UCSTestEnv storage) {
-        if (!mockProxy.exists()) DevUtils.revertWithDevEnvError("SetMockProxy_EmptyProxy");
+        if (!mockProxy.exists()) DevUtils.revertWith("SetMockProxy_EmptyProxy");
         test.mockProxies[DevUtils.getHash(name)] = mockProxy.assignLabel(name);
         return test;
     }
 
     function getMockProxyBy(UCSTestEnv storage test, string memory name) internal returns(MockProxy) {
         MockProxy mockProxy = test.mockProxies[DevUtils.getHash(name)];
-        if (!mockProxy.exists()) DevUtils.revertWithDevEnvError("GetMockProxy_NotFound");
+        if (!mockProxy.exists()) DevUtils.revertWith("GetMockProxy_NotFound");
         return mockProxy;
     }
 
@@ -58,14 +58,14 @@ library UCSTestEnvUtils {
     }
 
     function setMockDictionary(UCSTestEnv storage test, string memory name, MockDictionary mockDictionary) internal returns(UCSTestEnv storage) {
-        if (!mockDictionary.exists()) DevUtils.revertWithDevEnvError("SetMockDictionary_EmptyDictionary");
+        if (!mockDictionary.exists()) DevUtils.revertWith("SetMockDictionary_EmptyDictionary");
         test.mockDictionaries[DevUtils.getHash(name)] = mockDictionary.assignLabel(name);
         return test;
     }
 
     function getMockDictionaryBy(UCSTestEnv storage test, string memory name) internal returns(MockDictionary) {
         MockDictionary mockDictionary = test.mockDictionaries[DevUtils.getHash(name)];
-        if (!mockDictionary.exists()) DevUtils.revertWithDevEnvError("GetMockDictionary_NotFound");
+        if (!mockDictionary.exists()) DevUtils.revertWith("GetMockDictionary_NotFound");
         return mockDictionary;
     }
 
