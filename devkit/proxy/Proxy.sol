@@ -8,7 +8,7 @@ import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";
 import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEtherscan.sol";
 
 // Functions
-import {InitSetAdmin} from "~/src/std/functions/InitSetAdmin.sol";
+import {InitSetAdmin} from "~/std/functions/InitSetAdmin.sol";
 
 import {MCStdFuncs} from "../functions/MCStdFuncs.sol";
 
@@ -37,6 +37,7 @@ struct Proxy {
 
 library ProxyUtils {
     using DevUtils for address;
+    using DevUtils for bool;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Proxy
         🔧 Helper Methods for type Proxy
@@ -103,6 +104,13 @@ library ProxyUtils {
     function assertNotEmptyAt(Proxy memory proxy, string memory errorLocation) internal returns(Proxy memory) {
         check(proxy.isNotEmpty(), "Empty Proxy", errorLocation);
         return proxy;
+    }
+
+    function isMock(Proxy memory proxy) internal returns(bool) {
+        return proxy.kind == ProxyKind.Mock;
+    }
+    function isNotMock(Proxy memory proxy) internal returns(bool) {
+        return proxy.isMock().isNot();
     }
 
     function assignLabel(Proxy storage proxy, string memory name) internal returns(Proxy storage) {

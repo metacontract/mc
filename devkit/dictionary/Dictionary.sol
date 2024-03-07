@@ -35,6 +35,7 @@ struct Dictionary {
 
 library DictionaryUtils {
     using DevUtils for address;
+    using DevUtils for bool;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
@@ -186,8 +187,11 @@ library DictionaryUtils {
         return dictionary;
     }
 
-    function isMock(Dictionary storage dictionary) internal returns(bool) {
+    function isMock(Dictionary memory dictionary) internal returns(bool) {
         return dictionary.kind == DictionaryKind.Mock;
+    }
+    function isNotMock(Dictionary memory dictionary) internal returns(bool) {
+        return dictionary.isMock().isNot();
     }
 
     // function isUUPS(Dictionary dictionary) internal returns(bool) {

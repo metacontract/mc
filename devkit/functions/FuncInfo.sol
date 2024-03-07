@@ -86,12 +86,16 @@ library FuncInfoUtils {
     -----------------*/
     function emitLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
         if (DevUtils.shouldLog()) {
-            console2.log(
-                "Deployed Contract:", functionInfo.implementation,
-                ", Keyword:", functionInfo.name
-            );
+            functionInfo.parseAndLog();
         }
         return functionInfo;
+    }
+    function parseAndLog(FuncInfo memory functionInfo) internal {
+        console2.log(
+            DevUtils.concat("\tImpl: ", functionInfo.implementation),
+            DevUtils.concat(", Selector: ", functionInfo.selector),
+            DevUtils.concat(", Name: ", functionInfo.name)
+        );
     }
 
     function assertExists(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {

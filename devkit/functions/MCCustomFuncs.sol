@@ -151,7 +151,7 @@ library MCCustomFuncsUtils {
     /**-----------------------
         🔍 Find in Context
     -------------------------*/
-    string constant find_ = "Find in DevKit Context";
+    string constant find_ = "Find Current Bundle";
     function findCurrentBundleName(MCCustomFuncs storage custom) internal returns(string memory) {
         return custom.currentBundleName.assertNotEmptyAt(find_);
     }

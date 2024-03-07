@@ -6,16 +6,13 @@ import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import "./Errors.sol";
 
 //============================================
-//  📚 Development Utils
+//  🛠 Development Utils
 //      🔢 Utils for Primitives
 //      📊 Utils for Logging
 //      🚨 Utils for Errors & Assertions
 library DevUtils {
     using DevUtils for *;
     using StdStyle for string;
-    // using DevUtils for address;
-    // using DevUtils for string;
-    // using DevUtils for bytes4;
 
 
     /**---------------------------
@@ -42,6 +39,34 @@ library DevUtils {
     }
     function isFalse(bool flag) internal returns(bool) {
         return flag == false;
+    }
+
+
+    /**---------------
+        Convertor
+    ----------------*/
+    function concat(string memory str, string memory str2) internal returns(string memory) {
+        return string.concat(str, str2);
+    }
+    function concat(string memory str, address addr) internal returns(string memory) {
+        return concat(str, vm.toString(addr));
+    }
+    function concat(string memory str, bytes4 selector) internal returns(string memory) {
+        return concat(str, toString(selector));
+    }
+    function indent(string memory str) internal returns(string memory) {
+        return concat("\t", str);
+    }
+    function toString(bytes4 selector) internal pure returns (string memory) {
+        return vm.toString(selector).substring(10);
+    }
+    function substring(string memory str, uint n) internal pure returns (string memory) {
+        bytes memory strBytes = bytes(str);
+        bytes memory result = new bytes(n);
+        for(uint i = 0; i < n; i++) {
+            result[i] = strBytes[i];
+        }
+        return string(result);
     }
 
 
@@ -170,6 +195,12 @@ library DevUtils {
     }
     function logProcess(string memory message) internal {
         log(message.underline());
+    }
+    function logProcessStart(string memory message) internal {
+        log((message.isNotEmpty() ? message : "Start Process").underline());
+    }
+    function logProcessFinish(string memory message) internal {
+        log((message.isNotEmpty() ? message : "(Process Finished)").dim());
     }
 
 

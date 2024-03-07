@@ -106,9 +106,10 @@ library BundleInfoUtils {
      */
     function emitLog(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
         if (DevUtils.shouldLog()) {
-            console2.log("Facade Contract:", bundleInfo.facade);
+            console2.log(DevUtils.indent(bundleInfo.name));
+            console2.log("\tFacade:", bundleInfo.facade);
             for (uint i; i < bundleInfo.functionInfos.length; ++i) {
-                console2.log("Op Keyword:", bundleInfo.functionInfos[i].name);
+                bundleInfo.functionInfos[i].parseAndLog();
             }
         }
         return bundleInfo;

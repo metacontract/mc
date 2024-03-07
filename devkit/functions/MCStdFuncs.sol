@@ -29,7 +29,13 @@ struct MCStdFuncs {
 }
 
 library MCStdFuncsUtils {
-    using DevUtils for address;
+    using DevUtils for *;
+    modifier logProcess(string memory start, string memory end) {
+        DevUtils.logProcessStart(start);
+        _;
+        DevUtils.logProcessFinish(end);
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🔏 Assign and Load Standard Functions
         🐣 Deploy Standard Functions If Not Exists
@@ -39,8 +45,10 @@ library MCStdFuncsUtils {
     /**------------------------------------------
         🔏 Assign and Load Standard Functions
     --------------------------------------------*/
-    function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        DevUtils.logProcess("Assigning StdFunctionInfos... & Loading Deployed Function Impls...");
+    function assignAndLoad(MCStdFuncs storage std) internal
+        logProcess("Loading and Assigning FuncInfos... @ MCStdFuncs", "")
+        returns(MCStdFuncs storage)
+    {
         return std  .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
                     .assignAndLoad_Clone()
@@ -85,8 +93,10 @@ library MCStdFuncsUtils {
         🐣 Deploy Standard Functions If Not Exists
         TODO versioning
     -------------------------------------------------*/
-    function deployIfNotExists(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        DevUtils.logProcess("Deploying MCStdFuncs if not exists...");
+    function deployIfNotExists(MCStdFuncs storage std) internal
+        logProcess("Deploying MCStdFuncs if not exists...", "")
+        returns(MCStdFuncs storage)
+    {
         return std  .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
                     .deployIfNotExists_Clone()
@@ -126,8 +136,10 @@ library MCStdFuncsUtils {
     /**----------------------------------
         🧺 Configure Standard Bundles
     ------------------------------------*/
-    function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        DevUtils.logProcess("Configuring StdBundle...");
+    function configureStdBundle(MCStdFuncs storage std) internal
+        logProcess("Configuring StdBundle...", "")
+        returns(MCStdFuncs storage)
+    {
         return std  .configureStdBundle_AllFunctions()
                     .configureStdBundle_Defaults();
     }
