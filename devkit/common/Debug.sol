@@ -21,6 +21,7 @@ library Debug {
     /// @custom:storage-location erc7201:mc.devkit.debugger
     struct DebuggerStorage {
         bool emitLog;
+        Queue errorQueue;
         string[] errorLocationStack;
     }
 
@@ -44,10 +45,62 @@ library Debug {
     function logProcess(string memory message) internal {
         log(message.underline());
     }
-    function logProcessStart(string memory message) internal {
+    function logProcStart(string memory message) internal {
         log((message.isNotEmpty() ? message : "Start Process").underline());
     }
-    function logProcessFinish(string memory message) internal {
+    function logProcFin(string memory message) internal {
         log((message.isNotEmpty() ? message : "(Process Finished)").dim());
+    }
+
+    function insert(string memory message) internal {
+        log(message.inverse());
+    }
+
+    function enqueueLocation(string memory location) internal {
+        debug().errorQueue.enqueue(location);
+    }
+
+    function logLocation() internal {
+        uint size = debug().errorQueue.size();
+        for (uint i; i < size; ++i) {
+            log(debug().errorQueue.dequeue());
+        }
+    }
+}
+
+
+using QueueLib for Queue global;
+struct Queue {
+    string[] queue;
+    uint front;
+    uint back;
+}
+library QueueLib {
+    function enqueue(Queue storage $, string memory item) internal {
+        $.queue.push(item);
+        $.back++;
+    }
+
+    function dequeue(Queue storage $) internal returns (string memory) {
+        require($.back > $.front, "Queue is empty");
+
+        string memory item = $.queue[$.front];
+        $.front++;
+
+        if ($.front == $.back) {
+            delete $.queue;
+            $.front = 0;
+            $.back = 0;
+        }
+
+        return item;
+    }
+
+    function isEmpty(Queue storage $) internal view returns (bool) {
+        return $.back == $.front;
+    }
+
+    function size(Queue storage $) internal view returns (uint) {
+        return $.back - $.front;
     }
 }

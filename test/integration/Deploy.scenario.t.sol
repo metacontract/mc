@@ -46,7 +46,7 @@ contract DeployScenarioTest is MCTest {
 
         address multisigAddr;
 
-
+mc.startLog();
 
         address yamato = mc .init("a")
                             .use("Borrower", YamatoBorrower.borrow.selector, address(new YamatoBorrower()))

@@ -69,8 +69,10 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        Debug.enqueueLocation("init");
         mc.functions.safeInit(name);
                     console2.log(name);
+        Debug.logLocation();
         return mc;
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
@@ -416,6 +418,14 @@ library MCDevKitUtils {
 ********************************************************/
     function startLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
         Debug.startLog();
+        return mc;
+    }
+    function stopLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        Debug.stopLog();
+        return mc;
+    }
+    function insert(MCDevKit storage mc, string memory message) internal returns(MCDevKit storage) {
+        Debug.insert(message);
         return mc;
     }
 

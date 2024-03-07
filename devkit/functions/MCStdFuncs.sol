@@ -32,11 +32,6 @@ struct MCStdFuncs {
 
 library MCStdFuncsUtils {
     using DevUtils for *;
-    modifier logProcess(string memory start, string memory end) {
-        Debug.logProcessStart(start);
-        _;
-        Debug.logProcessFinish(end);
-    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🔏 Assign and Load Standard Functions
@@ -47,14 +42,14 @@ library MCStdFuncsUtils {
     /**------------------------------------------
         🔏 Assign and Load Standard Functions
     --------------------------------------------*/
-    function assignAndLoad(MCStdFuncs storage std) internal
-        logProcess("Loading and Assigning FuncInfos... @ MCStdFuncs", "")
-        returns(MCStdFuncs storage)
+    function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
     {
-        return std  .assignAndLoad_InitSetAdmin()
+        return std  ._logProcStart("Loading and Assigning FuncInfos... @ MCStdFuncs")
+                    .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
                     .assignAndLoad_Clone()
-                    .assignAndLoad_SetImplementation();
+                    .assignAndLoad_SetImplementation()
+                    ._logProcFin("");
     }
 
         /**===== Each Std Function =====*/
@@ -95,14 +90,14 @@ library MCStdFuncsUtils {
         🐣 Deploy Standard Functions If Not Exists
         TODO versioning
     -------------------------------------------------*/
-    function deployIfNotExists(MCStdFuncs storage std) internal
-        logProcess("Deploying MCStdFuncs if not exists...", "")
-        returns(MCStdFuncs storage)
+    function deployIfNotExists(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
     {
-        return std  .deployIfNotExists_InitSetAdmin()
+        return std  ._logProcStart("Deploying MCStdFuncs if not exists...")
+                    .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
                     .deployIfNotExists_Clone()
-                    .deployIfNotExists_SetImplementation();
+                    .deployIfNotExists_SetImplementation()
+                    ._logProcFin("");
     }
 
         /**===== Each Std Function =====*/
@@ -138,12 +133,12 @@ library MCStdFuncsUtils {
     /**----------------------------------
         🧺 Configure Standard Bundles
     ------------------------------------*/
-    function configureStdBundle(MCStdFuncs storage std) internal
-        logProcess("Configuring StdBundle...", "")
-        returns(MCStdFuncs storage)
+    function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
     {
-        return std  .configureStdBundle_AllFunctions()
-                    .configureStdBundle_Defaults();
+        return std  ._logProcStart("Configuring StdBundle...")
+                    .configureStdBundle_AllFunctions()
+                    .configureStdBundle_Defaults()
+                    ._logProcFin("");
     }
 
         /**===== Each Std Bundle =====*/
@@ -178,6 +173,14 @@ library MCStdFuncsUtils {
     //     return std.defaultOps.facade;
     // }
 
+    function _logProcStart(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
+        Debug.logProcStart(message);
+        return std;
+    }
+    function _logProcFin(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
+        Debug.logProcFin(message);
+        return std;
+    }
 }
 
 
