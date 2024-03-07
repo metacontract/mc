@@ -40,10 +40,16 @@ library DictionaryRegistryUtils {
     function safeAdd(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         return dictionaries.add(name.assertNotEmptyAt(safeAdd_), dictionary.assertNotEmptyAt(safeAdd_));
     }
-        function add(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
-            dictionaries.deployed[name.calcHash()] = dictionary;
-            return dictionaries;
+    function add(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
+        bytes32 nameHash = name.calcHash();
+        if (dictionary.isNotMock()) {
+            dictionaries.deployed[nameHash] = dictionary;
         }
+        if (dictionary.isMock()) {
+            dictionaries.mocks[nameHash] = dictionary;
+        }
+        return dictionaries;
+    }
 
 
     /**------------------------

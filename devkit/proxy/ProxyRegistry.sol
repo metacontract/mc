@@ -36,7 +36,13 @@ library ProxyRegistryUtils {
         return proxies.add(name.assertNotEmptyAt(safeAdd_), proxy.assertNotEmptyAt(safeAdd_));
     }
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        proxies.deployed[name.calcHash()] = proxy;
+        bytes32 nameHash = name.calcHash();
+        if (proxy.isNotMock()) {
+            proxies.deployed[nameHash] = proxy;
+        }
+        if (proxy.isMock()) {
+            proxies.mocks[nameHash] = proxy;
+        }
         return proxies;
     }
 
@@ -48,7 +54,7 @@ library ProxyRegistryUtils {
         return proxies.deployed[name.safeCalcHashAt(find_)]
                         .assertExistsAt(find_);
     }
-    string constant findCurrentProxy_ = "Find in DevKit Context";
+    string constant findCurrentProxy_ = "Find Current Proxy";
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
         return proxies.currentProxy.assertExistsAt(findCurrentProxy_);
     }
