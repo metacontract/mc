@@ -3,8 +3,9 @@ pragma solidity ^0.8.24;
 
 import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
 import {DevUtils} from "DevKit/common/DevUtils.sol";
+import {Debug} from "DevKit/common/Debug.sol";
 
-import {MCStdFuncs, MCStdFuncsArgs} from "./functions/MCStdFuncs.sol";
+import {MCStdFuncsArgs} from "./functions/MCStdFuncs.sol";
 import {DictRegistry} from "./dictionary/DictRegistry.sol";
 import {ProxyRegistry} from "./proxy/ProxyRegistry.sol";
 import {FuncRegistry} from "./functions/FuncRegistry.sol";
@@ -413,8 +414,8 @@ library MCDevKitUtils {
         logging
         provide the Default Values of the UCS DevEnv
 ********************************************************/
-    function toggleLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        DevUtils.toggleLog();
+    function startLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        Debug.startLog();
         return mc;
     }
 

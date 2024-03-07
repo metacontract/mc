@@ -165,43 +165,43 @@ library DevUtils {
 
 
 
-    /**-------------------------
-        📊 Utils for Logging
-    ---------------------------*/
+    // /**-------------------------
+    //     📊 Utils for Logging
+    // ---------------------------*/
 
-    /// @dev for settings
-    /// 7201:mc.settings.log
-    bytes32 constant SETTINGS_LOG_TRANSIENT_SLOT = 0xbde0fdc5ed1ea0336c91994660ac4a36d1b140bbccd99d8aa6d980b60a25d200;
-    function toggleLog() internal {
-        assembly {
-            switch tload(SETTINGS_LOG_TRANSIENT_SLOT)
-            case 0 {
-                tstore(SETTINGS_LOG_TRANSIENT_SLOT, 1)
-            }
-            default {
-                tstore(SETTINGS_LOG_TRANSIENT_SLOT, 0)
-            }
-        }
-    }
-    function shouldLog() internal returns(bool flag) {
-        assembly {
-            flag := tload(SETTINGS_LOG_TRANSIENT_SLOT)
-        }
-    }
-    function log(string memory message) internal {
-        if (shouldLog()) {
-            console2.log(message);
-        }
-    }
-    function logProcess(string memory message) internal {
-        log(message.underline());
-    }
-    function logProcessStart(string memory message) internal {
-        log((message.isNotEmpty() ? message : "Start Process").underline());
-    }
-    function logProcessFinish(string memory message) internal {
-        log((message.isNotEmpty() ? message : "(Process Finished)").dim());
-    }
+    // /// @dev for settings
+    // /// 7201:mc.settings.log
+    // bytes32 constant SETTINGS_LOG_TRANSIENT_SLOT = 0xbde0fdc5ed1ea0336c91994660ac4a36d1b140bbccd99d8aa6d980b60a25d200;
+    // function toggleLog() internal {
+    //     assembly {
+    //         switch tload(SETTINGS_LOG_TRANSIENT_SLOT)
+    //         case 0 {
+    //             tstore(SETTINGS_LOG_TRANSIENT_SLOT, 1)
+    //         }
+    //         default {
+    //             tstore(SETTINGS_LOG_TRANSIENT_SLOT, 0)
+    //         }
+    //     }
+    // }
+    // function shouldLog() internal returns(bool flag) {
+    //     assembly {
+    //         flag := tload(SETTINGS_LOG_TRANSIENT_SLOT)
+    //     }
+    // }
+    // function log(string memory message) internal {
+    //     if (shouldLog()) {
+    //         console2.log(message);
+    //     }
+    // }
+    // function logProcess(string memory message) internal {
+    //     log(message.underline());
+    // }
+    // function logProcessStart(string memory message) internal {
+    //     log((message.isNotEmpty() ? message : "Start Process").underline());
+    // }
+    // function logProcessFinish(string memory message) internal {
+    //     log((message.isNotEmpty() ? message : "(Process Finished)").dim());
+    // }
 
 
     /**-------------------------

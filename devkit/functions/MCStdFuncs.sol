@@ -3,6 +3,8 @@ pragma solidity ^0.8.24;
 
 import {console2} from "DevKit/common/ForgeHelper.sol";
 import {DevUtils} from "DevKit/common/DevUtils.sol";
+import {Debug} from "DevKit/common/Debug.sol";
+
 import {FuncInfo} from "./FuncInfo.sol";
 import {BundleInfo} from "./BundleInfo.sol";
 
@@ -31,9 +33,9 @@ struct MCStdFuncs {
 library MCStdFuncsUtils {
     using DevUtils for *;
     modifier logProcess(string memory start, string memory end) {
-        DevUtils.logProcessStart(start);
+        Debug.logProcessStart(start);
         _;
-        DevUtils.logProcessFinish(end);
+        Debug.logProcessFinish(end);
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

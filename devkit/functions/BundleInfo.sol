@@ -6,6 +6,7 @@ import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
 import {DevUtils} from "DevKit/common/DevUtils.sol";
 import {FuncInfo} from "./FuncInfo.sol";
 import "DevKit/common/Errors.sol";
+import {Debug} from "DevKit/common/Debug.sol";
 
 /**====================
     🧺 Bundle Info
@@ -106,7 +107,7 @@ library BundleInfoUtils {
         Logging
      */
     function emitLog(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
-        if (DevUtils.shouldLog()) {
+        if (Debug.shouldLog()) {
             console2.log(DevUtils.indent(bundleInfo.name));
             console2.log("\tFacade:", bundleInfo.facade);
             for (uint i; i < bundleInfo.functionInfos.length; ++i) {

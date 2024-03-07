@@ -6,6 +6,7 @@ import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
 import {DevUtils} from "DevKit/common/DevUtils.sol";
 import {BundleInfo} from "./BundleInfo.sol";
 import "DevKit/common/Errors.sol";
+import {Debug} from "DevKit/common/Debug.sol";
 
 /**======================
     🧩 Function Info
@@ -85,7 +86,7 @@ library FuncInfoUtils {
         🐞 Debug
     -----------------*/
     function emitLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        if (DevUtils.shouldLog()) {
+        if (Debug.shouldLog()) {
             functionInfo.parseAndLog();
         }
         return functionInfo;
