@@ -21,10 +21,10 @@ erDiagram
     ```
     ops
     ├ consensus
-    │  ├ ProposeOp.sol
-    │  └ VoteOp.sol
+    │  ├ Propose.sol
+    │  └ Vote.sol
     └ initialize
-        └ InitializeOp.sol
+        └ Initialize.sol
     ```
 
 - ### Predicates
