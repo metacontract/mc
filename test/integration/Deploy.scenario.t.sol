@@ -48,7 +48,8 @@ contract DeployScenarioTest is MCTest {
 
 
 
-        address yamato = mc.use("Borrower", YamatoBorrower.borrow.selector, address(new YamatoBorrower()))
+        address yamato = mc .init("a")
+                            .use("Borrower", YamatoBorrower.borrow.selector, address(new YamatoBorrower()))
                             .use("Depositor", YamatoDepositor.deposit.selector, address(new YamatoDepositor()))
                             .use("Redeemer")
                             .use("Repayer")
@@ -57,7 +58,7 @@ contract DeployScenarioTest is MCTest {
                             .use("Initialize", YamatoInitialize.initialize.selector, address(new YamatoInitialize()))
                             .set("Yamato", address(new YamatoFacade()))
                             .deploy(abi.encodeCall(YamatoInitialize.initialize, multisigAddr))
-                            .findProxyAddress();
+                            .toProxyAddress();
 
         // console2(YamatoBorrower.borrow);
         // TODO keyword --> selector

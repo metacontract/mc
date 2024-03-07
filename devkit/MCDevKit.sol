@@ -5,9 +5,9 @@ import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
 import {DevUtils} from "DevKit/common/DevUtils.sol";
 
 import {MCStdFuncs, MCStdFuncsArgs} from "./functions/MCStdFuncs.sol";
-import {MCCustomFuncs} from "./functions/MCCustomFuncs.sol";
-import {DictionaryRegistry} from "./dictionary/DictionaryRegistry.sol";
+import {DictRegistry} from "./dictionary/DictRegistry.sol";
 import {ProxyRegistry} from "./proxy/ProxyRegistry.sol";
+import {FuncRegistry} from "./functions/FuncRegistry.sol";
 import {FuncInfo} from "./functions/FuncInfo.sol";
 import {BundleInfo} from "./functions/BundleInfo.sol";
 import {Dictionary, DictionaryUtils} from "./dictionary/Dictionary.sol";
@@ -19,9 +19,8 @@ import {Proxy, ProxyUtils} from "./proxy/Proxy.sol";
 *********************************/
 using MCDevKitUtils for MCDevKit global;
 struct MCDevKit {
-    MCStdFuncs std;
-    MCCustomFuncs custom;
-    DictionaryRegistry dictionary;
+    FuncRegistry functions;
+    DictRegistry dictionary;
     ProxyRegistry proxy;
 }
 
@@ -58,9 +57,9 @@ library MCDevKitUtils {
         🏗 Setup DevKit Environment
     ----------------------------------*/
     function setupMCStdFuncs(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.std.assignAndLoad()
-                        .deployIfNotExists()
-                        .configureStdBundle();
+        mc.functions.std .assignAndLoad()
+                    .deployIfNotExists()
+                    .configureStdBundle();
         return mc;
     }
 
@@ -69,15 +68,15 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        mc.custom   .safeInit(name)
-                    .safeUpdateBundleName(name);
+        mc.functions.safeInit(name);
+                    console2.log(name);
         return mc;
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return mc.init(mc.defaultCustomBundleName());
     }
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        if (!mc.existsCurrentBundle()) mc.init();
+        if (mc.findCurrentBundle().hasNotName()) mc.init();
         return mc;
     }
 
@@ -86,38 +85,36 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+        console2.log("use", name);
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
-                    .addToBundle(name, mc.findCurrentFunction());
+                    .addToBundle(mc.functions.currentBundleName, mc.findCurrentFunction());
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(implementation.getLabel(), selector, implementation);
     }
     function use(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
-        return mc;
+        return mc.use(functionInfo.name, functionInfo.selector, functionInfo.implementation);
     }
-    function use(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
-        return mc;
-    }
+    // function use(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+    //     return mc;
+    // }
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc;
-    }
-    function use(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc;
+        return mc.use(mc.findFunction(name));
     }
         /**---------------------------
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            mc.custom   .safeAddFunction(name, selector, implementation)
-                        .safeUpdateFunctionName(name);
+            console2.log("add name", name);
+            mc.functions.safeAddFunction(name, selector, implementation);
             return mc;
         }
         /**-------------------------------------
             🧺 Add Custom Function to Bundle
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, string memory name, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
-            mc.custom.addToBundle(name, functionInfo);
+            mc.functions.addToBundle(functionInfo);
             return mc;
         }
 
@@ -126,7 +123,7 @@ library MCDevKitUtils {
         🖼 Set Facade
     *********************/
     function set(MCDevKit storage mc, string memory name, address facade) internal returns(MCDevKit storage) {
-        mc.custom.set(name, facade);
+        mc.functions.set(name, facade);
         return mc;
     }
     // function set(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
@@ -221,7 +218,7 @@ library MCDevKitUtils {
         🧩 Set Function
     -----------------------*/
     function set(MCDevKit storage mc, FuncInfo memory functionInfo) internal returns(MCDevKit storage) {
-        mc.findDictionary().set(functionInfo);
+        mc.findCurrentDictionary().set(functionInfo);
         return mc;
     }
 
@@ -230,7 +227,7 @@ library MCDevKitUtils {
         🧺 Set Bundle
     --------------------*/
     function set(MCDevKit storage mc, BundleInfo memory bundleInfo) internal returns(MCDevKit storage) {
-        mc.findDictionary().set(bundleInfo);
+        mc.findCurrentDictionary().set(bundleInfo);
         return mc;
     }
 
@@ -344,27 +341,23 @@ library MCDevKitUtils {
 
 
 
-/******************************************
-    🎭 Context Global Utils
-        🔼 Update Context
-*******************************************/
     /**----------------------
         🔼 Update Context
     ------------------------*/
-    function updateContext(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
+    function updateCurrentBundle(MCDevKit storage mc, string memory bundleName) internal returns(MCDevKit storage) {
+        mc.functions.safeUpdateCurrentBundle(bundleName);
+        return mc;
+    }
+    function updateCurrentFunction(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
+        mc.functions.safeUpdateCurrentFunction(functionName);
+        return mc;
+    }
+    function updateCurrent(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
         mc.proxy.safeUpdate(proxy);
         return mc;
     }
-    function updateContext(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
+    function updateCurrent(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
         mc.dictionary.safeUpdate(dictionary);
-        return mc;
-    }
-    function updateContextBundle(MCDevKit storage mc, string memory bundleName) internal returns(MCDevKit storage) {
-        mc.custom.safeUpdateBundleName(bundleName);
-        return mc;
-    }
-    function updateContextFunction(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
-        mc.custom.safeUpdateFunctionName(functionName);
         return mc;
     }
 
@@ -372,46 +365,39 @@ library MCDevKitUtils {
     /*************************
         🕵️ Getter Methods
     **************************/
-    /**-------------------------
-        📌 Current Context
-    ---------------------------*/
+    /**----- 🧺 Bundle -------*/
+    function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
+        return mc.functions.findCurrentBundle();
+    }
+    function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
+        return mc.functions.findBundle(name);
+    }
+
+    /**----- 🧩 Function -------*/
+    function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
+        return mc.functions.findCurrentFunction();
+    }
+    function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
+        return mc.functions.findFunction(name);
+    }
+
+    /**----- 🏠 Proxy -------*/
     function findCurrentProxy(MCDevKit storage mc) internal returns(Proxy storage) {
         return mc.proxy.findCurrentProxy();
     }
-    function findCurrentDictionary(MCDevKit storage mc) internal returns(Dictionary storage) {
-        return mc.dictionary.findCurrentDictionary();
-    }
-    function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
-        return mc.custom.findBundle(mc.custom.findCurrentBundleName());
-    }
-    function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
-        return mc.custom.findCurrentFunction();
-    }
-
-    /**--------------------------
-        📖 DevKit Environment
-    ----------------------------*/
     function findProxy(MCDevKit storage mc, string memory name) internal returns(Proxy storage) {
         return mc.proxy.find(name);
-    }
-    function findProxy(MCDevKit storage mc) internal returns(Proxy storage) {
-        return mc.findCurrentProxy();
-    }
-    function findProxyAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findProxy().toAddress();
     }
     // function findMockProxy(MCDevKit storage mc, string memory name) internal returns(MockProxy) {
     //     return mc.test.findMockProxy(name);
     // }
 
+    /**----- 📚 Dictionary -------*/
+    function findCurrentDictionary(MCDevKit storage mc) internal returns(Dictionary storage) {
+        return mc.dictionary.findCurrentDictionary();
+    }
     function findDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
         return mc.dictionary.find(name);
-    }
-    function findDictionary(MCDevKit storage mc) internal returns(Dictionary storage) {
-        return mc.findCurrentDictionary();
-    }
-    function findDictionaryAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findDictionary().toAddress();
     }
     function findMockDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
         return mc.dictionary.findMockDictionary(name);
@@ -420,22 +406,6 @@ library MCDevKitUtils {
     function getDictionaryAddress(MCDevKit storage mc) internal returns(address) {
         return mc.findCurrentDictionary().toAddress();
     }
-
-    function existsCurrentBundle(MCDevKit storage mc) internal returns(bool) {
-        return mc.findCurrentBundle().exists();
-    }
-
-    function findCustomFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
-        return mc.custom.findFunction(name);
-    }
-
-    // function getExistingCustomBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
-    //     return mc.custom.getExistingBundleInfoBy(name);
-    // }
-
-    // function getRef_CustomBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
-    //     return mc.custom.getRef_BundleInfoBy(name);
-    // }
 
 
 /*******************************************************
@@ -453,7 +423,7 @@ library MCDevKitUtils {
     }
 
     function defaultBundle(MCDevKit storage mc) internal returns(BundleInfo memory bundleInfo) {
-        return mc.std.allFunctions;
+        return mc.functions.std.allFunctions;
     }
 
     function defaultName(MCDevKit storage mc) internal returns(string memory) {
@@ -473,7 +443,7 @@ library MCDevKitUtils {
     }
 
     function defaultCustomBundleName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.custom.findUnusedCustomBundleName();
+        return mc.functions.findUnusedCustomBundleName();
     }
 
     function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
@@ -488,4 +458,8 @@ library MCDevKitUtils {
         return "";
     }
 
+
+    function toProxyAddress(MCDevKit storage mc) internal returns(address) {
+        return mc.findCurrentProxy().toAddress();
+    }
 }

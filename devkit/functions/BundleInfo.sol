@@ -19,9 +19,7 @@ struct BundleInfo {
 
 using BundleInfoUtils for mapping(bytes32 => BundleInfo);
 library BundleInfoUtils {
-    using DevUtils for string;
-    using DevUtils for bytes4;
-    using DevUtils for address;
+    using DevUtils for *;
 
     /**---------------------------
         📥 Assign BundleInfo
@@ -83,6 +81,9 @@ library BundleInfoUtils {
     function hasName(BundleInfo storage bundleInfo) internal returns(bool) {
         return bundleInfo.name.isNotEmpty();
     }
+    function hasNotName(BundleInfo storage bundleInfo) internal returns(bool) {
+        return bundleInfo.name.isEmpty();
+    }
 
     function exists(BundleInfo storage bundleInfo) internal returns(bool) {
         return  bundleInfo.name.isNotEmpty() ||
@@ -90,7 +91,7 @@ library BundleInfoUtils {
                 bundleInfo.facade.isNotContract();
     }
     function notExists(BundleInfo storage bundleInfo) internal returns(bool) {
-        return !bundleInfo.exists();
+        return bundleInfo.exists().isNot();
     }
     function assertExistsAt(BundleInfo storage bundleInfo, string memory errorLocation) internal returns(BundleInfo storage) {
         check(bundleInfo.exists(), "Bundle Info Not Exists", errorLocation);
