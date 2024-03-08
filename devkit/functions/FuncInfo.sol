@@ -30,16 +30,16 @@ library FuncInfoUtils {
     -----------------------------*/
     string constant safeAssign_ = "Safe Assign to FunctionInfo";
     function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
-        return functionInfo .assertEmptyNameAt(safeAssign_)
-                            .assign(name.assertNotEmptyAt(safeAssign_));
+        return functionInfo .assertEmptyName()
+                            .assign(name.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
-        return functionInfo .assertEmptySelectorAt(safeAssign_)
-                            .assign(selector.assertNotEmptyAt(safeAssign_));
+        return functionInfo .assertEmptySelector()
+                            .assign(selector.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
-        return functionInfo .assertEmptyImplAt(safeAssign_)
-                            .assign(implementation.assertIsContractAt(safeAssign_));
+        return functionInfo .assertEmptyImpl()
+                            .assign(implementation.assertIsContract());
     }
     function assign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
         functionInfo.name = name;
@@ -99,23 +99,23 @@ library FuncInfoUtils {
         );
     }
 
-    function assertExists(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
+    function assertExists(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
         if (!functionInfo.exists()) {
-            throwError("FunctionInfo does not exists", errorLocation);
+            throwError("FunctionInfo does not exists");
         }
         return functionInfo;
     }
 
-    function assertEmptyNameAt(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
-        check(functionInfo.name.isEmpty(), "Name Already Exist", errorLocation);
+    function assertEmptyName(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        check(functionInfo.name.isEmpty(), "Name Already Exist");
         return functionInfo;
     }
-    function assertEmptySelectorAt(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
-        check(functionInfo.selector.isEmpty(), "Selector Already Exist", errorLocation);
+    function assertEmptySelector(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        check(functionInfo.selector.isEmpty(), "Selector Already Exist");
         return functionInfo;
     }
-    function assertEmptyImplAt(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
-        check(functionInfo.implementation.isNotContract(), "Implementation Already Exist", errorLocation);
+    function assertEmptyImpl(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        check(functionInfo.implementation.isNotContract(), "Implementation Already Exist");
         return functionInfo;
     }
 
@@ -133,8 +133,8 @@ library FuncInfoUtils {
         return functionInfo;
     }
 
-    function assertImplIsContractAt(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
-        if (!functionInfo.implementation.isContract()) throwError("Implementation Not Contract", errorLocation);
+    function assertImplIsContract(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        if (!functionInfo.implementation.isContract()) throwError("Implementation Not Contract");
         return functionInfo;
     }
 
@@ -143,8 +143,8 @@ library FuncInfoUtils {
                 functionInfo.selector.isNotEmpty() &&
                 functionInfo.implementation.isContract();
     }
-    function assertCompleteAt(FuncInfo storage functionInfo, string memory errorLocation) internal returns(FuncInfo storage) {
-        check(functionInfo.isComplete(), "Function Info Not Complete", errorLocation);
+    function assertComplete(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        check(functionInfo.isComplete(), "Function Info Not Complete");
         return functionInfo;
     }
 

@@ -49,7 +49,7 @@ library DictionaryUtils {
     ---------------------------*/
     string constant safeDeploy_ = "Safe Deploy Dictionary";
     function safeDeploy(address owner) internal returns(Dictionary memory) {
-        return deploy(owner.assertNotZeroAt(safeDeploy_));
+        return deploy(owner.assertNotZero());
     }
     function deploy(address owner) internal returns(Dictionary memory) {
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
@@ -67,7 +67,7 @@ library DictionaryUtils {
     ------------------------------*/
     string constant duplicate_ = "Duplicate Dictionary";
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        return targetDictionary.assertNotEmptyAt(duplicate_).duplicate();
+        return targetDictionary.assertNotEmpty().duplicate();
     }
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
         return deploy(ForgeHelper.msgSender())
@@ -94,8 +94,9 @@ library DictionaryUtils {
     /**--------------------
         🧩 Set Function
     ----------------------*/
+    string constant set_ = "Set Function to Dictionary";
     function set(Dictionary storage dictionary, FuncInfo memory functionInfo) internal returns(Dictionary storage) {
-        IDictionary(dictionary.assertVerifiable("Set Function to Dictionary").toAddress()).setImplementation({
+        IDictionary(dictionary.assertVerifiable().toAddress()).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
         });
@@ -124,8 +125,9 @@ library DictionaryUtils {
     /**----------------------
         🖼 Upgrade Facade
     ------------------------*/
+    string constant upgradeFacade_ = "Upgrade Facade";
     function upgradeFacade(Dictionary storage dictionary, address newFacade) internal returns(Dictionary storage) {
-        DictionaryEtherscan(dictionary.assertVerifiable("Upgrade Facade").toAddress()).upgradeFacade(newFacade);
+        DictionaryEtherscan(dictionary.assertVerifiable().toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }
 
@@ -165,7 +167,7 @@ library DictionaryUtils {
     function exists(Dictionary storage dictionary) internal returns(bool) {
         return dictionary.toAddress().isContract();
     }
-    function assertExistsAt(Dictionary storage dictionary, string memory errorLocation) internal returns(Dictionary storage) {
+    function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
         if (dictionary.toAddress().code.length == 0) throwError("Dictionary Not Exists");
         return dictionary;
     }
@@ -173,8 +175,8 @@ library DictionaryUtils {
     function isNotEmpty(Dictionary memory dictionary) internal returns(bool) {
         return dictionary.toAddress().isContract();
     }
-    function assertNotEmptyAt(Dictionary memory dictionary, string memory errorLocation) internal returns(Dictionary memory) {
-        check(dictionary.isNotEmpty(), "Empty Dictionary", errorLocation);
+    function assertNotEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
+        check(dictionary.isNotEmpty(), "Empty Dictionary");
         return dictionary;
     }
 
@@ -182,8 +184,8 @@ library DictionaryUtils {
         (bool success,) = dictionary.toAddress().call(abi.encodeWithSelector(IBeacon.implementation.selector));
         return success;
     }
-    function assertVerifiable(Dictionary storage dictionary, string memory errorLocation) internal returns(Dictionary storage) {
-        check(dictionary.isVerifiable(), "Dictionary Not Verifiable", errorLocation);
+    function assertVerifiable(Dictionary storage dictionary) internal returns(Dictionary storage) {
+        check(dictionary.isVerifiable(), "Dictionary Not Verifiable");
         return dictionary;
     }
 
@@ -225,8 +227,8 @@ library DictionaryUtils {
     // function exists(MockDictionary mockDictionary) internal returns(bool) {
     //     return mockDictionary.toAddress().isZero();
     // }
-    // function assertExistsAt(MockDictionary mockDictionary, string memory errorLocation) internal returns(MockDictionary) {
-    //     check(mockDictionary.exists(), "Mock Dictionary Not Exist", errorLocation);
+    // function assertExists(MockDictionary mockDictionary) internal returns(MockDictionary) {
+    //     check(mockDictionary.exists(), "Mock Dictionary Not Exist");
     //     return mockDictionary;
     // }
 
@@ -248,8 +250,8 @@ library DictionaryKindUtils {
     function isNotUndefined(DictionaryKind kind) internal returns(bool) {
         return kind != DictionaryKind.undefined;
     }
-    function assertNotUndefinedAt(DictionaryKind kind, string memory errorLocation) internal returns(DictionaryKind) {
-        check(kind.isNotUndefined(), "Undefined Dictionary Kind", errorLocation);
+    function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
+        check(kind.isNotUndefined(), "Undefined Dictionary Kind");
         return kind;
     }
 }

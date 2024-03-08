@@ -20,7 +20,7 @@ library NameUtils {
         🔢 Utils for Primitives
     -----------------------------*/
     function toBundleHash(string memory name) internal returns(bytes32) {
-        return name.safeCalcHashAt("toBundleHash");
+        return name.safeCalcHash();
     }
 
 }

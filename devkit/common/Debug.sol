@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ForgeHelper, console2, StdStyle, vm} from "DevKit/common/ForgeHelper.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
+import {DevUtils} from "./DevUtils.sol";
 import "./Errors.sol";
 
 //============================================
@@ -21,7 +22,7 @@ library Debug {
     /// @custom:storage-location erc7201:mc.devkit.debugger
     struct DebuggerStorage {
         bool emitLog;
-        Queue errorQueue;
+        // Queue errorLocationQueue;
         string[] errorLocationStack;
     }
 
@@ -56,16 +57,34 @@ library Debug {
         log(message.inverse());
     }
 
-    function enqueueLocation(string memory location) internal {
-        debug().errorQueue.enqueue(location);
+    function push(string memory location) internal {
+        debug().errorLocationStack.push(location);
     }
 
-    function logLocation() internal {
-        uint size = debug().errorQueue.size();
-        for (uint i; i < size; ++i) {
-            log(debug().errorQueue.dequeue());
+    // function enqueueLocation(string memory location) internal {
+    //     debug().errorLocationQueue.enqueue(location);
+    // }
+    function logBody(string memory message) internal {
+        log(message.bold());
+    }
+    function logLocations() internal {
+        uint size = debug().errorLocationStack.length;
+        for (uint i = size; i > 0; --i) {
+            log(DevUtils.concat("\t\tat ", debug().errorLocationStack[i-1]).dim());
         }
     }
+    // function logLocation() internal {
+    //     uint size = debug().errorLocationStack.length;
+    //     for (uint i; i < size; ++i) {
+    //         log(debug().errorLocationStack.pop());
+    //     }
+    // }
+    // function logLocation() internal {
+    //     uint size = debug().errorLocationQueue.size();
+    //     for (uint i; i < size; ++i) {
+    //         log(debug().errorLocationQueue.dequeue());
+    //     }
+    // }
 }
 
 
@@ -87,7 +106,7 @@ library QueueLib {
         string memory item = $.queue[$.front];
         $.front++;
 
-        if ($.front == $.back) {
+        if ($.isEmpty()) {
             delete $.queue;
             $.front = 0;
             $.back = 0;

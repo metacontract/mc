@@ -28,12 +28,12 @@ library BundleInfoUtils {
     string constant safeAssign_ = "Safe Assign to BundleInfo";
 
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
-        bundleInfo.name = name.assertNotEmptyAt(safeAssign_);
+        bundleInfo.name = name.assertNotEmpty();
         return bundleInfo;
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
-        bundleInfo.facade = facade.assertIsContractAt(safeAssign_);
+        bundleInfo.facade = facade.assertIsContract();
         return bundleInfo;
     }
 
@@ -42,7 +42,7 @@ library BundleInfoUtils {
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
         bundleInfo.functionInfos.push(
             functionInfo.assertNotIncludedIn(bundleInfo)
-                        .assertImplIsContractAt(safeAdd_)
+                        .assertImplIsContract()
         );
         return bundleInfo;
     }
@@ -74,8 +74,8 @@ library BundleInfoUtils {
                 bundleInfo.functionInfos.length != 0 &&
                 bundleInfo.facade.isContract();
     }
-    function assertCompleteAt(BundleInfo storage bundleInfo, string memory errorLocation) internal returns(BundleInfo storage) {
-        check(bundleInfo.isComplete(), "Bundle Info Not Complete", errorLocation);
+    function assertComplete(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+        check(bundleInfo.isComplete(), "Bundle Info Not Complete");
         return bundleInfo;
     }
 
@@ -94,12 +94,12 @@ library BundleInfoUtils {
     function notExists(BundleInfo storage bundleInfo) internal returns(bool) {
         return bundleInfo.exists().isNot();
     }
-    function assertExistsAt(BundleInfo storage bundleInfo, string memory errorLocation) internal returns(BundleInfo storage) {
-        check(bundleInfo.exists(), "Bundle Info Not Exists", errorLocation);
+    function assertExists(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+        check(bundleInfo.exists(), "Bundle Info Not Exists");
         return bundleInfo;
     }
-    function assertNotExistsAt(BundleInfo storage bundleInfo, string memory errorLocation) internal returns(BundleInfo storage) {
-        check(bundleInfo.notExists(), "Bundle Info Already Exists", errorLocation);
+    function assertNotExists(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+        check(bundleInfo.notExists(), "Bundle Info Already Exists");
         return bundleInfo;
     }
 

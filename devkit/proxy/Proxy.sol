@@ -93,16 +93,16 @@ library ProxyUtils {
     function exists(Proxy storage proxy) internal returns(bool) {
         return proxy.toAddress().isContract();
     }
-    function assertExistsAt(Proxy storage proxy, string memory errorLocation) internal returns(Proxy storage) {
-        check(proxy.exists(), "Proxy Not Exist", errorLocation);
+    function assertExists(Proxy storage proxy) internal returns(Proxy storage) {
+        check(proxy.exists(), "Proxy Not Exist");
         return proxy;
     }
 
     function isNotEmpty(Proxy memory proxy) internal returns(bool) {
         return proxy.toAddress().isContract();
     }
-    function assertNotEmptyAt(Proxy memory proxy, string memory errorLocation) internal returns(Proxy memory) {
-        check(proxy.isNotEmpty(), "Empty Proxy", errorLocation);
+    function assertNotEmpty(Proxy memory proxy) internal returns(Proxy memory) {
+        check(proxy.isNotEmpty(), "Empty Proxy");
         return proxy;
     }
 
@@ -134,8 +134,8 @@ library ProxyKindUtils {
     function isNotUndefined(ProxyKind kind) internal returns(bool) {
         return kind != ProxyKind.undefined;
     }
-    function assertNotUndefinedAt(ProxyKind kind, string memory errorLocation) internal returns(ProxyKind) {
-        check(kind.isNotUndefined(), "Undefined Proxy Kind", errorLocation);
+    function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {
+        check(kind.isNotUndefined(), "Undefined Proxy Kind");
         return kind;
     }
 }

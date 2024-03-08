@@ -33,7 +33,7 @@ library ProxyRegistryUtils {
     ------------------------*/
     string constant safeAdd_ = "Safe Add Proxy to DevKitEnv";
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        return proxies.add(name.assertNotEmptyAt(safeAdd_), proxy.assertNotEmptyAt(safeAdd_));
+        return proxies.add(name.assertNotEmpty(), proxy.assertNotEmpty());
     }
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         bytes32 nameHash = name.calcHash();
@@ -51,16 +51,16 @@ library ProxyRegistryUtils {
     ---------------------*/
     string constant find_ = "Find Proxy in DevKitEnv";
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        return proxies.deployed[name.safeCalcHashAt(find_)]
-                        .assertExistsAt(find_);
+        return proxies.deployed[name.safeCalcHash()]
+                        .assertExists();
     }
     string constant findCurrentProxy_ = "Find Current Proxy";
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
-        return proxies.currentProxy.assertExistsAt(findCurrentProxy_);
+        return proxies.currentProxy.assertExists();
     }
     string constant findSimpleMockProxy_ = "Find Mock in DevKitEnv";
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        return proxies.mocks[name.safeCalcHashAt(findSimpleMockProxy_)].assertExistsAt(findSimpleMockProxy_);
+        return proxies.mocks[name.safeCalcHash()].assertExists();
     }
 
 
@@ -68,7 +68,7 @@ library ProxyRegistryUtils {
         🔧 Helper Methods
     -------------------------*/
     function exists(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.deployed[name.safeCalcHashAt("")].exists();
+        return proxies.deployed[name.safeCalcHash()].exists();
     }
 
     function findUnusedProxyName(ProxyRegistry storage proxies) internal returns(string memory name) {
@@ -89,7 +89,7 @@ library ProxyRegistryUtils {
     string constant safeUpdate_ = "Safe Update DevKit Context";
     /**----- 🏠 Proxy -------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        return proxies.update(proxy.assertNotEmptyAt(safeUpdate_));
+        return proxies.update(proxy.assertNotEmpty());
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         proxies.currentProxy = proxy;
@@ -120,7 +120,7 @@ library ProxyRegistryUtils {
 
     string constant exixtsMockProxy_ = "Exists";
     function existsMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.mocks[name.safeCalcHashAt(exixtsMockProxy_)].exists();
+        return proxies.mocks[name.safeCalcHash()].exists();
     }
 
 }

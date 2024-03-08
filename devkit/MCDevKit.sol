@@ -69,10 +69,9 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        Debug.enqueueLocation("init");
+        Debug.push("init");
         mc.functions.safeInit(name);
-                    console2.log(name);
-        Debug.logLocation();
+        Debug.logLocations();
         return mc;
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {

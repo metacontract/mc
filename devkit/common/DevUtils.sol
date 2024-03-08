@@ -21,8 +21,8 @@ library DevUtils {
     function calcHash(string memory name) internal returns(bytes32) {
         return keccak256(abi.encode(name));
     }
-    function safeCalcHashAt(string memory name, string memory errorLocation) internal returns(bytes32) {
-        check(name.isNotEmpty(), "Calc Hash", errorLocation);
+    function safeCalcHash(string memory name) internal returns(bytes32) {
+        check(name.isNotEmpty(), "Calc Hash");
         return name.calcHash();
     }
 
@@ -80,12 +80,12 @@ library DevUtils {
     function isNotZero(address addr) internal returns(bool) {
         return addr.isZero().isNot();
     }
-    function assertZeroAt(address addr, string memory errorLocation) internal returns(address) {
-        check(addr.isZero(), "Address Not Zero", errorLocation);
+    function assertZero(address addr) internal returns(address) {
+        check(addr.isZero(), "Address Not Zero");
         return addr;
     }
-    function assertNotZeroAt(address addr, string memory errorLocation) internal returns(address) {
-        check(addr.isNotZero(), "Zero Address", errorLocation);
+    function assertNotZero(address addr) internal returns(address) {
+        check(addr.isNotZero(), "Zero Address");
         return addr;
     }
 
@@ -101,8 +101,8 @@ library DevUtils {
     function isNotContract(address addr) internal returns(bool) {
         return addr.isContract().isNot();
     }
-    function assertIsContractAt(address addr, string memory errorLocation) internal returns(address) {
-        check(addr.isContract(), "Address Not Contract", errorLocation);
+    function assertIsContract(address addr) internal returns(address) {
+        check(addr.isContract(), "Address Not Contract");
         return addr;
     }
 
@@ -114,12 +114,12 @@ library DevUtils {
     function isNotEmpty(string memory str) internal returns(bool) {
         return str.isEmpty().isNot();
     }
-    function assertEmptyAt(string memory str, string memory errorLocation) internal returns(string memory) {
-        check(str.isEmpty(), "String Not Empty", errorLocation);
+    function assertEmpty(string memory str) internal returns(string memory) {
+        check(str.isEmpty(), "String Not Empty");
         return str;
     }
-    function assertNotEmptyAt(string memory str, string memory errorLocation) internal returns(string memory) {
-        check(str.isNotEmpty(), "Empty String", errorLocation);
+    function assertNotEmpty(string memory str) internal returns(string memory) {
+        check(str.isNotEmpty(), "Empty String");
         return str;
     }
 
@@ -137,12 +137,12 @@ library DevUtils {
     function isNotEmpty(bytes4 selector) internal returns(bool) {
         return selector.isEmpty().isNot();
     }
-    function assertEmptyAt(bytes4 selector, string memory errorLocation) internal returns(bytes4) {
-        check(selector.isEmpty(), "Selector Not Empty", errorLocation);
+    function assertEmpty(bytes4 selector) internal returns(bytes4) {
+        check(selector.isEmpty(), "Selector Not Empty");
         return selector;
     }
-    function assertNotEmptyAt(bytes4 selector, string memory errorLocation) internal returns(bytes4) {
-        check(selector.isNotEmpty(), "Empty Selector", errorLocation);
+    function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
+        check(selector.isNotEmpty(), "Empty Selector");
         return selector;
     }
 
