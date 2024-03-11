@@ -28,7 +28,7 @@ library Debug {
             Disable,
             Debug,
             Info,
-            Warm,
+            Warn,
             Error,
             Critical
         }
@@ -43,7 +43,7 @@ library Debug {
         setLogLevel(LogLevel.Info);
     }
     function startWarn() internal {
-        setLogLevel(LogLevel.Warm);
+        setLogLevel(LogLevel.Warn);
     }
     function startError() internal {
         setLogLevel(LogLevel.Error);
@@ -68,7 +68,7 @@ library Debug {
         return State().logLevel == LogLevel.Info;
     }
     function isWarm() internal returns(bool) {
-        return State().logLevel == LogLevel.Warm;
+        return State().logLevel == LogLevel.Warn;
     }
     function isError() internal returns(bool) {
         return State().logLevel == LogLevel.Error;
