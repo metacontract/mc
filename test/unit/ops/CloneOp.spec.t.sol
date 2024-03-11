@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.22;
 
-import {MCTest} from "DevKit/MCTest.sol";
+import {MCTest} from "@devkit/MCTest.sol";
 
-import {Clone} from "~/std/functions/Clone.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
 
 contract CloneOpSpecTest is MCTest {
     address cloneOp;

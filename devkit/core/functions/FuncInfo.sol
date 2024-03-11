@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
-
-import {DevUtils} from "DevKit/common/DevUtils.sol";
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Utils
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+// Core
 import {BundleInfo} from "./BundleInfo.sol";
-import "DevKit/common/Errors.sol";
-import {Debug} from "DevKit/common/Debug.sol";
 
 /**======================
     🧩 Function Info
@@ -19,11 +24,9 @@ struct FuncInfo { /// @dev FuncInfo may be different depending on the op version
 }
 
 library FuncInfoUtils {
-    using DevUtils for string;
-    using DevUtils for bytes4;
-    using DevUtils for address;
-    using ForgeHelper for string;
-    using {ForgeHelper.assignLabel} for address;
+    using StringUtils for string;
+    using Bytes4Utils for bytes4;
+    using AddressUtils for address;
 
     /**---------------------------
         📥 Assign FunctionInfo
@@ -85,19 +88,6 @@ library FuncInfoUtils {
     /**---------------
         🐞 Debug
     -----------------*/
-    function emitLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        if (Debug.shouldLog()) {
-            functionInfo.parseAndLog();
-        }
-        return functionInfo;
-    }
-    function parseAndLog(FuncInfo memory functionInfo) internal {
-        console2.log(
-            DevUtils.concat("\tImpl: ", functionInfo.implementation),
-            DevUtils.concat(", Selector: ", functionInfo.selector),
-            DevUtils.concat(", Name: ", functionInfo.name)
-        );
-    }
 
     function assertExists(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
         if (!functionInfo.exists()) {
@@ -127,14 +117,12 @@ library FuncInfoUtils {
     }
 
     function assertNotIncludedIn(FuncInfo storage functionInfo, BundleInfo storage bundleInfo) internal returns(FuncInfo storage) {
-        if (bundleInfo.has(functionInfo)) {
-            throwError("Already exists in the BundelOp");
-        }
+        check(bundleInfo.hasNot(functionInfo), "Already exists in the Bundel");
         return functionInfo;
     }
 
     function assertImplIsContract(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        if (!functionInfo.implementation.isContract()) throwError("Implementation Not Contract");
+        check(functionInfo.implementation.isContract(), "Implementation Not Contract");
         return functionInfo;
     }
 
@@ -148,4 +136,7 @@ library FuncInfoUtils {
         return functionInfo;
     }
 
+    function isEqual(FuncInfo storage a, FuncInfo storage b) internal returns(bool) {
+        return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+    }
 }

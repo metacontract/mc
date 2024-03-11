@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "DevKit/common/Errors.sol";
-
-import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
-import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
-import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
-
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {Dictionary, DictionaryUtils} from "./Dictionary.sol";
-import {ForgeHelper} from "DevKit/common/ForgeHelper.sol";
-import {MockDictionary} from "./mocks/MockDictionary.sol";
-import {FuncInfo} from "../functions/FuncInfo.sol";
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Config
+import {Config} from "@devkit/Config.sol";
+// Errors
+import {ERR_FIND_NAME_OVER_RANGE} from "@devkit/errors/Errors.sol";
+// Utils
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+// Core
+import {Dictionary} from "@devkit/core/dictionary/Dictionary.sol";
+// Test
+import {MockDictionary} from "@devkit/test/MockDictionary.sol";
 
 /*************************
     📚 UCS Dictionary
@@ -24,8 +29,6 @@ struct DictRegistry {
 }
 
 library DictRegistryUtils {
-    using DevUtils for address;
-    using DevUtils for string;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~
         📥 Safe Add Dictionary
         🔍 Find Dictionary
@@ -81,14 +84,14 @@ library DictRegistryUtils {
         DictRegistry storage dictionaries,
         string memory baseName
     ) internal returns(string memory name) {
-        (uint start, uint end) = DevUtils.getScanRange();
+        (uint start, uint end) = Config.SCAN_RANGE();
 
         for (uint i = start; i <= end; ++i) {
             name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
             if (!dictionaries.exists(name)) return name;
         }
 
-        DevUtils.revertUnusedNameNotFound();
+        throwError(ERR_FIND_NAME_OVER_RANGE);
     }
 
     function findUnusedDictionaryName(DictRegistry storage dictionaries) internal returns(string memory name) {
@@ -124,14 +127,14 @@ library DictRegistryUtils {
         function(DictRegistry storage, string memory) returns(bool) existsFunc,
         string memory baseName
     ) internal returns(string memory name) {
-        (uint start, uint end) = DevUtils.getScanRange();
+        (uint start, uint end) = Config.SCAN_RANGE();
 
         for (uint i = start; i <= end; ++i) {
             name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
             if (!existsFunc(dictionaries, name)) return name;
         }
 
-        DevUtils.revertUnusedNameNotFound();
+        throwError(ERR_FIND_NAME_OVER_RANGE);
     }
 
     function findUnusedMockDictionaryName(DictRegistry storage dictionaries) internal returns(string memory) {

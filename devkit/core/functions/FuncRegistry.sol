@@ -1,14 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Debug} from "DevKit/common/Debug.sol";
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {NameUtils} from "DevKit/common/NameUtils.sol";
-import {ForgeHelper} from "DevKit/common/ForgeHelper.sol";
-import "DevKit/common/Errors.sol";
-import {FuncInfo} from "./FuncInfo.sol";
-import {BundleInfo} from "./BundleInfo.sol";
-import {MCStdFuncs} from "./MCStdFuncs.sol";
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Config
+import {Config} from "@devkit/Config.sol";
+// Utils
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
+// Errors
+import {ERR_FIND_NAME_OVER_RANGE} from "@devkit/errors/Errors.sol";
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+// Core
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
+import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
 
 /****************************************
     🧩 Meta Contract Functions Registry
@@ -23,8 +33,11 @@ struct FuncRegistry {
 }
 
 library FuncRegistryUtils {
-    using DevUtils for *;
-    using NameUtils for string;
+    modifier debug(string memory location) {
+        Debug.stack(location);
+        _;
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🌱 Init Bundle
         ✨ Add Custom Function
@@ -38,9 +51,7 @@ library FuncRegistryUtils {
     /**---------------------------
         🌱 Init Custom Bundle
     -----------------------------*/
-    string constant safeInit_ = "Safe Init New Bundle";
-    function safeInit(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        Debug.push(safeInit_);
+    function safeInit(FuncRegistry storage functions, string memory name) debug("Safe Init New Bundle") internal returns(FuncRegistry storage) {
         check(name.isNotEmpty(), "Empty Name");
         return functions.assertBundleNotExists(name)
                         .init(name);
@@ -146,7 +157,7 @@ library FuncRegistryUtils {
         🧐 Inspectors & Assertions
     ---------------------------------*/
     function existsBundle(FuncRegistry storage functions, string memory name) internal returns(bool) {
-        return functions.bundles[name.toBundleHash()].hasName();
+        return functions.bundles[name.safeCalcHash()].hasName();
     }
     function notExistsBundle(FuncRegistry storage functions, string memory name) internal returns(bool) {
         return functions.existsBundle(name).isNot();
@@ -161,7 +172,7 @@ library FuncRegistryUtils {
         Naming
      */
     function findUnusedCustomBundleName(FuncRegistry storage functions) internal returns(string memory name) {
-        (uint start, uint end) = DevUtils.getScanRange();
+        (uint start, uint end) = Config.SCAN_RANGE();
         string memory baseName = "CustomBundle";
 
         for (uint i = start; i <= end; ++i) {
@@ -169,6 +180,6 @@ library FuncRegistryUtils {
             if (!functions.existsBundle(name)) return name;
         }
 
-        DevUtils.revertUnusedNameNotFound();
+        throwError(ERR_FIND_NAME_OVER_RANGE);
     }
 }

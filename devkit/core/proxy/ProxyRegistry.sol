@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {ForgeHelper} from "DevKit/common/ForgeHelper.sol";
-
-import {Proxy} from "./Proxy.sol";
-import {Dictionary} from "../dictionary/Dictionary.sol";
-
-import {FuncInfo} from "../functions/FuncInfo.sol";
-import {SimpleMockProxy} from "./mocks/SimpleMockProxy.sol";
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Config
+import {Config} from "@devkit/Config.sol";
+// Utils
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
+// Errors
+import {ERR_FIND_NAME_OVER_RANGE} from "@devkit/errors/Errors.sol";
+// Core
+import {Proxy} from "@devkit/core/proxy/Proxy.sol";
+import {Dictionary} from "@devkit/core/dictionary/Dictionary.sol";
 
 /********************
     🏠 UCS Proxy
@@ -21,7 +26,6 @@ struct ProxyRegistry {
 }
 
 library ProxyRegistryUtils {
-    using DevUtils for string;
     /**~~~~~~~~~~~~~~~~~~~~~~~
         📥 Safe Add Proxy
         🔍 Find Proxy
@@ -72,7 +76,7 @@ library ProxyRegistryUtils {
     }
 
     function findUnusedProxyName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        (uint start, uint end) = DevUtils.getScanRange();
+        (uint start, uint end) = Config.SCAN_RANGE();
         string memory baseName = "Proxy";
 
         for (uint i = start; i <= end; ++i) {
@@ -80,7 +84,7 @@ library ProxyRegistryUtils {
             if (!proxies.exists(name)) return name;
         }
 
-        DevUtils.revertUnusedNameNotFound();
+        throwError(ERR_FIND_NAME_OVER_RANGE);
     }
 
     /**----------------------
@@ -104,14 +108,14 @@ library ProxyRegistryUtils {
         function(ProxyRegistry storage, string memory) returns(bool) existsFunc,
         string memory baseName
     ) internal returns(string memory name) {
-        (uint start, uint end) = DevUtils.getScanRange();
+        (uint start, uint end) = Config.SCAN_RANGE();
 
         for (uint i = start; i <= end; ++i) {
             name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
             if (!existsFunc(proxies, name)) return name;
         }
 
-        DevUtils.revertUnusedNameNotFound();
+        throwError(ERR_FIND_NAME_OVER_RANGE);
     }
 
     function findUnusedMockProxyName(ProxyRegistry storage proxies) internal returns(string memory) {

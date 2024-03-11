@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {console2} from "DevKit/common/ForgeHelper.sol";
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {Debug} from "DevKit/common/Debug.sol";
-
-import {FuncInfo} from "./FuncInfo.sol";
-import {BundleInfo} from "./BundleInfo.sol";
-
-// Ops
-import {InitSetAdmin} from "~/std/functions/InitSetAdmin.sol";
-import {GetDeps} from "~/std/functions/GetDeps.sol";
-import {Clone} from "~/std/functions/Clone.sol";
-import {SetImplementation} from "~/std/functions/SetImplementation.sol";
-import {AllStdsFacade} from "~/std/interfaces/facades/AllStdsFacade.sol";
-import {DefaultsFacade} from "~/std/interfaces/facades/DefaultsFacade.sol";
+// Utils
+import {console2} from "@devkit/utils/ForgeHelper.sol";
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+import {Logger} from "@devkit/debug/Logger.sol";
+// Core
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+import {BundleInfo} from "@devkit/core/functions//BundleInfo.sol";
+// MC Std
+import {InitSetAdmin} from "@mc-std/functions/InitSetAdmin.sol";
+import {GetDeps} from "@mc-std/functions/GetDeps.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
+import {SetImplementation} from "@mc-std/functions/SetImplementation.sol";
+import {AllStdsFacade} from "@mc-std/interfaces/facades/AllStdsFacade.sol";
+import {DefaultsFacade} from "@mc-std/interfaces/facades/DefaultsFacade.sol";
 
 
 /*****************************************
@@ -31,7 +34,6 @@ struct MCStdFuncs {
 }
 
 library MCStdFuncsUtils {
-    using DevUtils for *;
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🔏 Assign and Load Standard Functions
@@ -56,32 +58,32 @@ library MCStdFuncsUtils {
         function assignAndLoad_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.initSetAdmin.safeAssign("INIT_SET_ADMIN")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
-                            .loadAndAssignImplFromEnv()
-                            .emitLog();
+                            .loadAndAssignImplFromEnv();
+                            // .emitLog(); TODO
             return std;
         }
 
         function assignAndLoad_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.getDeps .safeAssign("GET_DEPS")
                         .safeAssign(GetDeps.getDeps.selector)
-                        .loadAndAssignImplFromEnv()
-                        .emitLog();
+                        .loadAndAssignImplFromEnv();
+                        // .emitLog();
             return std;
         }
 
         function assignAndLoad_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.clone   .safeAssign("CLONE")
                         .safeAssign(Clone.clone.selector)
-                        .loadAndAssignImplFromEnv()
-                        .emitLog();
+                        .loadAndAssignImplFromEnv();
+                        // .emitLog();
             return std;
         }
 
         function assignAndLoad_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.setImplementation   .safeAssign("SET_IMPLEMENTATION")
                                     .safeAssign(SetImplementation.setImplementation.selector)
-                                    .loadAndAssignImplFromEnv()
-                                    .emitLog();
+                                    .loadAndAssignImplFromEnv();
+                                    // .emitLog();
             return std;
         }
 
@@ -102,29 +104,29 @@ library MCStdFuncsUtils {
 
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-            if (!std.initSetAdmin.implementation.isContract()) {
-                std.initSetAdmin.safeAssign(address(new InitSetAdmin())).emitLog();
+            if (std.initSetAdmin.implementation.isNotContract()) {
+                std.initSetAdmin.safeAssign(address(new InitSetAdmin()));
             }
             return std;
         }
 
         function deployIfNotExists_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             if (!std.getDeps.implementation.isContract()) {
-                std.getDeps.safeAssign(address(new GetDeps())).emitLog();
+                std.getDeps.safeAssign(address(new GetDeps()));
             }
             return std;
         }
 
         function deployIfNotExists_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             if (!std.clone.implementation.isContract()) {
-                std.clone.safeAssign(address(new Clone())).emitLog();
+                std.clone.safeAssign(address(new Clone()));
             }
             return std;
         }
 
         function deployIfNotExists_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             if (!std.setImplementation.implementation.isContract()) {
-                std.setImplementation.safeAssign(address(new SetImplementation())).emitLog();
+                std.setImplementation.safeAssign(address(new SetImplementation()));
             }
             return std;
         }
@@ -148,8 +150,8 @@ library MCStdFuncsUtils {
                             .safeAdd(std.getDeps)
                             .safeAdd(std.clone)
                             .safeAdd(std.setImplementation)
-                            .safeAssign(address(new AllStdsFacade()))
-                            .emitLog();
+                            .safeAssign(address(new AllStdsFacade()));
+                            // .emitLog();
             return std;
         }
 
@@ -157,8 +159,8 @@ library MCStdFuncsUtils {
             std.defaults.safeAssign("DEFAULTS")
                         .safeAdd(std.initSetAdmin)
                         .safeAdd(std.getDeps)
-                        .safeAssign(address(new DefaultsFacade()))
-                        .emitLog();
+                        .safeAssign(address(new DefaultsFacade()));
+                        // .emitLog();
             return std;
         }
 
@@ -174,11 +176,11 @@ library MCStdFuncsUtils {
     // }
 
     function _logProcStart(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
-        Debug.logProcStart(message);
+        Logger.logProcStart(message);
         return std;
     }
     function _logProcFin(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
-        Debug.logProcFin(message);
+        Logger.logProcFin(message);
         return std;
     }
 }

@@ -1,20 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "DevKit/common/Errors.sol";
-
-// UCS Dictionary
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol"; // solhin-disable-line no-unused-import
+// Utils
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+// Core
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
+// Test
+import {MockDictionary} from "@devkit/test/MockDictionary.sol";
+// External Libs
 import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
 import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
-
 import {IBeacon} from "@openzeppelin/contracts/proxy/beacon/IBeacon.sol";
-
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
-import {FuncInfo} from "../functions/FuncInfo.sol";
-import {BundleInfo} from "../functions/BundleInfo.sol";
-import {MockDictionary} from "./mocks/MockDictionary.sol";
-
 import {ERC1967Utils} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
 
@@ -34,8 +39,6 @@ struct Dictionary {
     }
 
 library DictionaryUtils {
-    using DevUtils for address;
-    using DevUtils for bool;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
@@ -43,12 +46,15 @@ library DictionaryUtils {
         🖼 Upgrade Facade
         🔧 Helper Methods for type Dictionary
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    modifier debug(string memory location) {
+        Debug.stack(location);
+        _;
+    }
 
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    string constant safeDeploy_ = "Safe Deploy Dictionary";
-    function safeDeploy(address owner) internal returns(Dictionary memory) {
+    function safeDeploy(address owner) debug("Safe Deploy Dictionary") internal returns(Dictionary memory) {
         return deploy(owner.assertNotZero());
     }
     function deploy(address owner) internal returns(Dictionary memory) {
@@ -107,7 +113,7 @@ library DictionaryUtils {
     /**------------------
         🧺 Set Bundle
     --------------------*/
-    function set(Dictionary storage dictionary, BundleInfo memory bundleInfo) internal returns(Dictionary storage) {
+    function set(Dictionary storage dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary storage) {
         FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
 
         for (uint i; i < functionInfos.length; ++i) {
@@ -135,15 +141,15 @@ library DictionaryUtils {
     /**------------------------------------------
         🔧 Helper Methods for type Dictionary
     --------------------------------------------*/
-    function alloc(Dictionary storage target, Dictionary storage value) internal {
+    function alloc(Dictionary storage target, Dictionary storage value) internal  {
         target = value;
     }
 
-    function toAddress(Dictionary memory dictionary) internal pure returns(address) {
+    function toAddress(Dictionary memory dictionary) internal  returns(address) {
         return dictionary.addr;
     }
 
-    // function asDictionary(address addr) internal pure returns(Dictionary storage) {
+    // function asDictionary(address addr) internal  returns(Dictionary storage) {
     //     return Dictionary.wrap(addr);
     // }
 
@@ -189,7 +195,7 @@ library DictionaryUtils {
         return dictionary;
     }
 
-    function isMock(Dictionary memory dictionary) internal returns(bool) {
+    function isMock(Dictionary memory dictionary) internal  returns(bool) {
         return dictionary.kind == DictionaryKind.Mock;
     }
     function isNotMock(Dictionary memory dictionary) internal returns(bool) {
@@ -212,11 +218,11 @@ library DictionaryUtils {
     }
 
 
-    // function toAddress(MockDictionary mockDictionary) internal pure returns(address) {
+    // function toAddress(MockDictionary mockDictionary) internal  returns(address) {
     //     return address(mockDictionary);
     // }
 
-    // function asMockDictionary(address addr) internal pure returns(MockDictionary) {
+    // function asMockDictionary(address addr) internal  returns(MockDictionary) {
     //     return MockDictionary(addr);
     // }
 
@@ -247,7 +253,7 @@ library DictionaryUtils {
 }
 
 library DictionaryKindUtils {
-    function isNotUndefined(DictionaryKind kind) internal returns(bool) {
+    function isNotUndefined(DictionaryKind kind) internal  returns(bool) {
         return kind != DictionaryKind.undefined;
     }
     function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {

@@ -1,23 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "DevKit/common/Errors.sol";
-
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Utils
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+// Core
+// import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
+import {Dictionary} from "@devkit/core/dictionary/Dictionary.sol";
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+// Test
+import {SimpleMockProxy} from "@devkit/test/SimpleMockProxy.sol";
+// External Lib
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";
 import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEtherscan.sol";
-
-// Functions
-import {InitSetAdmin} from "~/std/functions/InitSetAdmin.sol";
-
-import {MCStdFuncs} from "../functions/MCStdFuncs.sol";
-
-import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {Dictionary, DictionaryUtils} from "../dictionary/Dictionary.sol";
-import {FuncInfo} from "DevKit/functions/FuncInfo.sol";
-
-import {SimpleMockProxy} from "./mocks/SimpleMockProxy.sol";
 
 /**---------------------------
     🏠 UCS Proxy Primitive
@@ -36,8 +37,6 @@ struct Proxy {
     }
 
 library ProxyUtils {
-    using DevUtils for address;
-    using DevUtils for bool;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Proxy
         🔧 Helper Methods for type Proxy
@@ -76,11 +75,11 @@ library ProxyUtils {
         target = value;
     }
 
-    function toAddress(Proxy memory proxy) internal pure returns(address) {
+    function toAddress(Proxy memory proxy) internal  returns(address) {
         return proxy.addr;
     }
 
-    // function asProxy(address addr) internal pure returns(Proxy storage) {
+    // function asProxy(address addr) internal  returns(Proxy storage) {
     //     return Proxy.wrap(addr);
     // }
 

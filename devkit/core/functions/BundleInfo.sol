@@ -1,12 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
-
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {FuncInfo} from "./FuncInfo.sol";
-import "DevKit/common/Errors.sol";
-import {Debug} from "DevKit/common/Debug.sol";
+// Global Methods
+import "@devkit/utils/GlobalMethods.sol";
+// Utils
+// import {console2} from "@devkit/utils/ForgeHelper.sol";
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
+import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+    using Bytes4Utils for bytes4;
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+// Core
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
 
 /**====================
     🧺 Bundle Info
@@ -18,10 +28,7 @@ struct BundleInfo {
     address facade;
 }
 
-using BundleInfoUtils for mapping(bytes32 => BundleInfo);
 library BundleInfoUtils {
-    using DevUtils for *;
-
     /**---------------------------
         📥 Assign BundleInfo
     -----------------------------*/
@@ -38,15 +45,13 @@ library BundleInfoUtils {
     }
 
     string constant safeAdd_ = "Safe Add FunctionInfo to BundleInfo";
-
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
+        check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
-            functionInfo.assertNotIncludedIn(bundleInfo)
-                        .assertImplIsContract()
+            functionInfo.assertImplIsContract()
         );
         return bundleInfo;
     }
-
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
@@ -59,14 +64,12 @@ library BundleInfoUtils {
         🧐 Inspectors & Assertions
     ---------------------------------*/
     function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(bool flag) {
-        FuncInfo[] memory _functionInfos = bundleInfo.functionInfos;
-        bytes32 functionInfoHash = keccak256(abi.encode(functionInfo));
-        for (uint i; i < _functionInfos.length; ++i) {
-            if (DevUtils.isEqual(functionInfo.name, _functionInfos[i].name)) throwError("Same Keyword");
-            if (functionInfo.selector == _functionInfos[i].selector) throwError("Same Selector");
-            bytes32 _functionInfoHash = keccak256(abi.encode(_functionInfos[i]));
-            if (functionInfoHash == _functionInfoHash) flag = true;
+        for (uint i; i < bundleInfo.functionInfos.length; ++i) {
+            if (functionInfo.isEqual(bundleInfo.functionInfos[i])) return true;
         }
+    }
+    function hasNot(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(bool) {
+        return bundleInfo.has(functionInfo).isFalse();
     }
 
     function isComplete(BundleInfo storage bundleInfo) internal returns(bool) {
@@ -100,20 +103,6 @@ library BundleInfoUtils {
     }
     function assertNotExists(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
         check(bundleInfo.notExists(), "Bundle Info Already Exists");
-        return bundleInfo;
-    }
-
-    /**
-        Logging
-     */
-    function emitLog(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
-        if (Debug.shouldLog()) {
-            console2.log(DevUtils.indent(bundleInfo.name));
-            console2.log("\tFacade:", bundleInfo.facade);
-            for (uint i; i < bundleInfo.functionInfos.length; ++i) {
-                bundleInfo.functionInfos[i].parseAndLog();
-            }
-        }
         return bundleInfo;
     }
 }

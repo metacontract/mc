@@ -1,18 +1,33 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper, console2} from "DevKit/common/ForgeHelper.sol";
-import {DevUtils} from "DevKit/common/DevUtils.sol";
-import {Debug} from "DevKit/common/Debug.sol";
-
-import {MCStdFuncsArgs} from "./functions/MCStdFuncs.sol";
-import {DictRegistry} from "./dictionary/DictRegistry.sol";
-import {ProxyRegistry} from "./proxy/ProxyRegistry.sol";
-import {FuncRegistry} from "./functions/FuncRegistry.sol";
-import {FuncInfo} from "./functions/FuncInfo.sol";
-import {BundleInfo} from "./functions/BundleInfo.sol";
-import {Dictionary, DictionaryUtils} from "./dictionary/Dictionary.sol";
-import {Proxy, ProxyUtils} from "./proxy/Proxy.sol";
+// Global Methods
+// import "@devkit/utils/GlobalMethods.sol";
+// Utils
+import {ForgeHelper, console2} from "@devkit/utils/ForgeHelper.sol";
+import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
+import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+    using Bytes4Utils for bytes4;
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
+// Debug
+import {Debug} from "@devkit/debug/Debug.sol";
+import {Logger} from "@devkit/debug/Logger.sol";
+// Core
+//  dictionary
+import {DictRegistry} from "@devkit/core/dictionary/DictRegistry.sol";
+import {Dictionary, DictionaryUtils} from "@devkit/core/dictionary/Dictionary.sol";
+//  functions
+import {FuncRegistry} from "@devkit/core/functions/FuncRegistry.sol";
+import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+import {MCStdFuncsArgs} from "@devkit/core/functions/MCStdFuncs.sol";
+//  proxy
+import {ProxyRegistry} from "@devkit/core/proxy/ProxyRegistry.sol";
+import {Proxy, ProxyUtils} from "@devkit/core/proxy/Proxy.sol";
 
 
 /********************************
@@ -25,19 +40,13 @@ struct MCDevKit {
     ProxyRegistry proxy;
 }
 
-    /**----------------------
-        📝 DevKit Settings
-    ------------------------*/
-    /// @dev We will utilize this struct after Solidity is updated to allow Structs to be applied to Transient Storage.
-    // struct MCDevKitSettings {
-    //     bool outputLogs;
-    // }
-
-
 library MCDevKitUtils {
     using MCStdFuncsArgs for address;
-    using DevUtils for string;
-    using DevUtils for address;
+
+    modifier debug(string memory location) {
+        Debug.stack(location);
+        _;
+    }
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
         🌱 Init Custom Bundle
@@ -68,10 +77,9 @@ library MCDevKitUtils {
     /*****************************
         🌱 Init Custom Bundle
     ******************************/
-    function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        Debug.push("init");
+    function init(MCDevKit storage mc, string memory name) debug("MC: Init") internal returns(MCDevKit storage) {
         mc.functions.safeInit(name);
-        Debug.logLocations();
+        Logger.logLocations();
         return mc;
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
@@ -87,10 +95,9 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        console2.log("use", name);
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
-                    .addToBundle(mc.functions.currentBundleName, mc.findCurrentFunction());
+                    .addToBundle(mc.findCurrentFunction());
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(implementation.getLabel(), selector, implementation);
@@ -115,7 +122,7 @@ library MCDevKitUtils {
         /**-------------------------------------
             🧺 Add Custom Function to Bundle
         ---------------------------------------*/
-        function addToBundle(MCDevKit storage mc, string memory name, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
+        function addToBundle(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
             mc.functions.addToBundle(functionInfo);
             return mc;
         }
@@ -228,7 +235,7 @@ library MCDevKitUtils {
     /**------------------
         🧺 Set Bundle
     --------------------*/
-    function set(MCDevKit storage mc, BundleInfo memory bundleInfo) internal returns(MCDevKit storage) {
+    function set(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
         mc.findCurrentDictionary().set(bundleInfo);
         return mc;
     }
@@ -303,13 +310,13 @@ library MCDevKitUtils {
         return mc;
     }
     function createSimpleMockProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createSimpleMockProxy(name, mc.defaultBundle().functionInfos);
+        return mc.createSimpleMockProxy(name, mc.defaultFunctionInfos());
     }
     function createSimpleMockProxy(MCDevKit storage mc, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
         return mc.createSimpleMockProxy(mc.defaultMockProxyName(), functionInfos);
     }
     function createSimpleMockProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createSimpleMockProxy(mc.defaultMockProxyName(), mc.defaultBundle().functionInfos);
+        return mc.createSimpleMockProxy(mc.defaultMockProxyName(), mc.defaultFunctionInfos());
     }
 
 
@@ -332,13 +339,13 @@ library MCDevKitUtils {
         return mc;
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, owner, mc.defaultBundle().functionInfos);
+        return mc.createMockDictionary(name, owner, mc.defaultFunctionInfos());
     }
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, mc.defaultOwner(), mc.defaultBundle().functionInfos);
+        return mc.createMockDictionary(name, mc.defaultOwner(), mc.defaultFunctionInfos());
     }
     function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(mc.defaultMockDictionaryName(), mc.defaultOwner(), mc.defaultBundle().functionInfos);
+        return mc.createMockDictionary(mc.defaultMockDictionaryName(), mc.defaultOwner(), mc.defaultFunctionInfos());
     }
 
 
@@ -415,8 +422,8 @@ library MCDevKitUtils {
         logging
         provide the Default Values of the UCS DevEnv
 ********************************************************/
-    function startLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        Debug.startLog();
+    function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        Debug.startDebug();
         return mc;
     }
     function stopLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
@@ -424,7 +431,7 @@ library MCDevKitUtils {
         return mc;
     }
     function insert(MCDevKit storage mc, string memory message) internal returns(MCDevKit storage) {
-        Debug.insert(message);
+        Logger.insert(message);
         return mc;
     }
 
@@ -432,11 +439,16 @@ library MCDevKitUtils {
         return ForgeHelper.msgSender();
     }
 
-    function defaultBundle(MCDevKit storage mc) internal returns(BundleInfo memory bundleInfo) {
-        return mc.functions.std.allFunctions;
+    // function defaultBundle(MCDevKit storage mc) internal view returns(MCDevKit storage) {
+    //     // return mc.functions.std.allFunctions;
+    //     return mc;
+    // }
+
+    function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
+        return mc.functions.std.allFunctions.functionInfos;
     }
 
-    function defaultName(MCDevKit storage mc) internal returns(string memory) {
+    function defaultName(MCDevKit storage mc) internal  returns(string memory) {
         return "ProjectName"; // TODO
     }
 
@@ -464,7 +476,7 @@ library MCDevKitUtils {
         return mc.dictionary.findUnusedMockDictionaryName();
     }
 
-    function defaultInitData(MCDevKit storage mc) internal returns(bytes memory) {
+    function defaultInitData(MCDevKit storage mc) internal  returns(bytes memory) {
         return "";
     }
 

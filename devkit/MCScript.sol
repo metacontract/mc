@@ -8,7 +8,7 @@ pragma solidity ^0.8.24;
 import {Script as ForgeScript} from "forge-std/Script.sol";
 
 // 📦 BOILERPLATE
-import {MCScriptBase} from "./MCBase.sol";
+import {MCScriptBase} from "@devkit/MCBase.sol";
 
 // ⭐️ MC SCRIPT
 abstract contract MCScript is MCScriptBase, ForgeScript {

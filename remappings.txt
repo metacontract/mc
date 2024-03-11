@@ -1,6 +1,6 @@
 ds-test/=lib/forge-std/lib/ds-test/src/
 forge-std/=lib/forge-std/src/
-~/=src/
-DevKit/=devkit/
+@devkit/=devkit/
+@mc-std/=src/std/
 @ucs-contracts/=lib/ucs-contracts/
 @openzeppelin/=lib/openzeppelin-contracts/

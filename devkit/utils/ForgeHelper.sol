@@ -23,7 +23,7 @@ library ForgeHelper {
         return uint256(vm.envBytes32(keyword));
     }
 
-    function loadAddressFromEnv(string memory envKey) internal returns(address) {
+    function loadAddressFromEnv(string memory envKey) internal view returns(address) {
         return vm.envOr(envKey, address(0));
     }
 
@@ -33,12 +33,12 @@ library ForgeHelper {
     // }
 
     // backlog: checkLatest Op?
-    function canGetDeployedContract(string memory keyword) internal returns(bool) {
+    function canGetDeployedContract(string memory keyword) internal view returns(bool) {
         if (vm.envOr(keyword, address(0)).code.length != 0) return true;
         return false;
     }
 
-    function assumeAddressIsNotReserved(address addr) internal pure {
+    function assumeAddressIsNotReserved(address addr) internal  {
         vm.assume(
             addr != address(1) &&
             addr != address(2) &&
@@ -60,23 +60,23 @@ library ForgeHelper {
         return addr;
     }
 
-    function getLabel(address addr) internal returns(string memory) {
+    function getLabel(address addr) internal view returns(string memory) {
         return vm.getLabel(addr);
     }
 
-    function loadAddress(address target, bytes32 slot) internal returns(address) {
+    function loadAddress(address target, bytes32 slot) internal view returns(address) {
         return address(uint160(uint256(vm.load(target, slot))));
     }
 
-    function msgSender() internal returns(address msgSender) {
-        (,msgSender,) = vm.readCallers();
+    function msgSender() internal returns(address msgSender_) {
+        (,msgSender_,) = vm.readCallers();
     }
 
-    function appendNumberToName(string memory str, uint num) internal returns(string memory) {
+    function appendNumberToName(string memory str, uint num) internal  returns(string memory) {
         return string(abi.encodePacked(str, vm.toString(num)));
     }
 
-    function appendNumberToNameIfNotOne(string memory baseName, uint num) internal returns(string memory) {
+    function appendNumberToNameIfNotOne(string memory baseName, uint num) internal  returns(string memory) {
         return num == 1 ? baseName : appendNumberToName(baseName, num);
     }
 }

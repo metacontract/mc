@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {console2} from "forge-std/console2.sol";
-import {MCTest} from "DevKit/MCTest.sol";
-import {Clone} from "~/std/functions/Clone.sol";
+import {MCTest} from "@devkit/MCTest.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
 
 contract DeployScenarioTest is MCTest {
     function setUp() public startPrankWithDeployer {
@@ -46,7 +46,7 @@ contract DeployScenarioTest is MCTest {
 
         address multisigAddr;
 
-mc.startLog();
+mc.startDebug();
 
         address yamato = mc .init("a")
                             .use("Borrower", YamatoBorrower.borrow.selector, address(new YamatoBorrower()))

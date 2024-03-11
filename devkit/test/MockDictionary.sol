@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+// Core
+import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+// External Lib
 import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
-import {FuncInfo} from "../../functions/FuncInfo.sol";
 
 /**
     @title Mock Dictionary Contract
