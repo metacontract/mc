@@ -60,13 +60,13 @@ library FuncRegistryUtils {
         🌱 Init Custom Bundle
     -----------------------------*/
     function safeInit(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("Safe Init New Bundle");
+        __recordExecStart("safeInit");
         check(name.isNotEmpty(), "Empty Name");
         return functions.assertBundleNotExists(name)
                         .init(name);
     }
     function init(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("Init New Bundle");
+        __recordExecStart("init");
         functions.bundles[name.safeCalcHash()].safeAssign(name);
         functions.safeUpdateCurrentBundle(name);
         return functions;
@@ -77,7 +77,7 @@ library FuncRegistryUtils {
         ✨ Add Custom Function
     -----------------------------*/
     function safeAddFunction(FuncRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FuncRegistry storage) {
-        __recordExecStart(".safeAddFunction()");
+        __recordExecStart("safeAddFunction");
         check(name.isNotEmpty(), "Empty Name");
         functions.customs[name.safeCalcHash()]
                 .safeAssign(name)
@@ -110,7 +110,7 @@ library FuncRegistryUtils {
         🖼 Set Facade
     --------------------*/
     function set(FuncRegistry storage functions, string memory name, address facade) internal returns(FuncRegistry storage) {
-        __recordExecStart("Set Facade");
+        __recordExecStart("set");
         functions.bundles[name.safeCalcHash()]
                     .assertExists()
                     .safeAssign(facade);
@@ -123,7 +123,7 @@ library FuncRegistryUtils {
     ------------------------*/
     /**----- 🧩 FunctionInfo -------*/
     function safeUpdateCurrentFunction(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("Safe Update Current Function");
+        __recordExecStart("safeUpdateCurrentFunction");
         functions.currentFunctionName = name.assertNotEmpty();
         return functions;
     }
@@ -138,27 +138,27 @@ library FuncRegistryUtils {
         🔍 Find Function
     ------------------------------*/
     function findFunction(FuncRegistry storage functions, string memory name) internal returns(FuncInfo storage) {
-        __recordExecStart(".findFunction()");
+        __recordExecStart("findFunction");
         return functions.customs[name.safeCalcHash()];
     }
     function findCurrentFunction(FuncRegistry storage functions) internal returns(FuncInfo storage) {
         return functions.findFunction(functions.findCurrentFunctionName());
     }
         function findCurrentFunctionName(FuncRegistry storage functions) internal returns(string memory) {
-            __recordExecStart(".findCurrentFunctionName()");
+            __recordExecStart("findCurrentFunctionName");
             return functions.currentFunctionName.assertNotEmpty();
         }
 
     function findBundle(FuncRegistry storage functions, string memory name) internal returns(BundleInfo storage) {
-        __recordExecStart(".findBundle()");
+        __recordExecStart("findBundle");
         return functions.bundles[name.safeCalcHash()];
     }
     function findCurrentBundle(FuncRegistry storage functions) internal returns(BundleInfo storage) {
-        __recordExecStart(".findCurrentBundle()");
+        __recordExecStart("findCurrentBundle");
         return functions.findBundle(functions.findCurrentBundleName());
     }
         function findCurrentBundleName(FuncRegistry storage functions) internal returns(string memory) {
-            __recordExecStart(".findCurrentBundleName()");
+            __recordExecStart("findCurrentBundleName");
             return functions.currentBundleName.assertNotEmpty();
         }
 

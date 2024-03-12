@@ -61,7 +61,7 @@ library ProxyUtils {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
-        __recordExecStart("Deploy Proxy");
+        __recordExecStart("deploy");
         return dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
@@ -137,7 +137,7 @@ library ProxyUtils {
         🤖 Create Mock Proxy
     ---------------------------*/
     function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
-        __recordExecStart("Create Simple Mock Proxy");
+        __recordExecStart("createSimpleMockProxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
             kind: ProxyKind.Mock
@@ -147,7 +147,7 @@ library ProxyUtils {
 }
 
 library ProxyKindUtils {
-    function isNotUndefined(ProxyKind kind) internal returns(bool) {
+    function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
         return kind != ProxyKind.undefined;
     }
     function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {

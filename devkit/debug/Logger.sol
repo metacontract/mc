@@ -23,7 +23,7 @@ library Logger {
         if (Debug.isInfo()) logInfo(message);
         if (Debug.isWarm()) logWarn(message);
         if (Debug.isError()) logError(message);
-        if (Debug.isCritical()) logCritical(message);
+        // if (Debug.isCritical()) logCritical(message);
     }
 
     function logDebug(string memory message) internal  {
@@ -44,9 +44,9 @@ library Logger {
                 .append(parseLocations())
         );
     }
-    function logCritical(string memory message) internal  {
-        console2.log(message);
-    }
+    // function logCritical(string memory message) internal  {
+    //     console2.log(message);
+    // }
 
 
     /**-----------------------

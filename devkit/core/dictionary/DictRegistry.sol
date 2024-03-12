@@ -53,11 +53,11 @@ library DictRegistryUtils {
         📥 Safe Add Dictionary
     -----------------------------*/
     function safeAdd(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("Safe Add Dictionary to Registry");
+        __recordExecStart("safeAdd");
         return dictionaries.add(name.assertNotEmpty(), dictionary.assertNotEmpty());
     }
     function add(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("Add Dictionary to Registry");
+        __recordExecStart("add");
         bytes32 nameHash = name.calcHash();
         if (dictionary.isNotMock()) {
             dictionaries.deployed[nameHash] = dictionary;
@@ -73,16 +73,16 @@ library DictRegistryUtils {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __recordExecStart("Find Dictionary");
+        __recordExecStart("find");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists();
     }
     function findCurrentDictionary(DictRegistry storage dictionaries) internal returns(Dictionary storage) {
-        __recordExecStart("Find Current Dictionary");
+        __recordExecStart("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists();
     }
     function findMockDictionary(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __recordExecStart("Find Mock Dictionary");
+        __recordExecStart("findMockDictionary");
         return dictionaries.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -122,7 +122,7 @@ library DictRegistryUtils {
 
     /**----- 📚 Dictionary -------*/
     function safeUpdate(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("Safe Update DevKit Context");
+        __recordExecStart("safeUpdate");
         return dictionaries.update(dictionary.assertNotEmpty());
     }
     function update(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {

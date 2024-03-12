@@ -88,7 +88,7 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        __recordExecStart(".init()", PARAMS.append(name));
+        __recordExecStart("init", PARAMS.append(name));
         mc.functions.safeInit(name);
         return mc;
     }
@@ -96,7 +96,7 @@ library MCDevKitUtils {
         return mc.init(mc.defaultCustomBundleName());
     }
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        __recordExecStart(".ensureInit()", "");
+        __recordExecStart("ensureInit", "");
         if (mc.functions.findCurrentBundle().hasNotName()) mc.init();
         return mc;
     }
@@ -106,7 +106,7 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        __recordExecStart(".use()", PARAMS.append(name).comma().append(selector).comma().append(implementation));
+        __recordExecStart("use", PARAMS.append(name).comma().append(selector).comma().append(implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
                     .addCurrentToBundle();
@@ -128,7 +128,7 @@ library MCDevKitUtils {
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            __recordExecStart(".addFunction()");
+            __recordExecStart("addFunction");
             mc.functions.safeAddFunction(name, selector, implementation);
             return mc;
         }
@@ -393,7 +393,7 @@ library MCDevKitUtils {
     **************************/
     /**----- 🧺 Bundle -------*/
     // function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
-    //     __recordExecStart(".findCurrentBundle()");
+    //     __recordExecStart("findCurrentBundle");
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
@@ -402,11 +402,11 @@ library MCDevKitUtils {
 
     /**----- 🧩 Function -------*/
     function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
-        __recordExecStart(".findCurrentFunction()", "");
+        __recordExecStart("findCurrentFunction", "");
         return mc.functions.findCurrentFunction();
     }
     function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
-        __recordExecStart(".findFunction()");
+        __recordExecStart("findFunction");
         return mc.functions.findFunction(name);
     }
 

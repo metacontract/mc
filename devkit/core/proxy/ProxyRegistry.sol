@@ -49,7 +49,7 @@ library ProxyRegistryUtils {
         📥 Safe Add Proxy
     ------------------------*/
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        __recordExecStart("Safe Add Proxy to DevKitEnv");
+        __recordExecStart("safeAdd");
         return proxies.add(name.assertNotEmpty(), proxy.assertNotEmpty());
     }
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
@@ -67,16 +67,16 @@ library ProxyRegistryUtils {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        __recordExecStart("Find Proxy in DevKitEnv");
+        __recordExecStart("find");
         return proxies.deployed[name.safeCalcHash()]
                         .assertExists();
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
-        __recordExecStart("Find Current Proxy");
+        __recordExecStart("findCurrentProxy");
         return proxies.currentProxy.assertExists();
     }
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        __recordExecStart("Find Mock in DevKitEnv");
+        __recordExecStart("findSimpleMockProxy");
         return proxies.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -105,7 +105,7 @@ library ProxyRegistryUtils {
     ------------------------*/
     /**----- 🏠 Proxy -------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        __recordExecStart("Safe Update DevKit Context");
+        __recordExecStart("safeUpdate");
         return proxies.update(proxy.assertNotEmpty());
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {

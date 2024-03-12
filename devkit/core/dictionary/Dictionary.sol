@@ -69,11 +69,11 @@ library DictionaryUtils {
         🚀 Deploy Dictionary
     ---------------------------*/
     function safeDeploy(address owner) internal returns(Dictionary memory) {
-        __recordExecStart("Safe Deploy Dictionary");
+        __recordExecStart("safeDeploy");
         return deploy(owner.assertNotZero());
     }
     function deploy(address owner) internal returns(Dictionary memory) {
-        __recordExecStart("Deploy Dictionary");
+        __recordExecStart("deploy");
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return deployDictionaryVerifiable(owner);
     }
@@ -89,16 +89,16 @@ library DictionaryUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        __recordExecStart("Safe Duplicate Dictionary");
+        __recordExecStart("safeDuplicate");
         return targetDictionary.assertNotEmpty().duplicate();
     }
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        __recordExecStart("Duplicate Dictionary");
+        __recordExecStart("duplicate");
         return deploy(ForgeHelper.msgSender())
                 .duplicateFunctionsFrom(targetDictionary);
     }
         function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-            __recordExecStart("Duplicate Functions from Dictionary");
+            __recordExecStart("duplicateFunctionsFrom");
             address toAddr = toDictionary.toAddress();
             address fromAddr = fromDictionary.toAddress();
 
@@ -120,7 +120,7 @@ library DictionaryUtils {
         🧩 Set Function
     ----------------------*/
     function set(Dictionary storage dictionary, FuncInfo memory functionInfo) internal returns(Dictionary storage) {
-        __recordExecStart("Set Function to Dictionary");
+        __recordExecStart("set");
         IDictionary(dictionary.assertVerifiable().toAddress()).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
@@ -133,7 +133,7 @@ library DictionaryUtils {
         🧺 Set Bundle
     --------------------*/
     function set(Dictionary storage dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary storage) {
-        __recordExecStart("Set Bundle to Dictionary");
+        __recordExecStart("set");
 
         FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
 
@@ -153,7 +153,7 @@ library DictionaryUtils {
         🖼 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary storage dictionary, address newFacade) internal returns(Dictionary storage) {
-        __recordExecStart("Upgrade Facade");
+        __recordExecStart("upgradeFacade");
         DictionaryEtherscan(dictionary.assertVerifiable().toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }
@@ -232,7 +232,7 @@ library DictionaryUtils {
         🤖 Create Mock Dictionary
     --------------------------------*/
     function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
-        __recordExecStart("Create Mock Dictionary");
+        __recordExecStart("createMockDictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functionInfos)),
             kind: DictionaryKind.Mock

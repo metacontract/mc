@@ -47,19 +47,19 @@ library BundleInfoUtils {
         📥 Assign BundleInfo
     -----------------------------*/
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
-        __recordExecStart("Safe Assign `name` to BundleInfo");
+        __recordExecStart("safeAssign");
         bundleInfo.name = name.assertNotEmpty();
         return bundleInfo;
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
-        __recordExecStart("Safe Assign `facade` to BundleInfo");
+        __recordExecStart("safeAssign");
         bundleInfo.facade = facade.assertIsContract();
         return bundleInfo;
     }
 
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
-        __recordExecStart("Safe Add FunctionInfo to BundleInfo");
+        __recordExecStart("safeAdd");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
             functionInfo.assertImplIsContract()
@@ -67,7 +67,7 @@ library BundleInfoUtils {
         return bundleInfo;
     }
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
-        __recordExecStart("Safe Add FunctionInfos to BundleInfo");
+        __recordExecStart("safeAdd");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
         }
@@ -78,7 +78,7 @@ library BundleInfoUtils {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(bool flag) {
+    function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal view returns(bool flag) {
         for (uint i; i < bundleInfo.functionInfos.length; ++i) {
             if (functionInfo.isEqual(bundleInfo.functionInfos[i])) return true;
         }
