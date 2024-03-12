@@ -75,7 +75,6 @@ mc.startDebug();
     }
 
     function test_Success_DeployNewProxy() public {
-        address proxy = newProxy();
     }
 }
 

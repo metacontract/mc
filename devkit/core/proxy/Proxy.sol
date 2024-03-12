@@ -39,8 +39,17 @@ struct Proxy {
     }
 
 library ProxyUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Proxy Utils"));
+    string constant LIB_NAME = "Proxy";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
+    }
+    function __signalComletion() internal {}
+    function signalCompletion(Proxy storage target) internal returns(Proxy storage) {
+        __signalComletion();
+        return target;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,7 +61,7 @@ library ProxyUtils {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
-        __debug("Deploy Proxy");
+        __recordExecStart("Deploy Proxy");
         return dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
@@ -128,7 +137,7 @@ library ProxyUtils {
         🤖 Create Mock Proxy
     ---------------------------*/
     function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
-        __debug("Create Simple Mock Proxy");
+        __recordExecStart("Create Simple Mock Proxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
             kind: ProxyKind.Mock

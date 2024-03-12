@@ -42,17 +42,23 @@ library StringUtils {
         return str.append(selector.toString());
     }
 
-    function br(string memory str) internal returns(string memory) {
+    function br(string memory str) internal pure returns(string memory) {
         return string.concat(str, "\n");
     }
-    function indent(string memory str) internal returns(string memory) {
+    function indent(string memory str) internal pure returns(string memory) {
         return string.concat(str, "\t");
     }
-    function comma(string memory str) internal returns(string memory) {
+    function comma(string memory str) internal pure returns(string memory) {
         return string.concat(str, ", ");
     }
+    function dot(string memory str) internal pure returns(string memory) {
+        return string.concat(str, ".");
+    }
+    function brace(string memory str) internal pure returns(string memory) {
+        return string.concat(str, "()");
+    }
 
-    function substring(string memory str, uint n) internal  returns (string memory) {
+    function substring(string memory str, uint n) internal pure returns (string memory) {
         bytes memory strBytes = bytes(str);
         bytes memory result = new bytes(n);
         for(uint i = 0; i < n; i++) {

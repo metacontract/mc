@@ -25,30 +25,39 @@ struct FuncInfo { /// @dev FuncInfo may be different depending on the op version
 }
 
 library FuncInfoUtils {
+    string constant LIB_NAME = "FuncInfo";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
+    }
+    function __signalComletion() internal {}
+    function signalCompletion(FuncInfo storage target) internal returns(FuncInfo storage) {
+        __signalComletion();
+        return target;
+    }
+
     using StringUtils for string;
     using Bytes4Utils for bytes4;
     using AddressUtils for address;
-
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Function Info Utils"));
-    }
 
 
     /**---------------------------
         📥 Assign FunctionInfo
     -----------------------------*/
     function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `name` to FunctionInfo");
+        __recordExecStart("Safe Assign `name` to FunctionInfo");
         return functionInfo .assertEmptyName()
                             .assign(name.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `selector` to FunctionInfo");
+        __recordExecStart("Safe Assign `selector` to FunctionInfo");
         return functionInfo .assertEmptySelector()
                             .assign(selector.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `implementation` to FunctionInfo");
+        __recordExecStart("Safe Assign `implementation` to FunctionInfo");
         return functionInfo .assertEmptyImpl()
                             .assign(implementation.assertIsContract());
     }

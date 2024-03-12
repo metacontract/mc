@@ -44,15 +44,19 @@ struct MCDevKit {
 library MCDevKitUtils {
     using MCStdFuncsArgs for address;
 
-    function __debug(string memory location, string memory params) internal {
-        Debug.start(
-            StringUtils .append("MCDevKit", location)
-                        .append(params.italic())
-        );
+    string constant LIB_NAME = "MCDevKit";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __debug(string memory location) internal {
-        Debug.start(StringUtils .append("MCDevKit", location));
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
     }
+    function __signalComletion() internal {}
+    function signalCompletion(MCDevKit storage target) internal returns(MCDevKit storage) {
+        __signalComletion();
+        return target;
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
         🌱 Init Custom Bundle
@@ -84,7 +88,7 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        __debug(".init()", PARAMS.append(name));
+        __recordExecStart(".init()", PARAMS.append(name));
         mc.functions.safeInit(name);
         return mc;
     }
@@ -92,7 +96,7 @@ library MCDevKitUtils {
         return mc.init(mc.defaultCustomBundleName());
     }
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        __debug(".ensureInit()", "");
+        __recordExecStart(".ensureInit()", "");
         if (mc.functions.findCurrentBundle().hasNotName()) mc.init();
         return mc;
     }
@@ -102,7 +106,7 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        __debug(".use()", PARAMS.append(name).comma().append(selector).comma().append(implementation));
+        __recordExecStart(".use()", PARAMS.append(name).comma().append(selector).comma().append(implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
                     .addCurrentToBundle();
@@ -124,7 +128,7 @@ library MCDevKitUtils {
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            __debug(".addFunction()");
+            __recordExecStart(".addFunction()");
             mc.functions.safeAddFunction(name, selector, implementation);
             return mc;
         }
@@ -389,7 +393,7 @@ library MCDevKitUtils {
     **************************/
     /**----- 🧺 Bundle -------*/
     // function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
-    //     __debug(".findCurrentBundle()");
+    //     __recordExecStart(".findCurrentBundle()");
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
@@ -398,11 +402,11 @@ library MCDevKitUtils {
 
     /**----- 🧩 Function -------*/
     function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
-        __debug(".findCurrentFunction()");
+        __recordExecStart(".findCurrentFunction()", "");
         return mc.functions.findCurrentFunction();
     }
     function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
-        __debug(".findFunction()");
+        __recordExecStart(".findFunction()");
         return mc.functions.findFunction(name);
     }
 

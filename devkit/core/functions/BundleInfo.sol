@@ -30,27 +30,36 @@ struct BundleInfo {
 }
 
 library BundleInfoUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Bundle Info Utils"));
+    string constant LIB_NAME = "BundleInfo";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
+    }
+    function __signalComletion() internal {}
+    function signalCompletion(BundleInfo storage target) internal returns(BundleInfo storage) {
+        __signalComletion();
+        return target;
     }
 
     /**---------------------------
         📥 Assign BundleInfo
     -----------------------------*/
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
-        __debug("Safe Assign `name` to BundleInfo");
+        __recordExecStart("Safe Assign `name` to BundleInfo");
         bundleInfo.name = name.assertNotEmpty();
         return bundleInfo;
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
-        __debug("Safe Assign `facade` to BundleInfo");
+        __recordExecStart("Safe Assign `facade` to BundleInfo");
         bundleInfo.facade = facade.assertIsContract();
         return bundleInfo;
     }
 
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
-        __debug("Safe Add FunctionInfo to BundleInfo");
+        __recordExecStart("Safe Add FunctionInfo to BundleInfo");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
             functionInfo.assertImplIsContract()
@@ -58,7 +67,7 @@ library BundleInfoUtils {
         return bundleInfo;
     }
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
-        __debug("Safe Add FunctionInfos to BundleInfo");
+        __recordExecStart("Safe Add FunctionInfos to BundleInfo");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
         }

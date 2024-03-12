@@ -36,8 +36,17 @@ struct MCStdFuncs {
 }
 
 library MCStdFuncsUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ MC Standard Functions Utils"));
+    string constant LIB_NAME = "MCStdFuncs";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
+    }
+    function __signalComletion() internal {}
+    function signalCompletion(MCStdFuncs storage target) internal returns(MCStdFuncs storage) {
+        __signalComletion();
+        return target;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

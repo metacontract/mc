@@ -43,8 +43,17 @@ struct Dictionary {
     }
 
 library DictionaryUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Dictionary Utils"));
+    string constant LIB_NAME = "Dictionary";
+    function __recordExecStart(string memory funcName, string memory params) internal {
+        Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal {
+        __recordExecStart(funcName, "");
+    }
+    function __signalComletion() internal {}
+    function signalCompletion(BundleInfo storage target) internal returns(BundleInfo storage) {
+        __signalComletion();
+        return target;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,11 +69,11 @@ library DictionaryUtils {
         🚀 Deploy Dictionary
     ---------------------------*/
     function safeDeploy(address owner) internal returns(Dictionary memory) {
-        __debug("Safe Deploy Dictionary");
+        __recordExecStart("Safe Deploy Dictionary");
         return deploy(owner.assertNotZero());
     }
     function deploy(address owner) internal returns(Dictionary memory) {
-        __debug("Deploy Dictionary");
+        __recordExecStart("Deploy Dictionary");
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return deployDictionaryVerifiable(owner);
     }
@@ -80,16 +89,16 @@ library DictionaryUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        __debug("Safe Duplicate Dictionary");
+        __recordExecStart("Safe Duplicate Dictionary");
         return targetDictionary.assertNotEmpty().duplicate();
     }
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        __debug("Duplicate Dictionary");
+        __recordExecStart("Duplicate Dictionary");
         return deploy(ForgeHelper.msgSender())
                 .duplicateFunctionsFrom(targetDictionary);
     }
         function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-            __debug("Duplicate Functions from Dictionary");
+            __recordExecStart("Duplicate Functions from Dictionary");
             address toAddr = toDictionary.toAddress();
             address fromAddr = fromDictionary.toAddress();
 
@@ -111,7 +120,7 @@ library DictionaryUtils {
         🧩 Set Function
     ----------------------*/
     function set(Dictionary storage dictionary, FuncInfo memory functionInfo) internal returns(Dictionary storage) {
-        __debug("Set Function to Dictionary");
+        __recordExecStart("Set Function to Dictionary");
         IDictionary(dictionary.assertVerifiable().toAddress()).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
@@ -124,7 +133,7 @@ library DictionaryUtils {
         🧺 Set Bundle
     --------------------*/
     function set(Dictionary storage dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary storage) {
-        __debug("Set Bundle to Dictionary");
+        __recordExecStart("Set Bundle to Dictionary");
 
         FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
 
@@ -144,7 +153,7 @@ library DictionaryUtils {
         🖼 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary storage dictionary, address newFacade) internal returns(Dictionary storage) {
-        __debug("Upgrade Facade");
+        __recordExecStart("Upgrade Facade");
         DictionaryEtherscan(dictionary.assertVerifiable().toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }
@@ -223,7 +232,7 @@ library DictionaryUtils {
         🤖 Create Mock Dictionary
     --------------------------------*/
     function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
-        __debug("Create Mock Dictionary");
+        __recordExecStart("Create Mock Dictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functionInfos)),
             kind: DictionaryKind.Mock

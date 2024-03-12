@@ -78,11 +78,11 @@ library Debug {
     }
 
 
-    /**------------
-        Trace
-    --------------*/
-    function start(string memory location) internal {
-        stack(location);
+    /**----------------------------
+        📈 Execution Tracking
+    ------------------------------*/
+    function recordExecStart(string memory libName, string memory funcName, string memory params) internal {
+        stack(libName.dot().append(funcName).brace().append(params.italic()));
     }
 
     function stack(string memory location) internal {
