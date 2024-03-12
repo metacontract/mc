@@ -48,13 +48,13 @@ contract DeployScenarioTest is MCTest {
 
 mc.startDebug();
 
-        address yamato = mc .init("a")
+        address yamato = mc .init("Yamato")
                             .use("Borrower", YamatoBorrower.borrow.selector, address(new YamatoBorrower()))
                             .use("Depositor", YamatoDepositor.deposit.selector, address(new YamatoDepositor()))
-                            .use("Redeemer")
-                            .use("Repayer")
-                            .use("Sweeper")
-                            .use("Withdrawer")
+                            // .use("Redeemer")
+                            // .use("Repayer")
+                            // .use("Sweeper")
+                            // .use("Withdrawer")
                             .use("Initialize", YamatoInitialize.initialize.selector, address(new YamatoInitialize()))
                             .set("Yamato", address(new YamatoFacade()))
                             .deploy(abi.encodeCall(YamatoInitialize.initialize, multisigAddr))

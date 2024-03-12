@@ -11,11 +11,16 @@ import {Logger} from "@devkit/debug/Logger.sol";
 
 library Errors {
     using StdStyle for string;
+    using StringUtils for string;
     using BoolUtils for bool;
 
     /// @dev like `require`
     function check(bool condition, string memory errorBody) internal {
         if (condition.isFalse()) throwError(errorBody);
+    }
+
+    function check(bool condition, string memory errorBody, string memory errorDetail) internal {
+        if (condition.isFalse()) throwError(errorBody.append(errorDetail));
     }
 
     function throwError(string memory errorBody) internal {

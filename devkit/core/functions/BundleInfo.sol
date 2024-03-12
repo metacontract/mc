@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Global Methods
 import "@devkit/utils/GlobalMethods.sol";
 // Utils
-// import {console2} from "@devkit/utils/ForgeHelper.sol";
+import {console2} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
     using StringUtils for string;
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
@@ -84,7 +84,7 @@ library BundleInfoUtils {
                 bundleInfo.facade.isContract();
     }
     function assertComplete(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
-        check(bundleInfo.isComplete(), "Bundle Info Not Complete");
+        check(bundleInfo.isComplete(), "Bundle Info Not Complete", bundleInfo.parse());
         return bundleInfo;
     }
 
@@ -123,15 +123,13 @@ library BundleInfoUtils {
         return bundleInfo;
     }
     function parse(BundleInfo storage bundleInfo) internal returns(string memory message) {
-        message  .append("Facade: ").append(bundleInfo.facade);
+        message = message.append("Facade: ").append(bundleInfo.facade);
 
         FuncInfo[] memory _funcs = bundleInfo.functionInfos;
         for (uint i; i < _funcs.length; ++i) {
-            message .br()
-                    .append("Impl: ").append(_funcs[i].implementation).comma()
-                    .append("Selector: ").append(_funcs[i].selector).comma()
-                    .append("Name: ").append(_funcs[i].name);
+            message = message.br().append(_funcs[i].parse());
         }
+        console2.log(message);
     }
 
 }

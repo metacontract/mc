@@ -9,6 +9,11 @@ import {Debug} from "@devkit/debug/Debug.sol";
 function check(bool condition, string memory errorBody) {
     Errors.check(condition, errorBody);
 }
+function check(bool condition, string memory errorBody, string memory errorDetail) {
+    Errors.check(condition, errorBody, errorDetail);
+}
 function throwError(string memory errorBody) {
     Errors.throwError(errorBody);
 }
+
+string constant PARAMS = " with params: ";

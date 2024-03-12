@@ -2,9 +2,10 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-// import "@devkit/utils/GlobalMethods.sol";
+import "@devkit/utils/GlobalMethods.sol";
 // Utils
-import {ForgeHelper, console2} from "@devkit/utils/ForgeHelper.sol";
+import {ForgeHelper, console2, StdStyle} from "@devkit/utils/ForgeHelper.sol";
+    using StdStyle for string;
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
@@ -43,8 +44,14 @@ struct MCDevKit {
 library MCDevKitUtils {
     using MCStdFuncsArgs for address;
 
+    function __debug(string memory location, string memory params) internal {
+        Debug.start(
+            StringUtils .append("MCDevKit", location)
+                        .append(params.italic())
+        );
+    }
     function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Meta Contract DevKit"));
+        Debug.start(StringUtils .append("MCDevKit", location));
     }
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
@@ -77,7 +84,7 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        __debug("Init");
+        __debug(".init()", PARAMS.append(name));
         mc.functions.safeInit(name);
         return mc;
     }
@@ -85,8 +92,8 @@ library MCDevKitUtils {
         return mc.init(mc.defaultCustomBundleName());
     }
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        __debug("Ensure Init");
-        if (mc.findCurrentBundle().hasNotName()) mc.init();
+        __debug(".ensureInit()", "");
+        if (mc.functions.findCurrentBundle().hasNotName()) mc.init();
         return mc;
     }
 
@@ -95,10 +102,10 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        __debug("Use");
+        __debug(".use()", PARAMS.append(name).comma().append(selector).comma().append(implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
-                    .addToBundle(mc.findCurrentFunction());
+                    .addCurrentToBundle();
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(implementation.getLabel(), selector, implementation);
@@ -110,13 +117,14 @@ library MCDevKitUtils {
     //     return mc;
     // }
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        check(mc.functions.findFunction(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            console2.log("add name", name);
+            __debug(".addFunction()");
             mc.functions.safeAddFunction(name, selector, implementation);
             return mc;
         }
@@ -125,6 +133,10 @@ library MCDevKitUtils {
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
             mc.functions.addToBundle(functionInfo);
+            return mc;
+        }
+        function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
+            mc.functions.addToBundle(mc.findCurrentFunction());
             return mc;
         }
 
@@ -151,11 +163,11 @@ library MCDevKitUtils {
 
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
         return mc   .deployDictionary()
-                    .set(mc.findCurrentBundle())
+                    .set(mc.functions.findCurrentBundle())
                     .deployProxy(initData);
     }
     function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deploy(name, mc.findCurrentBundle(), mc.defaultInitData());
+        return mc.deploy(name, mc.functions.findCurrentBundle(), mc.defaultInitData());
         // TODO defaultBundle --> current or allStd
     }
     function deploy(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
@@ -376,18 +388,21 @@ library MCDevKitUtils {
         🕵️ Getter Methods
     **************************/
     /**----- 🧺 Bundle -------*/
-    function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
-        return mc.functions.findCurrentBundle();
-    }
+    // function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
+    //     __debug(".findCurrentBundle()");
+    //     return mc.functions.findCurrentBundle();
+    // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
         return mc.functions.findBundle(name);
     }
 
     /**----- 🧩 Function -------*/
     function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
+        __debug(".findCurrentFunction()");
         return mc.functions.findCurrentFunction();
     }
     function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
+        __debug(".findFunction()");
         return mc.functions.findFunction(name);
     }
 

@@ -34,7 +34,7 @@ struct FuncRegistry {
 
 library FuncRegistryUtils {
     function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Function Registry Utils"));
+        Debug.start(StringUtils.append("FuncRegistryUtils", location));
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,7 +68,7 @@ library FuncRegistryUtils {
         ✨ Add Custom Function
     -----------------------------*/
     function safeAddFunction(FuncRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FuncRegistry storage) {
-        __debug("Safe Add Function to Registry");
+        __debug(".safeAddFunction()");
         check(name.isNotEmpty(), "Empty Name");
         functions.customs[name.safeCalcHash()]
                 .safeAssign(name)
@@ -129,26 +129,27 @@ library FuncRegistryUtils {
         🔍 Find Function
     ------------------------------*/
     function findFunction(FuncRegistry storage functions, string memory name) internal returns(FuncInfo storage) {
-        __debug("Find Function");
-        return functions.customs[name.safeCalcHash()].assertComplete();
+        __debug(".findFunction()");
+        return functions.customs[name.safeCalcHash()];
     }
     function findCurrentFunction(FuncRegistry storage functions) internal returns(FuncInfo storage) {
         return functions.findFunction(functions.findCurrentFunctionName());
     }
         function findCurrentFunctionName(FuncRegistry storage functions) internal returns(string memory) {
-            __debug("Find Current Function Name");
+            __debug(".findCurrentFunctionName()");
             return functions.currentFunctionName.assertNotEmpty();
         }
 
     function findBundle(FuncRegistry storage functions, string memory name) internal returns(BundleInfo storage) {
-        __debug("Find Bundle");
-        return functions.bundles[name.safeCalcHash()].assertComplete();
+        __debug(".findBundle()");
+        return functions.bundles[name.safeCalcHash()];
     }
     function findCurrentBundle(FuncRegistry storage functions) internal returns(BundleInfo storage) {
+        __debug(".findCurrentBundle()");
         return functions.findBundle(functions.findCurrentBundleName());
     }
         function findCurrentBundleName(FuncRegistry storage functions) internal returns(string memory) {
-            __debug("Find Current Bundle Name");
+            __debug(".findCurrentBundleName()");
             return functions.currentBundleName.assertNotEmpty();
         }
 

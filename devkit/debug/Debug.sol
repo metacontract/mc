@@ -86,6 +86,8 @@ library Debug {
     }
 
     function stack(string memory location) internal {
-        State().errorLocationStack.push(location);
+        if (State().logLevel != LogLevel.Disable) {
+            State().errorLocationStack.push(location);
+        }
     }
 }
