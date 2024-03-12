@@ -28,26 +28,30 @@ library StringUtils {
         return name.calcHash();
     }
 
-    function append(string memory name, string memory str) internal returns(string memory) {
-        return string.concat(name, str);
-    }
-
 
     /**---------------
         Convertor
     ----------------*/
-    function concat(string memory str, string memory str2) internal returns(string memory) {
-        return string.concat(str, str2);
+    function append(string memory original, string memory addition) internal pure returns(string memory) {
+        return string.concat(original, addition);
     }
-    function concat(string memory str, address addr) internal returns(string memory) {
-        return concat(str, vm.toString(addr));
+    function append(string memory str, address addr) internal returns(string memory) {
+        return str.append(vm.toString(addr));
     }
-    function concat(string memory str, bytes4 selector) internal returns(string memory) {
-        return concat(str, selector.toString());
+    function append(string memory str, bytes4 selector) internal returns(string memory) {
+        return str.append(selector.toString());
+    }
+
+    function br(string memory str) internal returns(string memory) {
+        return string.concat(str, "\n");
     }
     function indent(string memory str) internal returns(string memory) {
-        return concat("\t", str);
+        return string.concat(str, "\t");
     }
+    function comma(string memory str) internal returns(string memory) {
+        return string.concat(str, ", ");
+    }
+
     function substring(string memory str, uint n) internal  returns (string memory) {
         bytes memory strBytes = bytes(str);
         bytes memory result = new bytes(n);
@@ -73,7 +77,7 @@ library StringUtils {
         return str;
     }
     function assertNotEmpty(string memory str) internal returns(string memory) {
-        check(str.isNotEmpty(), "Empty String");
+        check(str.isNotEmpty(), "Empty Stringqqqqq");
         return str;
     }
 

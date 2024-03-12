@@ -33,9 +33,8 @@ struct FuncRegistry {
 }
 
 library FuncRegistryUtils {
-    modifier debug(string memory location) {
-        Debug.stack(location);
-        _;
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Function Registry Utils"));
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,13 +50,14 @@ library FuncRegistryUtils {
     /**---------------------------
         🌱 Init Custom Bundle
     -----------------------------*/
-    function safeInit(FuncRegistry storage functions, string memory name) debug("Safe Init New Bundle") internal returns(FuncRegistry storage) {
+    function safeInit(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
+        __debug("Safe Init New Bundle");
         check(name.isNotEmpty(), "Empty Name");
         return functions.assertBundleNotExists(name)
                         .init(name);
     }
-    string constant init_ = "Init New Bundle";
     function init(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
+        __debug("Init New Bundle");
         functions.bundles[name.safeCalcHash()].safeAssign(name);
         functions.safeUpdateCurrentBundle(name);
         return functions;
@@ -67,8 +67,8 @@ library FuncRegistryUtils {
     /**---------------------------
         ✨ Add Custom Function
     -----------------------------*/
-    string constant safeAdd_ = "Safe Add Custom Function";
     function safeAddFunction(FuncRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FuncRegistry storage) {
+        __debug("Safe Add Function to Registry");
         check(name.isNotEmpty(), "Empty Name");
         functions.customs[name.safeCalcHash()]
                 .safeAssign(name)
@@ -100,8 +100,8 @@ library FuncRegistryUtils {
     /**------------------
         🖼 Set Facade
     --------------------*/
-    string constant set_ = "Set Facade";
     function set(FuncRegistry storage functions, string memory name, address facade) internal returns(FuncRegistry storage) {
+        __debug("Set Facade");
         functions.bundles[name.safeCalcHash()]
                     .assertExists()
                     .safeAssign(facade);
@@ -112,9 +112,9 @@ library FuncRegistryUtils {
     /**----------------------
         🔼 Update Context
     ------------------------*/
-    string constant safeUpdate = "Safe Update DevKit Context";
     /**----- 🧩 FunctionInfo -------*/
     function safeUpdateCurrentFunction(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
+        __debug("Safe Update Current Function");
         functions.currentFunctionName = name.assertNotEmpty();
         return functions;
     }
@@ -128,27 +128,27 @@ library FuncRegistryUtils {
     /**----------------------------
         🔍 Find Function
     ------------------------------*/
-    string constant findFunction_ = "Find Function";
     function findFunction(FuncRegistry storage functions, string memory name) internal returns(FuncInfo storage) {
+        __debug("Find Function");
         return functions.customs[name.safeCalcHash()].assertComplete();
     }
     function findCurrentFunction(FuncRegistry storage functions) internal returns(FuncInfo storage) {
         return functions.findFunction(functions.findCurrentFunctionName());
     }
-        string constant findCurrentFunctionName_ = "Find Current Function Name";
         function findCurrentFunctionName(FuncRegistry storage functions) internal returns(string memory) {
+            __debug("Find Current Function Name");
             return functions.currentFunctionName.assertNotEmpty();
         }
 
-    string constant findBundle_ = "Find Bundle";
     function findBundle(FuncRegistry storage functions, string memory name) internal returns(BundleInfo storage) {
+        __debug("Find Bundle");
         return functions.bundles[name.safeCalcHash()].assertComplete();
     }
     function findCurrentBundle(FuncRegistry storage functions) internal returns(BundleInfo storage) {
         return functions.findBundle(functions.findCurrentBundleName());
     }
-        string constant findCurrentBundleName_ = "Find Current Bundle Name";
         function findCurrentBundleName(FuncRegistry storage functions) internal returns(string memory) {
+            __debug("Find Current Bundle Name");
             return functions.currentBundleName.assertNotEmpty();
         }
 

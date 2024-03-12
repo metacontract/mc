@@ -26,6 +26,10 @@ struct ProxyRegistry {
 }
 
 library ProxyRegistryUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Proxy Registry Utils"));
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~
         📥 Safe Add Proxy
         🔍 Find Proxy
@@ -35,8 +39,8 @@ library ProxyRegistryUtils {
     /**----------------------
         📥 Safe Add Proxy
     ------------------------*/
-    string constant safeAdd_ = "Safe Add Proxy to DevKitEnv";
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        __debug("Safe Add Proxy to DevKitEnv");
         return proxies.add(name.assertNotEmpty(), proxy.assertNotEmpty());
     }
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
@@ -53,17 +57,17 @@ library ProxyRegistryUtils {
     /**-------------------
         🔍 Find Proxy
     ---------------------*/
-    string constant find_ = "Find Proxy in DevKitEnv";
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
+        __debug("Find Proxy in DevKitEnv");
         return proxies.deployed[name.safeCalcHash()]
                         .assertExists();
     }
-    string constant findCurrentProxy_ = "Find Current Proxy";
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
+        __debug("Find Current Proxy");
         return proxies.currentProxy.assertExists();
     }
-    string constant findSimpleMockProxy_ = "Find Mock in DevKitEnv";
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
+        __debug("Find Mock in DevKitEnv");
         return proxies.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -90,9 +94,9 @@ library ProxyRegistryUtils {
     /**----------------------
         🔼 Update Context
     ------------------------*/
-    string constant safeUpdate_ = "Safe Update DevKit Context";
     /**----- 🏠 Proxy -------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        __debug("Safe Update DevKit Context");
         return proxies.update(proxy.assertNotEmpty());
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {

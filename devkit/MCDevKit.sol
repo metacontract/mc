@@ -43,9 +43,8 @@ struct MCDevKit {
 library MCDevKitUtils {
     using MCStdFuncsArgs for address;
 
-    modifier debug(string memory location) {
-        Debug.stack(location);
-        _;
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Meta Contract DevKit"));
     }
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
@@ -77,15 +76,16 @@ library MCDevKitUtils {
     /*****************************
         🌱 Init Custom Bundle
     ******************************/
-    function init(MCDevKit storage mc, string memory name) debug("MC: Init") internal returns(MCDevKit storage) {
+    function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        __debug("Init");
         mc.functions.safeInit(name);
-        Logger.logLocations();
         return mc;
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return mc.init(mc.defaultCustomBundleName());
     }
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        __debug("Ensure Init");
         if (mc.findCurrentBundle().hasNotName()) mc.init();
         return mc;
     }
@@ -95,6 +95,7 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+        __debug("Use");
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
                     .addToBundle(mc.findCurrentFunction());

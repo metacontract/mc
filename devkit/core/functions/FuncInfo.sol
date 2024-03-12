@@ -10,6 +10,7 @@ import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
 // Debug
 import {Debug} from "@devkit/debug/Debug.sol";
+import {Logger} from "@devkit/debug/Logger.sol";
 // Core
 import {BundleInfo} from "./BundleInfo.sol";
 
@@ -28,19 +29,26 @@ library FuncInfoUtils {
     using Bytes4Utils for bytes4;
     using AddressUtils for address;
 
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Function Info Utils"));
+    }
+
+
     /**---------------------------
         📥 Assign FunctionInfo
     -----------------------------*/
-    string constant safeAssign_ = "Safe Assign to FunctionInfo";
     function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
+        __debug("Safe Assign `name` to FunctionInfo");
         return functionInfo .assertEmptyName()
                             .assign(name.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
+        __debug("Safe Assign `selector` to FunctionInfo");
         return functionInfo .assertEmptySelector()
                             .assign(selector.assertNotEmpty());
     }
     function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
+        __debug("Safe Assign `implementation` to FunctionInfo");
         return functionInfo .assertEmptyImpl()
                             .assign(implementation.assertIsContract());
     }
@@ -88,6 +96,17 @@ library FuncInfoUtils {
     /**---------------
         🐞 Debug
     -----------------*/
+    function parseAndLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        Logger.logDebug(
+            functionInfo.parse()
+        );
+        return functionInfo;
+    }
+    function parse(FuncInfo memory functionInfo) internal returns(string memory message) {
+        return message  .append("Impl: ").append(functionInfo.implementation).comma()
+                        .append("Selector: ").append(functionInfo.selector).comma()
+                        .append("Name: ").append(functionInfo.name);
+    }
 
     function assertExists(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
         if (!functionInfo.exists()) {
@@ -136,7 +155,7 @@ library FuncInfoUtils {
         return functionInfo;
     }
 
-    function isEqual(FuncInfo storage a, FuncInfo storage b) internal returns(bool) {
+    function isEqual(FuncInfo storage a, FuncInfo storage b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
 }

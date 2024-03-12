@@ -20,7 +20,7 @@ contract SimpleMockProxy is OZProxy {
     }
 
     function _implementation() internal view override returns(address) {
-        return SimpleMockProxyUtils.getOp(msg.sig);
+        return SimpleMockProxyUtils.getImplementation(msg.sig);
     }
 }
 
@@ -36,7 +36,7 @@ library SimpleMockProxyUtils {
         Storage().implementations[selector] = implementation;
     }
 
-    function getOp(bytes4 selector) internal view returns(address) {
+    function getImplementation(bytes4 selector) internal view returns(address) {
         return Storage().implementations[selector];
     }
 

@@ -15,6 +15,7 @@ import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 // Debug
 import {Debug} from "@devkit/debug/Debug.sol";
+import {Logger} from "@devkit/debug/Logger.sol";
 // Core
 import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
 
@@ -29,23 +30,27 @@ struct BundleInfo {
 }
 
 library BundleInfoUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Bundle Info Utils"));
+    }
+
     /**---------------------------
         📥 Assign BundleInfo
     -----------------------------*/
-    string constant safeAssign_ = "Safe Assign to BundleInfo";
-
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
+        __debug("Safe Assign `name` to BundleInfo");
         bundleInfo.name = name.assertNotEmpty();
         return bundleInfo;
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
+        __debug("Safe Assign `facade` to BundleInfo");
         bundleInfo.facade = facade.assertIsContract();
         return bundleInfo;
     }
 
-    string constant safeAdd_ = "Safe Add FunctionInfo to BundleInfo";
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
+        __debug("Safe Add FunctionInfo to BundleInfo");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
             functionInfo.assertImplIsContract()
@@ -53,6 +58,7 @@ library BundleInfoUtils {
         return bundleInfo;
     }
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
+        __debug("Safe Add FunctionInfos to BundleInfo");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
         }
@@ -105,4 +111,27 @@ library BundleInfoUtils {
         check(bundleInfo.notExists(), "Bundle Info Already Exists");
         return bundleInfo;
     }
+
+
+    /**---------------
+        🐞 Debug
+    -----------------*/
+    function parseAndLog(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+        Logger.logDebug(
+            bundleInfo.parse()
+        );
+        return bundleInfo;
+    }
+    function parse(BundleInfo storage bundleInfo) internal returns(string memory message) {
+        message  .append("Facade: ").append(bundleInfo.facade);
+
+        FuncInfo[] memory _funcs = bundleInfo.functionInfos;
+        for (uint i; i < _funcs.length; ++i) {
+            message .br()
+                    .append("Impl: ").append(_funcs[i].implementation).comma()
+                    .append("Selector: ").append(_funcs[i].selector).comma()
+                    .append("Name: ").append(_funcs[i].name);
+        }
+    }
+
 }

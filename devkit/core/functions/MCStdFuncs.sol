@@ -5,6 +5,8 @@ pragma solidity ^0.8.24;
 import {console2} from "@devkit/utils/ForgeHelper.sol";
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
 // Debug
 import {Debug} from "@devkit/debug/Debug.sol";
 import {Logger} from "@devkit/debug/Logger.sol";
@@ -34,6 +36,9 @@ struct MCStdFuncs {
 }
 
 library MCStdFuncsUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ MC Standard Functions Utils"));
+    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🔏 Assign and Load Standard Functions
@@ -44,8 +49,7 @@ library MCStdFuncsUtils {
     /**------------------------------------------
         🔏 Assign and Load Standard Functions
     --------------------------------------------*/
-    function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
-    {
+    function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
         return std  ._logProcStart("Loading and Assigning FuncInfos... @ MCStdFuncs")
                     .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
@@ -58,32 +62,32 @@ library MCStdFuncsUtils {
         function assignAndLoad_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.initSetAdmin.safeAssign("INIT_SET_ADMIN")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
-                            .loadAndAssignImplFromEnv();
-                            // .emitLog(); TODO
+                            .loadAndAssignImplFromEnv()
+                            .parseAndLog();
             return std;
         }
 
         function assignAndLoad_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.getDeps .safeAssign("GET_DEPS")
                         .safeAssign(GetDeps.getDeps.selector)
-                        .loadAndAssignImplFromEnv();
-                        // .emitLog();
+                        .loadAndAssignImplFromEnv()
+                        .parseAndLog();
             return std;
         }
 
         function assignAndLoad_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.clone   .safeAssign("CLONE")
                         .safeAssign(Clone.clone.selector)
-                        .loadAndAssignImplFromEnv();
-                        // .emitLog();
+                        .loadAndAssignImplFromEnv()
+                        .parseAndLog();
             return std;
         }
 
         function assignAndLoad_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             std.setImplementation   .safeAssign("SET_IMPLEMENTATION")
                                     .safeAssign(SetImplementation.setImplementation.selector)
-                                    .loadAndAssignImplFromEnv();
-                                    // .emitLog();
+                                    .loadAndAssignImplFromEnv()
+                                    .parseAndLog();
             return std;
         }
 
@@ -135,8 +139,7 @@ library MCStdFuncsUtils {
     /**----------------------------------
         🧺 Configure Standard Bundles
     ------------------------------------*/
-    function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
-    {
+    function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
         return std  ._logProcStart("Configuring StdBundle...")
                     .configureStdBundle_AllFunctions()
                     .configureStdBundle_Defaults()

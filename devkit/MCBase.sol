@@ -14,7 +14,7 @@ abstract contract MCCommonBase is CommonBase {
     address deployer;
 
     constructor() {
-        // mc.startLog();
+        // mc.startDebug();
         // mc.setupMCStdFuncs();
     }
 

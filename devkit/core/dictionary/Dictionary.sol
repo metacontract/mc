@@ -8,6 +8,10 @@ import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
+import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+    using Bytes4Utils for bytes4;
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
 import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 // Debug
 import {Debug} from "@devkit/debug/Debug.sol";
@@ -39,6 +43,10 @@ struct Dictionary {
     }
 
 library DictionaryUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Dictionary Utils"));
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
@@ -46,18 +54,17 @@ library DictionaryUtils {
         🖼 Upgrade Facade
         🔧 Helper Methods for type Dictionary
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    modifier debug(string memory location) {
-        Debug.stack(location);
-        _;
-    }
+
 
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    function safeDeploy(address owner) debug("Safe Deploy Dictionary") internal returns(Dictionary memory) {
+    function safeDeploy(address owner) internal returns(Dictionary memory) {
+        __debug("Safe Deploy Dictionary");
         return deploy(owner.assertNotZero());
     }
     function deploy(address owner) internal returns(Dictionary memory) {
+        __debug("Deploy Dictionary");
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return deployDictionaryVerifiable(owner);
     }
@@ -68,25 +75,28 @@ library DictionaryUtils {
             });
         }
 
+
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    string constant duplicate_ = "Duplicate Dictionary";
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
+        __debug("Safe Duplicate Dictionary");
         return targetDictionary.assertNotEmpty().duplicate();
     }
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
+        __debug("Duplicate Dictionary");
         return deploy(ForgeHelper.msgSender())
                 .duplicateFunctionsFrom(targetDictionary);
     }
         function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
+            __debug("Duplicate Functions from Dictionary");
             address toAddr = toDictionary.toAddress();
             address fromAddr = fromDictionary.toAddress();
 
             bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
             for (uint i; i < _selectors.length; ++i) {
                 bytes4 _selector = _selectors[i];
-                if (_selector == bytes4(0)) continue; // TODO
+                if (_selector.isEmpty()) continue;
                 IDictionary(toAddr).setImplementation({
                     functionSelector: _selector,
                     implementation: IDictionary(fromAddr).getImplementation(_selector)
@@ -100,8 +110,8 @@ library DictionaryUtils {
     /**--------------------
         🧩 Set Function
     ----------------------*/
-    string constant set_ = "Set Function to Dictionary";
     function set(Dictionary storage dictionary, FuncInfo memory functionInfo) internal returns(Dictionary storage) {
+        __debug("Set Function to Dictionary");
         IDictionary(dictionary.assertVerifiable().toAddress()).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
@@ -114,6 +124,8 @@ library DictionaryUtils {
         🧺 Set Bundle
     --------------------*/
     function set(Dictionary storage dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary storage) {
+        __debug("Set Bundle to Dictionary");
+
         FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
 
         for (uint i; i < functionInfos.length; ++i) {
@@ -131,8 +143,8 @@ library DictionaryUtils {
     /**----------------------
         🖼 Upgrade Facade
     ------------------------*/
-    string constant upgradeFacade_ = "Upgrade Facade";
     function upgradeFacade(Dictionary storage dictionary, address newFacade) internal returns(Dictionary storage) {
+        __debug("Upgrade Facade");
         DictionaryEtherscan(dictionary.assertVerifiable().toAddress()).upgradeFacade(newFacade);
         return dictionary;
     }
@@ -211,6 +223,7 @@ library DictionaryUtils {
         🤖 Create Mock Dictionary
     --------------------------------*/
     function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
+        __debug("Create Mock Dictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functionInfos)),
             kind: DictionaryKind.Mock
@@ -253,7 +266,7 @@ library DictionaryUtils {
 }
 
 library DictionaryKindUtils {
-    function isNotUndefined(DictionaryKind kind) internal  returns(bool) {
+    function isNotUndefined(DictionaryKind kind) internal returns(bool) {
         return kind != DictionaryKind.undefined;
     }
     function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {

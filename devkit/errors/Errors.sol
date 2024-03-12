@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {StdStyle, console2} from "@devkit/utils/ForgeHelper.sol";
+import {StdStyle} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
 // Debug
@@ -20,7 +20,7 @@ library Errors {
 
     function throwError(string memory errorBody) internal {
         Logger.logError(errorBody);
-        revert(StringUtils.concat(Logger.ERR_HEADER, errorBody).bold());
+        revert(StringUtils.append(Logger.ERR_HEADER, errorBody).bold());
     }
 
 }

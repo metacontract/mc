@@ -78,23 +78,14 @@ library Debug {
     }
 
 
+    /**------------
+        Trace
+    --------------*/
+    function start(string memory location) internal {
+        stack(location);
+    }
+
     function stack(string memory location) internal {
         State().errorLocationStack.push(location);
     }
-
-    // function enqueueLocation(string memory location) internal {
-    //     State().errorLocationQueue.enqueue(location);
-    // }
-    // function logLocation() internal {
-    //     uint size = State().errorLocationStack.length;
-    //     for (uint i; i < size; ++i) {
-    //         log(State().errorLocationStack.pop());
-    //     }
-    // }
-    // function logLocation() internal {
-    //     uint size = State().errorLocationQueue.size();
-    //     for (uint i; i < size; ++i) {
-    //         log(State().errorLocationQueue.dequeue());
-    //     }
-    // }
 }

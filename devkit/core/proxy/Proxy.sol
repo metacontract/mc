@@ -8,6 +8,8 @@ import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
+import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
 import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 // Core
 // import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
@@ -37,6 +39,10 @@ struct Proxy {
     }
 
 library ProxyUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Proxy Utils"));
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Proxy
         🔧 Helper Methods for type Proxy
@@ -46,6 +52,7 @@ library ProxyUtils {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        __debug("Deploy Proxy");
         return dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
@@ -121,6 +128,7 @@ library ProxyUtils {
         🤖 Create Mock Proxy
     ---------------------------*/
     function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
+        __debug("Create Simple Mock Proxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
             kind: ProxyKind.Mock

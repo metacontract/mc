@@ -29,6 +29,10 @@ struct DictRegistry {
 }
 
 library DictRegistryUtils {
+    function __debug(string memory location) internal {
+        Debug.start(location.append(" @ Dictionary Registry Utils"));
+    }
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~
         📥 Safe Add Dictionary
         🔍 Find Dictionary
@@ -39,11 +43,12 @@ library DictRegistryUtils {
     /**---------------------------
         📥 Safe Add Dictionary
     -----------------------------*/
-    string constant safeAdd_ = "Safe Add Dictionary to DevKitEnv";
     function safeAdd(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
+        __debug("Safe Add Dictionary to Registry");
         return dictionaries.add(name.assertNotEmpty(), dictionary.assertNotEmpty());
     }
     function add(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
+        __debug("Add Dictionary to Registry");
         bytes32 nameHash = name.calcHash();
         if (dictionary.isNotMock()) {
             dictionaries.deployed[nameHash] = dictionary;
@@ -58,17 +63,17 @@ library DictRegistryUtils {
     /**------------------------
         🔍 Find Dictionary
     --------------------------*/
-    string constant find_ = "Find Dictionary";
     function find(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
+        __debug("Find Dictionary");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists();
     }
-    string constant findCurrentDictionary_ = "Find Current Dictionary";
     function findCurrentDictionary(DictRegistry storage dictionaries) internal returns(Dictionary storage) {
+        __debug("Find Current Dictionary");
         return dictionaries.currentDictionary.assertExists();
     }
-    string constant findMockDictionary_ = "Find Mock Dictionary";
     function findMockDictionary(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
+        __debug("Find Mock Dictionary");
         return dictionaries.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -105,10 +110,10 @@ library DictRegistryUtils {
     /**----------------------
         🔼 Update Context
     ------------------------*/
-    string constant safeUpdate_ = "Safe Update DevKit Context";
 
     /**----- 📚 Dictionary -------*/
     function safeUpdate(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
+        __debug("Safe Update DevKit Context");
         return dictionaries.update(dictionary.assertNotEmpty());
     }
     function update(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
