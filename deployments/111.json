@@ -1,0 +1,7 @@
+{
+    "InitSetAdmin": {
+        "v0.1.0": "0xaaa",
+        "v0.1.1": "0xaab",
+        "latest": "v0.1.1"
+    }
+}

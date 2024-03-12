@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {UCSScriptBase} from "../utils/UCSScriptBase.sol";
+import {MCScript} from "@devkit/MCScript.sol";
+// import {IClone} from "@mc-std/interfaces/functions/IClone.sol";
 
-contract DeployNewProxyScript is UCSScriptBase {
-    function setUp() public startBroadcastWithDeployerPrivKey {}
-
-    function run() public {
-        address proxy = newProxy();
+contract DeployNewProxyScript is MCScript {
+    function run() public startBroadcastWithDeployerPrivKey {
+        // address proxy = newProxy();
+        // address dictionary = getDictionary(proxy);
+        // opNames.push(OpName.Clone);
+        // setOps(dictionary, mc.opNames);
+        // ICloneOp(proxy).clone("");
     }
 }

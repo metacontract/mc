@@ -1,42 +1,20 @@
-# UDS Standard Operation Library
+# Meta Contract
 
-A library for standard operation contracts used in UDS.
+***Meta Contract*** is a framework for smart contract development, with its architecture based on *ERC-7546: UCS*.
 
-- ***Operations (Ops)***
-    - are registered in the Dictionary.
-    - are properly processed by ***Predicates***, ensuring the fulfillment of *Requires* and *Intents*.
 
-```mermaid
-erDiagram
-    Dictionary {
-        mapping ops
-    }
-    Dictionary ||--o{ Op : registered
-    Op {
-    }
+## Getting Started
+### Prerequisite
+- `foundry`
+
+### Install
+It can be installed from `metacontract/mc`.
+```sh
+forge install metacontract/mc
 ```
 
-## Contracts
-- ### Operations
-    ```
-    ops
-    ├ consensus
-    │  ├ ProposeOp.sol
-    │  └ VoteOp.sol
-    └ initialize
-        └ InitializeOp.sol
-    ```
-
-- ### Predicates
-    ```
-    predicates
-    └ MsgSender.sol
-    ```
-
-- ### Utilities
-    ```
-    StorageLib.sol
-    ```
+## Document
+The [MC Book](https://mc-book.ecdysis.xyz/) serves as a comprehensive guide for developing with the meta contract and is available on github at `metacontract/book`.
 
 ## Contributing
 Please check out the [Contributing Guide](./CONTRIBUTING.md).
