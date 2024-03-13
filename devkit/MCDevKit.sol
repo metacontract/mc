@@ -26,6 +26,7 @@ import {FuncRegistry} from "@devkit/core/functions/FuncRegistry.sol";
 import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
 import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
 import {MCStdFuncsArgs} from "@devkit/core/functions/MCStdFuncs.sol";
+    using MCStdFuncsArgs for address;
 //  proxy
 import {ProxyRegistry} from "@devkit/core/proxy/ProxyRegistry.sol";
 import {Proxy, ProxyUtils} from "@devkit/core/proxy/Proxy.sol";
@@ -42,10 +43,8 @@ struct MCDevKit {
 }
 
 library MCDevKitUtils {
-    using MCStdFuncsArgs for address;
-
     string constant LIB_NAME = "MCDevKit";
-    function recordExecStart(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
+    function recordExecStart(MCDevKit storage, string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
     function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
@@ -467,7 +466,7 @@ library MCDevKitUtils {
         return mc;
     }
 
-    function defaultOwner(MCDevKit storage mc) internal returns(address) {
+    function defaultOwner(MCDevKit storage) internal returns(address) {
         return ForgeHelper.msgSender();
     }
 
@@ -475,7 +474,7 @@ library MCDevKitUtils {
         return mc.functions.std.allFunctions.functionInfos;
     }
 
-    function defaultName(MCDevKit storage mc) internal  returns(string memory) {
+    function defaultName(MCDevKit storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 

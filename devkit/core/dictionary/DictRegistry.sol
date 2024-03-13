@@ -30,16 +30,15 @@ struct DictRegistry {
 
 library DictRegistryUtils {
     string constant LIB_NAME = "DictionaryRegistry";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function recordExecStart(DictRegistry storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function recordExecStart(DictRegistry storage dictionaries, string memory funcName) internal returns(uint) {
+        return dictionaries.recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(DictRegistry storage target) internal returns(DictRegistry storage) {
-        __signalComletion();
-        return target;
+    function recordExecFinish(DictRegistry storage dictionaries, uint pid) internal returns(DictRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return dictionaries;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,11 +52,12 @@ library DictRegistryUtils {
         📥 Safe Add Dictionary
     -----------------------------*/
     function safeAdd(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("safeAdd");
-        return dictionaries.add(name.assertNotEmpty(), dictionary.assertNotEmpty());
+        uint pid = dictionaries.recordExecStart("safeAdd");
+        return dictionaries .add(name.assertNotEmpty(), dictionary.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function add(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("add");
+        uint pid = dictionaries.recordExecStart("add");
         bytes32 nameHash = name.calcHash();
         if (dictionary.isNotMock()) {
             dictionaries.deployed[nameHash] = dictionary;
@@ -65,7 +65,7 @@ library DictRegistryUtils {
         if (dictionary.isMock()) {
             dictionaries.mocks[nameHash] = dictionary;
         }
-        return dictionaries;
+        return dictionaries.recordExecFinish(pid);
     }
 
 
@@ -73,16 +73,16 @@ library DictRegistryUtils {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __recordExecStart("find");
+        uint pid = dictionaries.recordExecStart("find");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists();
     }
     function findCurrentDictionary(DictRegistry storage dictionaries) internal returns(Dictionary storage) {
-        __recordExecStart("findCurrentDictionary");
+        uint pid = dictionaries.recordExecStart("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists();
     }
     function findMockDictionary(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __recordExecStart("findMockDictionary");
+        uint pid = dictionaries.recordExecStart("findMockDictionary");
         return dictionaries.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -122,8 +122,9 @@ library DictRegistryUtils {
 
     /**----- 📚 Dictionary -------*/
     function safeUpdate(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __recordExecStart("safeUpdate");
-        return dictionaries.update(dictionary.assertNotEmpty());
+        uint pid = dictionaries.recordExecStart("safeUpdate");
+        return dictionaries .update(dictionary.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function update(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
         dictionaries.currentDictionary = dictionary;

@@ -34,16 +34,15 @@ struct FuncRegistry {
 
 library FuncRegistryUtils {
     string constant LIB_NAME = "FunctionRegistry";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function recordExecStart(FuncRegistry storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function recordExecStart(FuncRegistry storage functions, string memory funcName) internal returns(uint) {
+        return functions.recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(FuncRegistry storage target) internal returns(FuncRegistry storage) {
-        __signalComletion();
-        return target;
+    function recordExecFinish(FuncRegistry storage functions, uint pid) internal returns(FuncRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return functions;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,16 +59,17 @@ library FuncRegistryUtils {
         🌱 Init Custom Bundle
     -----------------------------*/
     function safeInit(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("safeInit");
+        uint pid = functions.recordExecStart("safeInit");
         check(name.isNotEmpty(), "Empty Name");
         return functions.assertBundleNotExists(name)
-                        .init(name);
+                        .init(name)
+                        .recordExecFinish(pid);
     }
     function init(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("init");
+        uint pid = functions.recordExecStart("init");
         functions.bundles[name.safeCalcHash()].safeAssign(name);
         functions.safeUpdateCurrentBundle(name);
-        return functions;
+        return functions.recordExecFinish(pid);
     }
 
 
@@ -77,14 +77,14 @@ library FuncRegistryUtils {
         ✨ Add Custom Function
     -----------------------------*/
     function safeAddFunction(FuncRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FuncRegistry storage) {
-        __recordExecStart("safeAddFunction");
+        uint pid = functions.recordExecStart("safeAddFunction");
         check(name.isNotEmpty(), "Empty Name");
         functions.customs[name.safeCalcHash()]
                 .safeAssign(name)
                 .safeAssign(selector)
                 .safeAssign(implementation);
         functions.safeUpdateCurrentFunction(name);
-        return functions;
+        return functions.recordExecFinish(pid);
     }
 
 
@@ -110,11 +110,11 @@ library FuncRegistryUtils {
         🖼 Set Facade
     --------------------*/
     function set(FuncRegistry storage functions, string memory name, address facade) internal returns(FuncRegistry storage) {
-        __recordExecStart("set");
+        uint pid = functions.recordExecStart("set");
         functions.bundles[name.safeCalcHash()]
                     .assertExists()
                     .safeAssign(facade);
-        return functions;
+        return functions.recordExecFinish(pid);
     }
 
 
@@ -123,14 +123,15 @@ library FuncRegistryUtils {
     ------------------------*/
     /**----- 🧩 FunctionInfo -------*/
     function safeUpdateCurrentFunction(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
-        __recordExecStart("safeUpdateCurrentFunction");
+        uint pid = functions.recordExecStart("safeUpdateCurrentFunction");
         functions.currentFunctionName = name.assertNotEmpty();
-        return functions;
+        return functions.recordExecFinish(pid);
     }
     /**----- 🧺 Bundle -------*/
     function safeUpdateCurrentBundle(FuncRegistry storage functions, string memory name) internal returns(FuncRegistry storage) {
+        uint pid = functions.recordExecStart("safeUpdateCurrentBundle");
         functions.currentBundleName = name.assertNotEmpty();
-        return functions;
+        return functions.recordExecFinish(pid);
     }
 
 
@@ -138,27 +139,27 @@ library FuncRegistryUtils {
         🔍 Find Function
     ------------------------------*/
     function findFunction(FuncRegistry storage functions, string memory name) internal returns(FuncInfo storage) {
-        __recordExecStart("findFunction");
+        uint pid = functions.recordExecStart("findFunction");
         return functions.customs[name.safeCalcHash()];
     }
     function findCurrentFunction(FuncRegistry storage functions) internal returns(FuncInfo storage) {
         return functions.findFunction(functions.findCurrentFunctionName());
     }
         function findCurrentFunctionName(FuncRegistry storage functions) internal returns(string memory) {
-            __recordExecStart("findCurrentFunctionName");
+            uint pid = functions.recordExecStart("findCurrentFunctionName");
             return functions.currentFunctionName.assertNotEmpty();
         }
 
     function findBundle(FuncRegistry storage functions, string memory name) internal returns(BundleInfo storage) {
-        __recordExecStart("findBundle");
+        uint pid = functions.recordExecStart("findBundle");
         return functions.bundles[name.safeCalcHash()];
     }
     function findCurrentBundle(FuncRegistry storage functions) internal returns(BundleInfo storage) {
-        __recordExecStart("findCurrentBundle");
+        uint pid = functions.recordExecStart("findCurrentBundle");
         return functions.findBundle(functions.findCurrentBundleName());
     }
         function findCurrentBundleName(FuncRegistry storage functions) internal returns(string memory) {
-            __recordExecStart("findCurrentBundleName");
+            uint pid = functions.recordExecStart("findCurrentBundleName");
             return functions.currentBundleName.assertNotEmpty();
         }
 

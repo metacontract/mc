@@ -27,16 +27,15 @@ struct ProxyRegistry {
 
 library ProxyRegistryUtils {
     string constant LIB_NAME = "ProxyRegistry";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function recordExecStart(ProxyRegistry storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function recordExecStart(ProxyRegistry storage proxies, string memory funcName) internal returns(uint) {
+        return proxies.recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(ProxyRegistry storage target) internal returns(ProxyRegistry storage) {
-        __signalComletion();
-        return target;
+    function recordExecFinish(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return proxies;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,8 +48,9 @@ library ProxyRegistryUtils {
         📥 Safe Add Proxy
     ------------------------*/
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        __recordExecStart("safeAdd");
-        return proxies.add(name.assertNotEmpty(), proxy.assertNotEmpty());
+        uint pid = proxies.recordExecStart("safeAdd");
+        return proxies  .add(name.assertNotEmpty(), proxy.assertNotEmpty())
+                        .recordExecFinish(pid);
     }
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         bytes32 nameHash = name.calcHash();
@@ -67,16 +67,16 @@ library ProxyRegistryUtils {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        __recordExecStart("find");
+        uint pid = proxies.recordExecStart("find");
         return proxies.deployed[name.safeCalcHash()]
                         .assertExists();
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
-        __recordExecStart("findCurrentProxy");
+        uint pid = proxies.recordExecStart("findCurrentProxy");
         return proxies.currentProxy.assertExists();
     }
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        __recordExecStart("findSimpleMockProxy");
+        uint pid = proxies.recordExecStart("findSimpleMockProxy");
         return proxies.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -105,8 +105,8 @@ library ProxyRegistryUtils {
     ------------------------*/
     /**----- 🏠 Proxy -------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        __recordExecStart("safeUpdate");
-        return proxies.update(proxy.assertNotEmpty());
+        uint pid = proxies.recordExecStart("safeUpdate");
+        return proxies.update(proxy.assertNotEmpty()).recordExecFinish(pid);
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         proxies.currentProxy = proxy;
