@@ -74,14 +74,14 @@ library ProxyUtils {
         -----------------------------*/
         function deployProxyVerifiable(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
-                addr: address(new ERC7546ProxyEtherscan(dictionary.toAddress(), initData)),
+                addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
                 kind: ProxyKind.Verifiable
             });
         }
 
         function deployProxy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
-                addr: address(new ERC7546Proxy(dictionary.toAddress(), initData)),
+                addr: address(new ERC7546Proxy(dictionary.addr, initData)),
                 kind: ProxyKind.Normal
             });
         }

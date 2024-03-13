@@ -226,7 +226,7 @@ library MCDevKitUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.toAddress()));
+        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
         mc.dictionary   .safeAdd(name, newDictionary)
                         .safeUpdate(newDictionary);
@@ -283,7 +283,7 @@ library MCDevKitUtils {
         🐣 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.toAddress()).comma().append(string(initData)));
+        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.addr).comma().append(string(initData)));
         Proxy memory proxy = ProxyUtils.deploy(dictionary, initData);
         mc.proxy.safeAdd(name, proxy)
                 .safeUpdate(proxy);
@@ -392,7 +392,7 @@ library MCDevKitUtils {
         return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.toAddress()));
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.addr));
         mc.dictionary.safeUpdate(dictionary);
         return mc.recordExecFinish(pid);
     }
@@ -444,7 +444,7 @@ library MCDevKitUtils {
     }
 
     function getDictionaryAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findCurrentDictionary().toAddress();
+        return mc.findCurrentDictionary().addr;
     }
 
 
