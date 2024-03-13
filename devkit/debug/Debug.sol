@@ -4,6 +4,29 @@ pragma solidity ^0.8.24;
 // Utils
 import {console2, StdStyle} from "../utils/ForgeHelper.sol";
 import {StringUtils} from "../utils/StringUtils.sol";
+import {Logger} from "@devkit/debug/Logger.sol";
+
+bytes32 constant DEBUGGER = 0x03d3692c02b7cdcaf0187e8ede4101c401cc53a33aa7e03ef4682fcca8a55300;
+/// @custom:storage-location erc7201:mc.devkit.debugger
+struct DebugState {
+    LogLevel logLevel;
+    string[] errorLocationStack;
+    Process[] processes;
+    uint nextPid;
+}
+    enum LogLevel {
+        Disable,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Critical
+    }
+    struct Process {
+        string libName;
+        string funcName;
+        string params;
+    }
 
 //=================
 //  🐞 Debug
@@ -15,23 +38,9 @@ library Debug {
     /**+++++++++++++++++++++
         🔵 Debug State
     +++++++++++++++++++++++*/
-    function State() internal pure returns(StateStorage storage ref) {
+    function State() internal pure returns(DebugState storage ref) {
         assembly { ref.slot := DEBUGGER }
     }
-    bytes32 constant DEBUGGER = 0x03d3692c02b7cdcaf0187e8ede4101c401cc53a33aa7e03ef4682fcca8a55300;
-    /// @custom:storage-location erc7201:mc.devkit.debugger
-    struct StateStorage {
-        LogLevel logLevel;
-        string[] errorLocationStack;
-    }
-        enum LogLevel {
-            Disable,
-            Debug,
-            Info,
-            Warn,
-            Error,
-            Critical
-        }
 
     /**-------------------------
         🕹️ Logging Control
@@ -81,11 +90,15 @@ library Debug {
     /**----------------------------
         📈 Execution Tracking
     ------------------------------*/
-    function recordExecStart(string memory libName, string memory funcName, string memory params) internal {
-        stack(libName.dot().append(funcName).brace().append(params.italic()));
+    function recordExecStart(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
+        pid = State().nextPid;
+        State().processes.push(Process(libName, funcName, params));
+        Logger.logExecStart(pid, libName, funcName);
+        State().nextPid++;
     }
 
-    function stack(string memory location) internal {
-        State().errorLocationStack.push(location);
+    function recordExecFinish(uint pid) internal {
+        Process memory current = State().processes[pid];
+        Logger.logExecFinish(pid, current.libName, current.funcName);
     }
 }

@@ -32,7 +32,7 @@ library StringUtils {
     /**---------------
         Convertor
     ----------------*/
-    function append(string memory original, string memory addition) internal pure returns(string memory) {
+    function append(string memory original, string memory addition) internal returns(string memory) {
         return string.concat(original, addition);
     }
     function append(string memory str, address addr) internal returns(string memory) {
@@ -41,21 +41,33 @@ library StringUtils {
     function append(string memory str, bytes4 selector) internal returns(string memory) {
         return str.append(selector.toString());
     }
+    function append(string memory str, uint num) internal returns(string memory) {
+        return str.append(vm.toString(num));
+    }
 
-    function br(string memory str) internal pure returns(string memory) {
+    function br(string memory str) internal returns(string memory) {
         return string.concat(str, "\n");
     }
-    function indent(string memory str) internal pure returns(string memory) {
+    function indent(string memory str) internal returns(string memory) {
         return string.concat(str, "\t");
     }
-    function comma(string memory str) internal pure returns(string memory) {
+    function comma(string memory str) internal returns(string memory) {
         return string.concat(str, ", ");
     }
-    function dot(string memory str) internal pure returns(string memory) {
+    function dot(string memory str) internal returns(string memory) {
         return string.concat(str, ".");
     }
-    function brace(string memory str) internal pure returns(string memory) {
+    function parens(string memory str) internal returns(string memory) {
         return string.concat(str, "()");
+    }
+    function brackL(string memory str) internal returns(string memory) {
+        return string.concat("[", str);
+    }
+    function brackR(string memory str) internal returns(string memory) {
+        return string.concat(str, "]");
+    }
+    function sp(string memory str) internal returns(string memory) {
+        return string.concat(str, " ");
     }
 
     function substring(string memory str, uint n) internal pure returns (string memory) {

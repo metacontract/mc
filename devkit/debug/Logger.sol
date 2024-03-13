@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {console2, StdStyle} from "@devkit/utils/ForgeHelper.sol";
+import {console2, StdStyle, vm} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
+import {Debug, Process} from "@devkit/debug/Debug.sol";
 
 //================
 //  📊 Logger
@@ -70,19 +70,36 @@ library Logger {
         log(message.bold());
     }
 
+    string constant START = "Starting... ";
+    function logExecStart(uint pid, string memory libName, string memory funcName) internal {
+        log(formatProc(pid, START, libName, funcName));
+    }
+    string constant FINISH = "Finished ";
+    function logExecFinish(uint pid, string memory libName, string memory funcName) internal {
+        log(formatProc(pid, FINISH, libName, funcName));
+    }
 
     /**---------------
         📑 Parser
     -----------------*/
     function parseLocations() internal returns(string memory locations) {
-        uint size = Debug.State().errorLocationStack.length;
-        for (uint i = size; i > 0; --i) {
-            locations = locations.append(formatLocation(Debug.State().errorLocationStack[i-1]));
+        Process[] memory processes = Debug.State().processes;
+        for (uint i = processes.length; i > 0; --i) {
+            locations = locations.append(formatLocation(processes[i-1]));
         }
     }
 
-    function formatLocation(string memory location) internal returns(string memory) {
-        return StringUtils.append("\n\t    at ", location).dim();
+    string constant AT = "\n\t    at ";
+    function formatLocation(Process memory proc) internal returns(string memory) {
+        return AT.append(proc.libName.dot().append(proc.funcName).parens().append(proc.params.italic())).dim();
+    }
+
+    string constant PID = "pid:";
+    function formatPid(uint pid) internal returns(string memory message) {
+        return message.brackL().append(PID).append(pid).brackR().sp().dim();
+    }
+    function formatProc(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
+        return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
     }
 
 string constant ERR_STR_EMPTY = "Empty String";
