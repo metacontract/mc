@@ -37,16 +37,15 @@ struct MCStdFuncs {
 
 library MCStdFuncsUtils {
     string constant LIB_NAME = "MCStdFuncs";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(MCStdFuncs storage target) internal returns(MCStdFuncs storage) {
-        __signalComletion();
-        return target;
+    function recordExecFinish(MCStdFuncs storage std, uint pid) internal returns(MCStdFuncs storage) {
+        Debug.recordExecFinish(pid);
+        return std;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,45 +58,49 @@ library MCStdFuncsUtils {
         🔏 Assign and Load Standard Functions
     --------------------------------------------*/
     function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        return std  ._logProcStart("Loading and Assigning FuncInfos... @ MCStdFuncs")
-                    .assignAndLoad_InitSetAdmin()
+        uint pid = recordExecStart("assignAndLoad");
+        return std  .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
                     .assignAndLoad_Clone()
                     .assignAndLoad_SetImplementation()
-                    ._logProcFin("");
+                    .recordExecFinish(pid);
     }
 
         /**===== Each Std Function =====*/
         function assignAndLoad_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("assignAndLoad_InitSetAdmin");
             std.initSetAdmin.safeAssign("INIT_SET_ADMIN")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
                             .loadAndAssignImplFromEnv()
                             .parseAndLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function assignAndLoad_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("assignAndLoad_GetDeps");
             std.getDeps .safeAssign("GET_DEPS")
                         .safeAssign(GetDeps.getDeps.selector)
                         .loadAndAssignImplFromEnv()
                         .parseAndLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function assignAndLoad_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("assignAndLoad_Clone");
             std.clone   .safeAssign("CLONE")
                         .safeAssign(Clone.clone.selector)
                         .loadAndAssignImplFromEnv()
                         .parseAndLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function assignAndLoad_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("assignAndLoad_SetImplementation");
             std.setImplementation   .safeAssign("SET_IMPLEMENTATION")
                                     .safeAssign(SetImplementation.setImplementation.selector)
                                     .loadAndAssignImplFromEnv()
                                     .parseAndLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
 
@@ -105,43 +108,46 @@ library MCStdFuncsUtils {
         🐣 Deploy Standard Functions If Not Exists
         TODO versioning
     -------------------------------------------------*/
-    function deployIfNotExists(MCStdFuncs storage std) internal returns(MCStdFuncs storage)
-    {
-        return std  ._logProcStart("Deploying MCStdFuncs if not exists...")
-                    .deployIfNotExists_InitSetAdmin()
+    function deployIfNotExists(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+        uint pid = recordExecStart("deployIfNotExists");
+        return std  .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
                     .deployIfNotExists_Clone()
                     .deployIfNotExists_SetImplementation()
-                    ._logProcFin("");
+                    .recordExecFinish(pid);
     }
 
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("deployIfNotExists_InitSetAdmin");
             if (std.initSetAdmin.implementation.isNotContract()) {
                 std.initSetAdmin.safeAssign(address(new InitSetAdmin()));
             }
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function deployIfNotExists_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("deployIfNotExists_GetDeps");
             if (!std.getDeps.implementation.isContract()) {
                 std.getDeps.safeAssign(address(new GetDeps()));
             }
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function deployIfNotExists_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("deployIfNotExists_Clone");
             if (!std.clone.implementation.isContract()) {
                 std.clone.safeAssign(address(new Clone()));
             }
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function deployIfNotExists_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("deployIfNotExists_SetImplementation");
             if (!std.setImplementation.implementation.isContract()) {
                 std.setImplementation.safeAssign(address(new SetImplementation()));
             }
-            return std;
+            return std.recordExecFinish(pid);
         }
 
 
@@ -149,14 +155,15 @@ library MCStdFuncsUtils {
         🧺 Configure Standard Bundles
     ------------------------------------*/
     function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        return std  ._logProcStart("Configuring StdBundle...")
-                    .configureStdBundle_AllFunctions()
+        uint pid = recordExecStart("configureStdBundle");
+        return std  .configureStdBundle_AllFunctions()
                     .configureStdBundle_Defaults()
-                    ._logProcFin("");
+                    .recordExecFinish(pid);
     }
 
         /**===== Each Std Bundle =====*/
         function configureStdBundle_AllFunctions(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("configureStdBundle_AllFunctions");
             std.allFunctions.safeAssign("ALL_FUNCTIONS")
                             .safeAdd(std.initSetAdmin)
                             .safeAdd(std.getDeps)
@@ -164,16 +171,17 @@ library MCStdFuncsUtils {
                             .safeAdd(std.setImplementation)
                             .safeAssign(address(new AllStdsFacade()));
                             // .emitLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
         function configureStdBundle_Defaults(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+            uint pid = recordExecStart("configureStdBundle_Defaults");
             std.defaults.safeAssign("DEFAULTS")
                         .safeAdd(std.initSetAdmin)
                         .safeAdd(std.getDeps)
                         .safeAssign(address(new DefaultsFacade()));
                         // .emitLog();
-            return std;
+            return std.recordExecFinish(pid);
         }
 
 
@@ -187,14 +195,6 @@ library MCStdFuncsUtils {
     //     return std.defaultOps.facade;
     // }
 
-    function _logProcStart(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
-        Logger.logProcStart(message);
-        return std;
-    }
-    function _logProcFin(MCStdFuncs storage std, string memory message) internal returns(MCStdFuncs storage) {
-        Logger.logProcFin(message);
-        return std;
-    }
 }
 
 

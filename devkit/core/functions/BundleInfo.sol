@@ -31,47 +31,46 @@ struct BundleInfo {
 
 library BundleInfoUtils {
     string constant LIB_NAME = "BundleInfo";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(BundleInfo storage target) internal returns(BundleInfo storage) {
-        __signalComletion();
-        return target;
+    function recordExecFinish(BundleInfo storage bundleInfo, uint pid) internal returns(BundleInfo storage) {
+        Debug.recordExecFinish(pid);
+        return bundleInfo;
     }
 
     /**---------------------------
         📥 Assign BundleInfo
     -----------------------------*/
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
-        __recordExecStart("safeAssign");
+        uint pid = recordExecStart("safeAssign");
         bundleInfo.name = name.assertNotEmpty();
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
-        __recordExecStart("safeAssign");
+        uint pid = recordExecStart("safeAssign");
         bundleInfo.facade = facade.assertIsContract();
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
-        __recordExecStart("safeAdd");
+        uint pid = recordExecStart("safeAdd");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
             functionInfo.assertImplIsContract()
         );
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
-        __recordExecStart("safeAdd");
+        uint pid = recordExecStart("safeAdd");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
         }
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
 
