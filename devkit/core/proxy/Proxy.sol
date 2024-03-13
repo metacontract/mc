@@ -40,16 +40,18 @@ struct Proxy {
 
 library ProxyUtils {
     string constant LIB_NAME = "Proxy";
-    function __recordExecStart(string memory funcName, string memory params) internal {
-        Debug.recordExecStart(LIB_NAME, funcName, params);
+    function __recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function __recordExecStart(string memory funcName) internal {
-        __recordExecStart(funcName, "");
+    function __recordExecStart(string memory funcName) internal returns(uint) {
+        return __recordExecStart(funcName, "");
     }
-    function __signalComletion() internal {}
-    function signalCompletion(Proxy storage target) internal returns(Proxy storage) {
-        __signalComletion();
-        return target;
+    function __recordExecFinish(uint pid) internal {
+        Debug.recordExecFinish(pid);
+    }
+    function __recordExecFinish(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
+        __recordExecFinish(pid);
+        return proxy;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,11 +62,12 @@ library ProxyUtils {
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
-        __recordExecStart("deploy");
-        return dictionary.isVerifiable() ?
+    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+        uint pid = __recordExecStart("deploy");
+        proxy = dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
+        return proxy.__recordExecFinish(pid);
     }
         /**---------------------------
             Deploy Proxy Primitives
@@ -137,11 +140,11 @@ library ProxyUtils {
         🤖 Create Mock Proxy
     ---------------------------*/
     function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
-        __recordExecStart("createSimpleMockProxy");
+        uint pid = __recordExecStart("createSimpleMockProxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
             kind: ProxyKind.Mock
-        });
+        }).__recordExecFinish(pid);
     }
 
 }
