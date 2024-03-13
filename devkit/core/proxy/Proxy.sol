@@ -22,6 +22,7 @@ import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";
 import {ERC7546ProxyEtherscan} from "@ucs-contracts/src/proxy/ERC7546ProxyEtherscan.sol";
 
+
 /**---------------------------
     🏠 UCS Proxy Primitive
 -----------------------------*/
@@ -40,22 +41,12 @@ struct Proxy {
 
 library ProxyUtils {
     string constant LIB_NAME = "Proxy";
-    function __recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function __recordExecStart(string memory funcName) internal returns(uint) {
-        return __recordExecStart(funcName, "");
-    }
-    function __recordExecFinish(uint pid) internal {
-        Debug.recordExecFinish(pid);
-    }
-    function __recordExecFinish(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
-        __recordExecFinish(pid);
-        return proxy;
-    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    << Primary >>
         🚀 Deploy Proxy
+    << Helper >>
+        🤖 Create Mock Proxy
         🔧 Helper Methods for type Proxy
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -63,11 +54,11 @@ library ProxyUtils {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
-        uint pid = __recordExecStart("deploy");
+        uint pid = recordExecStart("deploy");
         proxy = dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
-        return proxy.__recordExecFinish(pid);
+        return proxy.recordExecFinish(pid);
     }
         /**---------------------------
             Deploy Proxy Primitives
@@ -86,30 +77,40 @@ library ProxyUtils {
             });
         }
 
-
-    /**------------------------------------
-        🔧 Helper Methods for type Proxy
-    --------------------------------------*/
-    function alloc(Proxy storage target, Proxy storage value) internal {
-        target = value;
+    function safeDeploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        uint pid = recordExecStart("safeDeploy");
+        return deploy(dictionary.assertExists(), initData).recordExecFinish(pid);
     }
 
-    function toAddress(Proxy memory proxy) internal  returns(address) {
-        return proxy.addr;
+
+    /**-------------------------
+        🤖 Create Mock Proxy
+    ---------------------------*/
+    function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
+        uint pid = recordExecStart("createSimpleMockProxy");
+        return Proxy({
+            addr: address(new SimpleMockProxy(functionInfos)),
+            kind: ProxyKind.Mock
+        }).recordExecFinish(pid);
     }
 
-    // function asProxy(address addr) internal  returns(Proxy storage) {
-    //     return Proxy.wrap(addr);
-    // }
 
+
+    /**-------------------
+        🧪 Test Utils
+    ---------------------*/
     // function loadDictionary(Proxy storage proxy) internal returns(Dictionary storage) {
-    //     return ForgeHelper.loadAddress(proxy.toAddress(), ERC7546Utils.DICTIONARY_SLOT).asDictionary();
+    //     return ForgeHelper.loadAddress(proxy.addr, ERC7546Utils.DICTIONARY_SLOT).asDictionary();
     // }
 
-    function changeDictionary(Proxy storage proxy) internal {}
+    // function changeDictionary(Proxy storage proxy) internal {}
 
+
+    /**-------------------------------
+        🧐 Inspectors & Assertions
+    ---------------------------------*/
     function exists(Proxy storage proxy) internal returns(bool) {
-        return proxy.toAddress().isContract();
+        return proxy.addr.isContract();
     }
     function assertExists(Proxy storage proxy) internal returns(Proxy storage) {
         check(proxy.exists(), "Proxy Not Exist");
@@ -117,14 +118,14 @@ library ProxyUtils {
     }
 
     function isNotEmpty(Proxy memory proxy) internal returns(bool) {
-        return proxy.toAddress().isContract();
+        return proxy.addr.isContract();
     }
     function assertNotEmpty(Proxy memory proxy) internal returns(Proxy memory) {
         check(proxy.isNotEmpty(), "Empty Proxy");
         return proxy;
     }
 
-    function isMock(Proxy memory proxy) internal returns(bool) {
+    function isMock(Proxy memory proxy) internal pure returns(bool) {
         return proxy.kind == ProxyKind.Mock;
     }
     function isNotMock(Proxy memory proxy) internal returns(bool) {
@@ -132,19 +133,26 @@ library ProxyUtils {
     }
 
     function assignLabel(Proxy storage proxy, string memory name) internal returns(Proxy storage) {
-        ForgeHelper.assignLabel(proxy.toAddress(), name);
+        ForgeHelper.assignLabel(proxy.addr, name);
         return proxy;
     }
 
-    /**-------------------------
-        🤖 Create Mock Proxy
-    ---------------------------*/
-    function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
-        uint pid = __recordExecStart("createSimpleMockProxy");
-        return Proxy({
-            addr: address(new SimpleMockProxy(functionInfos)),
-            kind: ProxyKind.Mock
-        }).__recordExecFinish(pid);
+
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
+    }
+    function recordExecFinish(uint pid) internal {
+        Debug.recordExecFinish(pid);
+    }
+    function recordExecFinish(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
+        recordExecFinish(pid);
+        return proxy;
     }
 
 }

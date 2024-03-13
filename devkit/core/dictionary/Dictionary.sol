@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol"; // solhin-disable-line no-unused-import
+import "@devkit/utils/GlobalMethods.sol";
 // Utils
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
@@ -42,8 +42,9 @@ struct Dictionary {
         Mock
     }
 
-string constant LIB_NAME = "Dictionary";
 library DictionaryUtils {
+    string constant LIB_NAME = "Dictionary";
+
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         🚀 Deploy Dictionary
@@ -65,12 +66,16 @@ library DictionaryUtils {
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return deployDictionaryVerifiable(owner).recordExecFinish(pid);
     }
+        /**---------------------------
+            Deploy Proxy Primitives
+        -----------------------------*/
         function deployDictionaryVerifiable(address owner) internal returns(Dictionary memory) {
             return Dictionary({
                 addr: address(new DictionaryEtherscan(owner)),
                 kind: DictionaryKind.Verifiable
             });
         }
+
     function safeDeploy(address owner) internal returns(Dictionary memory) {
         uint pid = recordExecStart("safeDeploy");
         return deploy(owner.assertNotZero()).recordExecFinish(pid);

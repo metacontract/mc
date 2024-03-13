@@ -387,7 +387,7 @@ library MCDevKitUtils {
         return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.toAddress()));
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.addr));
         mc.proxy.safeUpdate(proxy);
         return mc.recordExecFinish(pid);
     }
@@ -508,6 +508,6 @@ library MCDevKitUtils {
 
 
     function toProxyAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findCurrentProxy().toAddress();
+        return mc.findCurrentProxy().addr;
     }
 }
