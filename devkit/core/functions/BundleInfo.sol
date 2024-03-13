@@ -30,46 +30,54 @@ struct BundleInfo {
 }
 
 library BundleInfoUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Bundle Info Utils"));
+    string constant LIB_NAME = "BundleInfo";
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
+    }
+    function recordExecFinish(BundleInfo storage bundleInfo, uint pid) internal returns(BundleInfo storage) {
+        Debug.recordExecFinish(pid);
+        return bundleInfo;
     }
 
     /**---------------------------
         📥 Assign BundleInfo
     -----------------------------*/
     function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
-        __debug("Safe Assign `name` to BundleInfo");
+        uint pid = recordExecStart("safeAssign");
         bundleInfo.name = name.assertNotEmpty();
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
     function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
-        __debug("Safe Assign `facade` to BundleInfo");
+        uint pid = recordExecStart("safeAssign");
         bundleInfo.facade = facade.assertIsContract();
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
-        __debug("Safe Add FunctionInfo to BundleInfo");
+        uint pid = recordExecStart("safeAdd");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
             functionInfo.assertImplIsContract()
         );
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
     function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
-        __debug("Safe Add FunctionInfos to BundleInfo");
+        uint pid = recordExecStart("safeAdd");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
         }
-        return bundleInfo;
+        return bundleInfo.recordExecFinish(pid);
     }
 
 
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(bool flag) {
+    function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal view returns(bool flag) {
         for (uint i; i < bundleInfo.functionInfos.length; ++i) {
             if (functionInfo.isEqual(bundleInfo.functionInfos[i])) return true;
         }

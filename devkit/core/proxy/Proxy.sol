@@ -39,8 +39,19 @@ struct Proxy {
     }
 
 library ProxyUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Proxy Utils"));
+    string constant LIB_NAME = "Proxy";
+    function __recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function __recordExecStart(string memory funcName) internal returns(uint) {
+        return __recordExecStart(funcName, "");
+    }
+    function __recordExecFinish(uint pid) internal {
+        Debug.recordExecFinish(pid);
+    }
+    function __recordExecFinish(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
+        __recordExecFinish(pid);
+        return proxy;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,11 +62,12 @@ library ProxyUtils {
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
-        __debug("Deploy Proxy");
-        return dictionary.isVerifiable() ?
+    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+        uint pid = __recordExecStart("deploy");
+        proxy = dictionary.isVerifiable() ?
                     deployProxyVerifiable(dictionary, initData) :
                     deployProxy(dictionary, initData);
+        return proxy.__recordExecFinish(pid);
     }
         /**---------------------------
             Deploy Proxy Primitives
@@ -128,17 +140,17 @@ library ProxyUtils {
         🤖 Create Mock Proxy
     ---------------------------*/
     function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
-        __debug("Create Simple Mock Proxy");
+        uint pid = __recordExecStart("createSimpleMockProxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
             kind: ProxyKind.Mock
-        });
+        }).__recordExecFinish(pid);
     }
 
 }
 
 library ProxyKindUtils {
-    function isNotUndefined(ProxyKind kind) internal returns(bool) {
+    function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
         return kind != ProxyKind.undefined;
     }
     function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {

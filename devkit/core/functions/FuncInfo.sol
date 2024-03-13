@@ -25,32 +25,43 @@ struct FuncInfo { /// @dev FuncInfo may be different depending on the op version
 }
 
 library FuncInfoUtils {
+    string constant LIB_NAME = "FuncInfo";
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
+    }
+    function recordExecFinish(FuncInfo storage funcInfo, uint pid) internal returns(FuncInfo storage) {
+        Debug.recordExecFinish(pid);
+        return funcInfo;
+    }
+
     using StringUtils for string;
     using Bytes4Utils for bytes4;
     using AddressUtils for address;
-
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Function Info Utils"));
-    }
 
 
     /**---------------------------
         📥 Assign FunctionInfo
     -----------------------------*/
     function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `name` to FunctionInfo");
+        uint pid = recordExecStart("Safe Assign `name` to FunctionInfo");
         return functionInfo .assertEmptyName()
-                            .assign(name.assertNotEmpty());
+                            .assign(name.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `selector` to FunctionInfo");
+        uint pid = recordExecStart("Safe Assign `selector` to FunctionInfo");
         return functionInfo .assertEmptySelector()
-                            .assign(selector.assertNotEmpty());
+                            .assign(selector.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
-        __debug("Safe Assign `implementation` to FunctionInfo");
+        uint pid = recordExecStart("Safe Assign `implementation` to FunctionInfo");
         return functionInfo .assertEmptyImpl()
-                            .assign(implementation.assertIsContract());
+                            .assign(implementation.assertIsContract())
+                            .recordExecFinish(pid);
     }
     function assign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
         functionInfo.name = name;
@@ -97,7 +108,7 @@ library FuncInfoUtils {
         🐞 Debug
     -----------------*/
     function parseAndLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        Logger.logDebug(
+        Logger.log(
             functionInfo.parse()
         );
         return functionInfo;

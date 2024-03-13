@@ -29,8 +29,16 @@ struct DictRegistry {
 }
 
 library DictRegistryUtils {
-    function __debug(string memory location) internal {
-        Debug.start(location.append(" @ Dictionary Registry Utils"));
+    string constant LIB_NAME = "DictionaryRegistry";
+    function recordExecStart(DictRegistry storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(DictRegistry storage dictionaries, string memory funcName) internal returns(uint) {
+        return dictionaries.recordExecStart(funcName, "");
+    }
+    function recordExecFinish(DictRegistry storage dictionaries, uint pid) internal returns(DictRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return dictionaries;
     }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,11 +52,12 @@ library DictRegistryUtils {
         📥 Safe Add Dictionary
     -----------------------------*/
     function safeAdd(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __debug("Safe Add Dictionary to Registry");
-        return dictionaries.add(name.assertNotEmpty(), dictionary.assertNotEmpty());
+        uint pid = dictionaries.recordExecStart("safeAdd");
+        return dictionaries .add(name.assertNotEmpty(), dictionary.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function add(DictRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __debug("Add Dictionary to Registry");
+        uint pid = dictionaries.recordExecStart("add");
         bytes32 nameHash = name.calcHash();
         if (dictionary.isNotMock()) {
             dictionaries.deployed[nameHash] = dictionary;
@@ -56,7 +65,7 @@ library DictRegistryUtils {
         if (dictionary.isMock()) {
             dictionaries.mocks[nameHash] = dictionary;
         }
-        return dictionaries;
+        return dictionaries.recordExecFinish(pid);
     }
 
 
@@ -64,16 +73,16 @@ library DictRegistryUtils {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __debug("Find Dictionary");
+        uint pid = dictionaries.recordExecStart("find");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists();
     }
     function findCurrentDictionary(DictRegistry storage dictionaries) internal returns(Dictionary storage) {
-        __debug("Find Current Dictionary");
+        uint pid = dictionaries.recordExecStart("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists();
     }
     function findMockDictionary(DictRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        __debug("Find Mock Dictionary");
+        uint pid = dictionaries.recordExecStart("findMockDictionary");
         return dictionaries.mocks[name.safeCalcHash()].assertExists();
     }
 
@@ -113,8 +122,9 @@ library DictRegistryUtils {
 
     /**----- 📚 Dictionary -------*/
     function safeUpdate(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
-        __debug("Safe Update DevKit Context");
-        return dictionaries.update(dictionary.assertNotEmpty());
+        uint pid = dictionaries.recordExecStart("safeUpdate");
+        return dictionaries .update(dictionary.assertNotEmpty())
+                            .recordExecFinish(pid);
     }
     function update(DictRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictRegistry storage) {
         dictionaries.currentDictionary = dictionary;

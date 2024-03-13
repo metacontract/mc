@@ -26,6 +26,7 @@ import {FuncRegistry} from "@devkit/core/functions/FuncRegistry.sol";
 import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
 import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
 import {MCStdFuncsArgs} from "@devkit/core/functions/MCStdFuncs.sol";
+    using MCStdFuncsArgs for address;
 //  proxy
 import {ProxyRegistry} from "@devkit/core/proxy/ProxyRegistry.sol";
 import {Proxy, ProxyUtils} from "@devkit/core/proxy/Proxy.sol";
@@ -42,17 +43,18 @@ struct MCDevKit {
 }
 
 library MCDevKitUtils {
-    using MCStdFuncsArgs for address;
+    string constant LIB_NAME = "MCDevKit";
+    function recordExecStart(MCDevKit storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
+        return mc.recordExecStart(funcName, "");
+    }
+    function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
+        Debug.recordExecFinish(pid);
+        return mc;
+    }
 
-    function __debug(string memory location, string memory params) internal {
-        Debug.start(
-            StringUtils .append("MCDevKit", location)
-                        .append(params.italic())
-        );
-    }
-    function __debug(string memory location) internal {
-        Debug.start(StringUtils .append("MCDevKit", location));
-    }
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
         🌱 Init Custom Bundle
@@ -73,10 +75,11 @@ library MCDevKitUtils {
         🏗 Setup DevKit Environment
     ----------------------------------*/
     function setupMCStdFuncs(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.functions.std .assignAndLoad()
-                    .deployIfNotExists()
-                    .configureStdBundle();
-        return mc;
+        uint pid = mc.recordExecStart("setupMCStdFuncs");
+        mc.functions.std.assignAndLoad()
+                        .deployIfNotExists()
+                        .configureStdBundle();
+        return mc.recordExecFinish(pid);
     }
 
 
@@ -84,17 +87,19 @@ library MCDevKitUtils {
         🌱 Init Custom Bundle
     ******************************/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        __debug(".init()", PARAMS.append(name));
+        uint pid = mc.recordExecStart("init", PARAMS.append(name));
         mc.functions.safeInit(name);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return mc.init(mc.defaultCustomBundleName());
     }
+
+    //
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        __debug(".ensureInit()", "");
+        uint pid = mc.recordExecStart("ensureInit");
         if (mc.functions.findCurrentBundle().hasNotName()) mc.init();
-        return mc;
+        return mc.recordExecFinish(pid);
     }
 
 
@@ -102,10 +107,11 @@ library MCDevKitUtils {
         🔗 Use Function
     ************************/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        __debug(".use()", PARAMS.append(name).comma().append(selector).comma().append(implementation));
+        uint pid = mc.recordExecStart("use", PARAMS.append(name).comma().append(selector).comma().append(implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
-                    .addCurrentToBundle();
+                    .addCurrentToBundle()
+                    .recordExecFinish(pid);
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(implementation.getLabel(), selector, implementation);
@@ -115,7 +121,7 @@ library MCDevKitUtils {
     }
     // function use(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
     //     return mc;
-    // }
+    // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         check(mc.functions.findFunction(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
@@ -124,16 +130,17 @@ library MCDevKitUtils {
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            __debug(".addFunction()");
+            uint pid = mc.recordExecStart("addFunction");
             mc.functions.safeAddFunction(name, selector, implementation);
-            return mc;
+            return mc.recordExecFinish(pid);
         }
         /**-------------------------------------
             🧺 Add Custom Function to Bundle
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
+            uint pid = mc.recordExecStart("addToBundle");
             mc.functions.addToBundle(functionInfo);
-            return mc;
+            return mc.recordExecFinish(pid);
         }
         function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
             mc.functions.addToBundle(mc.findCurrentFunction());
@@ -145,41 +152,43 @@ library MCDevKitUtils {
         🖼 Set Facade
     *********************/
     function set(MCDevKit storage mc, string memory name, address facade) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("set");
         mc.functions.set(name, facade);
-        return mc;
+            return mc.recordExecFinish(pid);
     }
-    // function set(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-    //     return mc.set(mc.findCurrentBundleName(), facade);
-    // }
+    function set(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
+        return mc.set(mc.functions.findCurrentBundleName(), facade);
+    }
 
 
     /******************************
         🚀 Deploy Meta Contract
     *******************************/
-    function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
+    function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, bytes memory initData) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(string(initData)));
+        return mc   .deployDictionary(name.append("_Dictionary"))
+                    .set(bundleInfo)
+                    .deployProxy(name.append("_Proxy"), initData)
+                    .recordExecFinish(pid);
         // TODO gen and set facade
-        return mc.deploy(string("MyProxy"));
-    }
-
-    function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc   .deployDictionary()
-                    .set(mc.functions.findCurrentBundle())
-                    .deployProxy(initData);
-    }
-    function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deploy(name, mc.functions.findCurrentBundle(), mc.defaultInitData());
-        // TODO defaultBundle --> current or allStd
-    }
-    function deploy(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.defaultName(), bundleInfo, mc.defaultInitData());
     }
     function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
         return mc.deploy(name, bundleInfo, mc.defaultInitData());
     }
-    function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc   .deployDictionary(name.append("_Dictionary"))
-                    .set(bundleInfo)
-                    .deployProxy(name.append("_Proxy"), initData);
+    function deploy(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+        return mc.deploy(mc.defaultName(), bundleInfo, mc.defaultInitData());
+    }
+    function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
+        return mc.deploy(name, mc.functions.findBundle(name), initData);
+    }
+    function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        return mc.deploy(name, mc.functions.findBundle(name), mc.defaultInitData());
+    }
+    function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
+        return mc.deploy(mc.defaultName(), mc.functions.findCurrentBundle(), initData);
+    }
+    function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return mc.deploy(mc.defaultName(), mc.functions.findCurrentBundle(), mc.defaultInitData());
     }
 
 
@@ -196,12 +205,11 @@ library MCDevKitUtils {
         🐣 Deploy Dictionary
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("deployDictionary", PARAMS.append(name).comma().append(owner));
         Dictionary memory dictionary = DictionaryUtils.deploy(owner);
-
         mc.dictionary   .safeAdd(name, dictionary)
                         .safeUpdate(dictionary);
-
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.deployDictionary(name, mc.defaultOwner());
@@ -218,12 +226,11 @@ library MCDevKitUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.toAddress()));
         Dictionary memory newDictionary = targetDictionary.duplicate();
-
         mc.dictionary   .safeAdd(name, newDictionary)
                         .safeUpdate(newDictionary);
-
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.duplicateDictionary(name, mc.findCurrentDictionary());
@@ -240,8 +247,9 @@ library MCDevKitUtils {
         🧩 Set Function
     -----------------------*/
     function set(MCDevKit storage mc, FuncInfo memory functionInfo) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("set", PARAMS.append(functionInfo.name));
         mc.findCurrentDictionary().set(functionInfo);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
 
 
@@ -249,8 +257,9 @@ library MCDevKitUtils {
         🧺 Set Bundle
     --------------------*/
     function set(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("set", PARAMS.append(bundleInfo.name));
         mc.findCurrentDictionary().set(bundleInfo);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
 
 
@@ -258,8 +267,9 @@ library MCDevKitUtils {
         🖼 Upgrade Facade
     ------------------------*/
     function upgradeFacade(MCDevKit storage mc, address newFacade) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("upgradeFacade", PARAMS.append(newFacade));
         mc.findCurrentDictionary().upgradeFacade(newFacade);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
 
 
@@ -273,12 +283,11 @@ library MCDevKitUtils {
         🐣 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, bytes memory initData) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.toAddress()).comma().append(string(initData)));
         Proxy memory proxy = ProxyUtils.deploy(dictionary, initData);
-
         mc.proxy.safeAdd(name, proxy)
                 .safeUpdate(proxy);
-
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
@@ -315,12 +324,15 @@ library MCDevKitUtils {
         @param functionInfos The function contract infos to be registered with the SimpleMockProxy. A bundle can also be specified. Note that the SimpleMockProxy cannot have its functions changed later. If no functions are provided, defaultBundle will be used.
     */
     function createSimpleMockProxy(MCDevKit storage mc, string memory name, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
+        string memory params = PARAMS.append(name);
+        for (uint i; i < functionInfos.length; ++i) {
+            params = params.comma().append(functionInfos[i].name);
+        }
+        uint pid = mc.recordExecStart("createSimpleMockProxy", params);
         Proxy memory simpleMockProxy = ProxyUtils.createSimpleMockProxy(functionInfos);
-
         mc.proxy.safeAdd(name, simpleMockProxy)
                 .safeUpdate(simpleMockProxy);
-
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function createSimpleMockProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.createSimpleMockProxy(name, mc.defaultFunctionInfos());
@@ -343,13 +355,11 @@ library MCDevKitUtils {
         @param functionInfos The Functions to be registered with the `MockDictionary`. A bundle can also be specified. If no Ops are provided, defaultBundle will be used.
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("createMockDictionary", PARAMS.append(name).comma().append(owner));
         Dictionary memory mockDictionary = DictionaryUtils.createMockDictionary(owner, functionInfos);
-        // MockDictionary mockDictionary = SimpleMockDictionaryUtils.createMockDictionary(owner, functionInfos);
-
         mc.dictionary   .safeAdd(name, mockDictionary)
                         .safeUpdate(mockDictionary);
-
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(MCDevKit storage) {
         return mc.createMockDictionary(name, owner, mc.defaultFunctionInfos());
@@ -367,21 +377,26 @@ library MCDevKitUtils {
         🔼 Update Context
     ------------------------*/
     function updateCurrentBundle(MCDevKit storage mc, string memory bundleName) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("updateCurrentBundle", PARAMS.append(bundleName));
         mc.functions.safeUpdateCurrentBundle(bundleName);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function updateCurrentFunction(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("updateCurrentFunction", PARAMS.append(functionName));
         mc.functions.safeUpdateCurrentFunction(functionName);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.toAddress()));
         mc.proxy.safeUpdate(proxy);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.toAddress()));
         mc.dictionary.safeUpdate(dictionary);
-        return mc;
+        return mc.recordExecFinish(pid);
     }
+
 
 
     /*************************
@@ -389,7 +404,7 @@ library MCDevKitUtils {
     **************************/
     /**----- 🧺 Bundle -------*/
     // function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
-    //     __debug(".findCurrentBundle()");
+    //     uint pid = mc.recordExecStart("findCurrentBundle");
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
@@ -398,11 +413,11 @@ library MCDevKitUtils {
 
     /**----- 🧩 Function -------*/
     function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
-        __debug(".findCurrentFunction()");
+        uint pid = mc.recordExecStart("findCurrentFunction", "");
         return mc.functions.findCurrentFunction();
     }
     function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
-        __debug(".findFunction()");
+        uint pid = mc.recordExecStart("findFunction");
         return mc.functions.findFunction(name);
     }
 
@@ -451,20 +466,15 @@ library MCDevKitUtils {
         return mc;
     }
 
-    function defaultOwner(MCDevKit storage mc) internal returns(address) {
+    function defaultOwner(MCDevKit storage) internal returns(address) {
         return ForgeHelper.msgSender();
     }
-
-    // function defaultBundle(MCDevKit storage mc) internal view returns(MCDevKit storage) {
-    //     // return mc.functions.std.allFunctions;
-    //     return mc;
-    // }
 
     function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
         return mc.functions.std.allFunctions.functionInfos;
     }
 
-    function defaultName(MCDevKit storage mc) internal  returns(string memory) {
+    function defaultName(MCDevKit storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 
