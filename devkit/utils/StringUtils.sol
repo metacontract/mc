@@ -79,6 +79,10 @@ library StringUtils {
         return string(result);
     }
 
+    function toSequential(string memory str, uint i) internal returns(string memory) {
+        return i == 1 ? str : str.append(i);
+    }
+
 
     /**-------------------------------
         🧐 Inspectors & Assertions
@@ -104,6 +108,18 @@ library StringUtils {
     }
     function isNotEqual(string memory a, string memory b) internal returns(bool) {
         return a.isEqual(b).isNot();
+    }
+
+
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    /**
+        Record Finish
+     */
+    function recordExecFinish(string memory str, uint pid) internal returns(string memory) {
+        Debug.recordExecFinish(pid);
+        return str;
     }
 
 }

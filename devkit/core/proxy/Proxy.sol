@@ -45,10 +45,13 @@ library ProxyUtils {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         🚀 Deploy Proxy
-    << Helper >>
         🤖 Create Mock Proxy
-        🔧 Helper Methods for type Proxy
+    << Helper >>
+        🧪 Test Utils
+        🐞 Debug
+        🧐 Inspectors & Assertions
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
     /**---------------------
         🚀 Deploy Proxy
@@ -141,16 +144,27 @@ library ProxyUtils {
     /**----------------
         🐞 Debug
     ------------------*/
+    /**
+        Record Start
+     */
     function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
     function recordExecStart(string memory funcName) internal returns(uint) {
         return recordExecStart(funcName, "");
     }
+
+    /**
+        Record Finish
+     */
     function recordExecFinish(uint pid) internal {
         Debug.recordExecFinish(pid);
     }
     function recordExecFinish(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
+        recordExecFinish(pid);
+        return proxy;
+    }
+    function recordExecFinishInStorage(Proxy storage proxy, uint pid) internal returns(Proxy storage) {
         recordExecFinish(pid);
         return proxy;
     }

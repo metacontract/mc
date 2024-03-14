@@ -92,7 +92,7 @@ library MCDevKitUtils {
         return mc.recordExecFinish(pid);
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.init(mc.defaultCustomBundleName());
+        return mc.init(mc.defaultBundleName());
     }
 
     //
@@ -470,39 +470,35 @@ library MCDevKitUtils {
         return ForgeHelper.msgSender();
     }
 
-    function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
-        return mc.functions.std.allFunctions.functionInfos;
-    }
-
     function defaultName(MCDevKit storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 
     function defaultProxyName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.proxy.findUnusedProxyName();
+        return mc.proxy.genUniqueName();
+    }
+    function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
+        return mc.proxy.genUniqueMockName();
     }
 
     function defaultDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedDictionaryName();
+        return mc.dictionary.genUniqueName();
     }
-
     function defaultDuplicatedDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedDuplicatedDictionaryName();
+        return mc.dictionary.genUniqueDuplicatedName();
     }
-
-    function defaultCustomBundleName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.functions.findUnusedCustomBundleName();
-    }
-
-    function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.proxy.findUnusedMockProxyName();
-    }
-
     function defaultMockDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedMockDictionaryName();
+        return mc.dictionary.genUniqueMockName();
     }
 
-    function defaultInitData(MCDevKit storage mc) internal  returns(bytes memory) {
+    function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
+        return mc.functions.std.allFunctions.functionInfos;
+    }
+    function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {
+        return mc.functions.genUniqueBundleName();
+    }
+
+    function defaultInitData(MCDevKit storage mc) internal pure returns(bytes memory) {
         return "";
     }
 

@@ -6,11 +6,12 @@ import "@devkit/utils/GlobalMethods.sol";
 // Config
 import {Config} from "@devkit/Config.sol";
 // Utils
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
     using StringUtils for string;
+import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
 // Errors
-import {ERR_FIND_NAME_OVER_RANGE} from "@devkit/errors/Errors.sol";
+import {Errors} from "@devkit/errors/Errors.sol";
 // Core
 import {Proxy} from "@devkit/core/proxy/Proxy.sol";
 import {Dictionary} from "@devkit/core/dictionary/Dictionary.sol";
@@ -27,32 +28,24 @@ struct ProxyRegistry {
 
 library ProxyRegistryUtils {
     string constant LIB_NAME = "ProxyRegistry";
-    function recordExecStart(ProxyRegistry storage, string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(ProxyRegistry storage proxies, string memory funcName) internal returns(uint) {
-        return proxies.recordExecStart(funcName, "");
-    }
-    function recordExecFinish(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
-        Debug.recordExecFinish(pid);
-        return proxies;
-    }
 
-    /**~~~~~~~~~~~~~~~~~~~~~~~
-        📥 Safe Add Proxy
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    << Primary >>
+        📥 Add Proxy
+        🔼 Update Current Context Proxy
         🔍 Find Proxy
-        🔧 Helper Methods
-    ~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        🏷 Generate Unique Name
+    << Helper >>
+        🧐 Inspectors & Assertions
+        🐞 Debug
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    /**----------------------
-        📥 Safe Add Proxy
-    ------------------------*/
-    function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("safeAdd");
-        return proxies  .add(name.assertNotEmpty(), proxy.assertNotEmpty())
-                        .recordExecFinish(pid);
-    }
+
+    /**-------------------
+        📥 Add Proxy
+    ---------------------*/
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        uint pid = proxies.recordExecStart("add");
         bytes32 nameHash = name.calcHash();
         if (proxy.isNotMock()) {
             proxies.deployed[nameHash] = proxy;
@@ -60,8 +53,29 @@ library ProxyRegistryUtils {
         if (proxy.isMock()) {
             proxies.mocks[nameHash] = proxy;
         }
-        return proxies;
+        return proxies.recordExecFinish(pid);
     }
+
+    function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        uint pid = proxies.recordExecStart("safeAdd");
+        return proxies  .add(name.assertNotEmpty(), proxy.assertNotEmpty())
+                        .recordExecFinish(pid);
+    }
+
+
+    /**------------------------------------
+        🔼 Update Current Context Proxy
+    --------------------------------------*/
+    function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        uint pid = proxies.recordExecStart("safeUpdate");
+        return proxies.update(proxy.assertNotEmpty()).recordExecFinish(pid);
+    }
+    function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+        uint pid = proxies.recordExecStart("update");
+        proxies.currentProxy = proxy;
+        return proxies.recordExecFinish(pid);
+    }
+
 
     /**-------------------
         🔍 Find Proxy
@@ -69,75 +83,73 @@ library ProxyRegistryUtils {
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.recordExecStart("find");
         return proxies.deployed[name.safeCalcHash()]
-                        .assertExists();
+                        .assertExists().recordExecFinishInStorage(pid);
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
         uint pid = proxies.recordExecStart("findCurrentProxy");
-        return proxies.currentProxy.assertExists();
+        return proxies.currentProxy.assertExists().recordExecFinishInStorage(pid);
     }
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.recordExecStart("findSimpleMockProxy");
-        return proxies.mocks[name.safeCalcHash()].assertExists();
+        return proxies.mocks[name.safeCalcHash()].assertExists().recordExecFinishInStorage(pid);
     }
 
 
-    /**-----------------------
-        🔧 Helper Methods
-    -------------------------*/
-    function exists(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
+    /**-----------------------------
+        🏷 Generate Unique Name
+    -------------------------------*/
+    function genUniqueName(ProxyRegistry storage proxies) internal returns(string memory name) {
+        uint pid = proxies.recordExecStart("genUniqueName");
+        Config.ScanRange memory range = Config.SCAN_RANGE();
+        for (uint i = range.start; i <= range.end; ++i) {
+            name = Config.DEFAULT_PROXY_NAME.toSequential(i);
+            if (proxies.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
+        }
+        throwError(Errors.FIND_NAME_OVER_RANGE);
+    }
+
+    function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
+        uint pid = proxies.recordExecStart("genUniqueMockName");
+        Config.ScanRange memory range = Config.SCAN_RANGE();
+        for (uint i = range.start; i <= range.end; ++i) {
+            name = Config.DEFAULT_PROXY_MOCK_NAME.toSequential(i);
+            if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
+        }
+        throwError(Errors.FIND_NAME_OVER_RANGE);
+    }
+
+
+
+    /**-------------------------------
+        🧐 Inspectors & Assertions
+    ---------------------------------*/
+    function existsInDeployed(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
         return proxies.deployed[name.safeCalcHash()].exists();
     }
-
-    function findUnusedProxyName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        (uint start, uint end) = Config.SCAN_RANGE();
-        string memory baseName = "Proxy";
-
-        for (uint i = start; i <= end; ++i) {
-            name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
-            if (!proxies.exists(name)) return name;
-        }
-
-        throwError(ERR_FIND_NAME_OVER_RANGE);
-    }
-
-    /**----------------------
-        🔼 Update Context
-    ------------------------*/
-    /**----- 🏠 Proxy -------*/
-    function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("safeUpdate");
-        return proxies.update(proxy.assertNotEmpty()).recordExecFinish(pid);
-    }
-    function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        proxies.currentProxy = proxy;
-        return proxies;
-    }
-
-    /**-----------------------
-        🔧 Helper Methods
-    -------------------------*/
-    function findUnusedName(
-        ProxyRegistry storage proxies,
-        function(ProxyRegistry storage, string memory) returns(bool) existsFunc,
-        string memory baseName
-    ) internal returns(string memory name) {
-        (uint start, uint end) = Config.SCAN_RANGE();
-
-        for (uint i = start; i <= end; ++i) {
-            name = ForgeHelper.appendNumberToNameIfNotOne(baseName, i);
-            if (!existsFunc(proxies, name)) return name;
-        }
-
-        throwError(ERR_FIND_NAME_OVER_RANGE);
-    }
-
-    function findUnusedMockProxyName(ProxyRegistry storage proxies) internal returns(string memory) {
-        return proxies.findUnusedName(existsMockProxy, "MockProxy");
-    }
-
-    string constant exixtsMockProxy_ = "Exists";
-    function existsMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
+    function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
         return proxies.mocks[name.safeCalcHash()].exists();
+    }
+
+
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    /**
+        Record Start
+     */
+    function recordExecStart(ProxyRegistry storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(ProxyRegistry storage proxies, string memory funcName) internal returns(uint) {
+        return proxies.recordExecStart(funcName, "");
+    }
+
+    /**
+        Record Finish
+     */
+    function recordExecFinish(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return proxies;
     }
 
 }

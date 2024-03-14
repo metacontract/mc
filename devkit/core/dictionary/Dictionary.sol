@@ -215,6 +215,9 @@ library DictionaryUtils {
     /**----------------
         🐞 Debug
     ------------------*/
+    /**
+        Record Start
+     */
     function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
@@ -224,10 +227,19 @@ library DictionaryUtils {
     function recordExecFinish(uint pid) internal {
         Debug.recordExecFinish(pid);
     }
+
+    /**
+        Record Finish
+     */
     function recordExecFinish(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
         recordExecFinish(pid);
         return dictionary;
     }
+    function recordExecFinishInStorage(Dictionary storage dictionary, uint pid) internal returns(Dictionary storage) {
+        recordExecFinish(pid);
+        return dictionary;
+    }
+
     // function assignLabel(Dictionary storage dictionary, string memory name) internal returns(Dictionary storage) {
     //     ForgeHelper.assignLabel(dictionary.addr, name);
     //     return dictionary;

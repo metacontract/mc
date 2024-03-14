@@ -38,7 +38,7 @@ library ForgeHelper {
         return false;
     }
 
-    function assumeAddressIsNotReserved(address addr) internal  {
+    function assumeAddressIsNotReserved(address addr) internal pure {
         vm.assume(
             addr != address(1) &&
             addr != address(2) &&
@@ -72,11 +72,4 @@ library ForgeHelper {
         (,msgSender_,) = vm.readCallers();
     }
 
-    function appendNumberToName(string memory str, uint num) internal  returns(string memory) {
-        return string(abi.encodePacked(str, vm.toString(num)));
-    }
-
-    function appendNumberToNameIfNotOne(string memory baseName, uint num) internal  returns(string memory) {
-        return num == 1 ? baseName : appendNumberToName(baseName, num);
-    }
 }
