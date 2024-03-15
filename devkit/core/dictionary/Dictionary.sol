@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol"; // solhin-disable-line no-unused-import
+import "@devkit/utils/GlobalMethods.sol";
 // Utils
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
@@ -44,41 +44,31 @@ struct Dictionary {
 
 library DictionaryUtils {
     string constant LIB_NAME = "Dictionary";
-    function __recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function __recordExecStart(string memory funcName) internal returns(uint) {
-        return __recordExecStart(funcName, "");
-    }
-    function __recordExecFinish(uint pid) internal {
-        Debug.recordExecFinish(pid);
-    }
-    function __recordExecFinish(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
-        __recordExecFinish(pid);
-        return dictionary;
-    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    << Primary >>
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
         🧩 Set Function
         🖼 Upgrade Facade
-        🔧 Helper Methods for type Dictionary
+        🤖 Create Mock Dictionary
+    << Helper >>
+        🧐 Inspectors & Assertions
+        🐞 Debug
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    function safeDeploy(address owner) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("safeDeploy");
-        return deploy(owner.assertNotZero()).__recordExecFinish(pid);
-    }
     function deploy(address owner) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("deploy");
+        uint pid = recordExecStart("deploy");
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
-        return deployDictionaryVerifiable(owner).__recordExecFinish(pid);
+        return deployDictionaryVerifiable(owner).recordExecFinish(pid);
     }
+        /**---------------------------
+            Deploy Proxy Primitives
+        -----------------------------*/
         function deployDictionaryVerifiable(address owner) internal returns(Dictionary memory) {
             return Dictionary({
                 addr: address(new DictionaryEtherscan(owner)),
@@ -86,23 +76,24 @@ library DictionaryUtils {
             });
         }
 
+    function safeDeploy(address owner) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("safeDeploy");
+        return deploy(owner.assertNotZero()).recordExecFinish(pid);
+    }
+
 
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("safeDuplicate");
-        return targetDictionary.assertNotEmpty().duplicate().__recordExecFinish(pid);
-    }
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("duplicate");
+        uint pid = recordExecStart("duplicate");
         return deploy(ForgeHelper.msgSender())
-                .duplicateFunctionsFrom(targetDictionary).__recordExecFinish(pid);
+                .duplicateFunctionsFrom(targetDictionary).recordExecFinish(pid);
     }
         function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-            uint pid = __recordExecStart("duplicateFunctionsFrom");
-            address toAddr = toDictionary.toAddress();
-            address fromAddr = fromDictionary.toAddress();
+            uint pid = recordExecStart("duplicateFunctionsFrom");
+            address toAddr = toDictionary.addr;
+            address fromAddr = fromDictionary.addr;
 
             bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
             for (uint i; i < _selectors.length; ++i) {
@@ -114,28 +105,27 @@ library DictionaryUtils {
                 });
             }
 
-            return toDictionary.__recordExecFinish(pid);
+            return toDictionary.recordExecFinish(pid);
         }
-
-
-    /**--------------------
-        🧩 Set Function
-    ----------------------*/
-    function set(Dictionary memory dictionary, FuncInfo memory functionInfo) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("set");
-        IDictionary(dictionary.assertVerifiable().toAddress()).setImplementation({
-            functionSelector: functionInfo.selector,
-            implementation: functionInfo.implementation
-        });
-        return dictionary.__recordExecFinish(pid);
+    function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("safeDuplicate");
+        return targetDictionary.assertNotEmpty().duplicate().recordExecFinish(pid);
     }
 
 
-    /**------------------
-        🧺 Set Bundle
-    --------------------*/
+    /**-----------------------------
+        🧩 Set Function & Bundle
+    -------------------------------*/
+    function set(Dictionary memory dictionary, FuncInfo memory functionInfo) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("set");
+        IDictionary(dictionary.assertVerifiable().addr).setImplementation({
+            functionSelector: functionInfo.selector,
+            implementation: functionInfo.implementation
+        });
+        return dictionary.recordExecFinish(pid);
+    }
     function set(Dictionary memory dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("set");
+        uint pid = recordExecStart("set");
 
         FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
 
@@ -143,11 +133,12 @@ library DictionaryUtils {
             dictionary.set(functionInfos[i]);
         }
 
-        if (dictionary.isVerifiable()) {
-            dictionary.upgradeFacade(bundleInfo.facade);
-        }
+        // TODO Generate Facade
+        // if (dictionary.isVerifiable()) {
+        //     dictionary.upgradeFacade(bundleInfo.facade);
+        // }
 
-        return dictionary.__recordExecFinish(pid);
+        return dictionary.recordExecFinish(pid);
     }
 
 
@@ -155,62 +146,54 @@ library DictionaryUtils {
         🖼 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("upgradeFacade");
-        DictionaryEtherscan(dictionary.assertVerifiable().toAddress()).upgradeFacade(newFacade);
-        return dictionary.__recordExecFinish(pid);
+        uint pid = recordExecStart("upgradeFacade");
+        DictionaryEtherscan(dictionary.assertVerifiable().addr).upgradeFacade(newFacade);
+        return dictionary.recordExecFinish(pid);
     }
 
 
-    /**------------------------------------------
-        🔧 Helper Methods for type Dictionary
-    --------------------------------------------*/
-    function alloc(Dictionary storage target, Dictionary storage value) internal  {
-        target = value;
+    /**------------------------------
+        🤖 Create Mock Dictionary
+    --------------------------------*/
+    function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("createMockDictionary");
+        return Dictionary({
+            addr: address(new MockDictionary(owner, functionInfos)),
+            kind: DictionaryKind.Mock
+        }).recordExecFinish(pid);
     }
 
-    function toAddress(Dictionary memory dictionary) internal  returns(address) {
-        return dictionary.addr;
-    }
-
-    // function asDictionary(address addr) internal  returns(Dictionary storage) {
-    //     return Dictionary.wrap(addr);
-    // }
 
 
-    // function exists(Dictionary storage dictionary) internal returns(bool) {
-    //     return dictionary.toAddress().exists();
-    // }
-
-    function assignLabel(Dictionary storage dictionary, string memory name) internal returns(Dictionary storage) {
-        ForgeHelper.assignLabel(dictionary.toAddress(), name);
-        return dictionary;
-    }
-
-    function assertSupports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
-        if (!IDictionary(dictionary.toAddress()).supportsInterface(selector)) {
-            throwError("Unsupport interface");
-        }
-        return dictionary;
-    }
-
+    /**-------------------------------
+        🧐 Inspectors & Assertions
+    ---------------------------------*/
     function exists(Dictionary storage dictionary) internal returns(bool) {
-        return dictionary.toAddress().isContract();
+        return dictionary.addr.isContract();
     }
     function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        if (dictionary.toAddress().code.length == 0) throwError("Dictionary Not Exists");
+        check(dictionary.exists(), "Dictionary Not Exists");
         return dictionary;
     }
 
     function isNotEmpty(Dictionary memory dictionary) internal returns(bool) {
-        return dictionary.toAddress().isContract();
+        return dictionary.addr.isContract();
     }
     function assertNotEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
         check(dictionary.isNotEmpty(), "Empty Dictionary");
         return dictionary;
     }
 
+    function isSupported(Dictionary memory dictionary, bytes4 selector) internal view returns(bool) {
+        return IDictionary(dictionary.addr).supportsInterface(selector);
+    }
+    function assertSupports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
+        check(dictionary.isSupported(selector), "Unsupported Selector");
+        return dictionary;
+    }
+
     function isVerifiable(Dictionary memory dictionary) internal returns(bool) {
-        (bool success,) = dictionary.toAddress().call(abi.encodeWithSelector(IBeacon.implementation.selector));
+        (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IBeacon.implementation.selector));
         return success;
     }
     function assertVerifiable(Dictionary memory dictionary) internal returns(Dictionary memory) {
@@ -224,60 +207,47 @@ library DictionaryUtils {
     function isNotMock(Dictionary memory dictionary) internal returns(bool) {
         return dictionary.isMock().isNot();
     }
-
     // function isUUPS(Dictionary dictionary) internal returns(bool) {
     //     return UUPSUpgradeable(dictionary.toAddress()).proxiableUUID() == ERC1967Utils.IMPLEMENTATION_SLOT;
     // }
 
 
-    /**------------------------------
-        🤖 Create Mock Dictionary
-    --------------------------------*/
-    function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
-        uint pid = __recordExecStart("createMockDictionary");
-        return Dictionary({
-            addr: address(new MockDictionary(owner, functionInfos)),
-            kind: DictionaryKind.Mock
-        });
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    /**
+        Record Start
+     */
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
+    }
+    function recordExecFinish(uint pid) internal {
+        Debug.recordExecFinish(pid);
     }
 
+    /**
+        Record Finish
+     */
+    function recordExecFinish(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
+        recordExecFinish(pid);
+        return dictionary;
+    }
+    function recordExecFinishInStorage(Dictionary storage dictionary, uint pid) internal returns(Dictionary storage) {
+        recordExecFinish(pid);
+        return dictionary;
+    }
 
-    // function toAddress(MockDictionary mockDictionary) internal  returns(address) {
-    //     return address(mockDictionary);
-    // }
-
-    // function asMockDictionary(address addr) internal  returns(MockDictionary) {
-    //     return MockDictionary(addr);
-    // }
-
-    // function asDictionary(MockDictionary mockDictionary) internal returns(Dictionary storage) {
-    //     return mockDictionary.toAddress().asDictionary();
-    // }
-
-    // function exists(MockDictionary mockDictionary) internal returns(bool) {
-    //     return mockDictionary.toAddress().isZero();
-    // }
-    // function assertExists(MockDictionary mockDictionary) internal returns(MockDictionary) {
-    //     check(mockDictionary.exists(), "Mock Dictionary Not Exist");
-    //     return mockDictionary;
-    // }
-
-    // function assignLabel(MockDictionary mockDictionary, string memory name) internal returns(MockDictionary) {
-    //     ForgeHelper.assignLabel(mockDictionary.toAddress(), name);
-    //     return mockDictionary;
-    // }
-
-    // function assertSupports(MockDictionary mockDictionary, bytes4 selector) internal returns(MockDictionary) {
-    //     // TODO change to IDictionary
-    //     if (!DictionaryEtherscan(mockDictionary.toAddress()).supportsInterface(selector)) {
-    //         throwError("Unsupport interface");
-    //     }
-    //     return mockDictionary;
+    // function assignLabel(Dictionary storage dictionary, string memory name) internal returns(Dictionary storage) {
+    //     ForgeHelper.assignLabel(dictionary.addr, name);
+    //     return dictionary;
     // }
 }
 
 library DictionaryKindUtils {
-    function isNotUndefined(DictionaryKind kind) internal returns(bool) {
+    function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
         return kind != DictionaryKind.undefined;
     }
     function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {

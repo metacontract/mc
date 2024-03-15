@@ -71,7 +71,7 @@ library MCStdFuncsUtils {
             uint pid = recordExecStart("assignAndLoad_InitSetAdmin");
             std.initSetAdmin.safeAssign("INIT_SET_ADMIN")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
-                            .loadAndAssignImplFromEnv()
+                            .loadAndAssignFromEnv()
                             .parseAndLog();
             return std.recordExecFinish(pid);
         }
@@ -80,7 +80,7 @@ library MCStdFuncsUtils {
             uint pid = recordExecStart("assignAndLoad_GetDeps");
             std.getDeps .safeAssign("GET_DEPS")
                         .safeAssign(GetDeps.getDeps.selector)
-                        .loadAndAssignImplFromEnv()
+                        .loadAndAssignFromEnv()
                         .parseAndLog();
             return std.recordExecFinish(pid);
         }
@@ -89,7 +89,7 @@ library MCStdFuncsUtils {
             uint pid = recordExecStart("assignAndLoad_Clone");
             std.clone   .safeAssign("CLONE")
                         .safeAssign(Clone.clone.selector)
-                        .loadAndAssignImplFromEnv()
+                        .loadAndAssignFromEnv()
                         .parseAndLog();
             return std.recordExecFinish(pid);
         }
@@ -98,7 +98,7 @@ library MCStdFuncsUtils {
             uint pid = recordExecStart("assignAndLoad_SetImplementation");
             std.setImplementation   .safeAssign("SET_IMPLEMENTATION")
                                     .safeAssign(SetImplementation.setImplementation.selector)
-                                    .loadAndAssignImplFromEnv()
+                                    .loadAndAssignFromEnv()
                                     .parseAndLog();
             return std.recordExecFinish(pid);
         }

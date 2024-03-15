@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Global Methods
 import "@devkit/utils/GlobalMethods.sol";
 // Utils
-import {StdStyle, vm} from "@devkit/utils/ForgeHelper.sol";
+import {StdStyle, ForgeHelper, vm} from "@devkit/utils/ForgeHelper.sol";
 import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
 
@@ -20,12 +20,16 @@ library StringUtils {
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
-    function calcHash(string memory name) internal returns(bytes32) {
+    function calcHash(string memory name) internal pure returns(bytes32) {
         return keccak256(abi.encode(name));
     }
     function safeCalcHash(string memory name) internal returns(bytes32) {
         check(name.isNotEmpty(), "Calc Hash");
         return name.calcHash();
+    }
+
+    function loadAddress(string memory envKey) internal returns(address) {
+        return ForgeHelper.loadAddressFromEnv(envKey);
     }
 
 
@@ -79,6 +83,10 @@ library StringUtils {
         return string(result);
     }
 
+    function toSequential(string memory str, uint i) internal returns(string memory) {
+        return i == 1 ? str : str.append(i);
+    }
+
 
     /**-------------------------------
         🧐 Inspectors & Assertions
@@ -104,6 +112,18 @@ library StringUtils {
     }
     function isNotEqual(string memory a, string memory b) internal returns(bool) {
         return a.isEqual(b).isNot();
+    }
+
+
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    /**
+        Record Finish
+     */
+    function recordExecFinish(string memory str, uint pid) internal returns(string memory) {
+        Debug.recordExecFinish(pid);
+        return str;
     }
 
 }

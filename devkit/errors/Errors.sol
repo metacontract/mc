@@ -28,6 +28,6 @@ library Errors {
         revert(StringUtils.append(Logger.ERR_HEADER, errorBody).bold());
     }
 
+    string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
 }
 
-string constant ERR_FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";

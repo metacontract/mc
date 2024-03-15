@@ -4,8 +4,7 @@ pragma solidity ^0.8.24;
 // Global Methods
 import "@devkit/utils/GlobalMethods.sol";
 // Utils
-import {ForgeHelper, console2, StdStyle} from "@devkit/utils/ForgeHelper.sol";
-    using StdStyle for string;
+import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
@@ -92,7 +91,7 @@ library MCDevKitUtils {
         return mc.recordExecFinish(pid);
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.init(mc.defaultCustomBundleName());
+        return mc.init(mc.defaultBundleName());
     }
 
     //
@@ -226,7 +225,7 @@ library MCDevKitUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.toAddress()));
+        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
         mc.dictionary   .safeAdd(name, newDictionary)
                         .safeUpdate(newDictionary);
@@ -283,7 +282,7 @@ library MCDevKitUtils {
         🐣 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.toAddress()).comma().append(string(initData)));
+        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.addr).comma().append(string(initData)));
         Proxy memory proxy = ProxyUtils.deploy(dictionary, initData);
         mc.proxy.safeAdd(name, proxy)
                 .safeUpdate(proxy);
@@ -387,12 +386,12 @@ library MCDevKitUtils {
         return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.toAddress()));
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.addr));
         mc.proxy.safeUpdate(proxy);
         return mc.recordExecFinish(pid);
     }
     function updateCurrent(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.toAddress()));
+        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.addr));
         mc.dictionary.safeUpdate(dictionary);
         return mc.recordExecFinish(pid);
     }
@@ -444,7 +443,7 @@ library MCDevKitUtils {
     }
 
     function getDictionaryAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findCurrentDictionary().toAddress();
+        return mc.findCurrentDictionary().addr;
     }
 
 
@@ -470,44 +469,40 @@ library MCDevKitUtils {
         return ForgeHelper.msgSender();
     }
 
-    function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
-        return mc.functions.std.allFunctions.functionInfos;
-    }
-
     function defaultName(MCDevKit storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 
     function defaultProxyName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.proxy.findUnusedProxyName();
+        return mc.proxy.genUniqueName();
+    }
+    function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
+        return mc.proxy.genUniqueMockName();
     }
 
     function defaultDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedDictionaryName();
+        return mc.dictionary.genUniqueName();
     }
-
     function defaultDuplicatedDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedDuplicatedDictionaryName();
+        return mc.dictionary.genUniqueDuplicatedName();
     }
-
-    function defaultCustomBundleName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.functions.findUnusedCustomBundleName();
-    }
-
-    function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.proxy.findUnusedMockProxyName();
-    }
-
     function defaultMockDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-        return mc.dictionary.findUnusedMockDictionaryName();
+        return mc.dictionary.genUniqueMockName();
     }
 
-    function defaultInitData(MCDevKit storage mc) internal  returns(bytes memory) {
+    function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
+        return mc.functions.std.allFunctions.functionInfos;
+    }
+    function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {
+        return mc.functions.genUniqueBundleName();
+    }
+
+    function defaultInitData(MCDevKit storage mc) internal pure returns(bytes memory) {
         return "";
     }
 
 
     function toProxyAddress(MCDevKit storage mc) internal returns(address) {
-        return mc.findCurrentProxy().toAddress();
+        return mc.findCurrentProxy().addr;
     }
 }

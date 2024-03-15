@@ -6,13 +6,17 @@ import "@devkit/utils/GlobalMethods.sol";
 // Utils
 import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
+    using StringUtils for string;
 import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+    using Bytes4Utils for bytes4;
 import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+    using AddressUtils for address;
 // Debug
 import {Debug} from "@devkit/debug/Debug.sol";
 import {Logger} from "@devkit/debug/Logger.sol";
 // Core
 import {BundleInfo} from "./BundleInfo.sol";
+
 
 /**======================
     🧩 Function Info
@@ -26,67 +30,83 @@ struct FuncInfo { /// @dev FuncInfo may be different depending on the op version
 
 library FuncInfoUtils {
     string constant LIB_NAME = "FuncInfo";
-    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(string memory funcName) internal returns(uint) {
-        return recordExecStart(funcName, "");
-    }
-    function recordExecFinish(FuncInfo storage funcInfo, uint pid) internal returns(FuncInfo storage) {
-        Debug.recordExecFinish(pid);
-        return funcInfo;
-    }
 
-    using StringUtils for string;
-    using Bytes4Utils for bytes4;
-    using AddressUtils for address;
+    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    << Primary >>
+        📥 Assign Function
+        🔼 Update Current Context Proxy
+        🔍 Find Proxy
+        🏷 Generate Unique Name
+    << Helper >>
+        🧐 Inspectors & Assertions
+        🐞 Debug
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-    /**---------------------------
-        📥 Assign FunctionInfo
-    -----------------------------*/
-    function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
-        uint pid = recordExecStart("Safe Assign `name` to FunctionInfo");
-        return functionInfo .assertEmptyName()
-                            .assign(name.assertNotEmpty())
-                            .recordExecFinish(pid);
-    }
-    function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
-        uint pid = recordExecStart("Safe Assign `selector` to FunctionInfo");
-        return functionInfo .assertEmptySelector()
-                            .assign(selector.assertNotEmpty())
-                            .recordExecFinish(pid);
-    }
-    function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
-        uint pid = recordExecStart("Safe Assign `implementation` to FunctionInfo");
-        return functionInfo .assertEmptyImpl()
-                            .assign(implementation.assertIsContract())
-                            .recordExecFinish(pid);
-    }
+    /**------------------------
+        📥 Assign Function
+    --------------------------*/
+    /**----- Name --------*/
     function assign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
         functionInfo.name = name;
         return functionInfo;
     }
+    function safeAssign(FuncInfo storage functionInfo, string memory name) internal returns(FuncInfo storage) {
+        uint pid = recordExecStart("safeAssign");
+        return functionInfo .assertEmptyName()
+                            .assign(name.assertNotEmpty())
+                            .recordExecFinish(pid);
+    }
+
+    /**----- Selector --------*/
+    function safeAssign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
+        uint pid = recordExecStart("safeAssign");
+        return functionInfo .assertEmptySelector()
+                            .assign(selector.assertNotEmpty())
+                            .recordExecFinish(pid);
+    }
     function assign(FuncInfo storage functionInfo, bytes4 selector) internal returns(FuncInfo storage) {
         functionInfo.selector = selector;
         return functionInfo;
+    }
+
+    /**----- Implementation --------*/
+    function safeAssign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
+        uint pid = recordExecStart("safeAssign");
+        return functionInfo .assertEmptyImpl()
+                            .assign(implementation.assertIsContract())
+                            .recordExecFinish(pid);
     }
     function assign(FuncInfo storage functionInfo, address implementation) internal returns(FuncInfo storage) {
         functionInfo.implementation = implementation;
         return functionInfo;
     }
 
-    string constant loadAndAssignImplFromEnv_ = "Load and Assign impl address from env by envKey to FunctionInfo";
-    function loadAndAssignImplFromEnv(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        return functionInfo.assign(
-            ForgeHelper.loadAddressFromEnv(functionInfo.name)
-        );
+    function loadAndAssignFromEnv(FuncInfo storage functionInfo, string memory envKey, string memory name, bytes4 selector) internal returns(FuncInfo storage) {
+        uint pid = recordExecStart("loadAndAssignFromEnv");
+        return functionInfo .assign(name)
+                            .assign(selector)
+                            .assign(envKey.loadAddress())
+                            .recordExecFinish(pid);
+    }
+    function loadAndAssignFromEnv(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        string memory name = functionInfo.name.assertNotEmpty();
+        bytes4 selector = functionInfo.selector.assertNotEmpty();
+        return functionInfo.loadAndAssignFromEnv(name, name, selector);
+    }
+    function safeLoadAndAssignFromEnv(FuncInfo storage functionInfo, string memory envKey, string memory name, bytes4 selector) internal returns(FuncInfo storage) {
+        uint pid = recordExecStart("safeLoadAndAssignFromEnv");
+        return functionInfo.loadAndAssignFromEnv(
+            envKey.assertNotEmpty(),
+            name.assertNotEmpty(),
+            selector.assertNotEmpty()
+        ).recordExecFinish(pid);
     }
 
 
-    /**
-        Helper Methods
-     */
+    /**-------------------------------
+        🧐 Inspectors & Assertions
+    ---------------------------------*/
     function exists(FuncInfo memory functionInfo) internal returns(bool) {
         return functionInfo.implementation.isContract();
     }
@@ -96,27 +116,6 @@ library FuncInfoUtils {
             ForgeHelper.assignLabel(functionInfo.implementation, functionInfo.name);
         }
         return functionInfo;
-    }
-
-    // function copyTo(FuncInfo memory functionInfo, Op memory op) internal {
-    //     op.selector = functionInfo.selector;
-    //     op.implementation = functionInfo.implementation;
-    // }
-
-
-    /**---------------
-        🐞 Debug
-    -----------------*/
-    function parseAndLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
-        Logger.log(
-            functionInfo.parse()
-        );
-        return functionInfo;
-    }
-    function parse(FuncInfo memory functionInfo) internal returns(string memory message) {
-        return message  .append("Impl: ").append(functionInfo.implementation).comma()
-                        .append("Selector: ").append(functionInfo.selector).comma()
-                        .append("Name: ").append(functionInfo.name);
     }
 
     function assertExists(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
@@ -169,4 +168,33 @@ library FuncInfoUtils {
     function isEqual(FuncInfo storage a, FuncInfo storage b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
+
+
+    /**---------------
+        🐞 Debug
+    -----------------*/
+    function parseAndLog(FuncInfo storage functionInfo) internal returns(FuncInfo storage) {
+        Logger.log(
+            functionInfo.parse()
+        );
+        return functionInfo;
+    }
+    function parse(FuncInfo memory functionInfo) internal returns(string memory message) {
+        return message  .append("Impl: ").append(functionInfo.implementation).comma()
+                        .append("Selector: ").append(functionInfo.selector).comma()
+                        .append("Name: ").append(functionInfo.name);
+    }
+
+
+    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(string memory funcName) internal returns(uint) {
+        return recordExecStart(funcName, "");
+    }
+    function recordExecFinish(FuncInfo storage funcInfo, uint pid) internal returns(FuncInfo storage) {
+        Debug.recordExecFinish(pid);
+        return funcInfo;
+    }
+
 }
