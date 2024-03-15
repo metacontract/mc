@@ -6,7 +6,6 @@ import "@devkit/utils/GlobalMethods.sol";
 // Config
 import {Config} from "@devkit/Config.sol";
 // Utils
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "@devkit/utils/StringUtils.sol";
     using StringUtils for string;
 import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
@@ -19,6 +18,7 @@ import {Debug} from "@devkit/debug/Debug.sol";
 import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
 import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
 import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
+
 
 /****************************************
     🧩 Meta Contract Functions Registry
@@ -83,9 +83,16 @@ library FuncRegistryUtils {
     }
 
 
-    /**------------------------------------------------
-        🔏 Load and Assign Custom Function from Env
-    --------------------------------------------------*/
+    /**---------------------------------------------
+        🔏 Load and Add Custom Function from Env
+    -----------------------------------------------*/
+    function safeLoadAndAdd(FuncRegistry storage functions, string memory envKey, string memory name, bytes4 selector, address implementation) internal returns(FuncRegistry storage) {
+        uint pid = functions.recordExecStart("safeLoadAndAdd");
+        functions.customs[name.safeCalcHash()]
+                    .loadAndAssignFromEnv(envKey, name, selector);
+        functions.safeUpdateCurrentFunction(name);
+        return functions.recordExecFinish(pid);
+    }
 
 
     /**-------------------------------------
