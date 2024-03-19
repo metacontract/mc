@@ -40,6 +40,10 @@ abstract contract MCStateFuzzingTest is MCTest {
     //     // implementations TODO
     // }
 
+    function setImplementation(bytes4 selector, address impl) internal {
+        implementations[selector] = impl;
+    }
+
     fallback(bytes calldata) external payable returns (bytes memory){
         address opAddress = implementations[msg.sig];
         require(opAddress != address(0), "Called implementation is not registered.");
