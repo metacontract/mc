@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Vm} from "forge-std/Vm.sol";
+import {Vm, VmSafe} from "forge-std/Vm.sol";
 
 /**
     Simply bypassing forge-std
@@ -63,8 +63,11 @@ library ForgeHelper {
         return address(uint160(uint256(vm.load(target, slot))));
     }
 
-    function msgSender() internal returns(address msgSender_) {
-        (,msgSender_,) = vm.readCallers();
+    function msgSender() internal returns(address) {
+        (VmSafe.CallerMode callerMode_, address msgSender_,) = vm.readCallers();
+
+        if (callerMode_ == VmSafe.CallerMode.None) return address(this);
+        return msgSender_;
     }
 
 }
