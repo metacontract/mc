@@ -371,6 +371,19 @@ library MCDevKitUtils {
     }
 
 
+    /**--------------------------
+        🤲 Set Storage Getter
+    ----------------------------*/
+    function setStorageGetter(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("setStorageGetter", PARAMS.append(selector).comma().append(implementation));
+        return mc.set(FuncInfo({
+            name: "StorageGetter",
+            selector: selector,
+            implementation: implementation
+        })).recordExecFinish(pid);
+    }
+
+
 
     /**----------------------
         🔼 Update Context
