@@ -61,6 +61,7 @@ library MCDevKitUtils {
             ✨ Add Custom Function
             🧺 Add Custom Function to Bundle
         🚀 Deploy Meta Contract
+        ♻️ Reset Current Context
         🧩 Functions
         📚 Dictionary
         🏠 Proxy
@@ -190,6 +191,17 @@ library MCDevKitUtils {
         return mc.deploy(mc.defaultName(), mc.functions.findCurrentBundle(), mc.defaultInitData());
     }
 
+
+    /******************************
+        ♻️ Reset Current Context
+    *******************************/
+    function reset(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("reset");
+        mc.dictionary.reset();
+        mc.functions.reset();
+        mc.proxy.reset();
+        return mc.recordExecFinish(pid);
+    }
 
 
 /************************************************
