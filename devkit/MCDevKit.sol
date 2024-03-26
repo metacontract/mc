@@ -154,7 +154,7 @@ library MCDevKitUtils {
     function set(MCDevKit storage mc, string memory name, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
         mc.functions.set(name, facade);
-            return mc.recordExecFinish(pid);
+        return mc.recordExecFinish(pid);
     }
     function set(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         return mc.set(mc.functions.findCurrentBundleName(), facade);
@@ -168,6 +168,7 @@ library MCDevKitUtils {
         uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(string(initData)));
         return mc   .deployDictionary(name.append("_Dictionary"))
                     .set(bundleInfo)
+                    .upgradeFacade()
                     .deployProxy(name.append("_Proxy"), initData)
                     .recordExecFinish(pid);
         // TODO gen and set facade
@@ -281,6 +282,9 @@ library MCDevKitUtils {
         uint pid = mc.recordExecStart("upgradeFacade", PARAMS.append(newFacade));
         mc.findCurrentDictionary().upgradeFacade(newFacade);
         return mc.recordExecFinish(pid);
+    }
+    function upgradeFacade(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return mc.upgradeFacade(mc.functions.findCurrentBundle().facade);
     }
 
 
