@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
-import {DecodeErrorString} from "@devkit/errors/DecodeErrorString.sol";
+import {ForgeHelper} from "./utils/ForgeHelper.sol";
+import {DecodeErrorString} from "./errors/DecodeErrorString.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
@@ -15,10 +15,13 @@ import {MCTestBase} from "./MCBase.sol";
 
 // ⭐️ MC TEST
 abstract contract MCTest is MCTestBase, ForgeTest {
+    modifier startPrankWith(string memory envKey) {
+        _startPrankWith(envKey);
+        _;
+    }
+
     modifier startPrankWithDeployer() {
-        string memory keyword = "DEPLOYER";
-        deployer = getAddressOr(keyword, makeAddr(keyword));
-        vm.startPrank(deployer);
+        _startPrankWith("DEPLOYER");
         _;
     }
 
@@ -27,8 +30,9 @@ abstract contract MCTest is MCTestBase, ForgeTest {
         _;
     }
 
-    function startPrankWith(string memory keyword) internal {
-        vm.startPrank(getAddressOr(keyword, makeAddr(keyword)));
+    function _startPrankWith(string memory envKey) internal {
+        deployer = getAddressOr(envKey, makeAddr(envKey));
+        vm.startPrank(deployer);
     }
 }
 

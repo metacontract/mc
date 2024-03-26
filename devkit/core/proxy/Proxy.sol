@@ -2,21 +2,21 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "../../utils/GlobalMethods.sol";
 // Utils
-import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Core
-// import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
-import {Dictionary} from "@devkit/core/dictionary/Dictionary.sol";
-import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
+// import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
+import {Dictionary} from "../dictionary/Dictionary.sol";
+import {FuncInfo} from "../functions/FuncInfo.sol";
 // Test
-import {SimpleMockProxy} from "@devkit/test/SimpleMockProxy.sol";
+import {SimpleMockProxy} from "../../test/SimpleMockProxy.sol";
 // External Lib
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {ERC7546Proxy} from "@ucs-contracts/src/proxy/ERC7546Proxy.sol";

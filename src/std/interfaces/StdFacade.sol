@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import {IAllStds} from "../IAllStds.sol";
+import {IStd} from "./IStd.sol";
 
-contract AllStdsFacade is IAllStds {
+contract StdFacade is IStd {
     function initSetAdmin(address admin) external {}
     function getDeps() external view returns(Op[] memory ops) {}
     function clone(bytes calldata initData) external returns (address) {}

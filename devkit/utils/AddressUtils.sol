@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "./GlobalMethods.sol";
 // Utils
-import {ForgeHelper, vm} from "@devkit/utils/ForgeHelper.sol";
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {ForgeHelper, vm} from "./ForgeHelper.sol";
+import {BoolUtils} from "./BoolUtils.sol";
 // External Lib
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 

@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {console2, StdStyle, vm} from "@devkit/utils/ForgeHelper.sol";
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {console2, StdStyle, vm} from "../utils/ForgeHelper.sol";
+import {StringUtils} from "../utils/StringUtils.sol";
 // Debug
-import {Debug, Process} from "@devkit/debug/Debug.sol";
+import {Debug, Process} from "./Debug.sol";
 
 //================
 //  📊 Logger

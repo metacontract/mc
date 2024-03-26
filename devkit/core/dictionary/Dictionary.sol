@@ -2,24 +2,24 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "../../utils/GlobalMethods.sol";
 // Utils
-import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
-import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "../../utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
+import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
+import {Debug} from "../../debug/Debug.sol";
 // Core
-import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
-import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
+import {FuncInfo} from "../functions/FuncInfo.sol";
+import {BundleInfo} from "../functions/BundleInfo.sol";
 // Test
-import {MockDictionary} from "@devkit/test/MockDictionary.sol";
+import {MockDictionary} from "../../test/MockDictionary.sol";
 // External Libs
 import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
 import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";

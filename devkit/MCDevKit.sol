@@ -2,33 +2,33 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "./utils/GlobalMethods.sol";
 // Utils
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
-import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+import {ForgeHelper} from "./utils/ForgeHelper.sol";
+import {AddressUtils} from "./utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "./utils/BoolUtils.sol";
     using BoolUtils for bool;
-import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "./utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {StringUtils} from "./utils/StringUtils.sol";
     using StringUtils for string;
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
-import {Logger} from "@devkit/debug/Logger.sol";
+import {Debug} from "./debug/Debug.sol";
+import {Logger} from "./debug/Logger.sol";
 // Core
 //  dictionary
-import {DictRegistry} from "@devkit/core/dictionary/DictRegistry.sol";
-import {Dictionary, DictionaryUtils} from "@devkit/core/dictionary/Dictionary.sol";
+import {DictRegistry} from "./core/dictionary/DictRegistry.sol";
+import {Dictionary, DictionaryUtils} from "./core/dictionary/Dictionary.sol";
 //  functions
-import {FuncRegistry} from "@devkit/core/functions/FuncRegistry.sol";
-import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
-import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
-import {MCStdFuncsArgs} from "@devkit/core/functions/MCStdFuncs.sol";
+import {FuncRegistry} from "./core/functions/FuncRegistry.sol";
+import {BundleInfo} from "./core/functions/BundleInfo.sol";
+import {FuncInfo} from "./core/functions/FuncInfo.sol";
+import {MCStdFuncsArgs} from "./core/functions/MCStdFuncs.sol";
     using MCStdFuncsArgs for address;
 //  proxy
-import {ProxyRegistry} from "@devkit/core/proxy/ProxyRegistry.sol";
-import {Proxy, ProxyUtils} from "@devkit/core/proxy/Proxy.sol";
+import {ProxyRegistry} from "./core/proxy/ProxyRegistry.sol";
+import {Proxy, ProxyUtils} from "./core/proxy/Proxy.sol";
 
 
 /********************************
@@ -154,7 +154,7 @@ library MCDevKitUtils {
     function set(MCDevKit storage mc, string memory name, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
         mc.functions.set(name, facade);
-            return mc.recordExecFinish(pid);
+        return mc.recordExecFinish(pid);
     }
     function set(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         return mc.set(mc.functions.findCurrentBundleName(), facade);
@@ -168,6 +168,7 @@ library MCDevKitUtils {
         uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(string(initData)));
         return mc   .deployDictionary(name.append("_Dictionary"))
                     .set(bundleInfo)
+                    .upgradeFacade()
                     .deployProxy(name.append("_Proxy"), initData)
                     .recordExecFinish(pid);
         // TODO gen and set facade
@@ -281,6 +282,9 @@ library MCDevKitUtils {
         uint pid = mc.recordExecStart("upgradeFacade", PARAMS.append(newFacade));
         mc.findCurrentDictionary().upgradeFacade(newFacade);
         return mc.recordExecFinish(pid);
+    }
+    function upgradeFacade(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return mc.upgradeFacade(mc.functions.findCurrentBundle().facade);
     }
 
 

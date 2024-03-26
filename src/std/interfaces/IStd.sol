@@ -7,7 +7,7 @@ import {IClone} from "./functions/IClone.sol";
 import {ISetImplementation} from "./functions/ISetImplementation.sol";
 import {ERC7546ProxyEvents} from "@ucs-contracts/src/proxy/ERC7546ProxyEvents.sol";
 
-interface IAllStds is
+interface IStd is
     IInitSetAdmin,
     IGetDeps,
     IClone,

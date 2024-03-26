@@ -2,12 +2,12 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {StdStyle} from "@devkit/utils/ForgeHelper.sol";
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {StdStyle} from "../utils/ForgeHelper.sol";
+import {StringUtils} from "../utils/StringUtils.sol";
+import {BoolUtils} from "../utils/BoolUtils.sol";
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
-import {Logger} from "@devkit/debug/Logger.sol";
+import {Debug} from "../debug/Debug.sol";
+import {Logger} from "../debug/Logger.sol";
 
 library Errors {
     using StdStyle for string;

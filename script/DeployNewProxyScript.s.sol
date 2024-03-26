@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCScript} from "@devkit/MCScript.sol";
+import {MCScript} from "devkit/MCScript.sol";
 // import {IClone} from "@mc-std/interfaces/functions/IClone.sol";
 
 contract DeployNewProxyScript is MCScript {

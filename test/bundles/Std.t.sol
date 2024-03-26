@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {console2} from "forge-std/console2.sol";
-import {MCTest} from "@devkit/MCTest.sol";
-import {Clone} from "@mc-std/functions/Clone.sol";
+import {MCTest} from "devkit/MCTest.sol";
+import {Clone} from "bundle/std/functions/Clone.sol";
 
-contract DeployScenarioTest is MCTest {
-    function setUp() public startPrankWithDeployer {
+contract StdTest is MCTest {
+    function setUp() public startPrankWith("TEST_DEPLOYER") {
         // address proxy = ucs .deploy("MyProxy")
         //                     .set(mc.functions.stdOps.clone)
         //                     .getProxy().toAddress();

@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Utils
 import {console2, StdStyle} from "../utils/ForgeHelper.sol";
 import {StringUtils} from "../utils/StringUtils.sol";
-import {Logger} from "@devkit/debug/Logger.sol";
+import {Logger} from "./Logger.sol";
 
 bytes32 constant DEBUGGER = 0x03d3692c02b7cdcaf0187e8ede4101c401cc53a33aa7e03ef4682fcca8a55300;
 /// @custom:storage-location erc7201:mc.devkit.debugger
