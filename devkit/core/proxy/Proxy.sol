@@ -58,9 +58,11 @@ library ProxyUtils {
     -----------------------*/
     function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = recordExecStart("deploy");
-        proxy = dictionary.isVerifiable() ?
-                    deployProxyVerifiable(dictionary, initData) :
-                    deployProxy(dictionary, initData);
+        // Note Temporarily disable (see details in https://github.com/metacontract/mc/issues/16)
+        // proxy = dictionary.isVerifiable() ?
+        //             deployProxyVerifiable(dictionary, initData) :
+        //             deployProxy(dictionary, initData);
+        proxy = deployProxyVerifiable(dictionary, initData);
         return proxy.recordExecFinish(pid);
     }
         /**---------------------------
