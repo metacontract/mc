@@ -118,7 +118,7 @@ library DictionaryUtils {
     -------------------------------*/
     function set(Dictionary memory dictionary, FuncInfo memory functionInfo) internal returns(Dictionary memory) {
         uint pid = recordExecStart("set");
-        IDictionary(dictionary.assertVerifiable().addr).setImplementation({
+        IDictionary(dictionary.addr).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
         });
