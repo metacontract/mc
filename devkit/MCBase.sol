@@ -3,9 +3,9 @@ pragma solidity ^0.8.24;
 
 import {CommonBase} from "forge-std/Base.sol";
 
-import {ForgeHelper, vm} from "@devkit/utils/ForgeHelper.sol";
-import {Config} from "@devkit/Config.sol";
-import {MCDevKit} from "@devkit/MCDevKit.sol";
+import {ForgeHelper, vm} from "./utils/ForgeHelper.sol";
+import {Config} from "./Config.sol";
+import {MCDevKit} from "./MCDevKit.sol";
 
 
 abstract contract MCCommonBase is CommonBase {

@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "./GlobalMethods.sol";
 // Utils
-import {StdStyle, ForgeHelper, vm} from "@devkit/utils/ForgeHelper.sol";
-import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {StdStyle, ForgeHelper, vm} from "./ForgeHelper.sol";
+import {Bytes4Utils} from "./Bytes4Utils.sol";
+import {BoolUtils} from "./BoolUtils.sol";
 
 /**=====================\
 |   🖋 String Utils     |

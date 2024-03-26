@@ -2,22 +2,22 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "../../utils/GlobalMethods.sol";
 // Config
-import {Config} from "@devkit/Config.sol";
+import {Config} from "../../Config.sol";
 // Utils
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
-import {BoolUtils} from "@devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
 // Errors
-import {Errors} from "@devkit/errors/Errors.sol";
+import {Errors} from "../../errors/Errors.sol";
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
+import {Debug} from "../../debug/Debug.sol";
 // Core
-import {FuncInfo} from "@devkit/core/functions/FuncInfo.sol";
-import {BundleInfo} from "@devkit/core/functions/BundleInfo.sol";
-import {MCStdFuncs} from "@devkit/core/functions/MCStdFuncs.sol";
+import {FuncInfo} from "./FuncInfo.sol";
+import {BundleInfo} from "./BundleInfo.sol";
+import {MCStdFuncs} from "./MCStdFuncs.sol";
 
 
 /****************************************

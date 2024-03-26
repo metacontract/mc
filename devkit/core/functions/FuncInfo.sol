@@ -2,18 +2,18 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "@devkit/utils/GlobalMethods.sol";
+import "../../utils/GlobalMethods.sol";
 // Utils
-import {ForgeHelper} from "@devkit/utils/ForgeHelper.sol";
-import {StringUtils} from "@devkit/utils/StringUtils.sol";
+import {ForgeHelper} from "../../utils/ForgeHelper.sol";
+import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
-import {Bytes4Utils} from "@devkit/utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "../../utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
-import {AddressUtils} from "@devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
 // Debug
-import {Debug} from "@devkit/debug/Debug.sol";
-import {Logger} from "@devkit/debug/Logger.sol";
+import {Debug} from "../../debug/Debug.sol";
+import {Logger} from "../../debug/Logger.sol";
 // Core
 import {BundleInfo} from "./BundleInfo.sol";
 
