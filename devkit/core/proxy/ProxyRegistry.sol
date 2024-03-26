@@ -78,6 +78,16 @@ library ProxyRegistryUtils {
     }
 
 
+    /**----------------------------------
+        ♻️ Reset Current Context Proxy
+    ------------------------------------*/
+    function reset(ProxyRegistry storage proxies) internal returns(ProxyRegistry storage) {
+        uint pid = proxies.recordExecStart("reset");
+        delete proxies.currentProxy;
+        return proxies.recordExecFinish(pid);
+    }
+
+
     /**-------------------
         🔍 Find Proxy
     ---------------------*/

@@ -79,6 +79,16 @@ library DictRegistryUtils {
     }
 
 
+    /**----------------------------------------
+        ♻️ Reset Current Context Dictionary
+    ------------------------------------------*/
+    function reset(DictRegistry storage dictionaries) internal returns(DictRegistry storage) {
+        uint pid = dictionaries.recordExecStart("reset");
+        delete dictionaries.currentDictionary;
+        return dictionaries.recordExecFinish(pid);
+    }
+
+
     /**------------------------
         🔍 Find Dictionary
     --------------------------*/

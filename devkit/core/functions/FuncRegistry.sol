@@ -143,6 +143,17 @@ library FuncRegistryUtils {
     }
 
 
+    /**-----------------------------------------------
+        ♻️ Reset Current Context Function & Bundle
+    -------------------------------------------------*/
+    function reset(FuncRegistry storage functions) internal returns(FuncRegistry storage) {
+        uint pid = functions.recordExecStart("reset");
+        delete functions.currentFunctionName;
+        delete functions.currentBundleName;
+        return functions.recordExecFinish(pid);
+    }
+
+
     /**-------------------------------
         🔍 Find Function & Bundle
     ---------------------------------*/
