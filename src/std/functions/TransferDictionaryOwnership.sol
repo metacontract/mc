@@ -2,7 +2,7 @@
 pragma solidity ^0.8.22;
 
 // storage
-import {StorageRef} from "../storages/StorageRef.sol";
+import {Storage} from "../storage/Storage.sol";
 import {ITransferDictionaryOwnership} from "../interfaces/functions/ITransferDictionaryOwnership.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";

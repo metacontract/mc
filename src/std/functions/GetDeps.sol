@@ -2,7 +2,7 @@
 pragma solidity ^0.8.22;
 
 // storage
-// import {StorageRef} from "../storages/StorageRef.sol";
+// import {Storage} from "../storage/Storage.sol";
 import {IGetDeps} from "../interfaces/functions/IGetDeps.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";

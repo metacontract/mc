@@ -5,7 +5,7 @@ pragma solidity ^0.8.22;
 import {MsgSender} from "../../_predicates/MsgSender.sol";
 
 // storage
-import {StorageRef} from "../storages/StorageRef.sol";
+import {Storage} from "../storage/Storage.sol";
 
 import {IPropose} from "../interfaces/functions/IPropose.sol";
 

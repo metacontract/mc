@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // storage
-import {StorageRef} from "../storages/StorageRef.sol";
+import {Storage} from "../storage/Storage.sol";
 import {IInitSetAdmin} from "../interfaces/functions/IInitSetAdmin.sol";
 
 // predicates
@@ -18,12 +18,12 @@ contract InitSetAdmin is IInitSetAdmin {
 
     modifier intents(address admin) {
         _;
-        assert(StorageRef.Admin().admin == admin);
+        assert(Storage.Admin().admin == admin);
         Initialization.willBeCompleted();
     }
 
     function initSetAdmin(address admin) external requires intents(admin) {
-        StorageRef.Admin().admin = admin;
+        Storage.Admin().admin = admin;
         emit AdminSet(admin);
     }
 }

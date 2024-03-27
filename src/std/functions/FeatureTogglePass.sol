@@ -5,7 +5,7 @@ pragma solidity ^0.8.22;
 import {MsgSender} from "../../_predicates/MsgSender.sol";
 
 // storage
-import {StorageRef} from "../storages/StorageRef.sol";
+import {Storage} from "../storage/Storage.sol";
 
 import {ERC7546Clones} from "@ucs-contracts/src/ERC7546Clones.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";

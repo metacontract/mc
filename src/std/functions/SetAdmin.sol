@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // storage
-import {StorageRef} from "../storages/StorageRef.sol";
+import {Storage} from "../storage/Storage.sol";
 import {ISetAdmin} from "../interfaces/functions/ISetAdmin.sol";
 
 // predicates
@@ -21,7 +21,7 @@ contract SetAdmin is ISetAdmin {
     }
 
     function setAdmin(address admin) external requires intents {
-        StorageRef.Admin().admin = admin;
+        Storage.Admin().admin = admin;
 
     }
 }
