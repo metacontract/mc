@@ -14,10 +14,10 @@ import {Logger} from "../../debug/Logger.sol";
 import {FuncInfo} from "./FuncInfo.sol";
 import {BundleInfo} from "./BundleInfo.sol";
 // MC Std
-import {InitSetAdmin} from "bundle/std/functions/InitSetAdmin.sol";
+import {InitSetAdmin} from "bundle/std/functions/protected/InitSetAdmin.sol";
 import {GetDeps} from "bundle/std/functions/GetDeps.sol";
 import {Clone} from "bundle/std/functions/Clone.sol";
-import {SetImplementation} from "bundle/std/functions/SetImplementation.sol";
+import {SetImplementation} from "bundle/std/functions/protected/SetImplementation.sol";
 import {StdFacade} from "bundle/std/interfaces/StdFacade.sol";
 import {DefaultsFacade} from "bundle/std/interfaces/facades/DefaultsFacade.sol";
 

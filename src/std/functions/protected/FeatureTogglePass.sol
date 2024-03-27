@@ -2,15 +2,15 @@
 pragma solidity ^0.8.22;
 
 // predicates
-import {MsgSender} from "../../_predicates/MsgSender.sol";
+import {MsgSender} from "./protection/MsgSender.sol";
 
 // storage
-import {Storage} from "../storage/Storage.sol";
+import {Storage} from "../../storage/Storage.sol";
 
 import {ERC7546Clones} from "@ucs-contracts/src/ERC7546Clones.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
-import {IClone} from "../interfaces/functions/IClone.sol";
+import {IClone} from "../../interfaces/functions/IClone.sol";
 
 import {console2} from "forge-std/console2.sol";
 

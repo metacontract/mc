@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.22;
 
-import {Storage} from "../std/storage/Storage.sol";
+import {Storage} from "../../../storage/Storage.sol";
 
 library Initialization {
     error InvalidInitialization();

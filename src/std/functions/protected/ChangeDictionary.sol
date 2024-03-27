@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 // storage
-import {IChangeDictionary} from "../interfaces/functions/IChangeDictionary.sol";
+import {IChangeDictionary} from "../../interfaces/functions/IChangeDictionary.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
 // predicates
-import {MsgSender} from "../../_predicates/MsgSender.sol";
+import {MsgSender} from "./protection/MsgSender.sol";
 
 contract ChangeDictionary is IChangeDictionary {
     /// DO NOT USE STORAGE DIRECTLY !!!

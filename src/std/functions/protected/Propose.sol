@@ -2,12 +2,12 @@
 pragma solidity ^0.8.22;
 
 // predicates
-import {MsgSender} from "../../_predicates/MsgSender.sol";
+import {MsgSender} from "./protection/MsgSender.sol";
 
 // storage
-import {Storage} from "../storage/Storage.sol";
+import {Storage} from "../../storage/Storage.sol";
 
-import {IPropose} from "../interfaces/functions/IPropose.sol";
+import {IPropose} from "../../interfaces/functions/IPropose.sol";
 
 import {console2} from "forge-std/console2.sol";
 

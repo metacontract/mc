@@ -1,13 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
+import {IInitSetAdmin} from "../../interfaces/functions/IInitSetAdmin.sol";
+
 // storage
-import {Storage} from "../storage/Storage.sol";
-import {IInitSetAdmin} from "../interfaces/functions/IInitSetAdmin.sol";
+import {Storage} from "../../storage/Storage.sol";
 
 // predicates
-import {Initialization} from "../../_predicates/Initialization.sol";
+import {Initialization} from "./protection/Initialization.sol";
 
+/**
+    < MC Standard Function >
+    @title InitSetAdmin
+    @custom:version 0.1.0
+    @custom:schema v0.1.0
+ */
 contract InitSetAdmin is IInitSetAdmin {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
