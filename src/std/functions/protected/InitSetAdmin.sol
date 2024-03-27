@@ -7,7 +7,7 @@ import {IInitSetAdmin} from "../../interfaces/functions/IInitSetAdmin.sol";
 import {Storage} from "../../storage/Storage.sol";
 
 // predicates
-import {Initialization} from "./utils/Initialization.sol";
+import {ProtectionBase} from "./utils/ProtectionBase.sol";
 
 /**
     < MC Standard Function >
@@ -15,21 +15,10 @@ import {Initialization} from "./utils/Initialization.sol";
     @custom:version 0.1.0
     @custom:schema v0.1.0
  */
-contract InitSetAdmin is IInitSetAdmin {
+contract InitSetAdmin is IInitSetAdmin, ProtectionBase {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
-    modifier requires() {
-        Initialization.shouldNotBeCompleted();
-        _;
-    }
-
-    modifier intents(address admin) {
-        _;
-        assert(Storage.Admin().admin == admin);
-        Initialization.willBeCompleted();
-    }
-
-    function initSetAdmin(address admin) external requires intents(admin) {
+    function initSetAdmin(address admin) external initializer {
         Storage.Admin().admin = admin;
         emit AdminSet(admin);
     }
