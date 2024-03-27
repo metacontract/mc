@@ -5,7 +5,6 @@ import {Storage} from "../../../storage/Storage.sol";
 
 library Initialization {
     error InvalidInitialization();
-
     function shouldNotBeCompleted() internal view {
         if (Storage.Initialization().initialized != 0) revert InvalidInitialization();
     }
