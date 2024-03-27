@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.22;
 
-import {IGetDeps} from "../interfaces/functions/IGetDeps.sol";
+import {Dep} from "../storage/Schema.sol";
 
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
@@ -12,17 +12,17 @@ import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
     @custom:version 0.1.0
     @custom:schema v0.1.0
  */
-contract GetDeps is IGetDeps {
+contract GetDeps {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
-    function getDeps() external view returns(Op[] memory) {
+    function getDeps() external view returns(Dep[] memory) {
         DictionaryBase dictionary = DictionaryBase(ERC7546Utils.getDictionary()); // TODO IDictionary
         bytes4[] memory selectors = dictionary.supportsInterfaces();
-        Op[] memory ops = new Op[](selectors.length);
+        Dep[] memory deps = new Dep[](selectors.length);
         for (uint i; i < selectors.length; ++i) {
-            ops[i].selector = selectors[i];
-            ops[i].implementation = dictionary.getImplementation(selectors[i]);
+            deps[i].selector = selectors[i];
+            deps[i].implementation = dictionary.getImplementation(selectors[i]);
         }
-        return ops;
+        return deps;
     }
 }
