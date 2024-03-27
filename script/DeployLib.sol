@@ -8,6 +8,10 @@ library DeployLib {
     //     return "Std";
     // }
 
+    function deployStd(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return mc.setupMCStdFuncs();
+    }
+
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
         mc.functions.std.assignAndLoad();
         mc.functions.std.deployIfNotExists();

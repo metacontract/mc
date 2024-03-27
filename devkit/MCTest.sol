@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ForgeHelper} from "./utils/ForgeHelper.sol";
 import {DecodeErrorString} from "./errors/DecodeErrorString.sol";
+import {Config} from "./Config.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
@@ -11,28 +12,31 @@ import {DecodeErrorString} from "./errors/DecodeErrorString.sol";
 import {Test as ForgeTest} from "forge-std/Test.sol";
 
 // 📦 BOILERPLATE
-import {MCTestBase} from "./MCBase.sol";
+import {MCBase} from "./MCBase.sol";
 
 // ⭐️ MC TEST
-abstract contract MCTest is MCTestBase, ForgeTest {
+abstract contract MCTest is MCBase, ForgeTest {
+    constructor() {
+        if (Config.DEBUG_MODE) mc.startDebug();
+        mc.setupMCStdFuncs();
+    }
+
     modifier startPrankWith(string memory envKey) {
         _startPrankWith(envKey);
         _;
     }
-
     modifier startPrankWithDeployer() {
         _startPrankWith("DEPLOYER");
         _;
+    }
+    function _startPrankWith(string memory envKey) internal {
+        deployer = vm.envOr(envKey, makeAddr(envKey));
+        vm.startPrank(deployer);
     }
 
     modifier assumeAddressIsNotReserved(address addr) {
         ForgeHelper.assumeAddressIsNotReserved(addr);
         _;
-    }
-
-    function _startPrankWith(string memory envKey) internal {
-        deployer = getAddressOr(envKey, makeAddr(envKey));
-        vm.startPrank(deployer);
     }
 }
 

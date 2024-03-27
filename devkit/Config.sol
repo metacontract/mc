@@ -10,6 +10,8 @@ library Config {
     bool constant DEBUG_MODE = false;
     LogLevel constant DEFAULT_LOG_LEVEL = LogLevel.Warn;
 
+    bool constant USE_DEPLOYED_STD = false; // TODO
+
     string constant DEFAULT_DICTIONARY_NAME = "Dictionary";
     string constant DEFAULT_DICTIONARY_DUPLICATED_NAME = "DuplicatedDictionary";
     string constant DEFAULT_DICTIONARY_MOCK_NAME = "MockDictionary";
