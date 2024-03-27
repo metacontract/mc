@@ -2,7 +2,6 @@
 pragma solidity ^0.8.22;
 
 import {Storage} from "../../../storage/Storage.sol";
-import {console2} from "forge-std/console2.sol";
 
 library FeatureToggle {
     error FeatureNotActive();
