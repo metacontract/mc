@@ -7,7 +7,7 @@ import {IInitSetAdmin} from "../../interfaces/functions/IInitSetAdmin.sol";
 import {Storage} from "../../storage/Storage.sol";
 
 // predicates
-import {Initialization} from "./protection/Initialization.sol";
+import {Initialization} from "./utils/Initialization.sol";
 
 /**
     < MC Standard Function >

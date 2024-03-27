@@ -2,7 +2,7 @@
 pragma solidity ^0.8.22;
 
 // predicates
-import {MsgSender} from "./protection/MsgSender.sol";
+import {MsgSender} from "./utils/MsgSender.sol";
 
 // storage
 // import {StorageLib, Proposal} from "../../StorageLib.sol";

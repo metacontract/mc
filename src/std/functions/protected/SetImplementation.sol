@@ -8,7 +8,7 @@ import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
 // predicates
-import {MsgSender} from "./protection/MsgSender.sol";
+import {MsgSender} from "./utils/MsgSender.sol";
 
 contract SetImplementation is ISetImplementation {
     /// DO NOT USE STORAGE DIRECTLY !!!

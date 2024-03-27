@@ -6,7 +6,7 @@ import {IChangeDictionary} from "../../interfaces/functions/IChangeDictionary.so
 import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
 
 // predicates
-import {MsgSender} from "./protection/MsgSender.sol";
+import {MsgSender} from "./utils/MsgSender.sol";
 
 contract ChangeDictionary is IChangeDictionary {
     /// DO NOT USE STORAGE DIRECTLY !!!
