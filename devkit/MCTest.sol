@@ -19,20 +19,18 @@ abstract contract MCTest is MCTestBase, ForgeTest {
         _startPrankWith(envKey);
         _;
     }
-
     modifier startPrankWithDeployer() {
         _startPrankWith("DEPLOYER");
         _;
+    }
+    function _startPrankWith(string memory envKey) internal {
+        deployer = getAddressOr(envKey, makeAddr(envKey));
+        vm.startPrank(deployer);
     }
 
     modifier assumeAddressIsNotReserved(address addr) {
         ForgeHelper.assumeAddressIsNotReserved(addr);
         _;
-    }
-
-    function _startPrankWith(string memory envKey) internal {
-        deployer = getAddressOr(envKey, makeAddr(envKey));
-        vm.startPrank(deployer);
     }
 }
 
