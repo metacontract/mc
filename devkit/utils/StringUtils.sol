@@ -103,7 +103,7 @@ library StringUtils {
         return str;
     }
     function assertNotEmpty(string memory str) internal returns(string memory) {
-        check(str.isNotEmpty(), "Empty Stringqqqqq");
+        check(str.isNotEmpty(), "Empty String");
         return str;
     }
 
