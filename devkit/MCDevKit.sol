@@ -166,10 +166,10 @@ library MCDevKitUtils {
     *******************************/
     function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(string(initData)));
-        return mc   .deployDictionary(name.append("_Dictionary"))
+        return mc   .deployDictionary(name)
                     .set(bundleInfo)
                     .upgradeFacade()
-                    .deployProxy(name.append("_Proxy"), initData)
+                    .deployProxy(name, initData)
                     .recordExecFinish(pid);
         // TODO gen and set facade
     }
