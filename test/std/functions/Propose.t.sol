@@ -3,7 +3,7 @@ pragma solidity ^0.8.22;
 
 import {Test} from "forge-std/Test.sol";
 
-import {Dictionary} from "@ucs-contracts/src/dictionary/Dictionary.sol";
+import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 
 contract ProposeOpSpecTest is Test {
     // function test_Fuzz_ProposeOp(Proposal calldata _fuzz_proposal) public {

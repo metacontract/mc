@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Core
 import {FuncInfo} from "../core/functions/FuncInfo.sol";
 // External Lib
-import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
+import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
 
 /**
     @title Mock Dictionary Contract

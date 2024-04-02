@@ -3,8 +3,8 @@ pragma solidity ^0.8.22;
 
 import {Dep} from "../storage/Schema.sol";
 
-import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
-import {DictionaryBase} from "@ucs-contracts/src/dictionary/DictionaryBase.sol";
+import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
+import {DictionaryBase} from "@ucs.mc/dictionary/DictionaryBase.sol";
 
 /**
     < MC Standard Function >

@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Core
 import {FuncInfo} from "../core/functions/FuncInfo.sol";
 // External Lib
-import {Proxy as OZProxy} from "@openzeppelin/contracts/proxy/Proxy.sol";
+import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
 
 /**
     @title Mock Proxy Contract

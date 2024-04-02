@@ -7,7 +7,7 @@ import "./GlobalMethods.sol";
 import {ForgeHelper, vm} from "./ForgeHelper.sol";
 import {BoolUtils} from "./BoolUtils.sol";
 // External Lib
-import {ERC7546Utils} from "@ucs-contracts/src/proxy/ERC7546Utils.sol";
+import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
 
 /**======================\
 |   📌 Address Utils     |

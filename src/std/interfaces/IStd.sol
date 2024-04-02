@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import {ERC7546ProxyEvents} from "@ucs-contracts/src/proxy/ERC7546ProxyEvents.sol";
+import {ERC7546ProxyEvents} from "@ucs.mc/proxy/ERC7546ProxyEvents.sol";
 import {Dep} from "../storage/Schema.sol";
 
 interface IStd is ERC7546ProxyEvents {

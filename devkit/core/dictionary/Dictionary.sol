@@ -21,10 +21,10 @@ import {BundleInfo} from "../functions/BundleInfo.sol";
 // Test
 import {MockDictionary} from "../../test/MockDictionary.sol";
 // External Libs
-import {DictionaryEtherscan} from "@ucs-contracts/src/dictionary/DictionaryEtherscan.sol";
-import {IDictionary} from "@ucs-contracts/src/dictionary/IDictionary.sol";
-import {IBeacon} from "@openzeppelin/contracts/proxy/beacon/IBeacon.sol";
-import {ERC1967Utils} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
+import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
+import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
+import {IBeacon} from "@oz.mc/proxy/beacon/IBeacon.sol";
+import {ERC1967Utils} from "@oz.mc/proxy/ERC1967/ERC1967Utils.sol";
 
 
 /**---------------------------------
