@@ -14,12 +14,12 @@ import {Logger} from "../../debug/Logger.sol";
 import {FuncInfo} from "./FuncInfo.sol";
 import {BundleInfo} from "./BundleInfo.sol";
 // MC Std
-import {Clone} from "bundle/std/functions/Clone.sol";
-import {GetDeps} from "bundle/std/functions/GetDeps.sol";
-import {FeatureToggle} from "bundle/std/functions/protected/FeatureToggle.sol";
-import {InitSetAdmin} from "bundle/std/functions/protected/InitSetAdmin.sol";
-import {UpgradeDictionary} from "bundle/std/functions/protected/UpgradeDictionary.sol";
-import {StdFacade} from "bundle/std/interfaces/StdFacade.sol";
+import {Clone} from "mc-std/functions/Clone.sol";
+import {GetDeps} from "mc-std/functions/GetDeps.sol";
+import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
+import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
+import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
+import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 
 
 /*****************************************
