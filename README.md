@@ -1,6 +1,9 @@
 # Meta Contract
 A meta contract is a powerful framework for smart contract development, designed to enhance developer productivity and contract maintainability. Built on the principles of the *ERC-7546: UCS* (Upgradeable Clone Standard), this ***mc*** library provides a robust architecture for creating and managing upgradeable smart contracts.
 
+> [!WARNING]
+> This is an alpha release of the Meta Contract (mc) library, which means it is an early version intended for testing and feedback purposes. Please be cautious when using this version in production environments, as it may contain bugs, incomplete features, or unexpected behavior.
+
 ## Features
 - **Upgradeable Contracts**: Create smart contracts that can be easily upgraded, allowing for continuous improvement and bug fixes without contract migration.
 - **Modular Design**: A meta contract promotes a modular approach to contract development, enabling code reuse and reducing complexity.
