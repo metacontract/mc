@@ -14,7 +14,7 @@ contract Receive {
     /// DO NOT USE STORAGE DIRECTLY !!!
     event Received(address from, uint256 amount);
 
-    function receive() external payable {
+    receive() external payable {
         emit Received(msg.sender, msg.value);
     }
 
