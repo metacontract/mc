@@ -415,6 +415,9 @@ library MCDevKitUtils {
             })
         ).recordExecFinish(pid);
     }
+    function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+        return mc.setStorageReader(mc.findDictionary(bundleName), selector, implementation);
+    }
     function setStorageReader(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.setStorageReader(mc.findCurrentDictionary(), selector, implementation);
     }
