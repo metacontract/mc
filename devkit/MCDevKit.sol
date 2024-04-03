@@ -186,10 +186,10 @@ library MCDevKitUtils {
         return mc.deploy(name, mc.functions.findBundle(name), mc.defaultInitData());
     }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.defaultName(), mc.functions.findCurrentBundle(), initData);
+        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), initData);
     }
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.defaultName(), mc.functions.findCurrentBundle(), mc.defaultInitData());
+        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), mc.defaultInitData());
     }
 
 
@@ -451,6 +451,10 @@ library MCDevKitUtils {
     function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
         uint pid = mc.recordExecStart("findFunction");
         return mc.functions.findFunction(name);
+    }
+    function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
+        uint pid = mc.recordExecStart("findCurrentBundleName", "");
+        return mc.functions.findCurrentBundleName();
     }
 
     /**----- 🏠 Proxy -------*/
