@@ -262,33 +262,43 @@ library MCDevKitUtils {
     /**---------------------
         🧩 Set Function
     -----------------------*/
-    function set(MCDevKit storage mc, FuncInfo memory functionInfo) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("set", PARAMS.append(functionInfo.name));
-        mc.findCurrentDictionary().set(functionInfo);
+    function set(MCDevKit storage mc, Dictionary memory dictionary, FuncInfo memory functionInfo) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("set", PARAMS.append(dictionary.addr).comma().append(functionInfo.name));
+        dictionary.set(functionInfo);
         return mc.recordExecFinish(pid);
+    }
+    function set(MCDevKit storage mc, FuncInfo memory functionInfo) internal returns(MCDevKit storage) {
+        return mc.set(mc.findCurrentDictionary(), functionInfo);
     }
 
 
     /**------------------
         🧺 Set Bundle
     --------------------*/
-    function set(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("set", PARAMS.append(bundleInfo.name));
-        mc.findCurrentDictionary().set(bundleInfo);
+    function set(MCDevKit storage mc, Dictionary memory dictionary, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("set", PARAMS.append(dictionary.addr).comma().append(bundleInfo.name));
+        dictionary.set(bundleInfo);
         return mc.recordExecFinish(pid);
+    }
+    function set(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+        return mc.set(mc.findCurrentDictionary(), bundleInfo);
     }
 
 
     /**----------------------
         🖼 Upgrade Facade
     ------------------------*/
-    function upgradeFacade(MCDevKit storage mc, address newFacade) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("upgradeFacade", PARAMS.append(newFacade));
-        mc.findCurrentDictionary().upgradeFacade(newFacade);
+    function upgradeFacade(MCDevKit storage mc, Dictionary memory dictionary, address newFacade) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("upgradeFacade", PARAMS.append(dictionary.addr).comma().append(newFacade));
+        dictionary.upgradeFacade(newFacade);
         return mc.recordExecFinish(pid);
+
+    }
+    function upgradeFacade(MCDevKit storage mc, address newFacade) internal returns(MCDevKit storage) {
+        return mc.upgradeFacade(mc.findCurrentDictionary(), newFacade);
     }
     function upgradeFacade(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.upgradeFacade(mc.functions.findCurrentBundle().facade);
+        return mc.upgradeFacade(mc.findCurrentDictionary(), mc.functions.findCurrentBundle().facade);
     }
 
 
