@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {ForgeHelper} from "./utils/ForgeHelper.sol";
 import {LogLevel} from "./debug/Debug.sol";
+// import {MCDevKit} from "./MCDevKit.sol";
+// import {FuncInfo} from "./core/functions/FuncInfo.sol";
 
 /**===============\
 |   📝 Config     |
@@ -22,5 +25,44 @@ library Config {
     struct ScanRange { uint128 start; uint128 end; }
     function SCAN_RANGE() internal pure returns(ScanRange memory) {
         return ScanRange(1, 5);
+    }
+
+
+
+
+    function defaultOwner() internal returns(address) {
+        return ForgeHelper.msgSender();
+    }
+
+    function defaultName() internal pure returns(string memory) {
+        return "ProjectName"; // TODO
+    }
+
+    // function defaultProxyName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.proxy.genUniqueName();
+    // }
+    // function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.proxy.genUniqueMockName();
+    // }
+
+    // function defaultDictionaryName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.dictionary.genUniqueName();
+    // }
+    // function defaultDuplicatedDictionaryName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.dictionary.genUniqueDuplicatedName();
+    // }
+    // function defaultMockDictionaryName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.dictionary.genUniqueMockName();
+    // }
+
+    // function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
+    //     return mc.functions.std.allFunctions.functionInfos;
+    // }
+    // function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {
+    //     return mc.functions.genUniqueBundleName();
+    // }
+
+    function defaultInitData() internal pure returns(bytes memory) {
+        return "";
     }
 }
