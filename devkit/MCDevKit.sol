@@ -43,16 +43,6 @@ struct MCDevKit {
 
 library MCDevKitUtils {
     string constant LIB_NAME = "MCDevKit";
-    function recordExecStart(MCDevKit storage, string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
-        return mc.recordExecStart(funcName, "");
-    }
-    function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
-        Debug.recordExecFinish(pid);
-        return mc;
-    }
 
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🏗 Setup DevKit Environment
@@ -561,4 +551,27 @@ library MCDevKitUtils {
     function toProxyAddress(MCDevKit storage mc) internal returns(address) {
         return mc.findCurrentProxy().addr;
     }
+
+
+    /**----------------
+        🐞 Debug
+    ------------------*/
+    /**
+        Record Start
+     */
+    function recordExecStart(MCDevKit storage, string memory funcName, string memory params) internal returns(uint) {
+        return Debug.recordExecStart(LIB_NAME, funcName, params);
+    }
+    function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
+        return mc.recordExecStart(funcName, "");
+    }
+
+    /**
+        Record Finish
+     */
+    function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
+        Debug.recordExecFinish(pid);
+        return mc;
+    }
+
 }
