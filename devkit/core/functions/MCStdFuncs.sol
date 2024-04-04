@@ -30,7 +30,7 @@ struct MCStdFuncs {
     FuncInfo initSetAdmin;
     FuncInfo getDeps;
     FuncInfo clone;
-    BundleInfo allFunctions;
+    BundleInfo all;
 }
 
 library MCStdFuncsUtils {
@@ -142,11 +142,11 @@ library MCStdFuncsUtils {
         /**===== Each Std Bundle =====*/
         function configureStdBundle_AllFunctions(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             uint pid = recordExecStart("configureStdBundle_AllFunctions");
-            std.allFunctions.safeAssign("ALL_FUNCTIONS")
-                            .safeAdd(std.initSetAdmin)
-                            .safeAdd(std.getDeps)
-                            .safeAdd(std.clone)
-                            .safeAssign(address(new StdFacade()));
+            std.all .safeAssign("ALL_FUNCTIONS")
+                    .safeAdd(std.initSetAdmin)
+                    .safeAdd(std.getDeps)
+                    .safeAdd(std.clone)
+                    .safeAssign(address(new StdFacade()));
             return std.recordExecFinish(pid);
         }
 
