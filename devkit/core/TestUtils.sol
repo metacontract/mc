@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {MCDevKit} from "devkit/MCDevKit.sol";
 // Global Methods
 import "devkit/utils/GlobalMethods.sol";
+import {Params} from "devkit/debug/Params.sol";
 // Config
 import {Config} from "devkit/Config.sol";
 // Utils
@@ -17,7 +19,6 @@ import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
 //  dictionary
 import {Dictionary, DictionaryUtils} from "devkit/core/dictionary/Dictionary.sol";
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
 
 
 using TestUtils for MCDevKit;
@@ -39,7 +40,7 @@ library TestUtils {
         @param functionInfos The function contract infos to be registered with the SimpleMockProxy. A bundle can also be specified. Note that the SimpleMockProxy cannot have its functions changed later. If no functions are provided, defaultBundle will be used.
     */
     function createSimpleMockProxy(MCDevKit storage mc, string memory name, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
-        string memory params = PARAMS.append(name);
+        string memory params = Params.append(name);
         for (uint i; i < functionInfos.length; ++i) {
             params = params.comma().append(functionInfos[i].name);
         }
@@ -73,7 +74,7 @@ library TestUtils {
         @param functionInfos The Functions to be registered with the `MockDictionary`. A bundle can also be specified. If no Ops are provided, defaultBundle will be used.
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("createMockDictionary", PARAMS.append(name).comma().append(owner));
+        uint pid = mc.recordExecStart("createMockDictionary", Params.append(name, owner));
         Dictionary memory mockDictionary = DictionaryUtils.createMockDictionary(owner, functionInfos);
         mc.dictionary   .safeAdd(name, mockDictionary)
                         .safeUpdate(mockDictionary);
@@ -97,7 +98,7 @@ library TestUtils {
         🤲 Set Storage Reader
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("setStorageReader", PARAMS.append(selector).comma().append(implementation));
+        uint pid = mc.recordExecStart("setStorageReader", Params.append(selector, implementation));
         dictionary.set(
             FuncInfo({
                 name: "StorageGetter",
