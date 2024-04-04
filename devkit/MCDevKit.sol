@@ -413,33 +413,6 @@ library MCDevKitUtils {
     }
 
 
-
-    /**----------------------
-        🔼 Update Context
-    ------------------------*/
-    function updateCurrentBundle(MCDevKit storage mc, string memory bundleName) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrentBundle", PARAMS.append(bundleName));
-        mc.functions.safeUpdateCurrentBundle(bundleName);
-        return mc.recordExecFinish(pid);
-    }
-    function updateCurrentFunction(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrentFunction", PARAMS.append(functionName));
-        mc.functions.safeUpdateCurrentFunction(functionName);
-        return mc.recordExecFinish(pid);
-    }
-    function updateCurrent(MCDevKit storage mc, Proxy storage proxy) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(proxy.addr));
-        mc.proxy.safeUpdate(proxy);
-        return mc.recordExecFinish(pid);
-    }
-    function updateCurrent(MCDevKit storage mc, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("updateCurrent", PARAMS.append(dictionary.addr));
-        mc.dictionary.safeUpdate(dictionary);
-        return mc.recordExecFinish(pid);
-    }
-
-
-
     /*************************
         🕵️ Getter Methods
     **************************/
