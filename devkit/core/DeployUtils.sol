@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {MCDevKit} from "devkit/MCDevKit.sol";
 // Global Methods
 import "devkit/utils/GlobalMethods.sol";
+import {Params} from "devkit/debug/Params.sol";
 // Config
 import {Config} from "devkit/Config.sol";
 // Utils
@@ -18,7 +20,6 @@ import {MCStdFuncsArgs} from "devkit/core/functions/MCStdFuncs.sol";
 //  proxy
 import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
 
 
 /***********************************************
@@ -71,7 +72,7 @@ library DeployUtils {
         🏠 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("deployProxy", PARAMS.append(dictionary.addr).comma().append(string(initData)));
+        uint pid = mc.recordExecStart("deployProxy", Params.append(dictionary.addr, initData));
         Proxy memory proxy = ProxyUtils.deploy(dictionary, initData);
         mc.proxy.safeAdd(name, proxy)
                 .safeUpdate(proxy);
@@ -101,7 +102,7 @@ library DeployUtils {
         📚 Deploy Dictionary
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        uint pid = mc.recordExecStart("deployDictionary", PARAMS.append(name).append(bundleInfo.name).comma().append(owner));
+        uint pid = mc.recordExecStart("deployDictionary", Params.append(name, bundleInfo.name, owner));
         Dictionary memory dictionary = DictionaryUtils  .deploy(owner)
                                                         .set(bundleInfo)
                                                         .upgradeFacade(bundleInfo.facade);
@@ -137,7 +138,7 @@ library DeployUtils {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("duplicateDictionary", PARAMS.append(name).comma().append(targetDictionary.addr));
+        uint pid = mc.recordExecStart("duplicateDictionary", Params.append(name, targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
         mc.dictionary   .safeAdd(name, newDictionary)
                         .safeUpdate(newDictionary);
