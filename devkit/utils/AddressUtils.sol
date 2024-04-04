@@ -17,11 +17,6 @@ library AddressUtils {
     using BoolUtils for bool;
 
 
-    function getLabel(address addr) internal returns(string memory) {
-        return ForgeHelper.getLabel(addr);
-    }
-
-
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
