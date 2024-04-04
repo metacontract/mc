@@ -17,7 +17,7 @@ import {MCBase} from "./MCBase.sol";
 abstract contract MCScript is MCBase, ForgeScript {
     constructor() {
         if (Config.DEBUG_MODE) mc.startDebug();
-        if (Config.USE_DEPLOYED_STD) mc.setupMCStdFuncs();
+        if (Config.USE_DEPLOYED_STD) mc.setupStdFuncs();
     }
 
     modifier startBroadcastWith(string memory envKey) {

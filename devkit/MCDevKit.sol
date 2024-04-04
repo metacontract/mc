@@ -74,7 +74,7 @@ library MCDevKitUtils {
     /**--------------------------------
         🏗 Setup DevKit Environment
     ----------------------------------*/
-    function setupMCStdFuncs(MCDevKit storage mc) internal returns(MCDevKit storage) {
+    function setupStdFuncs(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("setupMCStdFuncs");
         mc.functions.std.assignAndLoad()
                         .deployIfNotExists()

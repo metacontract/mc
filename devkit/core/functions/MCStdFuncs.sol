@@ -30,9 +30,7 @@ struct MCStdFuncs {
     FuncInfo initSetAdmin;
     FuncInfo getDeps;
     FuncInfo clone;
-    FuncInfo setImplementation;
     BundleInfo allFunctions;
-    BundleInfo defaults;
 }
 
 library MCStdFuncsUtils {
@@ -62,14 +60,13 @@ library MCStdFuncsUtils {
         return std  .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
                     .assignAndLoad_Clone()
-                    // .assignAndLoad_SetImplementation()
                     .recordExecFinish(pid);
     }
 
         /**===== Each Std Function =====*/
         function assignAndLoad_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             uint pid = recordExecStart("assignAndLoad_InitSetAdmin");
-            std.initSetAdmin.safeAssign("INIT_SET_ADMIN")
+            std.initSetAdmin.safeAssign("InitSetAdmin")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
                             .loadAndAssignFromEnv()
                             .parseAndLog();
@@ -78,7 +75,7 @@ library MCStdFuncsUtils {
 
         function assignAndLoad_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             uint pid = recordExecStart("assignAndLoad_GetDeps");
-            std.getDeps .safeAssign("GET_DEPS")
+            std.getDeps .safeAssign("GetDeps")
                         .safeAssign(GetDeps.getDeps.selector)
                         .loadAndAssignFromEnv()
                         .parseAndLog();
@@ -87,21 +84,12 @@ library MCStdFuncsUtils {
 
         function assignAndLoad_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
             uint pid = recordExecStart("assignAndLoad_Clone");
-            std.clone   .safeAssign("CLONE")
+            std.clone   .safeAssign("Clone")
                         .safeAssign(Clone.clone.selector)
                         .loadAndAssignFromEnv()
                         .parseAndLog();
             return std.recordExecFinish(pid);
         }
-
-        // function assignAndLoad_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        //     uint pid = recordExecStart("assignAndLoad_SetImplementation");
-        //     std.setImplementation   .safeAssign("SET_IMPLEMENTATION")
-        //                             .safeAssign(SetImplementation.setImplementation.selector)
-        //                             .loadAndAssignFromEnv()
-        //                             .parseAndLog();
-        //     return std.recordExecFinish(pid);
-        // }
 
 
     /**-----------------------------------------------
@@ -113,7 +101,6 @@ library MCStdFuncsUtils {
         return std  .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
                     .deployIfNotExists_Clone()
-                    // .deployIfNotExists_SetImplementation()
                     .recordExecFinish(pid);
     }
 
@@ -142,14 +129,6 @@ library MCStdFuncsUtils {
             return std.recordExecFinish(pid);
         }
 
-        // function deployIfNotExists_SetImplementation(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        //     uint pid = recordExecStart("deployIfNotExists_SetImplementation");
-        //     if (!std.setImplementation.implementation.isContract()) {
-        //         std.setImplementation.safeAssign(address(new SetImplementation()));
-        //     }
-        //     return std.recordExecFinish(pid);
-        // }
-
 
     /**----------------------------------
         🧺 Configure Standard Bundles
@@ -157,7 +136,6 @@ library MCStdFuncsUtils {
     function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
         uint pid = recordExecStart("configureStdBundle");
         return std  .configureStdBundle_AllFunctions()
-                    // .configureStdBundle_Defaults()
                     .recordExecFinish(pid);
     }
 
@@ -168,32 +146,9 @@ library MCStdFuncsUtils {
                             .safeAdd(std.initSetAdmin)
                             .safeAdd(std.getDeps)
                             .safeAdd(std.clone)
-                            // .safeAdd(std.setImplementation)
                             .safeAssign(address(new StdFacade()));
-                            // .emitLog();
             return std.recordExecFinish(pid);
         }
-
-        // function configureStdBundle_Defaults(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        //     uint pid = recordExecStart("configureStdBundle_Defaults");
-        //     std.defaults.safeAssign("DEFAULTS")
-        //                 .safeAdd(std.initSetAdmin)
-        //                 .safeAdd(std.getDeps)
-        //                 .safeAssign(address(new DefaultsFacade()));
-        //                 // .emitLog();
-        //     return std.recordExecFinish(pid);
-        // }
-
-
-    /**--------------------------------------------
-        🔧 Helper Methods for each Standard Functions
-    ----------------------------------------------*/
-    // function getAllMCStdFuncsFacade(MCStdFuncs storage std) internal returns(address) {
-    //     return std.allMCStdFuncs.facade;
-    // }
-    // function getDefaultMCStdFuncsFacade(MCStdFuncs storage std) internal returns(address) {
-    //     return std.defaultOps.facade;
-    // }
 
 }
 

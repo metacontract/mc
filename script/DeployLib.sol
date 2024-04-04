@@ -9,7 +9,7 @@ library DeployLib {
     // }
 
     function deployStd(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.setupMCStdFuncs();
+        return mc.setupStdFuncs();
     }
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {

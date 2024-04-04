@@ -18,7 +18,7 @@ import {MCBase} from "./MCBase.sol";
 abstract contract MCTest is MCBase, ForgeTest {
     constructor() {
         if (Config.DEBUG_MODE) mc.startDebug();
-        mc.setupMCStdFuncs();
+        mc.setupStdFuncs();
     }
 
     modifier startPrankWith(string memory envKey) {
