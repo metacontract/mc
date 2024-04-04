@@ -6,9 +6,14 @@ import {MCDevKit, FuncInfo} from "devkit/MCDevKit.sol";
 
 import {TestHelper} from "../utils/TestHelper.sol";
     using TestHelper for FuncInfo;
+import {StringUtils} from "devkit/utils/StringUtils.sol";
+    using StringUtils for string;
 
 contract MCDevKitTest is Test {
     MCDevKit internal mc;
+    function setUp() public {
+        mc.stopLog();
+    }
 
     function test_Success_setupStdFuncs() public {
         mc.setupStdFuncs();
@@ -21,5 +26,13 @@ contract MCDevKitTest is Test {
         assertTrue(mc.functions.std.allFunctions.functionInfos[0].isInitSetAdmin());
         assertTrue(mc.functions.std.allFunctions.functionInfos[1].isGetDeps());
         assertTrue(mc.functions.std.allFunctions.functionInfos[2].isClone());
+    }
+
+    function test_Success_init_withName() public {
+        string memory name = "TestBundleName";
+        mc.init(name);
+
+        assertTrue(mc.functions.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.functions.currentBundleName.isEqual(name));
     }
 }
