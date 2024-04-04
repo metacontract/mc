@@ -2,14 +2,11 @@
 pragma solidity ^0.8.24;
 
 // Global Methods
-import "devkit/utils/GlobalMethods.sol";
+import {check} from "devkit/utils/GlobalMethods.sol";
+import {Params} from "devkit/debug/Params.sol";
 // Utils
-import {AddressUtils} from "devkit/utils/AddressUtils.sol";
-    using AddressUtils for address;
-import {StringUtils} from "devkit/utils/StringUtils.sol";
-    using StringUtils for string;
+import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Core
-//  functions
 import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
@@ -21,7 +18,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
         🔗 Use Function
             ✨ Add Custom Function
             🧺 Add Custom Function to Bundle
-        🪟 Set Facade
+        🪟 Use Facade
 ************************************************/
 using BundleUtils for MCDevKit;
 library BundleUtils {
@@ -31,7 +28,7 @@ library BundleUtils {
         🌱 Init Custom Bundle
     -----------------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("init", PARAMS.append(name));
+        uint pid = mc.recordExecStart("init", Params.append(name));
         mc.functions.safeInit(name);
         return mc.recordExecFinish(pid);
     }
@@ -51,14 +48,14 @@ library BundleUtils {
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("use", PARAMS.append(name).comma().append(selector).comma().append(implementation));
+        uint pid = mc.recordExecStart("use", Params.append(name, selector, implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
                     .addCurrentToBundle()
                     .recordExecFinish(pid);
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.use(implementation.getLabel(), selector, implementation);
+        return mc.use(ForgeHelper.getLabel(implementation), selector, implementation);
     }
     function use(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
         return mc.use(functionInfo.name, functionInfo.selector, functionInfo.implementation);
