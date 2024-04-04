@@ -2,14 +2,9 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-// Global Methods
-import "devkit/utils/GlobalMethods.sol";
-import {Params} from "devkit/debug/Params.sol";
-// Config
-import {Config} from "devkit/Config.sol";
 // Utils
-import {StringUtils} from "devkit/utils/StringUtils.sol";
-    using StringUtils for string;
+import {Params} from "devkit/debug/Params.sol";
+import {Config} from "devkit/Config.sol";
 // Core
 //  functions
 import {BundleInfo} from "devkit/core/functions/BundleInfo.sol";
@@ -20,17 +15,16 @@ import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
 import {Dictionary, DictionaryUtils} from "devkit/core/dictionary/Dictionary.sol";
 
 
-
-using TestUtils for MCDevKit;
-library TestUtils {
-    string constant LIB_NAME = "MCTest";
-
 /******************************************
     🧪 Test
         🏠 Mocking Proxy
         📚 Mocking Dictionary
         🤲 Set Storage Reader
 *******************************************/
+using TestUtils for MCDevKit;
+library TestUtils {
+    string constant LIB_NAME = "MCTest";
+
     /**---------------------
         🏠 Mocking Proxy
     -----------------------*/
@@ -41,9 +35,9 @@ library TestUtils {
     */
     function createSimpleMockProxy(MCDevKit storage mc, string memory name, FuncInfo[] memory functionInfos) internal returns(MCDevKit storage) {
         string memory params = Params.append(name);
-        for (uint i; i < functionInfos.length; ++i) {
-            params = params.comma().append(functionInfos[i].name);
-        }
+        // for (uint i; i < functionInfos.length; ++i) {
+        //     params = params.comma().append(functionInfos[i].name);
+        // }
         uint pid = mc.recordExecStart("createSimpleMockProxy", params);
         Proxy memory simpleMockProxy = ProxyUtils.createSimpleMockProxy(functionInfos);
         mc.proxy.safeAdd(name, simpleMockProxy)

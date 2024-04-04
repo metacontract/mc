@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-
 // Core
 //  functions
 import {BundleInfo} from "devkit/core/functions/BundleInfo.sol";
