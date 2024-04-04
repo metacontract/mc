@@ -16,6 +16,13 @@ library AddressUtils {
     using AddressUtils for address;
     using BoolUtils for bool;
 
+    /**-----------------------
+        🔀 Type Convertor
+    -------------------------*/
+    function toString(address addr) internal pure returns(string memory) {
+        return vm.toString(addr);
+    }
+
 
     /**-------------------------------
         🧐 Inspectors & Assertions
@@ -51,7 +58,6 @@ library AddressUtils {
         check(addr.isContract(), "Address Not Contract");
         return addr;
     }
-
 
 
     /**-------------------------

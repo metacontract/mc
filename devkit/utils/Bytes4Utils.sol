@@ -22,10 +22,10 @@ library Bytes4Utils {
     -----------------------------*/
 
 
-    /**---------------
-        Convertor
-    ----------------*/
-    function toString(bytes4 selector) internal  returns (string memory) {
+    /**-----------------------
+        🔀 Type Convertor
+    -------------------------*/
+    function toString(bytes4 selector) internal pure returns (string memory) {
         return vm.toString(selector).substring(10);
     }
 
