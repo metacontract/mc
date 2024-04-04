@@ -15,5 +15,3 @@ function check(bool condition, string memory errorBody, string memory errorDetai
 function throwError(string memory errorBody) {
     Errors.throwError(errorBody);
 }
-
-string constant PARAMS = " with params: ";
