@@ -56,7 +56,7 @@ mc.startDebug();
                             // .use("Sweeper")
                             // .use("Withdrawer")
                             .use("Initialize", YamatoInitialize.initialize.selector, address(new YamatoInitialize()))
-                            .set("Yamato", address(new YamatoFacade()))
+                            .useFacade(address(new YamatoFacade()))
                             .deploy(abi.encodeCall(YamatoInitialize.initialize, multisigAddr))
                             .toProxyAddress();
 
