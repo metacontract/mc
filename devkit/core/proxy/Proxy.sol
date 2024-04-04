@@ -56,7 +56,7 @@ library ProxyUtils {
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = recordExecStart("deploy");
         // Note Temporarily disable (see details in https://github.com/metacontract/mc/issues/16)
         // proxy = dictionary.isVerifiable() ?
@@ -68,14 +68,14 @@ library ProxyUtils {
         /**---------------------------
             Deploy Proxy Primitives
         -----------------------------*/
-        function deployProxyVerifiable(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        function deployProxyVerifiable(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
                 addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
                 kind: ProxyKind.Verifiable
             });
         }
 
-        function deployProxy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        function deployProxy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
                 addr: address(new ERC7546Proxy(dictionary.addr, initData)),
                 kind: ProxyKind.Normal
