@@ -26,8 +26,8 @@ import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
         📚 Deploy Dictionary
         🔂 Duplicate Dictionary
 ************************************************/
-using DeployLib for MCDevKit;
 library DeployLib {
+    using DeployLib for MCDevKit;
     string constant LIB_NAME = "DeployLib";
 
 

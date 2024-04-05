@@ -19,8 +19,8 @@ import {Dictionary} from "devkit/core/dictionary/Dictionary.sol";
         🏠 Find Proxy
         📚 Find Dictionary
 ***********************************/
-using FinderLib for MCDevKit;
 library FinderLib {
+    using FinderLib for MCDevKit;
     string constant LIB_NAME = "FinderLib";
 
 
