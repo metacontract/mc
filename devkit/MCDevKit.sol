@@ -6,7 +6,7 @@ import {FuncRegistry} from "./core/functions/FuncRegistry.sol";
 import {DictRegistry} from "./core/dictionary/DictRegistry.sol";
 import {ProxyRegistry} from "./core/proxy/ProxyRegistry.sol";
 
-// Core Utils
+// Global Methods
 import {SetupLib} from "./global/SetupLib.sol";
 import {BundleLib} from "./global/BundleLib.sol";
 import {DeployLib} from "./global/DeployLib.sol";
