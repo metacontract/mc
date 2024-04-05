@@ -3,9 +3,14 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 
-using ContextLib for MCDevKit;
+/***********************************************
+    🎭 Context
+        ♻️ Reset Current Context
+************************************************/
 library ContextLib {
-    string constant LIB_NAME = "MCContext";
+    using ContextLib for MCDevKit;
+    string constant LIB_NAME = "ContextLib";
+
 
     /**-----------------------------
         ♻️ Reset Current Context
