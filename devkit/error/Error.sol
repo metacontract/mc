@@ -17,5 +17,7 @@ function throwError(string memory errorBody) {
 library ERR {
     string constant HEADER = "\u2716 DevKit Error: ";
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
+    // string constant STR_EMPTY = "Empty String";
+    // string constant STR_EXISTS = "String Already Exist";
 }
 

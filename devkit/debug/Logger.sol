@@ -102,9 +102,6 @@ library Logger {
         return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
     }
 
-string constant ERR_STR_EMPTY = "Empty String";
-string constant ERR_STR_EXISTS = "String Already Exist";
-
 
     /**-------------------
         💾 Export Log
