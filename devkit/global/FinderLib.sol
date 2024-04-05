@@ -21,7 +21,8 @@ import {Dictionary} from "devkit/core/dictionary/Dictionary.sol";
 ***********************************/
 using FinderLib for MCDevKit;
 library FinderLib {
-    string constant LIB_NAME = "MCFinder";
+    string constant LIB_NAME = "FinderLib";
+
 
     /**--------------------
         🗂️ Find Bundle
