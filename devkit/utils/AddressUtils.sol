@@ -4,18 +4,17 @@ pragma solidity ^0.8.24;
 // Validation
 import {check} from "devkit/error/Validation.sol";
 // Utils
-import {ForgeHelper, vm} from "./ForgeHelper.sol";
+import {vm} from "./ForgeHelper.sol";
 import {BoolUtils} from "./BoolUtils.sol";
+    using BoolUtils for bool;
 // External Lib
 import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
 
 /**======================\
 |   📌 Address Utils     |
 \=======================*/
+using AddressUtils for address;
 library AddressUtils {
-    using AddressUtils for address;
-    using BoolUtils for bool;
-
     /**-----------------------
         🔀 Type Convertor
     -------------------------*/
@@ -27,36 +26,46 @@ library AddressUtils {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
+    // isZero
     function isZero(address addr) internal returns(bool) {
         return addr == address(0);
-    }
-    function isNotZero(address addr) internal returns(bool) {
-        return addr.isZero().isNot();
     }
     function assertZero(address addr) internal returns(address) {
         check(addr.isZero(), "Address Not Zero");
         return addr;
+    }
+
+    // isNotZero
+    function isNotZero(address addr) internal returns(bool) {
+        return addr.isZero().isNot();
     }
     function assertNotZero(address addr) internal returns(address) {
         check(addr.isNotZero(), "Zero Address");
         return addr;
     }
 
+    // hasCode
     function hasCode(address addr) internal returns(bool) {
         return addr.code.length != 0;
     }
+
+    // hasNotCode
     function hasNotCode(address addr) internal returns(bool) {
         return addr.hasCode().isNot();
     }
+
+    // isContract
     function isContract(address addr) internal returns(bool) {
         return addr.hasCode();
-    }
-    function isNotContract(address addr) internal returns(bool) {
-        return addr.isContract().isNot();
     }
     function assertIsContract(address addr) internal returns(address) {
         check(addr.isContract(), "Address Not Contract");
         return addr;
+    }
+
+    // isNotContract
+    function isNotContract(address addr) internal returns(bool) {
+        return addr.isContract().isNot();
     }
 
 
