@@ -2,26 +2,26 @@
 pragma solidity ^0.8.24;
 
 // Registries
-import {FuncRegistry} from "./core/functions/FuncRegistry.sol";
-import {DictRegistry} from "./core/dictionary/DictRegistry.sol";
-import {ProxyRegistry} from "./core/proxy/ProxyRegistry.sol";
+import {FunctionRegistry} from "devkit/ucs/functions/FunctionRegistry.sol";
+import {DictionaryRegistry} from "devkit/ucs/dictionary/DictionaryRegistry.sol";
+import {ProxyRegistry} from "devkit/ucs/proxy/ProxyRegistry.sol";
 
 // Global Methods
-import {SetupLib} from "./global/SetupLib.sol";
-import {BundleLib} from "./global/BundleLib.sol";
-import {DeployLib} from "./global/DeployLib.sol";
-import {FinderLib} from "./global/FinderLib.sol";
-import {ContextLib} from "./global/ContextLib.sol";
-import {TestLib} from "./global/TestLib.sol";
-import {DebugLib} from "./global/DebugLib.sol";
+import {SetupLib} from "devkit/global/SetupLib.sol";
+import {BundleLib} from "devkit/global/BundleLib.sol";
+import {DeployLib} from "devkit/global/DeployLib.sol";
+import {FinderLib} from "devkit/global/FinderLib.sol";
+import {ContextLib} from "devkit/global/ContextLib.sol";
+import {TestLib} from "devkit/global/TestLib.sol";
+import {DebugLib} from "devkit/global/DebugLib.sol";
 
 
 /********************************
     🌟 Meta Contract DevKit
 *********************************/
 struct MCDevKit {
-    FuncRegistry functions;
-    DictRegistry dictionary;
+    FunctionRegistry functions;
+    DictionaryRegistry dictionary;
     ProxyRegistry proxy;
 }
 using SetupLib for MCDevKit global;

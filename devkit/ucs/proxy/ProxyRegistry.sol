@@ -17,29 +17,29 @@ import {Proxy} from "./Proxy.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";
 
 
-/********************
-    🏠 UCS Proxy
-*********************/
-using ProxyRegistryUtils for ProxyRegistry global;
+/**---------------------------
+    🏠 UCS Proxy Registry
+-----------------------------*/
+using ProxyRegistryLib for ProxyRegistry global;
 struct ProxyRegistry {
     mapping(bytes32 nameHash => Proxy) deployed;
     mapping(bytes32 nameHash => Proxy) mocks;
     Proxy currentProxy;
 }
 
-library ProxyRegistryUtils {
-    string constant LIB_NAME = "ProxyRegistry";
-
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         📥 Add Proxy
         🔼 Update Current Context Proxy
+        ♻️ Reset Current Context Proxy
         🔍 Find Proxy
         🏷 Generate Unique Name
     << Helper >>
         🧐 Inspectors & Assertions
         🐞 Debug
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library ProxyRegistryLib {
+    string constant LIB_NAME = "ProxyRegistryLib";
 
 
     /**-------------------

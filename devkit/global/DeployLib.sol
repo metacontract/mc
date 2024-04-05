@@ -9,13 +9,13 @@ import {Params} from "devkit/debug/Params.sol";
 import {Config} from "devkit/Config.sol";
 // Core
 //  dictionary
-import {Dictionary, DictionaryUtils} from "devkit/core/dictionary/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/ucs/dictionary/Dictionary.sol";
 //  functions
-import {BundleInfo} from "devkit/core/functions/BundleInfo.sol";
-import {MCStdFuncsArgs} from "devkit/core/functions/MCStdFuncs.sol";
+import {Bundle} from "devkit/ucs/functions/Bundle.sol";
+import {MCStdFuncsArgs} from "devkit/ucs/functions/MCStdFuncs.sol";
     using MCStdFuncsArgs for address;
 //  proxy
-import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/ucs/proxy/Proxy.sol";
 
 
 
@@ -34,7 +34,7 @@ library DeployLib {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/
-    function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, address owner, bytes memory initData) internal returns(MCDevKit storage) {
+    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("deploy");
         // uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
         Dictionary memory dictionary = mc.deployDictionary(name, bundleInfo, owner);
@@ -46,13 +46,13 @@ library DeployLib {
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), Config.defaultOwner(), Config.defaultInitData());
     }
-    // function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, bundleInfo, facade, owner, Config.defaultInitData());
     // }
-    // function deploy(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, bundleInfo, Config.defaultInitData(), );
     // }
-    // function deploy(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+    // function deploy(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
     //     return mc.deploy(Config.defaultName(), bundleInfo, Config.defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
@@ -71,7 +71,7 @@ library DeployLib {
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("deployProxy", Params.append(dictionary.addr, initData));
-        Proxy memory proxy = ProxyUtils.deploy(dictionary, initData);
+        Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         mc.proxy.safeAdd(name, proxy)
                 .safeUpdate(proxy);
         return mc.recordExecFinish(pid);
@@ -99,9 +99,9 @@ library DeployLib {
     /**-------------------------
         📚 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo, address owner) internal returns(Dictionary memory) {
+    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
         uint pid = mc.recordExecStart("deployDictionary", Params.append(name, bundleInfo.name, owner));
-        Dictionary memory dictionary = DictionaryUtils  .deploy(owner)
+        Dictionary memory dictionary = DictionaryLib  .deploy(owner)
                                                         .set(bundleInfo)
                                                         .upgradeFacade(bundleInfo.facade);
         mc.dictionary   .safeAdd(name, dictionary)
@@ -115,19 +115,19 @@ library DeployLib {
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.functions.findCurrentBundle(), Config.defaultOwner());
     }
-    function deployDictionary(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(Dictionary memory) {
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.dictionary.genUniqueName(), bundleInfo, Config.defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.dictionary.genUniqueName(), mc.functions.findCurrentBundle(), owner);
     }
-    function deployDictionary(MCDevKit storage mc, string memory name, BundleInfo storage bundleInfo) internal returns(Dictionary memory) {
+    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, bundleInfo, Config.defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.functions.findCurrentBundle(), owner);
     }
-    function deployDictionary(MCDevKit storage mc, BundleInfo storage bundleInfo, address owner) internal returns(Dictionary memory) {
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.dictionary.genUniqueName(), bundleInfo, owner);
     }
 

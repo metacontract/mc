@@ -11,8 +11,8 @@ import {StringUtils} from "../../utils/StringUtils.sol";
 import {Debug} from "../../debug/Debug.sol";
 import {Logger} from "../../debug/Logger.sol";
 // Core
-import {FuncInfo} from "./FuncInfo.sol";
-import {BundleInfo} from "./BundleInfo.sol";
+import {Function} from "./Function.sol";
+import {Bundle} from "./Bundle.sol";
 // MC Std
 import {Clone} from "mc-std/functions/Clone.sol";
 import {GetDeps} from "mc-std/functions/GetDeps.sol";
@@ -25,16 +25,21 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 /*****************************************
     🏛 Meta Contract Standard Functions
 ******************************************/
-using MCStdFuncsUtils for MCStdFuncs global;
+using MCStdFuncsLib for MCStdFuncs global;
 struct MCStdFuncs {
-    FuncInfo initSetAdmin;
-    FuncInfo getDeps;
-    FuncInfo clone;
-    BundleInfo all;
+    Function initSetAdmin;
+    Function getDeps;
+    Function clone;
+    Bundle all;
 }
 
-library MCStdFuncsUtils {
-    string constant LIB_NAME = "MCStdFuncs";
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    🔏 Assign and Load Standard Functions
+    🐣 Deploy Standard Functions If Not Exists
+    🧺 Configure Standard Bundles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library MCStdFuncsLib {
+    string constant LIB_NAME = "MCStdFuncsLib";
     function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
@@ -45,12 +50,6 @@ library MCStdFuncsUtils {
         Debug.recordExecFinish(pid);
         return std;
     }
-
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🔏 Assign and Load Standard Functions
-        🐣 Deploy Standard Functions If Not Exists
-        🧺 Configure Standard Bundles
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     /**------------------------------------------
         🔏 Assign and Load Standard Functions

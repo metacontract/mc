@@ -4,12 +4,12 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Core
 //  functions
-import {BundleInfo} from "devkit/core/functions/BundleInfo.sol";
-import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
+import {Bundle} from "devkit/ucs/functions/Bundle.sol";
+import {Function} from "devkit/ucs/functions/Function.sol";
 //  proxy
-import {Proxy} from "devkit/core/proxy/Proxy.sol";
+import {Proxy} from "devkit/ucs/proxy/Proxy.sol";
 //  dictionary
-import {Dictionary} from "devkit/core/dictionary/Dictionary.sol";
+import {Dictionary} from "devkit/ucs/dictionary/Dictionary.sol";
 
 
 /**********************************
@@ -27,11 +27,11 @@ library FinderLib {
     /**--------------------
         🗂️ Find Bundle
     ----------------------*/
-    // function findCurrentBundle(MCDevKit storage mc) internal returns(BundleInfo storage) {
+    // function findCurrentBundle(MCDevKit storage mc) internal returns(Bundle storage) {
     //     uint pid = mc.recordExecStart("findCurrentBundle");
     //     return mc.functions.findCurrentBundle();
     // }
-    function findBundle(MCDevKit storage mc, string memory name) internal returns(BundleInfo storage) {
+    function findBundle(MCDevKit storage mc, string memory name) internal returns(Bundle storage) {
         return mc.functions.findBundle(name);
     }
     function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
@@ -42,11 +42,11 @@ library FinderLib {
     /**----------------------
         🧩 Find Function
     ------------------------*/
-    function findFunction(MCDevKit storage mc, string memory name) internal returns(FuncInfo storage) {
+    function findFunction(MCDevKit storage mc, string memory name) internal returns(Function storage) {
         uint pid = mc.recordExecStart("findFunction");
         return mc.functions.findFunction(name);
     }
-    function findCurrentFunction(MCDevKit storage mc) internal returns(FuncInfo storage) {
+    function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
         uint pid = mc.recordExecStart("findCurrentFunction", "");
         return mc.functions.findCurrentFunction();
     }

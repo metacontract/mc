@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {ForgeHelper} from "./utils/ForgeHelper.sol";
 import {LogLevel} from "./debug/Debug.sol";
 // import {MCDevKit} from "./MCDevKit.sol";
-// import {FuncInfo} from "./core/functions/FuncInfo.sol";
+// import {Function} from "./ucs/functions/Function.sol";
 
 /**===============\
 |   📝 Config     |
@@ -55,7 +55,7 @@ library Config {
     //     return mc.dictionary.genUniqueMockName();
     // }
 
-    // function defaultFunctionInfos(MCDevKit storage mc) internal returns(FuncInfo[] storage) {
+    // function defaultFunctionInfos(MCDevKit storage mc) internal returns(Function[] storage) {
     //     return mc.functions.std.allFunctions.functionInfos;
     // }
     // function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {

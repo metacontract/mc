@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Core
-import {FuncInfo} from "../core/functions/FuncInfo.sol";
+import {Function} from "../ucs/functions/Function.sol";
 // External Lib
 import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
 
@@ -10,9 +10,9 @@ import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
     @title Mock Proxy Contract
  */
 contract SimpleMockProxy is OZProxy {
-    constructor (FuncInfo[] memory functionInfos) {
+    constructor (Function[] memory functionInfos) {
         for (uint i; i < functionInfos.length; ++i) {
-            SimpleMockProxyUtils.set({
+            SimpleMockProxyLib.set({
                 selector: functionInfos[i].selector,
                 implementation: functionInfos[i].implementation
             });
@@ -20,11 +20,11 @@ contract SimpleMockProxy is OZProxy {
     }
 
     function _implementation() internal view override returns(address) {
-        return SimpleMockProxyUtils.getImplementation(msg.sig);
+        return SimpleMockProxyLib.getImplementation(msg.sig);
     }
 }
 
-library SimpleMockProxyUtils {
+library SimpleMockProxyLib {
     bytes32 internal constant STORAGE_LOCATION = 0x64a9f0903a8f864d59bc40808555c0090d6ada027fd81884feeb2af9acdbc200;
     /// @custom:storage-location erc7021:mc.mock.proxy
     struct SimpleMockProxyStorage {

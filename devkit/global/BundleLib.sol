@@ -8,7 +8,7 @@ import {check} from "devkit/error/Validation.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
-import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
+import {Function} from "devkit/ucs/functions/Function.sol";
 
 
 /***********************************************
@@ -60,10 +60,10 @@ library BundleLib {
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(ForgeHelper.getLabel(implementation), selector, implementation);
     }
-    function use(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
+    function use(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
         return mc.use(functionInfo.name, functionInfo.selector, functionInfo.implementation);
     }
-    // function use(MCDevKit storage mc, BundleInfo storage bundleInfo) internal returns(MCDevKit storage) {
+    // function use(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
@@ -81,7 +81,7 @@ library BundleLib {
         /**-------------------------------------
             🧺 Add Custom Function to Bundle
         ---------------------------------------*/
-        function addToBundle(MCDevKit storage mc, FuncInfo storage functionInfo) internal returns(MCDevKit storage) {
+        function addToBundle(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addToBundle");
             mc.functions.addToBundle(functionInfo);
             return mc.recordExecFinish(pid);

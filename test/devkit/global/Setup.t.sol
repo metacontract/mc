@@ -3,9 +3,9 @@ pragma solidity ^0.8.24;
 
 import {MCDevKitTest} from "test/devkit/MCDevKitTest.sol";
 
-import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
+import {Function} from "devkit/ucs/functions/Function.sol";
 import {TestHelper} from "test/utils/TestHelper.sol";
-    using TestHelper for FuncInfo;
+    using TestHelper for Function;
 
 contract DevKitTest_MCSetup is MCDevKitTest {
 

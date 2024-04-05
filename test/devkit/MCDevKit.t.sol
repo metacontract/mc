@@ -3,10 +3,10 @@ pragma solidity ^0.8.24;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
+import {Function} from "devkit/ucs/functions/Function.sol";
 
 import {TestHelper} from "../utils/TestHelper.sol";
-    using TestHelper for FuncInfo;
+    using TestHelper for Function;
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 
