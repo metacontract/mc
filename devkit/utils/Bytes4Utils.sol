@@ -6,17 +6,16 @@ import {check} from "devkit/error/Validation.sol";
 // Utils
 import {vm} from "./ForgeHelper.sol";
 import {StringUtils} from "./StringUtils.sol";
+    using StringUtils for string;
 import {BoolUtils} from "./BoolUtils.sol";
+    using BoolUtils for bool;
+
 
 /**=====================\
 |   💾 Bytes4 Utils     |
 \======================*/
+using Bytes4Utils for bytes4;
 library Bytes4Utils {
-    using Bytes4Utils for bytes4;
-    using StringUtils for string;
-    using BoolUtils for bool;
-
-
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
@@ -36,12 +35,13 @@ library Bytes4Utils {
     function isEmpty(bytes4 selector) internal  returns(bool) {
         return selector == bytes4(0);
     }
-    function isNotEmpty(bytes4 selector) internal  returns(bool) {
-        return selector.isEmpty().isFalse();
-    }
     function assertEmpty(bytes4 selector) internal returns(bytes4) {
         check(selector.isEmpty(), "Selector Not Empty");
         return selector;
+    }
+
+    function isNotEmpty(bytes4 selector) internal  returns(bool) {
+        return selector.isEmpty().isFalse();
     }
     function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
         check(selector.isNotEmpty(), "Empty Selector");
