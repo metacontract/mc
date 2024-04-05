@@ -32,7 +32,7 @@ library Bytes4Utils {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function isEmpty(bytes4 selector) internal  returns(bool) {
+    function isEmpty(bytes4 selector) internal pure returns(bool) {
         return selector == bytes4(0);
     }
     function assertEmpty(bytes4 selector) internal returns(bytes4) {
@@ -40,7 +40,7 @@ library Bytes4Utils {
         return selector;
     }
 
-    function isNotEmpty(bytes4 selector) internal  returns(bool) {
+    function isNotEmpty(bytes4 selector) internal pure returns(bool) {
         return selector.isEmpty().isFalse();
     }
     function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
@@ -48,10 +48,10 @@ library Bytes4Utils {
         return selector;
     }
 
-    function isEqual(bytes4 a, bytes4 b) internal returns(bool) {
+    function isEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
         return a == b;
     }
-    function isNotEqual(bytes4 a, bytes4 b) internal returns(bool) {
+    function isNotEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
         return a.isEqual(b).isFalse();
     }
 }

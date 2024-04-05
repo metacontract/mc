@@ -4,10 +4,8 @@ pragma solidity ^0.8.24;
 /**===================\
 |   ✅ Bool Utils     |
 \====================*/
+using BoolUtils for bool;
 library BoolUtils {
-    using BoolUtils for bool;
-
-
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
