@@ -20,4 +20,3 @@ library ERR {
     // string constant STR_EMPTY = "Empty String";
     // string constant STR_EXISTS = "String Already Exist";
 }
-
