@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Errors & Debug
-import {Errors, throwError} from "devkit/errors/Errors.sol";
-import {check} from "devkit/errors/Validation.sol";
+// Error & Debug
+import {ERR, throwError} from "devkit/error/Error.sol";
+import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config} from "../../Config.sol";
@@ -118,7 +118,7 @@ library DictRegistryUtils {
             name = baseName.toSequential(i);
             if (dictionaries.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
     function genUniqueName(DictRegistry storage dictionaries) internal returns(string memory name) {
         return dictionaries.genUniqueName(Config.DEFAULT_DICTIONARY_NAME);
@@ -134,7 +134,7 @@ library DictRegistryUtils {
             name = Config.DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
             if (dictionaries.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
 

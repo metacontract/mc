@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Validation
-import {check} from "devkit/errors/Validation.sol";
-import {throwError} from "devkit/errors/Errors.sol";
+// Error & Debug
+import {check} from "devkit/error/Validation.sol";
+import {ERR, throwError} from "devkit/error/Error.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config} from "../../Config.sol";
 // Utils
@@ -11,10 +12,6 @@ import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
 import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
-// Errors
-import {Errors} from "../../errors/Errors.sol";
-// Debug
-import {Debug} from "../../debug/Debug.sol";
 // Core
 import {FuncInfo} from "./FuncInfo.sol";
 import {BundleInfo} from "./BundleInfo.sol";
@@ -197,7 +194,7 @@ library FuncRegistryUtils {
             name = Config.DEFAULT_BUNDLE_NAME.toSequential(i);
             if (functions.existsBundle(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
 

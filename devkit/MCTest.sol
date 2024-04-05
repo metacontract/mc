@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ForgeHelper} from "./utils/ForgeHelper.sol";
-import {DecodeErrorString} from "./errors/DecodeErrorString.sol";
+import {DecodeErrorString} from "./error/DecodeErrorString.sol";
 import {Config} from "./Config.sol";
 
 // 💬 ABOUT

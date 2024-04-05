@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Errors & Debug
-import {check} from "devkit/errors/Validation.sol";
+import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";

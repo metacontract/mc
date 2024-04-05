@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {check} from "devkit/errors/Validation.sol";
+import {check} from "devkit/error/Validation.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Errors & Debug
-import {Errors, throwError} from "devkit/errors/Errors.sol";
-import {check} from "devkit/errors/Validation.sol";
+// Error & Debug
+import {ERR, throwError} from "devkit/error/Error.sol";
+import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config} from "../../Config.sol";
@@ -116,7 +116,7 @@ library ProxyRegistryUtils {
             name = Config.DEFAULT_PROXY_NAME.toSequential(i);
             if (proxies.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
     function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
@@ -126,7 +126,7 @@ library ProxyRegistryUtils {
             name = Config.DEFAULT_PROXY_MOCK_NAME.toSequential(i);
             if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
 
