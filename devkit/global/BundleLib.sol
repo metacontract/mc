@@ -19,9 +19,10 @@ import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
             🧺 Add Custom Function to Bundle
         🪟 Use Facade
 ************************************************/
-using BundleLib for MCDevKit;
 library BundleLib {
-    string constant LIB_NAME = "MCBundle";
+    using BundleLib for MCDevKit;
+    string constant LIB_NAME = "BundleLib";
+
 
     /**---------------------------
         🌱 Init Custom Bundle
@@ -31,6 +32,7 @@ library BundleLib {
         mc.functions.safeInit(name);
         return mc.recordExecFinish(pid);
     }
+
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return mc.init(mc.functions.genUniqueBundleName());
     }
@@ -38,7 +40,9 @@ library BundleLib {
     //
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("ensureInit");
-        if (mc.functions.findCurrentBundle().hasNotName()) mc.init();
+        if (mc.functions.notExistsCurrentBundle()) {
+            mc.init();
+        }
         return mc.recordExecFinish(pid);
     }
 
@@ -96,6 +100,7 @@ library BundleLib {
         mc.functions.set(name, facade);
         return mc.recordExecFinish(pid);
     }
+
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         return mc.useFacade(mc.functions.findCurrentBundleName(), facade);
     }
