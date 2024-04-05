@@ -11,10 +11,10 @@ library BoolUtils {
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
-    function isNot(bool flag) internal  returns(bool) {
+    function isNot(bool flag) internal pure returns(bool) {
         return !flag;
     }
-    function isFalse(bool flag) internal  returns(bool) {
+    function isFalse(bool flag) internal pure returns(bool) {
         return flag == false;
     }
 
