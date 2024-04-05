@@ -7,9 +7,9 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
     🎭 Context
         ♻️ Reset Current Context
 ************************************************/
-library ContextLib {
-    using ContextLib for MCDevKit;
-    string constant LIB_NAME = "ContextLib";
+library MCContextLib {
+    using MCContextLib for MCDevKit;
+    string constant LIB_NAME = "MCContextLib";
 
 
     /**-----------------------------

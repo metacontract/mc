@@ -7,13 +7,13 @@ import {DictionaryRegistry} from "devkit/ucs/dictionary/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/ucs/proxy/ProxyRegistry.sol";
 
 // Global Methods
-import {SetupLib} from "devkit/global/SetupLib.sol";
-import {BundleLib} from "devkit/global/BundleLib.sol";
-import {DeployLib} from "devkit/global/DeployLib.sol";
-import {FinderLib} from "devkit/global/FinderLib.sol";
-import {ContextLib} from "devkit/global/ContextLib.sol";
-import {TestLib} from "devkit/global/TestLib.sol";
-import {DebugLib} from "devkit/global/DebugLib.sol";
+import {MCSetupLib} from "devkit/global/MCSetupLib.sol";
+import {MCBundleLib} from "devkit/global/MCBundleLib.sol";
+import {MCDeployLib} from "devkit/global/MCDeployLib.sol";
+import {MCFinderLib} from "devkit/global/MCFinderLib.sol";
+import {MCContextLib} from "devkit/global/MCContextLib.sol";
+import {MCTestLib} from "devkit/global/MCTestLib.sol";
+import {MCDebugLib} from "devkit/global/MCDebugLib.sol";
 
 
 /********************************
@@ -24,10 +24,10 @@ struct MCDevKit {
     DictionaryRegistry dictionary;
     ProxyRegistry proxy;
 }
-using SetupLib for MCDevKit global;
-using BundleLib for MCDevKit global;
-using DeployLib for MCDevKit global;
-using FinderLib for MCDevKit global;
-using ContextLib for MCDevKit global;
-using TestLib for MCDevKit global;
-using DebugLib for MCDevKit global;
+using MCSetupLib for MCDevKit global;
+using MCBundleLib for MCDevKit global;
+using MCDeployLib for MCDevKit global;
+using MCFinderLib for MCDevKit global;
+using MCContextLib for MCDevKit global;
+using MCTestLib for MCDevKit global;
+using MCDebugLib for MCDevKit global;

@@ -19,9 +19,9 @@ import {Function} from "devkit/ucs/functions/Function.sol";
             🧺 Add Custom Function to Bundle
         🪟 Use Facade
 ************************************************/
-library BundleLib {
-    using BundleLib for MCDevKit;
-    string constant LIB_NAME = "BundleLib";
+library MCBundleLib {
+    using MCBundleLib for MCDevKit;
+    string constant LIB_NAME = "MCBundleLib";
 
 
     /**---------------------------

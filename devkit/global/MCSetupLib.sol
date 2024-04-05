@@ -7,9 +7,9 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
     🏗 Setup
         🧩 Setup Standard Funcs
 ***********************************/
-library SetupLib {
-    using SetupLib for MCDevKit;
-    string constant LIB_NAME = "SetupLib";
+library MCSetupLib {
+    using MCSetupLib for MCDevKit;
+    string constant LIB_NAME = "MCSetupLib";
 
 
     /**----------------------------
