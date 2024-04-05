@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "devkit/global/MCDevKit.sol";
 // Debug
 import {Debug} from "devkit/debug/Debug.sol";
 import {Logger} from "devkit/debug/Logger.sol";

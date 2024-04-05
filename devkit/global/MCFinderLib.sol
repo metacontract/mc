@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "devkit/global/MCDevKit.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/ucs/functions/Bundle.sol";
