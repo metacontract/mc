@@ -6,7 +6,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 
 abstract contract MCDevKitTest is Test {
     MCDevKit internal mc;
-    function setUp() public {
+    constructor() {
         mc.stopLog();
     }
 }
