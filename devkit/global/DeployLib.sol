@@ -28,7 +28,8 @@ import {Proxy, ProxyUtils} from "devkit/core/proxy/Proxy.sol";
 ************************************************/
 using DeployLib for MCDevKit;
 library DeployLib {
-    string constant LIB_NAME = "MCDeploy";
+    string constant LIB_NAME = "DeployLib";
+
 
     /**-----------------------------
         🌞 Deploy Meta Contract
