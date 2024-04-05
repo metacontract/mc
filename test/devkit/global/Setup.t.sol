@@ -1,18 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test, console2} from "forge-std/Test.sol";
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKitTest} from "test/devkit/MCDevKitTest.sol";
 
 import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
 import {TestHelper} from "test/utils/TestHelper.sol";
     using TestHelper for FuncInfo;
 
-contract DevKitTest_MCSetup is Test {
-    MCDevKit internal mc;
-    function setUp() public {
-        mc.stopLog();
-    }
+contract DevKitTest_MCSetup is MCDevKitTest {
 
     function test_Success_setupStdFuncs() public {
         mc.setupStdFuncs();
