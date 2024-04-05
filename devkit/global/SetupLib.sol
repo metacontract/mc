@@ -3,8 +3,8 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 
-using SetupUtils for MCDevKit;
-library SetupUtils {
+using SetupLib for MCDevKit;
+library SetupLib {
     string constant LIB_NAME = "MCSetup";
 
 /**********************************

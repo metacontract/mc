@@ -18,8 +18,8 @@ import {FuncInfo} from "devkit/core/functions/FuncInfo.sol";
             🧺 Add Custom Function to Bundle
         🪟 Use Facade
 ************************************************/
-using BundleUtils for MCDevKit;
-library BundleUtils {
+using BundleLib for MCDevKit;
+library BundleLib {
     string constant LIB_NAME = "MCBundle";
 
     /**---------------------------

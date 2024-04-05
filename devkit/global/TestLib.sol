@@ -21,8 +21,8 @@ import {Dictionary, DictionaryUtils} from "devkit/core/dictionary/Dictionary.sol
         📚 Mocking Dictionary
         🤲 Set Storage Reader
 *******************************************/
-using TestUtils for MCDevKit;
-library TestUtils {
+using TestLib for MCDevKit;
+library TestLib {
     string constant LIB_NAME = "MCTest";
 
     /**---------------------

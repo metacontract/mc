@@ -3,8 +3,8 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 
-using ContextUtils for MCDevKit;
-library ContextUtils {
+using ContextLib for MCDevKit;
+library ContextLib {
     string constant LIB_NAME = "MCContext";
 
     /**-----------------------------

@@ -6,8 +6,8 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 import {Logger} from "devkit/debug/Logger.sol";
 
-using DebugUtils for MCDevKit;
-library DebugUtils {
+using DebugLib for MCDevKit;
+library DebugLib {
     string constant LIB_NAME = "MCDebug";
 
     /**----------------
