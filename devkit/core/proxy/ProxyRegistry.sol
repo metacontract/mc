@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Errors & Debug
+import {Errors, throwError} from "devkit/errors/Errors.sol";
+import {check} from "devkit/errors/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config} from "../../Config.sol";
 // Utils
@@ -10,8 +12,6 @@ import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
 import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
-// Errors
-import {Errors} from "../../errors/Errors.sol";
 // Core
 import {Proxy} from "./Proxy.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";

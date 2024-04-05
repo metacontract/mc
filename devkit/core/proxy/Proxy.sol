@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Errors & Debug
+import {check} from "devkit/errors/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;

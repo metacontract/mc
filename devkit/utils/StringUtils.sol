@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "./GlobalMethods.sol";
+// Validation
+import {check} from "devkit/errors/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "./ForgeHelper.sol";
 import {Bytes4Utils} from "./Bytes4Utils.sol";

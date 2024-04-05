@@ -9,6 +9,10 @@ import {BoolUtils} from "../utils/BoolUtils.sol";
 import {Debug} from "../debug/Debug.sol";
 import {Logger} from "../debug/Logger.sol";
 
+function throwError(string memory errorBody) {
+    Errors.throwError(errorBody);
+}
+
 library Errors {
     using StdStyle for string;
     using StringUtils for string;
