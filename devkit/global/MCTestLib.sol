@@ -22,7 +22,6 @@ import {Dictionary, DictionaryLib} from "devkit/ucs/dictionary/Dictionary.sol";
         🤲 Set Storage Reader
 *******************************************/
 library MCTestLib {
-    using MCTestLib for MCDevKit;
     string constant LIB_NAME = "MCTestLib";
 
 

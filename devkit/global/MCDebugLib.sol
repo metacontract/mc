@@ -16,7 +16,6 @@ import {Logger} from "devkit/debug/Logger.sol";
         🔼 Record Finish
 ************************************************/
 library MCDebugLib {
-    using MCDebugLib for MCDevKit;
     string constant LIB_NAME = "MCDebugLib";
 
     /**---------------

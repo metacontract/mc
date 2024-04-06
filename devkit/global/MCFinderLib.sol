@@ -20,7 +20,6 @@ import {Dictionary} from "devkit/ucs/dictionary/Dictionary.sol";
         📚 Find Dictionary
 ***********************************/
 library MCFinderLib {
-    using MCFinderLib for MCDevKit;
     string constant LIB_NAME = "MCFinderLib";
 
 

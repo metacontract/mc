@@ -8,7 +8,6 @@ import {MCDevKit} from "devkit/global/MCDevKit.sol";
         🧩 Setup Standard Funcs
 ***********************************/
 library MCSetupLib {
-    using MCSetupLib for MCDevKit;
     string constant LIB_NAME = "MCSetupLib";
 
 
