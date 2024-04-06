@@ -25,8 +25,8 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 /*****************************************
     🏛 Meta Contract Standard Functions
 ******************************************/
-using MCStdFuncsLib for MCStdFuncs global;
-struct MCStdFuncs {
+using StdFunctionsLib for StdFunctions global;
+struct StdFunctions {
     Function initSetAdmin;
     Function getDeps;
     Function clone;
@@ -38,15 +38,15 @@ struct MCStdFuncs {
     🐣 Deploy Standard Functions If Not Exists
     🧺 Configure Standard Bundles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-library MCStdFuncsLib {
-    string constant LIB_NAME = "MCStdFuncsLib";
+library StdFunctionsLib {
+    string constant LIB_NAME = "StdFunctionsLib";
     function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
     function recordExecStart(string memory funcName) internal returns(uint) {
         return recordExecStart(funcName, "");
     }
-    function recordExecFinish(MCStdFuncs storage std, uint pid) internal returns(MCStdFuncs storage) {
+    function recordExecFinish(StdFunctions storage std, uint pid) internal returns(StdFunctions storage) {
         Debug.recordExecFinish(pid);
         return std;
     }
@@ -54,7 +54,7 @@ library MCStdFuncsLib {
     /**------------------------------------------
         🔏 Assign and Load Standard Functions
     --------------------------------------------*/
-    function assignAndLoad(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+    function assignAndLoad(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = recordExecStart("assignAndLoad");
         return std  .assignAndLoad_InitSetAdmin()
                     .assignAndLoad_GetDeps()
@@ -63,7 +63,7 @@ library MCStdFuncsLib {
     }
 
         /**===== Each Std Function =====*/
-        function assignAndLoad_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+        function assignAndLoad_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = recordExecStart("assignAndLoad_InitSetAdmin");
             std.initSetAdmin.safeAssign("InitSetAdmin")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
@@ -72,7 +72,7 @@ library MCStdFuncsLib {
             return std.recordExecFinish(pid);
         }
 
-        function assignAndLoad_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+        function assignAndLoad_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = recordExecStart("assignAndLoad_GetDeps");
             std.getDeps .safeAssign("GetDeps")
                         .safeAssign(GetDeps.getDeps.selector)
@@ -81,7 +81,7 @@ library MCStdFuncsLib {
             return std.recordExecFinish(pid);
         }
 
-        function assignAndLoad_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+        function assignAndLoad_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = recordExecStart("assignAndLoad_Clone");
             std.clone   .safeAssign("Clone")
                         .safeAssign(Clone.clone.selector)
@@ -95,51 +95,45 @@ library MCStdFuncsLib {
         🐣 Deploy Standard Functions If Not Exists
         TODO versioning
     -------------------------------------------------*/
-    function deployIfNotExists(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-        uint pid = recordExecStart("deployIfNotExists");
+    function deployIfNotExists(StdFunctions storage std) internal returns(StdFunctions storage) {
         return std  .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
-                    .deployIfNotExists_Clone()
-                    .recordExecFinish(pid);
+                    .deployIfNotExists_Clone();
     }
-
         /**===== Each Std Function =====*/
-        function deployIfNotExists_InitSetAdmin(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-            uint pid = recordExecStart("deployIfNotExists_InitSetAdmin");
+        function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (std.initSetAdmin.implementation.isNotContract()) {
                 std.initSetAdmin.safeAssign(address(new InitSetAdmin()));
             }
-            return std.recordExecFinish(pid);
+            return std;
         }
 
-        function deployIfNotExists_GetDeps(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-            uint pid = recordExecStart("deployIfNotExists_GetDeps");
+        function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (!std.getDeps.implementation.isContract()) {
                 std.getDeps.safeAssign(address(new GetDeps()));
             }
-            return std.recordExecFinish(pid);
+            return std;
         }
 
-        function deployIfNotExists_Clone(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
-            uint pid = recordExecStart("deployIfNotExists_Clone");
+        function deployIfNotExists_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (!std.clone.implementation.isContract()) {
                 std.clone.safeAssign(address(new Clone()));
             }
-            return std.recordExecFinish(pid);
+            return std;
         }
 
 
     /**----------------------------------
         🧺 Configure Standard Bundles
     ------------------------------------*/
-    function configureStdBundle(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+    function configureStdBundle(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = recordExecStart("configureStdBundle");
         return std  .configureStdBundle_AllFunctions()
                     .recordExecFinish(pid);
     }
 
         /**===== Each Std Bundle =====*/
-        function configureStdBundle_AllFunctions(MCStdFuncs storage std) internal returns(MCStdFuncs storage) {
+        function configureStdBundle_AllFunctions(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = recordExecStart("configureStdBundle_AllFunctions");
             std.all .safeAssign("ALL_FUNCTIONS")
                     .safeAdd(std.initSetAdmin)
@@ -155,7 +149,7 @@ library MCStdFuncsLib {
 /****************************************************
     🧩 Std Ops Primitive Utils for Arguments
 *****************************************************/
-library MCStdFuncsArgs {
+library StdFunctionsArgs {
     function initSetAdminBytes(address admin) internal view returns(bytes memory) {
         return abi.encodeCall(InitSetAdmin.initSetAdmin, admin);
     }

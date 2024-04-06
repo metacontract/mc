@@ -16,8 +16,8 @@ contract MCDevKitTest is Test {
         mc.stopLog();
     }
 
-    function test_Success_setupStdFuncs() public {
-        mc.setupStdFuncs();
+    function test_Success_setupStdFunctions() public {
+        mc.setupStdFunctions();
 
         assertTrue(mc.functions.std.initSetAdmin.isInitSetAdmin());
         assertTrue(mc.functions.std.getDeps.isGetDeps());

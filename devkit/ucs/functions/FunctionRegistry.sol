@@ -15,7 +15,7 @@ import {BoolUtils} from "../../utils/BoolUtils.sol";
 // Core
 import {Function} from "./Function.sol";
 import {Bundle} from "./Bundle.sol";
-import {MCStdFuncs} from "./MCStdFuncs.sol";
+import {StdFunctions} from "./StdFunctions.sol";
 
 
 /**-------------------------------
@@ -23,7 +23,7 @@ import {MCStdFuncs} from "./MCStdFuncs.sol";
 ---------------------------------*/
 using FunctionRegistryLib for FunctionRegistry global;
 struct FunctionRegistry {
-    MCStdFuncs std;
+    StdFunctions std;
     mapping(bytes32 nameHash => Function) customs;
     mapping(bytes32 nameHash => Bundle) bundles;
     string currentFunctionName;

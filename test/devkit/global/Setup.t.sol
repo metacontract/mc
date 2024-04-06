@@ -10,7 +10,7 @@ import {TestHelper} from "test/utils/TestHelper.sol";
 contract DevKitTest_MCSetup is MCDevKitTest {
 
     function test_Success_setupStdFuncs() public {
-        mc.setupStdFuncs();
+        mc.setupStdFunctions();
 
         assertTrue(mc.functions.std.initSetAdmin.isInitSetAdmin());
         assertTrue(mc.functions.std.getDeps.isGetDeps());

@@ -12,8 +12,8 @@ import {Params} from "devkit/debug/Params.sol";
 import {Dictionary, DictionaryLib} from "devkit/ucs/dictionary/Dictionary.sol";
 //  functions
 import {Bundle} from "devkit/ucs/functions/Bundle.sol";
-import {MCStdFuncsArgs} from "devkit/ucs/functions/MCStdFuncs.sol";
-    using MCStdFuncsArgs for address;
+import {StdFunctionsArgs} from "devkit/ucs/functions/StdFunctions.sol";
+    using StdFunctionsArgs for address;
 //  proxy
 import {Proxy, ProxyLib} from "devkit/ucs/proxy/Proxy.sol";
 

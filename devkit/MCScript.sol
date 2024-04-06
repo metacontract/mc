@@ -14,7 +14,7 @@ abstract contract MCScript is MCScriptBase {
     constructor() {
         Config().load();
         if (Config().DEBUG_MODE) mc.startDebug();
-        if (Config().SETUP_STD_FUNCS) mc.setupStdFuncs();
+        if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
