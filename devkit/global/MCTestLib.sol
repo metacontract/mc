@@ -2,9 +2,9 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/global/MCDevKit.sol";
+import {Config} from "devkit/config/Config.sol";
 // Utils
 import {Params} from "devkit/debug/Params.sol";
-import {Config} from "devkit/Config.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/ucs/functions/Bundle.sol";
@@ -82,10 +82,10 @@ library MCTestLib {
         return mc.createMockDictionary(name, owner, mc.functions.std.all);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, Config.defaultOwner(), mc.functions.std.all);
+        return mc.createMockDictionary(name, Config().defaultOwner(), mc.functions.std.all);
     }
     function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config.defaultOwner(), mc.functions.std.all);
+        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config().defaultOwner(), mc.functions.std.all);
     }
 
 

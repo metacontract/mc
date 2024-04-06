@@ -6,7 +6,7 @@ import {ERR, throwError} from "devkit/error/Error.sol";
 import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
-import {Config} from "../../Config.sol";
+import {Config, ScanRange} from "devkit/config/Config.sol";
 // Utils
 import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
@@ -111,9 +111,9 @@ library ProxyRegistryLib {
     -------------------------------*/
     function genUniqueName(ProxyRegistry storage proxies) internal returns(string memory name) {
         uint pid = proxies.recordExecStart("genUniqueName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_PROXY_NAME.toSequential(i);
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_PROXY_NAME.toSequential(i);
             if (proxies.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
@@ -121,9 +121,9 @@ library ProxyRegistryLib {
 
     function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
         uint pid = proxies.recordExecStart("genUniqueMockName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_PROXY_MOCK_NAME.toSequential(i);
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_PROXY_MOCK_NAME.toSequential(i);
             if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);

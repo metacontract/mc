@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKitTest} from "test/devkit/MCDevKitTest.sol";
+import {MCDevKitTest} from "devkit/MCTest.sol";
 
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
+import {Config} from "devkit/config/Config.sol";
 
 contract DevKitTest_MCBundle is MCDevKitTest {
-
     /**---------------------------
         🌱 Init Custom Bundle
     -----------------------------*/

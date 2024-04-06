@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/global/MCDevKit.sol";
+import {Config} from "devkit/config/Config.sol";
 // Validation
 import {check} from "devkit/error/Validation.sol";
 // Utils
 import {Params} from "devkit/debug/Params.sol";
-import {Config} from "devkit/Config.sol";
 // Core
 //  dictionary
 import {Dictionary, DictionaryLib} from "devkit/ucs/dictionary/Dictionary.sol";
@@ -44,25 +44,25 @@ library MCDeployLib {
     }
 
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), Config.defaultOwner(), Config.defaultInitData());
+        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), Config().defaultOwner(), Config().defaultInitData());
     }
     // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, facade, owner, Config.defaultInitData());
+    //     return mc.deploy(name, bundleInfo, facade, owner, Config().defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, Config.defaultInitData(), );
+    //     return mc.deploy(name, bundleInfo, Config().defaultInitData(), );
     // }
     // function deploy(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(Config.defaultName(), bundleInfo, Config.defaultInitData());
+    //     return mc.deploy(Config().defaultName(), bundleInfo, Config().defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, mc.functions.findBundle(name), initData);
     // }
     // function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, mc.functions.findBundle(name), Config.defaultInitData());
+    //     return mc.deploy(name, mc.functions.findBundle(name), Config().defaultInitData());
     // }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), Config.defaultOwner(), initData);
+        return mc.deploy(mc.findCurrentBundleName(), mc.functions.findCurrentBundle(), Config().defaultOwner(), initData);
     }
 
 
@@ -80,10 +80,10 @@ library MCDeployLib {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, dictionary, Config.defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(name, dictionary, Config().defaultOwner().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.findCurrentDictionary(), Config.defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(name, mc.findCurrentDictionary(), Config().defaultOwner().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, mc.findCurrentDictionary(), initData);
@@ -92,7 +92,7 @@ library MCDeployLib {
         return mc.deployProxy(mc.proxy.genUniqueName(), mc.findCurrentDictionary(), initData);
     }
     function deployProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.genUniqueName(), mc.findCurrentDictionary(), Config.defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(mc.proxy.genUniqueName(), mc.findCurrentDictionary(), Config().defaultOwner().initSetAdminBytes());
     }
 
 
@@ -110,19 +110,19 @@ library MCDeployLib {
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.genUniqueName(), mc.functions.findCurrentBundle(), Config.defaultOwner());
+        return mc.deployDictionary(mc.dictionary.genUniqueName(), mc.functions.findCurrentBundle(), Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, mc.functions.findCurrentBundle(), Config.defaultOwner());
+        return mc.deployDictionary(name, mc.functions.findCurrentBundle(), Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.genUniqueName(), bundleInfo, Config.defaultOwner());
+        return mc.deployDictionary(mc.dictionary.genUniqueName(), bundleInfo, Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.dictionary.genUniqueName(), mc.functions.findCurrentBundle(), owner);
     }
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, bundleInfo, Config.defaultOwner());
+        return mc.deployDictionary(name, bundleInfo, Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.functions.findCurrentBundle(), owner);

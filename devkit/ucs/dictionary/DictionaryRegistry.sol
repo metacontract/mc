@@ -6,7 +6,7 @@ import {ERR, throwError} from "devkit/error/Error.sol";
 import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
-import {Config} from "../../Config.sol";
+import {Config, ScanRange} from "devkit/config/Config.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
@@ -113,25 +113,25 @@ library DictionaryRegistryLib {
     -------------------------------*/
     function genUniqueName(DictionaryRegistry storage dictionaries, string memory baseName) internal returns(string memory name) {
         uint pid = dictionaries.recordExecStart("genUniqueName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
             if (dictionaries.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
     }
     function genUniqueName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        return dictionaries.genUniqueName(Config.DEFAULT_DICTIONARY_NAME);
+        return dictionaries.genUniqueName(Config().DEFAULT_DICTIONARY_NAME);
     }
     function genUniqueDuplicatedName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        return dictionaries.genUniqueName(Config.DEFAULT_DICTIONARY_DUPLICATED_NAME);
+        return dictionaries.genUniqueName(Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
     }
 
     function genUniqueMockName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
         uint pid = dictionaries.recordExecStart("genUniqueName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
             if (dictionaries.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);

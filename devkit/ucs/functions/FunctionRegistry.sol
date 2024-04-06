@@ -6,7 +6,7 @@ import {check} from "devkit/error/Validation.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
-import {Config} from "../../Config.sol";
+import {ScanRange, Config} from "devkit/config/Config.sol";
 // Utils
 import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
@@ -188,9 +188,9 @@ library FunctionRegistryLib {
     -------------------------------*/
     function genUniqueBundleName(FunctionRegistry storage functions) internal returns(string memory name) {
         uint pid = functions.recordExecStart("genUniqueBundleName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_BUNDLE_NAME.toSequential(i);
+        ScanRange storage range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_BUNDLE_NAME.toSequential(i);
             if (functions.existsBundle(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
