@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKitTest} from "test/devkit/MCDevKitTest.sol";
+import {MCDevKitTest} from "devkit/MCTest.sol";
 
 import {Function} from "devkit/ucs/functions/Function.sol";
 import {TestHelper} from "test/utils/TestHelper.sol";

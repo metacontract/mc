@@ -17,3 +17,11 @@ abstract contract MCScript is MCScriptBase {
         if (Config().SETUP_STD_FUNCS) mc.setupStdFuncs();
     }
 }
+
+// ⭐️ MC SCRIPT without Setup
+abstract contract MCScriptWithoutSetup is MCScriptBase {
+    constructor() {
+        Config().load();
+        if (Config().DEBUG_MODE) mc.startDebug();
+    }
+}
