@@ -8,7 +8,11 @@ import {MCDevKit} from "devkit/global/MCDevKit.sol";
 contract DeployScript is MCScriptWithoutSetup {
     using DeployLib for MCDevKit;
 
+    function setUp() public {
+        mc.functions.std.assignAndLoad();
+    }
+
     function run() public startBroadcastWith("DEPLOYER_PRIV_KEY") {
-        mc.deployStd();
+        mc.deployStdIfNotExists();
     }
 }
