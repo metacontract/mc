@@ -1,45 +1,45 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Error & Debug
+import {ERR, throwError} from "devkit/error/Error.sol";
+import {check} from "devkit/error/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Config
-import {Config} from "../../Config.sol";
+import {Config, ScanRange} from "devkit/config/Config.sol";
 // Utils
 import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
 import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
-// Errors
-import {Errors} from "../../errors/Errors.sol";
 // Core
 import {Proxy} from "./Proxy.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";
 
 
-/********************
-    🏠 UCS Proxy
-*********************/
-using ProxyRegistryUtils for ProxyRegistry global;
+/**---------------------------
+    🏠 UCS Proxy Registry
+-----------------------------*/
+using ProxyRegistryLib for ProxyRegistry global;
 struct ProxyRegistry {
     mapping(bytes32 nameHash => Proxy) deployed;
     mapping(bytes32 nameHash => Proxy) mocks;
     Proxy currentProxy;
 }
 
-library ProxyRegistryUtils {
-    string constant LIB_NAME = "ProxyRegistry";
-
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         📥 Add Proxy
         🔼 Update Current Context Proxy
+        ♻️ Reset Current Context Proxy
         🔍 Find Proxy
         🏷 Generate Unique Name
     << Helper >>
         🧐 Inspectors & Assertions
         🐞 Debug
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library ProxyRegistryLib {
+    string constant LIB_NAME = "ProxyRegistryLib";
 
 
     /**-------------------
@@ -111,22 +111,22 @@ library ProxyRegistryUtils {
     -------------------------------*/
     function genUniqueName(ProxyRegistry storage proxies) internal returns(string memory name) {
         uint pid = proxies.recordExecStart("genUniqueName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_PROXY_NAME.toSequential(i);
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_PROXY_NAME.toSequential(i);
             if (proxies.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
     function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
         uint pid = proxies.recordExecStart("genUniqueMockName");
-        Config.ScanRange memory range = Config.SCAN_RANGE();
-        for (uint i = range.start; i <= range.end; ++i) {
-            name = Config.DEFAULT_PROXY_MOCK_NAME.toSequential(i);
+        ScanRange memory range = Config().SCAN_RANGE;
+        for (uint i = range.START; i <= range.END; ++i) {
+            name = Config().DEFAULT_PROXY_MOCK_NAME.toSequential(i);
             if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
-        throwError(Errors.FIND_NAME_OVER_RANGE);
+        throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
 

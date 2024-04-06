@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.23;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
 
 library DecodeErrorString {
@@ -8,7 +8,7 @@ library DecodeErrorString {
      * @param data ABI-encoded revert reason.
      * @return reason The decoded revert reason as a string.
      */
-    function decodeRevertReason(bytes memory data) public  returns (string memory) {
+    function decodeRevertReason(bytes memory data) public returns (string memory) {
         // Ensure the data is at least 4 + 32 + 32 bytes (function selector + offset + string length)
         if (data.length == 0) {
             revert("reverted with no error message.");

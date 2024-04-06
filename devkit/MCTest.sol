@@ -1,47 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper} from "./utils/ForgeHelper.sol";
-import {DecodeErrorString} from "./errors/DecodeErrorString.sol";
-import {Config} from "./Config.sol";
+import {Config} from "devkit/config/Config.sol";
+import {DecodeErrorString} from "./error/DecodeErrorString.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
 
-// 🛠 FORGE STD
-import {Test as ForgeTest} from "forge-std/Test.sol";
-
 // 📦 BOILERPLATE
-import {MCBase} from "./MCBase.sol";
+import {MCTestBase} from "./MCBase.sol";
 
 // ⭐️ MC TEST
-abstract contract MCTest is MCBase, ForgeTest {
+abstract contract MCTest is MCTestBase {
     constructor() {
-        if (Config.DEBUG_MODE) mc.startDebug();
-        mc.setupMCStdFuncs();
-    }
-
-    modifier startPrankWith(string memory envKey) {
-        _startPrankWith(envKey);
-        _;
-    }
-    modifier startPrankWithDeployer() {
-        _startPrankWith("DEPLOYER");
-        _;
-    }
-    function _startPrankWith(string memory envKey) internal {
-        deployer = vm.envOr(envKey, makeAddr(envKey));
-        vm.startPrank(deployer);
-    }
-
-    modifier assumeAddressIsNotReserved(address addr) {
-        ForgeHelper.assumeAddressIsNotReserved(addr);
-        _;
+        Config().load();
+        if (Config().DEBUG_MODE) mc.startDebug();
+        if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
 // 🌟 MC State Fuzzing Test
-abstract contract MCStateFuzzingTest is MCTest {
+abstract contract MCStateFuzzingTest is MCTestBase {
     mapping(bytes4 => address) implementations; // selector => impl
 
     // function setUp() public {
@@ -62,5 +41,13 @@ abstract contract MCStateFuzzingTest is MCTest {
             // vm.expectRevert needs this.
             revert(DecodeErrorString.decodeRevertReasonAndPanicCode(data));
         }
+    }
+}
+
+// 🌟 MC TEST for DevKit
+abstract contract MCDevKitTest is MCTestBase {
+    constructor() {
+        Config().load();
+        mc.stopLog();
     }
 }

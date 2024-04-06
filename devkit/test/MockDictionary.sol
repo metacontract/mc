@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Core
-import {FuncInfo} from "../core/functions/FuncInfo.sol";
+import {Function} from "../ucs/functions/Function.sol";
 // External Lib
 import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
 
@@ -10,7 +10,7 @@ import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
     @title Mock Dictionary Contract
  */
 contract MockDictionary is DictionaryEtherscan {
-    constructor (address owner, FuncInfo[] memory functionInfos) DictionaryEtherscan(owner) {
+    constructor (address owner, Function[] memory functionInfos) DictionaryEtherscan(owner) {
         for (uint i; i < functionInfos.length; ++i) {
             setImplementation(functionInfos[i].selector, functionInfos[i].implementation);
         }

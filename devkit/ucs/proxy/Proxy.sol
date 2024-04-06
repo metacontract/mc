@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Errors & Debug
+import {check} from "devkit/error/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
@@ -12,9 +13,9 @@ import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
 import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Core
-// import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
+// import {MCStdFuncs} from "../../ucs/functions/MCStdFuncs.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";
-import {FuncInfo} from "../functions/FuncInfo.sol";
+import {Function} from "../functions/Function.sol";
 // Test
 import {SimpleMockProxy} from "../../test/SimpleMockProxy.sol";
 // External Lib
@@ -23,15 +24,15 @@ import {ERC7546Proxy} from "@ucs.mc/proxy/ERC7546Proxy.sol";
 import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
 
 
-/**---------------------------
-    🏠 UCS Proxy Primitive
------------------------------*/
-using ProxyUtils for Proxy global;
+/**-------------------
+    🏠 UCS Proxy
+---------------------*/
+using ProxyLib for Proxy global;
 struct Proxy {
     address addr;
     ProxyKind kind;
 }
-    using ProxyKindUtils for ProxyKind global;
+    using ProxyKindLib for ProxyKind global;
     enum ProxyKind {
         undefined,
         Normal,
@@ -39,10 +40,7 @@ struct Proxy {
         Mock
     }
 
-library ProxyUtils {
-    string constant LIB_NAME = "Proxy";
-
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         🚀 Deploy Proxy
         🤖 Create Mock Proxy
@@ -50,13 +48,15 @@ library ProxyUtils {
         🧪 Test Utils
         🐞 Debug
         🧐 Inspectors & Assertions
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library ProxyLib {
+    string constant LIB_NAME = "ProxyLib";
 
 
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = recordExecStart("deploy");
         // Note Temporarily disable (see details in https://github.com/metacontract/mc/issues/16)
         // proxy = dictionary.isVerifiable() ?
@@ -68,14 +68,14 @@ library ProxyUtils {
         /**---------------------------
             Deploy Proxy Primitives
         -----------------------------*/
-        function deployProxyVerifiable(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        function deployProxyVerifiable(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
                 addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
                 kind: ProxyKind.Verifiable
             });
         }
 
-        function deployProxy(Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory) {
+        function deployProxy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
             return Proxy({
                 addr: address(new ERC7546Proxy(dictionary.addr, initData)),
                 kind: ProxyKind.Normal
@@ -91,7 +91,7 @@ library ProxyUtils {
     /**-------------------------
         🤖 Create Mock Proxy
     ---------------------------*/
-    function createSimpleMockProxy(FuncInfo[] memory functionInfos) internal returns(Proxy memory) {
+    function createSimpleMockProxy(Function[] memory functionInfos) internal returns(Proxy memory) {
         uint pid = recordExecStart("createSimpleMockProxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functionInfos)),
@@ -173,7 +173,7 @@ library ProxyUtils {
 
 }
 
-library ProxyKindUtils {
+library ProxyKindLib {
     function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
         return kind != ProxyKind.undefined;
     }

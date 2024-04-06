@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {ERR} from "devkit/error/Error.sol";
 // Utils
 import {console2, StdStyle, vm} from "../utils/ForgeHelper.sol";
 import {StringUtils} from "../utils/StringUtils.sol";
@@ -36,10 +37,9 @@ library Logger {
         console2.log(message);
     }
 
-    string constant ERR_HEADER = "\u2716 DevKit Error: ";
     function logError(string memory body) internal {
         console2.log(
-            ERR_HEADER.red().br()
+            ERR.HEADER.red().br()
                 .indent().append(body)
                 .append(parseLocations())
         );
@@ -101,9 +101,6 @@ library Logger {
     function formatProc(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
         return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
     }
-
-string constant ERR_STR_EMPTY = "Empty String";
-string constant ERR_STR_EXISTS = "String Already Exist";
 
 
     /**-------------------

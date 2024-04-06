@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Validation
+import {check} from "devkit/error/Validation.sol";
+import {Params} from "devkit/debug/Params.sol";
 // Utils
 import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
@@ -16,8 +17,8 @@ import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Debug
 import {Debug} from "../../debug/Debug.sol";
 // Core
-import {FuncInfo} from "../functions/FuncInfo.sol";
-import {BundleInfo} from "../functions/BundleInfo.sol";
+import {Function} from "../functions/Function.sol";
+import {Bundle} from "../functions/Bundle.sol";
 // Test
 import {MockDictionary} from "../../test/MockDictionary.sol";
 // External Libs
@@ -27,35 +28,34 @@ import {IBeacon} from "@oz.mc/proxy/beacon/IBeacon.sol";
 import {ERC1967Utils} from "@oz.mc/proxy/ERC1967/ERC1967Utils.sol";
 
 
-/**---------------------------------
-    📚 UCS Dictionary Primitive
------------------------------------*/
-using DictionaryUtils for Dictionary global;
+/**------------------------
+    📚 UCS Dictionary
+--------------------------*/
+using DictionaryLib for Dictionary global;
 struct Dictionary {
     address addr;
     DictionaryKind kind;
 }
-    using DictionaryKindUtils for DictionaryKind global;
+    using DictionaryKindLib for DictionaryKind global;
     enum DictionaryKind {
         undefined,
         Verifiable,
         Mock
     }
 
-library DictionaryUtils {
-    string constant LIB_NAME = "Dictionary";
-
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
         🧩 Set Function
-        🖼 Upgrade Facade
+        🪟 Upgrade Facade
         🤖 Create Mock Dictionary
     << Helper >>
         🧐 Inspectors & Assertions
         🐞 Debug
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library DictionaryLib {
+    string constant LIB_NAME = "DictionaryLib";
 
 
     /**-------------------------
@@ -116,18 +116,18 @@ library DictionaryUtils {
     /**-----------------------------
         🧩 Set Function & Bundle
     -------------------------------*/
-    function set(Dictionary memory dictionary, FuncInfo memory functionInfo) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("set");
+    function set(Dictionary memory dictionary, Function memory functionInfo) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("set", Params.append(functionInfo.name));
         IDictionary(dictionary.addr).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
         });
         return dictionary.recordExecFinish(pid);
     }
-    function set(Dictionary memory dictionary, BundleInfo storage bundleInfo) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("set");
+    function set(Dictionary memory dictionary, Bundle storage bundleInfo) internal returns(Dictionary memory) {
+        uint pid = recordExecStart("set", Params.append(bundleInfo.name));
 
-        FuncInfo[] memory functionInfos = bundleInfo.functionInfos;
+        Function[] memory functionInfos = bundleInfo.functionInfos;
 
         for (uint i; i < functionInfos.length; ++i) {
             dictionary.set(functionInfos[i]);
@@ -143,7 +143,7 @@ library DictionaryUtils {
 
 
     /**----------------------
-        🖼 Upgrade Facade
+        🪟 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = recordExecStart("upgradeFacade");
@@ -155,7 +155,7 @@ library DictionaryUtils {
     /**------------------------------
         🤖 Create Mock Dictionary
     --------------------------------*/
-    function createMockDictionary(address owner, FuncInfo[] memory functionInfos) internal returns(Dictionary memory) {
+    function createMockDictionary(address owner, Function[] memory functionInfos) internal returns(Dictionary memory) {
         uint pid = recordExecStart("createMockDictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functionInfos)),
@@ -246,7 +246,7 @@ library DictionaryUtils {
     // }
 }
 
-library DictionaryKindUtils {
+library DictionaryKindLib {
     function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
         return kind != DictionaryKind.undefined;
     }

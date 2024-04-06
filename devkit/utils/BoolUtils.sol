@@ -4,17 +4,15 @@ pragma solidity ^0.8.24;
 /**===================\
 |   ✅ Bool Utils     |
 \====================*/
+using BoolUtils for bool;
 library BoolUtils {
-    using BoolUtils for bool;
-
-
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
-    function isNot(bool flag) internal  returns(bool) {
+    function isNot(bool flag) internal pure returns(bool) {
         return !flag;
     }
-    function isFalse(bool flag) internal  returns(bool) {
+    function isFalse(bool flag) internal pure returns(bool) {
         return flag == false;
     }
 

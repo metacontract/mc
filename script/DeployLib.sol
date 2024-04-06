@@ -1,24 +1,21 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "devkit/global/MCDevKit.sol";
+import {StdFunctions} from "devkit/ucs/functions/StdFunctions.sol";
 
+
+using DeployLib for MCDevKit;
 library DeployLib {
-    // function bundleName() internal returns(string memory) {
-    //     return "Std";
-    // }
+    string internal constant BUNDLE_NAME = "Std";
 
-    function deployStd(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.setupMCStdFuncs();
+    function deployStdIfNotExists(MCDevKit storage mc) internal {
+        mc.functions.std.deployIfNotExists();
     }
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.functions.std.assignAndLoad();
-        mc.functions.std.deployIfNotExists();
-        mc.functions.std.configureStdBundle();
-        mc.deployDictionary();
-        mc.set(mc.functions.std.allFunctions);
-        mc.upgradeFacade();
+        mc.deployStdIfNotExists();
+        mc.deployDictionary(mc.functions.std.all);
         return mc;
     }
 }

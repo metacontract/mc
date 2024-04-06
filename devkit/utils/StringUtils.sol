@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "./GlobalMethods.sol";
+// Validation
+import {check} from "devkit/error/Validation.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "./ForgeHelper.sol";
+    using StdStyle for string;
 import {Bytes4Utils} from "./Bytes4Utils.sol";
+    using Bytes4Utils for bytes4;
 import {BoolUtils} from "./BoolUtils.sol";
+    using BoolUtils for bool;
 
 /**=====================\
 |   🖋 String Utils     |
 \======================*/
+using StringUtils for string;
 library StringUtils {
-    using StringUtils for string;
-    using StdStyle for string;
-    using Bytes4Utils for bytes4;
-    using BoolUtils for bool;
-
     /**---------------------------
         🔢 Utils for Primitives
     -----------------------------*/
@@ -32,12 +32,25 @@ library StringUtils {
         return ForgeHelper.loadAddressFromEnv(envKey);
     }
 
+    function substring(string memory str, uint n) internal pure returns (string memory) {
+        bytes memory strBytes = bytes(str);
+        bytes memory result = new bytes(n);
+        for(uint i = 0; i < n; i++) {
+            result[i] = strBytes[i];
+        }
+        return string(result);
+    }
 
-    /**---------------
-        Convertor
-    ----------------*/
-    function append(string memory original, string memory addition) internal returns(string memory) {
-        return string.concat(original, addition);
+    function toSequential(string memory str, uint i) internal returns(string memory) {
+        return i == 1 ? str : str.append(i);
+    }
+
+
+    /**----------------
+        ➕ Append
+    ------------------*/
+    function append(string memory str, string memory addition) internal returns(string memory) {
+        return string.concat(str, addition);
     }
     function append(string memory str, address addr) internal returns(string memory) {
         return str.append(vm.toString(addr));
@@ -51,6 +64,9 @@ library StringUtils {
 
     function br(string memory str) internal returns(string memory) {
         return string.concat(str, "\n");
+    }
+    function sp(string memory str) internal returns(string memory) {
+        return string.concat(str, " ");
     }
     function indent(string memory str) internal returns(string memory) {
         return string.concat(str, "\t");
@@ -70,46 +86,36 @@ library StringUtils {
     function brackR(string memory str) internal returns(string memory) {
         return string.concat(str, "]");
     }
-    function sp(string memory str) internal returns(string memory) {
-        return string.concat(str, " ");
-    }
-
-    function substring(string memory str, uint n) internal pure returns (string memory) {
-        bytes memory strBytes = bytes(str);
-        bytes memory result = new bytes(n);
-        for(uint i = 0; i < n; i++) {
-            result[i] = strBytes[i];
-        }
-        return string(result);
-    }
-
-    function toSequential(string memory str, uint i) internal returns(string memory) {
-        return i == 1 ? str : str.append(i);
-    }
 
 
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
+    // isEmpty
     /// @dev only for memory
     function isEmpty(string memory str) internal returns(bool) {
         return bytes(str).length == 0;
     }
-    function isNotEmpty(string memory str) internal returns(bool) {
-        return str.isEmpty().isNot();
-    }
     function assertEmpty(string memory str) internal returns(string memory) {
         check(str.isEmpty(), "String Not Empty");
         return str;
+    }
+
+    // isNotEmpty
+    function isNotEmpty(string memory str) internal returns(bool) {
+        return str.isEmpty().isNot();
     }
     function assertNotEmpty(string memory str) internal returns(string memory) {
         check(str.isNotEmpty(), "Empty String");
         return str;
     }
 
+    // isEqual
     function isEqual(string memory a, string memory b) internal returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
+
+    // isNotEqual
     function isNotEqual(string memory a, string memory b) internal returns(bool) {
         return a.isEqual(b).isNot();
     }
@@ -126,40 +132,4 @@ library StringUtils {
         return str;
     }
 
-}
-
-using StringQueueLib for StringQueue global;
-struct StringQueue {
-    string[] queue;
-    uint front;
-    uint back;
-}
-library StringQueueLib {
-    function enqueue(StringQueue storage $, string memory item) internal {
-        $.queue.push(item);
-        $.back++;
-    }
-
-    function dequeue(StringQueue storage $) internal returns (string memory) {
-        require($.back > $.front, "StringQueue is empty");
-
-        string memory item = $.queue[$.front];
-        $.front++;
-
-        if ($.isEmpty()) {
-            delete $.queue;
-            $.front = 0;
-            $.back = 0;
-        }
-
-        return item;
-    }
-
-    function isEmpty(StringQueue storage $) internal view returns (bool) {
-        return $.back == $.front;
-    }
-
-    function size(StringQueue storage $) internal view returns (uint) {
-        return $.back - $.front;
-    }
 }

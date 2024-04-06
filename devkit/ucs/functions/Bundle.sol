@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Global Methods
-import "../../utils/GlobalMethods.sol";
+// Validation
+import {check} from "devkit/error/Validation.sol";
 // Utils
 import {console2} from "../../utils/ForgeHelper.sol";
 import {StringUtils} from "../../utils/StringUtils.sol";
@@ -17,47 +17,47 @@ import {Bytes4Utils} from "../../utils/Bytes4Utils.sol";
 import {Debug} from "../../debug/Debug.sol";
 import {Logger} from "../../debug/Logger.sol";
 // Core
-import {FuncInfo} from "./FuncInfo.sol";
+import {Function} from "./Function.sol";
 
 /**====================
     🧺 Bundle Info
 ======================*/
-using BundleInfoUtils for BundleInfo global;
-struct BundleInfo {
+using BundleUtils for Bundle global;
+struct Bundle {
     string name;
-    FuncInfo[] functionInfos;
+    Function[] functionInfos;
     address facade;
 }
 
-library BundleInfoUtils {
-    string constant LIB_NAME = "BundleInfo";
+library BundleUtils {
+    string constant LIB_NAME = "Bundle";
     function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
     function recordExecStart(string memory funcName) internal returns(uint) {
         return recordExecStart(funcName, "");
     }
-    function recordExecFinish(BundleInfo storage bundleInfo, uint pid) internal returns(BundleInfo storage) {
+    function recordExecFinish(Bundle storage bundleInfo, uint pid) internal returns(Bundle storage) {
         Debug.recordExecFinish(pid);
         return bundleInfo;
     }
 
     /**---------------------------
-        📥 Assign BundleInfo
+        📥 Assign Bundle
     -----------------------------*/
-    function safeAssign(BundleInfo storage bundleInfo, string memory name) internal returns(BundleInfo storage) {
+    function safeAssign(Bundle storage bundleInfo, string memory name) internal returns(Bundle storage) {
         uint pid = recordExecStart("safeAssign");
         bundleInfo.name = name.assertNotEmpty();
         return bundleInfo.recordExecFinish(pid);
     }
 
-    function safeAssign(BundleInfo storage bundleInfo, address facade) internal returns(BundleInfo storage) {
+    function safeAssign(Bundle storage bundleInfo, address facade) internal returns(Bundle storage) {
         uint pid = recordExecStart("safeAssign");
         bundleInfo.facade = facade.assertIsContract();
         return bundleInfo.recordExecFinish(pid);
     }
 
-    function safeAdd(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(BundleInfo storage) {
+    function safeAdd(Bundle storage bundleInfo, Function storage functionInfo) internal returns(Bundle storage) {
         uint pid = recordExecStart("safeAdd");
         check(bundleInfo.hasNot(functionInfo), "Already added");
         bundleInfo.functionInfos.push(
@@ -65,7 +65,7 @@ library BundleInfoUtils {
         );
         return bundleInfo.recordExecFinish(pid);
     }
-    function safeAdd(BundleInfo storage bundleInfo, FuncInfo[] storage functionInfos) internal returns(BundleInfo storage) {
+    function safeAdd(Bundle storage bundleInfo, Function[] storage functionInfos) internal returns(Bundle storage) {
         uint pid = recordExecStart("safeAdd");
         for (uint i; i < functionInfos.length; ++i) {
             bundleInfo.safeAdd(functionInfos[i]);
@@ -77,45 +77,45 @@ library BundleInfoUtils {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function has(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal view returns(bool flag) {
+    function has(Bundle storage bundleInfo, Function storage functionInfo) internal view returns(bool flag) {
         for (uint i; i < bundleInfo.functionInfos.length; ++i) {
             if (functionInfo.isEqual(bundleInfo.functionInfos[i])) return true;
         }
     }
-    function hasNot(BundleInfo storage bundleInfo, FuncInfo storage functionInfo) internal returns(bool) {
+    function hasNot(Bundle storage bundleInfo, Function storage functionInfo) internal returns(bool) {
         return bundleInfo.has(functionInfo).isFalse();
     }
 
-    function isComplete(BundleInfo storage bundleInfo) internal returns(bool) {
+    function isComplete(Bundle storage bundleInfo) internal returns(bool) {
         return  bundleInfo.name.isNotEmpty() &&
                 bundleInfo.functionInfos.length != 0 &&
                 bundleInfo.facade.isContract();
     }
-    function assertComplete(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+    function assertComplete(Bundle storage bundleInfo) internal returns(Bundle storage) {
         check(bundleInfo.isComplete(), "Bundle Info Not Complete", bundleInfo.parse());
         return bundleInfo;
     }
 
-    function hasName(BundleInfo storage bundleInfo) internal returns(bool) {
+    function hasName(Bundle storage bundleInfo) internal returns(bool) {
         return bundleInfo.name.isNotEmpty();
     }
-    function hasNotName(BundleInfo storage bundleInfo) internal returns(bool) {
+    function hasNotName(Bundle storage bundleInfo) internal returns(bool) {
         return bundleInfo.name.isEmpty();
     }
 
-    function exists(BundleInfo storage bundleInfo) internal returns(bool) {
+    function exists(Bundle storage bundleInfo) internal returns(bool) {
         return  bundleInfo.name.isNotEmpty() ||
                 bundleInfo.functionInfos.length != 0 ||
                 bundleInfo.facade.isNotContract();
     }
-    function notExists(BundleInfo storage bundleInfo) internal returns(bool) {
+    function notExists(Bundle storage bundleInfo) internal returns(bool) {
         return bundleInfo.exists().isNot();
     }
-    function assertExists(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+    function assertExists(Bundle storage bundleInfo) internal returns(Bundle storage) {
         check(bundleInfo.exists(), "Bundle Info Not Exists");
         return bundleInfo;
     }
-    function assertNotExists(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+    function assertNotExists(Bundle storage bundleInfo) internal returns(Bundle storage) {
         check(bundleInfo.notExists(), "Bundle Info Already Exists");
         return bundleInfo;
     }
@@ -124,16 +124,16 @@ library BundleInfoUtils {
     /**---------------
         🐞 Debug
     -----------------*/
-    function parseAndLog(BundleInfo storage bundleInfo) internal returns(BundleInfo storage) {
+    function parseAndLog(Bundle storage bundleInfo) internal returns(Bundle storage) {
         Logger.logDebug(
             bundleInfo.parse()
         );
         return bundleInfo;
     }
-    function parse(BundleInfo storage bundleInfo) internal returns(string memory message) {
+    function parse(Bundle storage bundleInfo) internal returns(string memory message) {
         message = message.append("Facade: ").append(bundleInfo.facade);
 
-        FuncInfo[] memory _funcs = bundleInfo.functionInfos;
+        Function[] memory _funcs = bundleInfo.functionInfos;
         for (uint i; i < _funcs.length; ++i) {
             message = message.br().append(_funcs[i].parse());
         }

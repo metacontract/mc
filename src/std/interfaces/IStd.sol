@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import {ERC7546ProxyEvents} from "@ucs.mc/proxy/ERC7546ProxyEvents.sol";

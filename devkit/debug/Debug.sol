@@ -3,7 +3,11 @@ pragma solidity ^0.8.24;
 
 // Utils
 import {console2, StdStyle} from "../utils/ForgeHelper.sol";
+    using StdStyle for string;
 import {StringUtils} from "../utils/StringUtils.sol";
+    using StringUtils for string;
+import {BoolUtils} from "devkit/utils/BoolUtils.sol";
+    using BoolUtils for bool;
 import {Logger} from "./Logger.sol";
 
 bytes32 constant DEBUGGER = 0x03d3692c02b7cdcaf0187e8ede4101c401cc53a33aa7e03ef4682fcca8a55300;
@@ -31,10 +35,6 @@ struct DebugState {
 //=================
 //  🐞 Debug
 library Debug {
-    using StringUtils for string;
-    using StdStyle for string;
-
-
     /**+++++++++++++++++++++
         🔵 Debug State
     +++++++++++++++++++++++*/
@@ -67,7 +67,7 @@ library Debug {
         State().logLevel = level;
     }
 
-    function isDisable() internal returns(bool) {
+    function isDisabled() internal returns(bool) {
         return State().logLevel == LogLevel.Disable;
     }
     function isDebug() internal returns(bool) {
@@ -91,6 +91,7 @@ library Debug {
         📈 Execution Tracking
     ------------------------------*/
     function recordExecStart(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
+        if (isDisabled()) return 0;
         pid = State().nextPid;
         State().processes.push(Process(libName, funcName, params));
         Logger.logExecStart(pid, libName, funcName);
@@ -98,6 +99,7 @@ library Debug {
     }
 
     function recordExecFinish(uint pid) internal {
+        if (isDisabled()) return;
         Process memory current = State().processes[pid];
         Logger.logExecFinish(pid, current.libName, current.funcName);
     }
