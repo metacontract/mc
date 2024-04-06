@@ -8,7 +8,6 @@ import {MCDevKit} from "devkit/global/MCDevKit.sol";
         ♻️ Reset Current Context
 ************************************************/
 library MCContextLib {
-    using MCContextLib for MCDevKit;
     string constant LIB_NAME = "MCContextLib";
 
 

@@ -20,7 +20,6 @@ import {Function} from "devkit/ucs/functions/Function.sol";
         🪟 Use Facade
 ************************************************/
 library MCBundleLib {
-    using MCBundleLib for MCDevKit;
     string constant LIB_NAME = "MCBundleLib";
 
 
