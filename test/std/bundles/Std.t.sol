@@ -13,6 +13,6 @@ contract StdTest is MCDevKitTest {
     }
 
     function test_Success_DeployStdFunctions() public startPrankWith("TEST_DEPLOYER") {
-        mc.deployStdIfNotExists();
+        mc.deployStdFunctions();
     }
 }
