@@ -13,7 +13,7 @@ import {StringUtils} from "../../utils/StringUtils.sol";
     using StringUtils for string;
 import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Core
-// import {MCStdFuncs} from "../../ucs/functions/MCStdFuncs.sol";
+// import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";
 import {Function} from "../functions/Function.sol";
 // Test

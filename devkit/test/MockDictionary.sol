@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Core
-import {Function} from "../ucs/functions/Function.sol";
+import {Function} from "../core/functions/Function.sol";
 // External Lib
 import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
 

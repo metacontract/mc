@@ -9,13 +9,13 @@ import {check} from "devkit/error/Validation.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/ucs/dictionary/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/core/dictionary/Dictionary.sol";
 //  functions
-import {Bundle} from "devkit/ucs/functions/Bundle.sol";
-import {StdFunctionsArgs} from "devkit/ucs/functions/StdFunctions.sol";
+import {Bundle} from "devkit/core/functions/Bundle.sol";
+import {StdFunctionsArgs} from "devkit/core/functions/StdFunctions.sol";
     using StdFunctionsArgs for address;
 //  proxy
-import {Proxy, ProxyLib} from "devkit/ucs/proxy/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/core/proxy/Proxy.sol";
 
 
 

@@ -2,9 +2,9 @@
 pragma solidity ^0.8.24;
 
 // Registries
-import {FunctionRegistry} from "devkit/ucs/functions/FunctionRegistry.sol";
-import {DictionaryRegistry} from "devkit/ucs/dictionary/DictionaryRegistry.sol";
-import {ProxyRegistry} from "devkit/ucs/proxy/ProxyRegistry.sol";
+import {FunctionRegistry} from "devkit/core/functions/FunctionRegistry.sol";
+import {DictionaryRegistry} from "devkit/core/dictionary/DictionaryRegistry.sol";
+import {ProxyRegistry} from "devkit/core/proxy/ProxyRegistry.sol";
 
 // Global Methods
 import {MCSetupLib} from "devkit/global/MCSetupLib.sol";

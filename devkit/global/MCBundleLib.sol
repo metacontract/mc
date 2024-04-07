@@ -9,7 +9,7 @@ import {ERR} from "devkit/error/Error.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
-import {Function} from "devkit/ucs/functions/Function.sol";
+import {Function} from "devkit/core/functions/Function.sol";
 
 
 /***********************************************

@@ -8,8 +8,8 @@ import {StringUtils} from "devkit/utils/StringUtils.sol";
 import {Config} from "devkit/config/Config.sol";
 import {ERR} from "devkit/error/Error.sol";
 
-import {Bundle} from "devkit/ucs/functions/Bundle.sol";
-import {Function} from "devkit/ucs/functions/Function.sol";
+import {Bundle} from "devkit/core/functions/Bundle.sol";
+import {Function} from "devkit/core/functions/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 
