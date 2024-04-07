@@ -165,7 +165,7 @@ library FunctionLib {
         return functionInfo;
     }
 
-    function isEqual(Function storage a, Function storage b) internal pure returns(bool) {
+    function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
 
