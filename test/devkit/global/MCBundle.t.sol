@@ -11,6 +11,7 @@ import {ERR} from "devkit/error/Error.sol";
 import {Bundle} from "devkit/ucs/functions/Bundle.sol";
 import {Function} from "devkit/ucs/functions/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
+import {DummyFacade} from "test/utils/DummyFacade.sol";
 
 contract DevKitTest_MCBundle is MCDevKitTest {
     /**---------------------------
@@ -108,4 +109,15 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     /**------------------
         🪟 Use Facade
     --------------------*/
+    function test_Success_useFacade() public {
+        address facade = address(new DummyFacade());
+        mc.init();
+        mc.useFacade(facade);
+    }
+
+    function test_Revert_useFacade_withoutInit() public {
+        address facade = address(new DummyFacade());
+        vm.expectRevert(ERR.message(ERR.NOT_INIT).toBytes());
+        mc.useFacade(facade);
+    }
 }
