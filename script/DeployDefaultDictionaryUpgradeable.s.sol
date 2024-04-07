@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCScript} from "devkit/MCScript.sol";
 // import {UCSContractList} from "utils/common/UCSTypes.sol";
-// import "@devkit/global/MCDevKit.sol";
+// import "@devkit/MCDevKit.sol";
 
 // import {UCSDeployUtils} from "../utils/UCSDeployUtils.sol";
 

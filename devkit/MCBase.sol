@@ -6,7 +6,7 @@ import {CommonBase} from "forge-std/Base.sol";
 import {Script as ForgeScript} from "forge-std/Script.sol";
 import {Test as ForgeTest} from "forge-std/Test.sol";
 
-import {MCDevKit} from "devkit/global/MCDevKit.sol";
+import {MCDevKit} from "devkit/MCDevKit.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCDevKitTest} from "devkit/MCTest.sol";
 import {DeployLib} from "script/DeployLib.sol";
-import {MCDevKit} from "devkit/global/MCDevKit.sol";
+import {MCDevKit} from "devkit/MCDevKit.sol";
 
 import {Clone} from "mc-std/functions/Clone.sol";
 
