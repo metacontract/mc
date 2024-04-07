@@ -19,6 +19,7 @@ library ERR {
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
     // string constant STR_EMPTY = "Empty String";
     // string constant STR_EXISTS = "String Already Exist";
+    string constant NOT_INIT = "Bundle has not initialized yet, please mc.init() first.";
 
     function message(string memory errorBody) internal returns(string memory) {
         return StringUtils.append(HEADER, errorBody).bold();

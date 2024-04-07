@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
 import {check} from "devkit/error/Validation.sol";
+import {ERR} from "devkit/error/Error.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/debug/Params.sol";
@@ -94,14 +95,11 @@ library MCBundleLib {
     /**------------------
         🪟 Use Facade
     --------------------*/
-    function useFacade(MCDevKit storage mc, string memory name, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("set");
-        mc.functions.set(name, facade);
-        return mc.recordExecFinish(pid);
-    }
-
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        return mc.useFacade(mc.functions.findCurrentBundleName(), facade);
+        uint pid = mc.recordExecStart("set");
+        check(mc.functions.existsCurrentBundle(), ERR.NOT_INIT);
+        mc.functions.set(mc.functions.findCurrentBundleName(), facade);
+        return mc.recordExecFinish(pid);
     }
 
 }
