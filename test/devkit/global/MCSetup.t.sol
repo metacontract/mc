@@ -9,6 +9,9 @@ import {TestHelper} from "test/utils/TestHelper.sol";
 
 contract DevKitTest_MCSetup is MCDevKitTest {
 
+    /**----------------------------
+        🧩 Setup Standard Funcs
+    ------------------------------*/
     function test_Success_setupStdFuncs() public {
         mc.setupStdFunctions();
 
