@@ -46,6 +46,14 @@ library StringUtils {
     }
 
 
+    /**-----------------------
+        🔀 Type Convertor
+    -------------------------*/
+    function toBytes(string memory str) internal returns (bytes memory) {
+        return bytes(str);
+    }
+
+
     /**----------------
         ➕ Append
     ------------------*/
