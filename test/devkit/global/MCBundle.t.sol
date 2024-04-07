@@ -55,6 +55,18 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     /**---------------------
         🔗 Use Function
     -----------------------*/
+    function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal {
+        Bundle memory bundle = mc.functions.bundles[bundleName.safeCalcHash()];
+        assertEq(bundle.name, bundleName);
+        assertEq(bundle.facade, address(0));
+        Function memory func = mc.functions.customs[functionName.safeCalcHash()];
+        assertEq(func.name, functionName);
+        assertEq(func.selector, selector);
+        assertEq(func.implementation, impl);
+        assertTrue(bundle.functionInfos[functionsIndex].isEqual(func));
+        assertEq(mc.functions.currentFunctionName, functionName);
+    }
+
     function test_Success_use() public {
         string memory bundleName = mc.functions.genUniqueBundleName();
         string memory functionName = "DummyFunction";
@@ -63,18 +75,10 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
         mc.use(functionName, selector, impl);
 
-        Bundle memory bundle = mc.functions.bundles[bundleName.safeCalcHash()];
-        assertEq(bundle.name, bundleName);
-        assertEq(bundle.facade, address(0));
-        Function memory func = mc.functions.customs[functionName.safeCalcHash()];
-        assertEq(func.name, functionName);
-        assertEq(func.selector, selector);
-        assertEq(func.implementation, impl);
-        assertTrue(bundle.functionInfos[0].isEqual(func));
-        assertEq(mc.functions.currentFunctionName, functionName);
+        assertFunctionAdded(bundleName, 0, functionName, selector, impl);
     }
 
-    function test_Success_use_withSameName() public {
+    function test_Revert_use_withSameName() public {
         string memory bundleName = mc.functions.genUniqueBundleName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
@@ -85,6 +89,21 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         vm.expectRevert(ERR.message("Name Already Exist").toBytes());
         mc.use(functionName, selector, impl);
     }
+
+    function test_Success_use_withDifferentName() public {
+        string memory bundleName = mc.functions.genUniqueBundleName();
+
+        string memory functionName = "DummyFunction";
+        string memory functionName2 = "DummyFunction2";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl =  address(new DummyFunction());
+
+        mc.use(functionName, selector, impl);
+        mc.use(functionName2, selector, impl);
+
+        assertFunctionAdded(bundleName, 1, functionName2, selector, impl);
+    }
+
 
     /**------------------
         🪟 Use Facade
