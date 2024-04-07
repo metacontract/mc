@@ -47,56 +47,56 @@ library FunctionLib {
         📥 Assign Function
     --------------------------*/
     /**----- Name --------*/
-    function assign(Function storage functionInfo, string memory name) internal returns(Function storage) {
-        functionInfo.name = name;
-        return functionInfo;
+    function assign(Function storage func, string memory name) internal returns(Function storage) {
+        func.name = name;
+        return func;
     }
-    function safeAssign(Function storage functionInfo, string memory name) internal returns(Function storage) {
+    function safeAssign(Function storage func, string memory name) internal returns(Function storage) {
         uint pid = recordExecStart("safeAssign");
-        return functionInfo .assertEmptyName()
+        return func .assertEmptyName()
                             .assign(name.assertNotEmpty())
                             .recordExecFinish(pid);
     }
 
     /**----- Selector --------*/
-    function safeAssign(Function storage functionInfo, bytes4 selector) internal returns(Function storage) {
+    function safeAssign(Function storage func, bytes4 selector) internal returns(Function storage) {
         uint pid = recordExecStart("safeAssign");
-        return functionInfo .assertEmptySelector()
+        return func .assertEmptySelector()
                             .assign(selector.assertNotEmpty())
                             .recordExecFinish(pid);
     }
-    function assign(Function storage functionInfo, bytes4 selector) internal returns(Function storage) {
-        functionInfo.selector = selector;
-        return functionInfo;
+    function assign(Function storage func, bytes4 selector) internal returns(Function storage) {
+        func.selector = selector;
+        return func;
     }
 
     /**----- Implementation --------*/
-    function safeAssign(Function storage functionInfo, address implementation) internal returns(Function storage) {
+    function safeAssign(Function storage func, address implementation) internal returns(Function storage) {
         uint pid = recordExecStart("safeAssign");
-        return functionInfo .assertEmptyImpl()
+        return func .assertEmptyImpl()
                             .assign(implementation.assertIsContract())
                             .recordExecFinish(pid);
     }
-    function assign(Function storage functionInfo, address implementation) internal returns(Function storage) {
-        functionInfo.implementation = implementation;
-        return functionInfo;
+    function assign(Function storage func, address implementation) internal returns(Function storage) {
+        func.implementation = implementation;
+        return func;
     }
 
-    function loadAndAssignFromEnv(Function storage functionInfo, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
+    function loadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
         uint pid = recordExecStart("loadAndAssignFromEnv");
-        return functionInfo .assign(name)
+        return func .assign(name)
                             .assign(selector)
                             .assign(envKey.loadAddress())
                             .recordExecFinish(pid);
     }
-    function loadAndAssignFromEnv(Function storage functionInfo) internal returns(Function storage) {
-        string memory name = functionInfo.name.assertNotEmpty();
-        bytes4 selector = functionInfo.selector.assertNotEmpty();
-        return functionInfo.loadAndAssignFromEnv(name, name, selector);
+    function loadAndAssignFromEnv(Function storage func) internal returns(Function storage) {
+        string memory name = func.name.assertNotEmpty();
+        bytes4 selector = func.selector.assertNotEmpty();
+        return func.loadAndAssignFromEnv(name, name, selector);
     }
-    function safeLoadAndAssignFromEnv(Function storage functionInfo, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
+    function safeLoadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
         uint pid = recordExecStart("safeLoadAndAssignFromEnv");
-        return functionInfo.loadAndAssignFromEnv(
+        return func.loadAndAssignFromEnv(
             envKey.assertNotEmpty(),
             name.assertNotEmpty(),
             selector.assertNotEmpty()
@@ -107,35 +107,35 @@ library FunctionLib {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function exists(Function memory functionInfo) internal returns(bool) {
-        return functionInfo.implementation.isContract();
+    function exists(Function memory func) internal returns(bool) {
+        return func.implementation.isContract();
     }
 
-    function assignLabel(Function storage functionInfo) internal returns(Function storage) {
-        if (functionInfo.exists()) {
-            ForgeHelper.assignLabel(functionInfo.implementation, functionInfo.name);
+    function assignLabel(Function storage func) internal returns(Function storage) {
+        if (func.exists()) {
+            ForgeHelper.assignLabel(func.implementation, func.name);
         }
-        return functionInfo;
+        return func;
     }
 
-    function assertExists(Function storage functionInfo) internal returns(Function storage) {
-        if (!functionInfo.exists()) {
-            throwError("FunctionInfo does not exists");
+    function assertExists(Function storage func) internal returns(Function storage) {
+        if (!func.exists()) {
+            throwError("func does not exists");
         }
-        return functionInfo;
+        return func;
     }
 
-    function assertEmptyName(Function storage functionInfo) internal returns(Function storage) {
-        check(functionInfo.name.isEmpty(), "Name Already Exist");
-        return functionInfo;
+    function assertEmptyName(Function storage func) internal returns(Function storage) {
+        check(func.name.isEmpty(), "Name Already Exist");
+        return func;
     }
-    function assertEmptySelector(Function storage functionInfo) internal returns(Function storage) {
-        check(functionInfo.selector.isEmpty(), "Selector Already Exist");
-        return functionInfo;
+    function assertEmptySelector(Function storage func) internal returns(Function storage) {
+        check(func.selector.isEmpty(), "Selector Already Exist");
+        return func;
     }
-    function assertEmptyImpl(Function storage functionInfo) internal returns(Function storage) {
-        check(functionInfo.implementation.isNotContract(), "Implementation Already Exist");
-        return functionInfo;
+    function assertEmptyImpl(Function storage func) internal returns(Function storage) {
+        check(func.implementation.isNotContract(), "Implementation Already Exist");
+        return func;
     }
 
     function assertNotEmpty(Function storage functionInfo) internal returns(Function storage) {
