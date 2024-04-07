@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 // Validation
 import {check} from "devkit/error/Validation.sol";
 import {throwError} from "devkit/error/Error.sol";
+import {ProcessLib} from "devkit/debug/ProcessLib.sol";
 // Utils
 import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 import {StringUtils} from "../../utils/StringUtils.sol";
@@ -22,12 +23,13 @@ import {Bundle} from "./Bundle.sol";
 /**======================
     🧩 Function Info
 ========================*/
-using FunctionLib for Function global;
 struct Function { /// @dev Function may be different depending on the op version.
     string name;
     bytes4 selector;
     address implementation;
 }
+using FunctionLib for Function global;
+using ProcessLib for Function global;
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
@@ -52,18 +54,18 @@ library FunctionLib {
         return func;
     }
     function safeAssign(Function storage func, string memory name) internal returns(Function storage) {
-        uint pid = recordExecStart("safeAssign");
+        uint pid = func.startProcess("safeAssign");
         return func .assertEmptyName()
-                            .assign(name.assertNotEmpty())
-                            .recordExecFinish(pid);
+                    .assign(name.assertNotEmpty())
+                    .finishProcess(pid);
     }
 
     /**----- Selector --------*/
     function safeAssign(Function storage func, bytes4 selector) internal returns(Function storage) {
-        uint pid = recordExecStart("safeAssign");
+        uint pid = func.startProcess("safeAssign");
         return func .assertEmptySelector()
                             .assign(selector.assertNotEmpty())
-                            .recordExecFinish(pid);
+                            .finishProcess(pid);
     }
     function assign(Function storage func, bytes4 selector) internal returns(Function storage) {
         func.selector = selector;
@@ -72,10 +74,10 @@ library FunctionLib {
 
     /**----- Implementation --------*/
     function safeAssign(Function storage func, address implementation) internal returns(Function storage) {
-        uint pid = recordExecStart("safeAssign");
+        uint pid = func.startProcess("safeAssign");
         return func .assertEmptyImpl()
                             .assign(implementation.assertIsContract())
-                            .recordExecFinish(pid);
+                            .finishProcess(pid);
     }
     function assign(Function storage func, address implementation) internal returns(Function storage) {
         func.implementation = implementation;
@@ -83,11 +85,11 @@ library FunctionLib {
     }
 
     function loadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
-        uint pid = recordExecStart("loadAndAssignFromEnv");
+        uint pid = func.startProcess("loadAndAssignFromEnv");
         return func .assign(name)
                             .assign(selector)
                             .assign(envKey.loadAddress())
-                            .recordExecFinish(pid);
+                            .finishProcess(pid);
     }
     function loadAndAssignFromEnv(Function storage func) internal returns(Function storage) {
         string memory name = func.name.assertNotEmpty();
@@ -95,12 +97,12 @@ library FunctionLib {
         return func.loadAndAssignFromEnv(name, name, selector);
     }
     function safeLoadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
-        uint pid = recordExecStart("safeLoadAndAssignFromEnv");
+        uint pid = func.startProcess("safeLoadAndAssignFromEnv");
         return func.loadAndAssignFromEnv(
             envKey.assertNotEmpty(),
             name.assertNotEmpty(),
             selector.assertNotEmpty()
-        ).recordExecFinish(pid);
+        ).finishProcess(pid);
     }
 
 
@@ -183,18 +185,6 @@ library FunctionLib {
         return message  .append("Impl: ").append(functionInfo.implementation).comma()
                         .append("Selector: ").append(functionInfo.selector).comma()
                         .append("Name: ").append(functionInfo.name);
-    }
-
-
-    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(string memory funcName) internal returns(uint) {
-        return recordExecStart(funcName, "");
-    }
-    function recordExecFinish(Function storage funcInfo, uint pid) internal returns(Function storage) {
-        Debug.recordExecFinish(pid);
-        return funcInfo;
     }
 
 }

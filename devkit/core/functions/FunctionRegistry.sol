@@ -157,11 +157,11 @@ library FunctionRegistryLib {
     /**----- 🧩 Function -------*/
     function findFunction(FunctionRegistry storage functions, string memory name) internal returns(Function storage) {
         uint pid = functions.recordExecStart("findFunction");
-        return functions.customs[name.safeCalcHash()].assertExists().recordExecFinish(pid);
+        return functions.customs[name.safeCalcHash()].assertExists().finishProcess(pid);
     }
     function findCurrentFunction(FunctionRegistry storage functions) internal returns(Function storage) {
         uint pid = functions.recordExecStart("findCurrentFunction");
-        return functions.findFunction(functions.findCurrentFunctionName()).recordExecFinish(pid);
+        return functions.findFunction(functions.findCurrentFunctionName()).finishProcess(pid);
     }
         function findCurrentFunctionName(FunctionRegistry storage functions) internal returns(string memory) {
             uint pid = functions.recordExecStart("findCurrentFunctionName");
