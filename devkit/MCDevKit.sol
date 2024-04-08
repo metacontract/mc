@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Core Registries
-import {FunctionRegistry} from "devkit/core/functions/FunctionRegistry.sol";
+import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/dictionary/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/core/proxy/ProxyRegistry.sol";
 

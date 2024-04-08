@@ -6,7 +6,7 @@ import {AddressUtils} from "devkit/utils/AddressUtils.sol";
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 
-import {Function} from "devkit/core/functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 // import {Bundle} from "./Bundle.sol";
 
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";

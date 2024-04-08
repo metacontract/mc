@@ -11,7 +11,7 @@ import {StringUtils} from "../../utils/StringUtils.sol";
 import {Debug} from "../../debug/Debug.sol";
 import {Logger} from "../../debug/Logger.sol";
 // Core
-import {Function} from "./Function.sol";
+import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "./Bundle.sol";
 // MC Std
 import {Clone} from "mc-std/functions/Clone.sol";

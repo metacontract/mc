@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Logger} from "devkit/debug/Logger.sol";
-import {Function} from "devkit/core/functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;

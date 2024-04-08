@@ -17,7 +17,7 @@ import {Bytes4Utils} from "../../utils/Bytes4Utils.sol";
 import {Debug} from "../../debug/Debug.sol";
 import {Logger} from "../../debug/Logger.sol";
 // Core
-import {Function} from "./Function.sol";
+import {Function} from "devkit/core/Function.sol";
 
 /**====================
     🧺 Bundle Info

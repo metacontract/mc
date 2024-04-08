@@ -5,7 +5,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/functions/Bundle.sol";
-import {Function} from "devkit/core/functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 //  proxy
 import {Proxy} from "devkit/core/proxy/Proxy.sol";
 //  dictionary

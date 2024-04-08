@@ -15,6 +15,10 @@ import {StdStyle} from "forge-std/StdStyle.sol";
 /// @dev address(uint160(uint256(keccak256("hevm cheat code"))));
 Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
+function loadAddressFrom(string memory envKey) returns(address) {
+    return ForgeHelper.loadAddressFromEnv(envKey);
+}
+
 /**************************************
     🛠 Helper Methods for Forge Std
 **************************************/

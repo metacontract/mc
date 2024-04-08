@@ -15,7 +15,7 @@ import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Core
 // import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
 import {Dictionary} from "../dictionary/Dictionary.sol";
-import {Function} from "../functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 // Test
 import {SimpleMockProxy} from "../../test/SimpleMockProxy.sol";
 // External Lib

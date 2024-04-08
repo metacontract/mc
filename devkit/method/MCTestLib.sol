@@ -8,7 +8,7 @@ import {Params} from "devkit/debug/Params.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/functions/Bundle.sol";
-import {Function} from "devkit/core/functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 //  proxy
 import {Proxy, ProxyLib} from "devkit/core/proxy/Proxy.sol";
 //  dictionary
@@ -93,13 +93,14 @@ library MCTestLib {
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("setStorageReader", Params.append(selector, implementation));
-        dictionary.set(
-            Function({
-                name: "StorageReader",
-                selector: selector,
-                implementation: implementation
-            })
-        );
+        // dictionary.set(
+        //     Function.create("aaa")
+        //     // Function({
+        //     //     name: "StorageReader",
+        //     //     selector: selector,
+        //     //     implementation: implementation
+        //     // })
+        // );
         return mc.recordExecFinish(pid);
     }
     function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {

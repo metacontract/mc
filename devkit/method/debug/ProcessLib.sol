@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Debug} from "devkit/debug/Debug.sol";
 // Types
-import {Function} from "devkit/core/functions/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 
 library ProcessLib {
     function startProcess(Function storage, string memory name, string memory params) internal returns(uint) {
