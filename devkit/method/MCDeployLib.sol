@@ -15,7 +15,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctionsArgs} from "devkit/core/StdFunctions.sol";
     using StdFunctionsArgs for address;
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/proxy/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 
 
 

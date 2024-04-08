@@ -5,19 +5,19 @@ pragma solidity ^0.8.24;
 import {check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Utils
-import {AddressUtils} from "../../utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BoolUtils} from "../../utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
-import {StringUtils} from "../../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
-import {ForgeHelper} from "../../utils/ForgeHelper.sol";
+import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Core
-// import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
+// import {MCStdFuncs} from "devkit/core/functions/MCStdFuncs.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 import {Function} from "devkit/core/Function.sol";
 // Test
-import {SimpleMockProxy} from "../../test/SimpleMockProxy.sol";
+import {SimpleMockProxy} from "devkit/test/SimpleMockProxy.sol";
 // External Lib
 import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
 import {ERC7546Proxy} from "@ucs.mc/proxy/ERC7546Proxy.sol";
