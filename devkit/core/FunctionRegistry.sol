@@ -8,9 +8,9 @@ import {FunctionRegistryLib} from "devkit/method/core/FunctionRegistryLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 
-/**---------------------------
+/**===========================
     🧩 Functions Registry
------------------------------*/
+=============================*/
 struct FunctionRegistry {
     mapping(bytes32 nameHash => Function) customs;
     string currentName;

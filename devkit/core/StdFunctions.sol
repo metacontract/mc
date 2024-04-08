@@ -9,9 +9,9 @@ import {StdFunctionsLib} from "devkit/method/core/StdFunctionsLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 
-/****************************
+/**==========================
     🏛 Standard Functions
-*****************************/
+============================*/
 struct StdFunctions {
     Function initSetAdmin;
     Function getDeps;

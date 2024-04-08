@@ -7,9 +7,9 @@ import {ProxyKindLib} from "devkit/method/core/ProxyKindLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 
-/****************
+/**===============
     🏠 Proxy
-*****************/
+=================*/
 struct Proxy {
     address addr;
     ProxyKind kind;

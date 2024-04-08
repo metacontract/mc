@@ -8,9 +8,9 @@ import {BundleRegistryLib} from "devkit/method/core/BundleRegistryLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 
-/**************************
+/**========================
     🗂️ Bundle Registry
-***************************/
+==========================*/
 struct BundleRegistry {
     mapping(bytes32 nameHash => Bundle) bundles;
     string currentBundleName;
