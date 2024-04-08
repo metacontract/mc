@@ -34,14 +34,13 @@ import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
         🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library DictionaryRegistryLib {
-    string constant LIB_NAME = "DictionaryRegistryLib";
 
 
     /**------------------------
         📥 Add Dictionary
     --------------------------*/
     function add(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
-        uint pid = dictionaries.recordExecStart("add");
+        uint pid = dictionaries.startProcess("add");
         bytes32 nameHash = name.calcHash();
         if (dictionary.isNotMock()) {
             dictionaries.deployed[nameHash] = dictionary;
@@ -49,13 +48,13 @@ library DictionaryRegistryLib {
         if (dictionary.isMock()) {
             dictionaries.mocks[nameHash] = dictionary;
         }
-        return dictionaries.recordExecFinish(pid);
+        return dictionaries.finishProcess(pid);
     }
 
     function safeAdd(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
-        uint pid = dictionaries.recordExecStart("safeAdd");
+        uint pid = dictionaries.startProcess("safeAdd");
         return dictionaries .add(name.assertNotEmpty(), dictionary.assertNotEmpty())
-                            .recordExecFinish(pid);
+                            .finishProcess(pid);
     }
 
 
@@ -63,13 +62,13 @@ library DictionaryRegistryLib {
         🔼 Update Current Context Dictionary
     -------------------------------------------*/
     function safeUpdate(DictionaryRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
-        uint pid = dictionaries.recordExecStart("safeUpdate");
-        return dictionaries .update(dictionary.assertNotEmpty()).recordExecFinish(pid);
+        uint pid = dictionaries.startProcess("safeUpdate");
+        return dictionaries .update(dictionary.assertNotEmpty()).finishProcess(pid);
     }
     function update(DictionaryRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
-        uint pid = dictionaries.recordExecStart("update");
+        uint pid = dictionaries.startProcess("update");
         dictionaries.currentDictionary = dictionary;
-        return dictionaries.recordExecFinish(pid);
+        return dictionaries.finishProcess(pid);
     }
 
 
@@ -77,9 +76,9 @@ library DictionaryRegistryLib {
         ♻️ Reset Current Context Dictionary
     ------------------------------------------*/
     function reset(DictionaryRegistry storage dictionaries) internal returns(DictionaryRegistry storage) {
-        uint pid = dictionaries.recordExecStart("reset");
+        uint pid = dictionaries.startProcess("reset");
         delete dictionaries.currentDictionary;
-        return dictionaries.recordExecFinish(pid);
+        return dictionaries.finishProcess(pid);
     }
 
 
@@ -87,17 +86,17 @@ library DictionaryRegistryLib {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        uint pid = dictionaries.recordExecStart("find");
+        uint pid = dictionaries.startProcess("find");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists()
                             .recordExecFinishInStorage(pid);
     }
     function findCurrentDictionary(DictionaryRegistry storage dictionaries) internal returns(Dictionary storage) {
-        uint pid = dictionaries.recordExecStart("findCurrentDictionary");
+        uint pid = dictionaries.startProcess("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists().recordExecFinishInStorage(pid);
     }
     function findMockDictionary(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        uint pid = dictionaries.recordExecStart("findMockDictionary");
+        uint pid = dictionaries.startProcess("findMockDictionary");
         return dictionaries.mocks[name.safeCalcHash()].assertExists().recordExecFinishInStorage(pid);
     }
 
@@ -106,7 +105,7 @@ library DictionaryRegistryLib {
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(DictionaryRegistry storage dictionaries, string memory baseName) internal returns(string memory name) {
-        uint pid = dictionaries.recordExecStart("genUniqueName");
+        uint pid = dictionaries.startProcess("genUniqueName");
         ScanRange memory range = Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
@@ -122,7 +121,7 @@ library DictionaryRegistryLib {
     }
 
     function genUniqueMockName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        uint pid = dictionaries.recordExecStart("genUniqueName");
+        uint pid = dictionaries.startProcess("genUniqueName");
         ScanRange memory range = Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = Config().DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
@@ -141,28 +140,6 @@ library DictionaryRegistryLib {
     }
     function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
         return dictionaries.mocks[name.safeCalcHash()].exists();
-    }
-
-
-    /**----------------
-        🐞 Debug
-    ------------------*/
-    /**
-        Record Start
-     */
-    function recordExecStart(DictionaryRegistry storage, string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(DictionaryRegistry storage dictionaries, string memory funcName) internal returns(uint) {
-        return dictionaries.recordExecStart(funcName, "");
-    }
-
-    /**
-        Record Finish
-     */
-    function recordExecFinish(DictionaryRegistry storage dictionaries, uint pid) internal returns(DictionaryRegistry storage) {
-        Debug.recordExecFinish(pid);
-        return dictionaries;
     }
 
 }

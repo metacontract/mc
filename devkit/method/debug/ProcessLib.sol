@@ -7,6 +7,7 @@ import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
+import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 
 library ProcessLib {
     /**------------------
@@ -71,4 +72,21 @@ library ProcessLib {
         Debug.recordExecFinish(pid);
         return proxies;
     }
+
+
+    /**----------------------------
+        📚 Dictionary Registry
+    ------------------------------*/
+    function startProcess(DictionaryRegistry storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("DictionaryRegistryLib", name, params);
+    }
+    function startProcess(DictionaryRegistry storage dictionaries, string memory name) internal returns(uint) {
+        return dictionaries.startProcess(name, "");
+    }
+
+    function finishProcess(DictionaryRegistry storage dictionaries, uint pid) internal returns(DictionaryRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return dictionaries;
+    }
+
 }
