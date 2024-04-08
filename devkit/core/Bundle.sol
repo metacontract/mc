@@ -6,7 +6,7 @@ import {Function} from "devkit/core/Function.sol";
 // Methods
 import {BundleLib} from "devkit/method/core/BundleLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
-import {ParseLib} from "devkit/method/debug/ParseLib.sol";
+import {Parser} from "devkit/method/debug/Parser.sol";
 
 
 /**================
@@ -19,4 +19,4 @@ struct Bundle {
 }
 using BundleLib for Bundle global;
 using ProcessLib for Bundle global;
-using ParseLib for Bundle global;
+using Parser for Bundle global;

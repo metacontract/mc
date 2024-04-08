@@ -9,8 +9,8 @@ import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 
 //================
-//  🗒️ Parse Lib
-library ParseLib {
+//  🗒️ Parser
+library Parser {
     /**==================
         🧩 Function
     ====================*/

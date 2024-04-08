@@ -8,8 +8,8 @@ import {Bundle} from "devkit/core/Bundle.sol";
 
 
 //================
-//  📊 LogLib
-library LogLib {
+//  🚰 Dumper
+library Dumper {
     /**==================
         🧩 Function
     ====================*/
