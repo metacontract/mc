@@ -5,6 +5,7 @@ import {Debug} from "devkit/debug/Debug.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
+import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
@@ -25,9 +26,13 @@ library ProcessLib {
         return func;
     }
 
+    /**--------------------------
+        🧩 Functions Registry
+    ----------------------------*/
+
 
     /**----------------
-        🧺 Bundle
+        🗂️ Bundle
     ------------------*/
     function startProcess(Bundle storage, string memory name, string memory params) internal returns(uint) {
         return Debug.recordExecStart("Bundle", name, params);
@@ -37,6 +42,21 @@ library ProcessLib {
     }
 
     function finishProcess(Bundle storage bundle, uint pid) internal returns(Bundle storage) {
+        Debug.recordExecFinish(pid);
+        return bundle;
+    }
+
+    /**--------------------------
+        🧩 Bundle Registry
+    ----------------------------*/
+    function startProcess(BundleRegistry storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("BundleRegistry", name, params);
+    }
+    function startProcess(BundleRegistry storage bundle, string memory name) internal returns(uint) {
+        return bundle.startProcess(name, "");
+    }
+
+    function finishProcess(BundleRegistry storage bundle, uint pid) internal returns(BundleRegistry storage) {
         Debug.recordExecFinish(pid);
         return bundle;
     }
