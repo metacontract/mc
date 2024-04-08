@@ -29,7 +29,7 @@ import {ERC1967Utils} from "@oz.mc/proxy/ERC1967/ERC1967Utils.sol";
 
 
 import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
-// import {} from "devkit/core/";
+import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 /**------------------------
     📚 UCS Dictionary
@@ -47,16 +47,13 @@ import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
         🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library DictionaryLib {
-    string constant LIB_NAME = "DictionaryLib";
-
-
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("deploy");
+        uint pid = ProcessLib.startDictionaryLibProcess("deploy");
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
-        return deployDictionaryVerifiable(owner).recordExecFinish(pid);
+        return deployDictionaryVerifiable(owner).finishProcess(pid);
     }
         /**---------------------------
             Deploy Proxy Primitives
@@ -69,8 +66,8 @@ library DictionaryLib {
         }
 
     function safeDeploy(address owner) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("safeDeploy");
-        return deploy(owner.assertNotZero()).recordExecFinish(pid);
+        uint pid = ProcessLib.startDictionaryLibProcess("safeDeploy");
+        return deploy(owner.assertNotZero()).finishProcess(pid);
     }
 
 
@@ -78,12 +75,12 @@ library DictionaryLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("duplicate");
+        uint pid = ProcessLib.startDictionaryLibProcess("duplicate");
         return deploy(ForgeHelper.msgSender())
-                .duplicateFunctionsFrom(targetDictionary).recordExecFinish(pid);
+                .duplicateFunctionsFrom(targetDictionary).finishProcess(pid);
     }
         function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-            uint pid = recordExecStart("duplicateFunctionsFrom");
+            uint pid = ProcessLib.startDictionaryLibProcess("duplicateFunctionsFrom");
             address toAddr = toDictionary.addr;
             address fromAddr = fromDictionary.addr;
 
@@ -97,11 +94,11 @@ library DictionaryLib {
                 });
             }
 
-            return toDictionary.recordExecFinish(pid);
+            return toDictionary.finishProcess(pid);
         }
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("safeDuplicate");
-        return targetDictionary.assertNotEmpty().duplicate().recordExecFinish(pid);
+        uint pid = ProcessLib.startDictionaryLibProcess("safeDuplicate");
+        return targetDictionary.assertNotEmpty().duplicate().finishProcess(pid);
     }
 
 
@@ -109,15 +106,15 @@ library DictionaryLib {
         🧩 Set Function & Bundle
     -------------------------------*/
     function set(Dictionary memory dictionary, Function memory functionInfo) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("set", Params.append(functionInfo.name));
+        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(functionInfo.name));
         IDictionary(dictionary.addr).setImplementation({
             functionSelector: functionInfo.selector,
             implementation: functionInfo.implementation
         });
-        return dictionary.recordExecFinish(pid);
+        return dictionary.finishProcess(pid);
     }
     function set(Dictionary memory dictionary, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("set", Params.append(bundleInfo.name));
+        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(bundleInfo.name));
 
         Function[] memory functionInfos = bundleInfo.functionInfos;
 
@@ -130,7 +127,7 @@ library DictionaryLib {
         //     dictionary.upgradeFacade(bundleInfo.facade);
         // }
 
-        return dictionary.recordExecFinish(pid);
+        return dictionary.finishProcess(pid);
     }
 
 
@@ -138,9 +135,9 @@ library DictionaryLib {
         🪟 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("upgradeFacade");
+        uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
         DictionaryEtherscan(dictionary.assertVerifiable().addr).upgradeFacade(newFacade);
-        return dictionary.recordExecFinish(pid);
+        return dictionary.finishProcess(pid);
     }
 
 
@@ -148,11 +145,11 @@ library DictionaryLib {
         🤖 Create Mock Dictionary
     --------------------------------*/
     function createMockDictionary(address owner, Function[] memory functionInfos) internal returns(Dictionary memory) {
-        uint pid = recordExecStart("createMockDictionary");
+        uint pid = ProcessLib.startDictionaryLibProcess("createMockDictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functionInfos)),
             kind: DictionaryKind.Mock
-        }).recordExecFinish(pid);
+        }).finishProcess(pid);
     }
 
 
@@ -204,46 +201,8 @@ library DictionaryLib {
     // }
 
 
-    /**----------------
-        🐞 Debug
-    ------------------*/
-    /**
-        Record Start
-     */
-    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(string memory funcName) internal returns(uint) {
-        return recordExecStart(funcName, "");
-    }
-    function recordExecFinish(uint pid) internal {
-        Debug.recordExecFinish(pid);
-    }
-
-    /**
-        Record Finish
-     */
-    function recordExecFinish(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
-        recordExecFinish(pid);
-        return dictionary;
-    }
-    function recordExecFinishInStorage(Dictionary storage dictionary, uint pid) internal returns(Dictionary storage) {
-        recordExecFinish(pid);
-        return dictionary;
-    }
-
     // function assignLabel(Dictionary storage dictionary, string memory name) internal returns(Dictionary storage) {
     //     ForgeHelper.assignLabel(dictionary.addr, name);
     //     return dictionary;
     // }
-}
-
-library DictionaryKindLib {
-    function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
-        return kind != DictionaryKind.undefined;
-    }
-    function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
-        check(kind.isNotUndefined(), "Undefined Dictionary Kind");
-        return kind;
-    }
 }

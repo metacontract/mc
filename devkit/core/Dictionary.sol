@@ -29,18 +29,21 @@ import {ERC1967Utils} from "@oz.mc/proxy/ERC1967/ERC1967Utils.sol";
 
 import {DictionaryLib} from "devkit/method/core/DictionaryLib.sol";
 import {DictionaryKindLib} from "devkit/method/core/DictionaryKindLib.sol";
+import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 /**------------------------
     📚 UCS Dictionary
 --------------------------*/
-using DictionaryLib for Dictionary global;
 struct Dictionary {
     address addr;
     DictionaryKind kind;
 }
-    using DictionaryKindLib for DictionaryKind global;
+using DictionaryLib for Dictionary global;
+using ProcessLib for Dictionary global;
+
     enum DictionaryKind {
         undefined,
         Verifiable,
         Mock
     }
+    using DictionaryKindLib for DictionaryKind global;

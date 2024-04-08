@@ -9,6 +9,7 @@ import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {Proxy} from "devkit/core/Proxy.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
+import {Dictionary} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 
 library ProcessLib {
@@ -118,6 +119,25 @@ library ProcessLib {
         return proxies;
     }
 
+
+    /**-------------------
+        📚 Dictionary
+    ---------------------*/
+    function startDictionaryLibProcess(string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("DictionaryLib", name, params);
+    }
+    function startDictionaryLibProcess(string memory name) internal returns(uint) {
+        return startDictionaryLibProcess(name, "");
+    }
+
+    function finishProcess(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
+        finishProcess(pid);
+        return dictionary;
+    }
+    function finishProcessInStorage(Dictionary storage dictionary, uint pid) internal returns(Dictionary storage) {
+        finishProcess(pid);
+        return dictionary;
+    }
 
     /**----------------------------
         📚 Dictionary Registry

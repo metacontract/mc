@@ -105,7 +105,7 @@ library MCDeployLib {
                                                         .upgradeFacade(bundleInfo.facade);
         mc.dictionary   .safeAdd(name, dictionary)
                         .safeUpdate(dictionary);
-        return dictionary.recordExecFinish(pid);
+        return dictionary.finishProcess(pid);
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {

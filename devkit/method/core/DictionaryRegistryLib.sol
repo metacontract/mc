@@ -89,15 +89,15 @@ library DictionaryRegistryLib {
         uint pid = dictionaries.startProcess("find");
         return dictionaries.deployed[name.safeCalcHash()]
                             .assertExists()
-                            .recordExecFinishInStorage(pid);
+                            .finishProcessInStorage(pid);
     }
     function findCurrentDictionary(DictionaryRegistry storage dictionaries) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("findCurrentDictionary");
-        return dictionaries.currentDictionary.assertExists().recordExecFinishInStorage(pid);
+        return dictionaries.currentDictionary.assertExists().finishProcessInStorage(pid);
     }
     function findMockDictionary(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("findMockDictionary");
-        return dictionaries.mocks[name.safeCalcHash()].assertExists().recordExecFinishInStorage(pid);
+        return dictionaries.mocks[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
     }
 
 
