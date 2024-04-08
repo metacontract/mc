@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Debug} from "devkit/debug/Debug.sol";
-// Types
+// Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";

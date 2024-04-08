@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Core Types
+// Core Type
 import {Dictionary} from "./Dictionary.sol";
 // Methods
 import {DictionaryRegistryLib} from "devkit/method/core/DictionaryRegistryLib.sol";
