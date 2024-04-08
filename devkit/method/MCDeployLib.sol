@@ -9,7 +9,7 @@ import {check} from "devkit/error/Validation.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/core/dictionary/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctionsArgs} from "devkit/core/StdFunctions.sol";

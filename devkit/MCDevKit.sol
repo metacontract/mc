@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
-import {DictionaryRegistry} from "devkit/core/dictionary/DictionaryRegistry.sol";
+import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/core/proxy/ProxyRegistry.sol";
 
 // Global Methods

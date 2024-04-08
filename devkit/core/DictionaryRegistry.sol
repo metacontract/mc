@@ -8,11 +8,11 @@ import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config, ScanRange} from "devkit/config/Config.sol";
 // Utils
-import {AddressUtils} from "../../utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
-import {StringUtils} from "../../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
-import {BoolUtils} from "../../utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
 // Core
 import {Dictionary} from "./Dictionary.sol";

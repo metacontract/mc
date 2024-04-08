@@ -5,22 +5,22 @@ pragma solidity ^0.8.24;
 import {check} from "devkit/error/Validation.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Utils
-import {AddressUtils} from "../../utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BoolUtils} from "../../utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
-import {Bytes4Utils} from "../../utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
-import {StringUtils} from "../../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
-import {ForgeHelper} from "../../utils/ForgeHelper.sol";
+import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Debug
-import {Debug} from "../../debug/Debug.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Core
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 // Test
-import {MockDictionary} from "../../test/MockDictionary.sol";
+import {MockDictionary} from "devkit/test/MockDictionary.sol";
 // External Libs
 import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";

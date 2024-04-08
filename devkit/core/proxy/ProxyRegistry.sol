@@ -14,7 +14,7 @@ import {BoolUtils} from "../../utils/BoolUtils.sol";
     using BoolUtils for bool;
 // Core
 import {Proxy} from "./Proxy.sol";
-import {Dictionary} from "../dictionary/Dictionary.sol";
+import {Dictionary} from "devkit/core/Dictionary.sol";
 
 
 /**---------------------------

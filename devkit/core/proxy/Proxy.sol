@@ -14,7 +14,7 @@ import {StringUtils} from "../../utils/StringUtils.sol";
 import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 // Core
 // import {MCStdFuncs} from "../../core/functions/MCStdFuncs.sol";
-import {Dictionary} from "../dictionary/Dictionary.sol";
+import {Dictionary} from "devkit/core/Dictionary.sol";
 import {Function} from "devkit/core/Function.sol";
 // Test
 import {SimpleMockProxy} from "../../test/SimpleMockProxy.sol";

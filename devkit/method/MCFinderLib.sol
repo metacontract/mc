@@ -9,7 +9,7 @@ import {Function} from "devkit/core/Function.sol";
 //  proxy
 import {Proxy} from "devkit/core/proxy/Proxy.sol";
 //  dictionary
-import {Dictionary} from "devkit/core/dictionary/Dictionary.sol";
+import {Dictionary} from "devkit/core/Dictionary.sol";
 
 
 /**********************************
