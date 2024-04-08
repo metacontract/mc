@@ -31,14 +31,13 @@ import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
         🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library ProxyRegistryLib {
-    string constant LIB_NAME = "ProxyRegistryLib";
 
 
     /**-------------------
         📥 Add Proxy
     ---------------------*/
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("add");
+        uint pid = proxies.startProcess("add");
         bytes32 nameHash = name.calcHash();
         if (proxy.isNotMock()) {
             proxies.deployed[nameHash] = proxy;
@@ -46,13 +45,13 @@ library ProxyRegistryLib {
         if (proxy.isMock()) {
             proxies.mocks[nameHash] = proxy;
         }
-        return proxies.recordExecFinish(pid);
+        return proxies.finishProcess(pid);
     }
 
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("safeAdd");
+        uint pid = proxies.startProcess("safeAdd");
         return proxies  .add(name.assertNotEmpty(), proxy.assertNotEmpty())
-                        .recordExecFinish(pid);
+                        .finishProcess(pid);
     }
 
 
@@ -60,13 +59,13 @@ library ProxyRegistryLib {
         🔼 Update Current Context Proxy
     --------------------------------------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("safeUpdate");
-        return proxies.update(proxy.assertNotEmpty()).recordExecFinish(pid);
+        uint pid = proxies.startProcess("safeUpdate");
+        return proxies.update(proxy.assertNotEmpty()).finishProcess(pid);
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("update");
+        uint pid = proxies.startProcess("update");
         proxies.currentProxy = proxy;
-        return proxies.recordExecFinish(pid);
+        return proxies.finishProcess(pid);
     }
 
 
@@ -74,9 +73,9 @@ library ProxyRegistryLib {
         ♻️ Reset Current Context Proxy
     ------------------------------------*/
     function reset(ProxyRegistry storage proxies) internal returns(ProxyRegistry storage) {
-        uint pid = proxies.recordExecStart("reset");
+        uint pid = proxies.startProcess("reset");
         delete proxies.currentProxy;
-        return proxies.recordExecFinish(pid);
+        return proxies.finishProcess(pid);
     }
 
 
@@ -84,16 +83,16 @@ library ProxyRegistryLib {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        uint pid = proxies.recordExecStart("find");
+        uint pid = proxies.startProcess("find");
         return proxies.deployed[name.safeCalcHash()]
                         .assertExists().recordExecFinishInStorage(pid);
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
-        uint pid = proxies.recordExecStart("findCurrentProxy");
+        uint pid = proxies.startProcess("findCurrentProxy");
         return proxies.currentProxy.assertExists().recordExecFinishInStorage(pid);
     }
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        uint pid = proxies.recordExecStart("findSimpleMockProxy");
+        uint pid = proxies.startProcess("findSimpleMockProxy");
         return proxies.mocks[name.safeCalcHash()].assertExists().recordExecFinishInStorage(pid);
     }
 
@@ -102,7 +101,7 @@ library ProxyRegistryLib {
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        uint pid = proxies.recordExecStart("genUniqueName");
+        uint pid = proxies.startProcess("genUniqueName");
         ScanRange memory range = Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = Config().DEFAULT_PROXY_NAME.toSequential(i);
@@ -112,7 +111,7 @@ library ProxyRegistryLib {
     }
 
     function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        uint pid = proxies.recordExecStart("genUniqueMockName");
+        uint pid = proxies.startProcess("genUniqueMockName");
         ScanRange memory range = Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = Config().DEFAULT_PROXY_MOCK_NAME.toSequential(i);
@@ -131,28 +130,6 @@ library ProxyRegistryLib {
     }
     function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
         return proxies.mocks[name.safeCalcHash()].exists();
-    }
-
-
-    /**----------------
-        🐞 Debug
-    ------------------*/
-    /**
-        Record Start
-     */
-    function recordExecStart(ProxyRegistry storage, string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(ProxyRegistry storage proxies, string memory funcName) internal returns(uint) {
-        return proxies.recordExecStart(funcName, "");
-    }
-
-    /**
-        Record Finish
-     */
-    function recordExecFinish(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
-        Debug.recordExecFinish(pid);
-        return proxies;
     }
 
 }

@@ -5,14 +5,19 @@ import {Debug} from "devkit/debug/Debug.sol";
 // Types
 import {Function} from "devkit/core/Function.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
+import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 
 library ProcessLib {
+    /**------------------
+        🧩 Function
+    --------------------*/
     function startProcess(Function storage, string memory name, string memory params) internal returns(uint) {
         return Debug.recordExecStart("FunctionLib", name, params);
     }
     function startProcess(Function storage func, string memory name) internal returns(uint) {
         return func.startProcess(name, "");
     }
+
     function finishProcess(Function storage func, uint pid) internal returns(Function storage) {
         Debug.recordExecFinish(pid);
         return func;
@@ -28,9 +33,25 @@ library ProcessLib {
     function startProcess(StdFunctions storage std, string memory name) internal returns(uint) {
         return std.startProcess(name, "");
     }
+
     function finishProcess(StdFunctions storage std, uint pid) internal returns(StdFunctions storage) {
         Debug.recordExecFinish(pid);
         return std;
     }
 
+
+    /**----------------------
+        🏠 Proxy Registry
+    ------------------------*/
+    function startProcess(ProxyRegistry storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("ProxyRegistryLib", name, params);
+    }
+    function startProcess(ProxyRegistry storage proxies, string memory name) internal returns(uint) {
+        return proxies.startProcess(name, "");
+    }
+
+    function finishProcess(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return proxies;
+    }
 }
