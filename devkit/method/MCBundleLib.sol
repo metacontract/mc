@@ -67,7 +67,7 @@ library MCBundleLib {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        check(mc.functions.findFunction(name).isComplete(), "Invalid Function Name");
+        check(mc.functions.find(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------

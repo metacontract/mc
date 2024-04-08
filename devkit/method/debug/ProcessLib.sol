@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {Debug} from "devkit/debug/Debug.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
+import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
@@ -36,6 +37,17 @@ library ProcessLib {
     /**--------------------------
         🧩 Functions Registry
     ----------------------------*/
+    function startProcess(FunctionRegistry storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("FunctionRegistry", name, params);
+    }
+    function startProcess(FunctionRegistry storage functions, string memory name) internal returns(uint) {
+        return functions.startProcess(name, "");
+    }
+
+    function finishProcess(FunctionRegistry storage functions, uint pid) internal returns(FunctionRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return functions;
+    }
 
 
     /**----------------

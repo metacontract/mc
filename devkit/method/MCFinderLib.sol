@@ -43,7 +43,7 @@ library MCFinderLib {
     ------------------------*/
     function findFunction(MCDevKit storage mc, string memory name) internal returns(Function storage) {
         uint pid = mc.recordExecStart("findFunction");
-        return mc.functions.findFunction(name);
+        return mc.functions.find(name);
     }
     function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
         uint pid = mc.recordExecStart("findCurrentFunction", "");
