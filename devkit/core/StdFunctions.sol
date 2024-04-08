@@ -2,14 +2,14 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {console2} from "../../utils/ForgeHelper.sol";
-import {AddressUtils} from "../../utils/AddressUtils.sol";
+import {console2} from "devkit/utils/ForgeHelper.sol";
+import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
-import {StringUtils} from "../../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 // Debug
-import {Debug} from "../../debug/Debug.sol";
-import {Logger} from "../../debug/Logger.sol";
+import {Debug} from "devkit/debug/Debug.sol";
+import {Logger} from "devkit/debug/Logger.sol";
 // Core
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "./Bundle.sol";

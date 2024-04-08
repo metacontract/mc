@@ -31,11 +31,11 @@ library MCFinderLib {
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(Bundle storage) {
-        return mc.functions.findBundle(name);
+        return mc.bundle.findBundle(name);
     }
     function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
         uint pid = mc.recordExecStart("findCurrentBundleName", "");
-        return mc.functions.findCurrentBundleName();
+        return mc.bundle.findCurrentBundleName();
     }
 
     /**----------------------

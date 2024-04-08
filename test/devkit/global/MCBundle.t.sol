@@ -21,35 +21,35 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         string memory name = "TestBundleName";
         mc.init(name);
 
-        assertTrue(mc.functions.bundles[name.safeCalcHash()].name.isEqual(name));
-        assertTrue(mc.functions.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
     // verify genUniqueBundleName
     // function test_Success_init_withoutName() public {}
 
     function test_Success_ensureInit_beforeInit() public {
-        string memory name = mc.functions.genUniqueBundleName();
+        string memory name = mc.bundle.genUniqueBundleName();
 
         mc.ensureInit();
 
-        assertTrue(mc.functions.bundles[name.safeCalcHash()].name.isEqual(name));
-        assertTrue(mc.functions.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
     function test_Success_ensureInit_afterInit() public {
-        string memory name = mc.functions.genUniqueBundleName();
+        string memory name = mc.bundle.genUniqueBundleName();
 
         mc.init();
 
-        assertTrue(mc.functions.bundles[name.safeCalcHash()].name.isEqual(name));
-        assertTrue(mc.functions.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.currentBundleName.isEqual(name));
 
-        string memory name2 = mc.functions.genUniqueBundleName();
+        string memory name2 = mc.bundle.genUniqueBundleName();
         mc.ensureInit();
 
-        assertTrue(mc.functions.bundles[name2.safeCalcHash()].name.isEmpty());
-        assertTrue(mc.functions.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.bundles[name2.safeCalcHash()].name.isEmpty());
+        assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
 
@@ -69,7 +69,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Success_use() public {
-        string memory bundleName = mc.functions.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueBundleName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -80,7 +80,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Revert_use_withSameName() public {
-        string memory bundleName = mc.functions.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueBundleName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -92,7 +92,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Success_use_withDifferentName() public {
-        string memory bundleName = mc.functions.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueBundleName();
 
         string memory functionName = "DummyFunction";
         string memory functionName2 = "DummyFunction2";

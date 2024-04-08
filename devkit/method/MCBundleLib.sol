@@ -29,18 +29,18 @@ library MCBundleLib {
     -----------------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("init", Params.append(name));
-        mc.functions.safeInit(name);
+        mc.bundle.safeInit(name);
         return mc.recordExecFinish(pid);
     }
 
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.init(mc.functions.genUniqueBundleName());
+        return mc.init(mc.bundle.genUniqueBundleName());
     }
 
     //
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("ensureInit");
-        if (mc.functions.notExistsCurrentBundle()) {
+        if (mc.bundle.notExistsCurrentBundle()) {
             mc.init();
         }
         return mc.recordExecFinish(pid);
@@ -67,7 +67,7 @@ library MCBundleLib {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        check(mc.functions.findFunction(name).isComplete(), "Invalid Function Name");
+        check(mc.bundle.findFunction(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------
@@ -75,7 +75,7 @@ library MCBundleLib {
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addFunction");
-            mc.functions.safeAddFunction(name, selector, implementation);
+            mc.bundle.safeAddFunction(name, selector, implementation);
             return mc.recordExecFinish(pid);
         }
         /**-------------------------------------
@@ -83,11 +83,11 @@ library MCBundleLib {
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addToBundle");
-            mc.functions.addToBundle(functionInfo);
+            mc.bundle.addToBundle(functionInfo);
             return mc.recordExecFinish(pid);
         }
         function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
-            mc.functions.addToBundle(mc.findCurrentFunction());
+            mc.bundle.addToBundle(mc.findCurrentFunction());
             return mc;
         }
 
@@ -97,8 +97,8 @@ library MCBundleLib {
     --------------------*/
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
-        check(mc.functions.existsCurrentBundle(), ERR.NOT_INIT);
-        mc.functions.set(mc.functions.findCurrentBundleName(), facade);
+        check(mc.bundle.existsCurrentBundle(), ERR.NOT_INIT);
+        mc.bundle.set(mc.bundle.findCurrentBundleName(), facade);
         return mc.recordExecFinish(pid);
     }
 

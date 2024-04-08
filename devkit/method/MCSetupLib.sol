@@ -16,7 +16,7 @@ library MCSetupLib {
     ------------------------------*/
     function setupStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("setupStdFunctions");
-        mc.functions.std.assignAndLoad()
+        mc.std.assignAndLoad()
                         .deployIfNotExists()
                         .configureStdBundle();
         return mc.recordExecFinish(pid);

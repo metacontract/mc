@@ -18,7 +18,7 @@ import {ForgeHelper} from "../../utils/ForgeHelper.sol";
 import {Debug} from "../../debug/Debug.sol";
 // Core
 import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "../functions/Bundle.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
 // Test
 import {MockDictionary} from "../../test/MockDictionary.sol";
 // External Libs

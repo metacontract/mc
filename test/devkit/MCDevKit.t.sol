@@ -19,21 +19,21 @@ contract MCDevKitTest is Test {
     function test_Success_setupStdFunctions() public {
         mc.setupStdFunctions();
 
-        assertTrue(mc.functions.std.initSetAdmin.isInitSetAdmin());
-        assertTrue(mc.functions.std.getDeps.isGetDeps());
-        assertTrue(mc.functions.std.clone.isClone());
+        assertTrue(mc.std.initSetAdmin.isInitSetAdmin());
+        assertTrue(mc.std.getDeps.isGetDeps());
+        assertTrue(mc.std.clone.isClone());
 
-        assertTrue(mc.functions.std.all.functionInfos.length == 3);
-        assertTrue(mc.functions.std.all.functionInfos[0].isInitSetAdmin());
-        assertTrue(mc.functions.std.all.functionInfos[1].isGetDeps());
-        assertTrue(mc.functions.std.all.functionInfos[2].isClone());
+        assertTrue(mc.std.all.functionInfos.length == 3);
+        assertTrue(mc.std.all.functionInfos[0].isInitSetAdmin());
+        assertTrue(mc.std.all.functionInfos[1].isGetDeps());
+        assertTrue(mc.std.all.functionInfos[2].isClone());
     }
 
     function test_Success_init_withName() public {
         string memory name = "TestBundleName";
         mc.init(name);
 
-        assertTrue(mc.functions.bundles[name.safeCalcHash()].name.isEqual(name));
-        assertTrue(mc.functions.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 }

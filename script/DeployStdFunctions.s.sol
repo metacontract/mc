@@ -9,7 +9,7 @@ contract DeployStdFunctions is MCScriptWithoutSetup {
     using DeployLib for MCDevKit;
 
     function setUp() public {
-        mc.functions.std.assignAndLoad();
+        mc.std.assignAndLoad();
     }
 
     function run() public startBroadcastWith("DEPLOYER_PRIV_KEY") {

@@ -9,13 +9,13 @@ library DeployLib {
     string internal constant BUNDLE_NAME = "Std";
 
     function deployStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.functions.std.deployIfNotExists();
+        mc.std.deployIfNotExists();
         return mc;
     }
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
         mc.deployStdFunctions();
-        mc.deployDictionary(mc.functions.std.all);
+        mc.deployDictionary(mc.std.all);
         return mc;
     }
 }
