@@ -100,25 +100,4 @@ library BundleLib {
         check(bundle.notExists(), "Bundle Info Already Exists");
         return bundle;
     }
-
-
-    /**---------------
-        🐞 Debug
-    -----------------*/
-    function parseAndLog(Bundle storage bundle) internal returns(Bundle storage) {
-        Logger.logDebug(
-            bundle.parse()
-        );
-        return bundle;
-    }
-    function parse(Bundle storage bundle) internal returns(string memory message) {
-        message = message.append("Facade: ").append(bundle.facade);
-
-        Function[] memory _funcs = bundle.functionInfos;
-        for (uint i; i < _funcs.length; ++i) {
-            message = message.br().append(_funcs[i].parse());
-        }
-        console2.log(message);
-    }
-
 }

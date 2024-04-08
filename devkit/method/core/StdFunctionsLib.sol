@@ -51,7 +51,7 @@ library StdFunctionsLib {
             std.initSetAdmin.safeAssign("InitSetAdmin")
                             .safeAssign(InitSetAdmin.initSetAdmin.selector)
                             .loadAndAssignFromEnv()
-                            .parseAndLog();
+                            .dump();
             return std.finishProcess(pid);
         }
 
@@ -60,7 +60,7 @@ library StdFunctionsLib {
             std.getDeps .safeAssign("GetDeps")
                         .safeAssign(GetDeps.getDeps.selector)
                         .loadAndAssignFromEnv()
-                        .parseAndLog();
+                        .dump();
             return std.finishProcess(pid);
         }
 
@@ -69,7 +69,7 @@ library StdFunctionsLib {
             std.clone   .safeAssign("Clone")
                         .safeAssign(Clone.clone.selector)
                         .loadAndAssignFromEnv()
-                        .parseAndLog();
+                        .dump();
             return std.finishProcess(pid);
         }
 

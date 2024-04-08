@@ -32,7 +32,7 @@ import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 /**------------------------
-    📚 UCS Dictionary
+    📚 Dictionary
 --------------------------*/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

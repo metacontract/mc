@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {Logger} from "devkit/debug/Logger.sol";
+// Core Types
 import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
 
-import {StringUtils} from "devkit/utils/StringUtils.sol";
-    using StringUtils for string;
 
 //================
 //  📊 LogLib
@@ -13,16 +13,18 @@ library LogLib {
     /**==================
         🧩 Function
     ====================*/
-    function parseAndLog(Function storage func) internal returns(Function storage) {
-        Logger.log(
-            func.parse()
-        );
+    function dump(Function storage func) internal returns(Function storage) {
+        Logger.log(func.parse());
         return func;
     }
-    function parse(Function memory func) internal returns(string memory message) {
-        return message  .append("Impl: ").append(func.implementation).comma()
-                        .append("Selector: ").append(func.selector).comma()
-                        .append("Name: ").append(func.name);
+
+
+    /**===============
+        🗂️ Bundle
+    =================*/
+    function dump(Bundle storage bundle) internal returns(Bundle storage) {
+        Logger.logDebug(bundle.parse());
+        return bundle;
     }
 
 }
