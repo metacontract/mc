@@ -10,7 +10,8 @@ import {Params} from "devkit/debug/Params.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
+import {Proxy} from "devkit/core/Proxy.sol";
+import {ProxyLib} from "devkit/method/core/ProxyLib.sol";
 //  dictionary
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
 

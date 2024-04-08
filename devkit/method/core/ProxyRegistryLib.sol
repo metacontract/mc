@@ -85,15 +85,15 @@ library ProxyRegistryLib {
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("find");
         return proxies.deployed[name.safeCalcHash()]
-                        .assertExists().recordExecFinishInStorage(pid);
+                        .assertExists().finishProcessInStorage(pid);
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("findCurrentProxy");
-        return proxies.currentProxy.assertExists().recordExecFinishInStorage(pid);
+        return proxies.currentProxy.assertExists().finishProcessInStorage(pid);
     }
     function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("findSimpleMockProxy");
-        return proxies.mocks[name.safeCalcHash()].assertExists().recordExecFinishInStorage(pid);
+        return proxies.mocks[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
     }
 
 

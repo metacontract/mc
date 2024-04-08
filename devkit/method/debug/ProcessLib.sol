@@ -7,10 +7,16 @@ import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
+import {Proxy} from "devkit/core/Proxy.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 
 library ProcessLib {
+    function finishProcess(uint pid) internal {
+        Debug.recordExecFinish(pid);
+    }
+
+
     /**------------------
         🧩 Function
     --------------------*/
@@ -77,6 +83,25 @@ library ProcessLib {
         return std;
     }
 
+
+    /**---------------
+        🏠 Proxy
+    -----------------*/
+    function startProxyLibProcess(string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("ProxyLib", name, params);
+    }
+    function startProxyLibProcess(string memory name) internal returns(uint) {
+        return startProxyLibProcess(name, "");
+    }
+
+    function finishProcess(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
+        finishProcess(pid);
+        return proxy;
+    }
+    function finishProcessInStorage(Proxy storage proxy, uint pid) internal returns(Proxy storage) {
+        finishProcess(pid);
+        return proxy;
+    }
 
     /**----------------------
         🏠 Proxy Registry
