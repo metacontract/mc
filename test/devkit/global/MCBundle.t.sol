@@ -57,7 +57,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         🔗 Use Function
     -----------------------*/
     function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal {
-        Bundle memory bundle = mc.functions.bundles[bundleName.safeCalcHash()];
+        Bundle memory bundle = mc.bundle.bundles[bundleName.safeCalcHash()];
         assertEq(bundle.name, bundleName);
         assertEq(bundle.facade, address(0));
         Function memory func = mc.functions.customs[functionName.safeCalcHash()];
@@ -65,7 +65,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         assertEq(func.selector, selector);
         assertEq(func.implementation, impl);
         assertTrue(bundle.functionInfos[functionsIndex].isEqual(func));
-        assertEq(mc.functions.currentFunctionName, functionName);
+        assertEq(mc.functions.currentName, functionName);
     }
 
     function test_Success_use() public {

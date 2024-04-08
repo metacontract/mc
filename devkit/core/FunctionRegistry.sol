@@ -18,26 +18,21 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 
 
-/**-------------------------------
-    🧩 UCS Functions Registry
----------------------------------*/
+/**---------------------------
+    🧩 Functions Registry
+-----------------------------*/
 using FunctionRegistryLib for FunctionRegistry global;
 struct FunctionRegistry {
     mapping(bytes32 nameHash => Function) customs;
-    mapping(bytes32 nameHash => Bundle) bundles;
-    string currentFunctionName;
+    string currentName;
 }
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     << Primary >>
-        🌱 Init Bundle
         ✨ Add Custom Function
         🔏 Load and Assign Custom Function from Env
-        🧺 Add Custom Function to Bundle
-        🪟 Set Facade
-        🔼 Update Current Context Function & Bundle
-        🔍 Find Function & Bundle
-        🏷 Generate Unique Name
+        🔼 Update Current Context Function
+        🔍 Find Function
     << Helper >>
         🔍 Find Custom Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -77,7 +72,7 @@ library FunctionRegistryLib {
     --------------------------------------------------*/
     function safeUpdateCurrentFunction(FunctionRegistry storage functions, string memory name) internal returns(FunctionRegistry storage) {
         uint pid = functions.recordExecStart("safeUpdateCurrentFunction");
-        functions.currentFunctionName = name.assertNotEmpty();
+        functions.currentName = name.assertNotEmpty();
         return functions.recordExecFinish(pid);
     }
 
@@ -87,7 +82,7 @@ library FunctionRegistryLib {
     -------------------------------------------------*/
     function reset(FunctionRegistry storage functions) internal returns(FunctionRegistry storage) {
         uint pid = functions.recordExecStart("reset");
-        delete functions.currentFunctionName;
+        delete functions.currentName;
         return functions.recordExecFinish(pid);
     }
 
@@ -102,11 +97,11 @@ library FunctionRegistryLib {
     }
     function findCurrentFunction(FunctionRegistry storage functions) internal returns(Function storage) {
         uint pid = functions.recordExecStart("findCurrentFunction");
-        return functions.findFunction(functions.findCurrentFunctionName()).finishProcess(pid);
+        return functions.findFunction(functions.findCurrentName()).finishProcess(pid);
     }
-        function findCurrentFunctionName(FunctionRegistry storage functions) internal returns(string memory) {
-            uint pid = functions.recordExecStart("findCurrentFunctionName");
-            return functions.currentFunctionName.assertNotEmpty().recordExecFinish(pid);
+        function findCurrentName(FunctionRegistry storage functions) internal returns(string memory) {
+            uint pid = functions.recordExecStart("findCurrentName");
+            return functions.currentName.assertNotEmpty().recordExecFinish(pid);
         }
 
 
