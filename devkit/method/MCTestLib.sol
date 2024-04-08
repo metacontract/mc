@@ -95,7 +95,7 @@ library MCTestLib {
         uint pid = mc.recordExecStart("setStorageReader", Params.append(selector, implementation));
         dictionary.set(
             Function({
-                name: "StorageGetter",
+                name: "StorageReader",
                 selector: selector,
                 implementation: implementation
             })
