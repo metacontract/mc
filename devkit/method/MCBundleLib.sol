@@ -67,7 +67,7 @@ library MCBundleLib {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        check(mc.bundle.findFunction(name).isComplete(), "Invalid Function Name");
+        check(mc.functions.findFunction(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------
@@ -75,7 +75,7 @@ library MCBundleLib {
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addFunction");
-            mc.bundle.safeAddFunction(name, selector, implementation);
+            mc.functions.safeAddFunction(name, selector, implementation);
             return mc.recordExecFinish(pid);
         }
         /**-------------------------------------

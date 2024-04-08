@@ -50,148 +50,98 @@ library BundleRegistryLib {
     /**---------------------
         🌱 Init Bundle
     -----------------------*/
-    function init(BundleRegistry storage functions, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("init");
-        functions.bundles[name.safeCalcHash()].safeAssign(name);
-        functions.safeUpdateCurrentBundle(name);
-        return functions.recordExecFinish(pid);
+    function init(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("init");
+        bundle.bundles[name.safeCalcHash()].safeAssign(name);
+        bundle.safeUpdateCurrentBundle(name);
+        return bundle.recordExecFinish(pid);
     }
-    function safeInit(BundleRegistry storage functions, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("safeInit");
+    function safeInit(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("safeInit");
         check(name.isNotEmpty(), "Empty Name");
-        return functions.assertBundleNotExists(name)
+        return bundle.assertBundleNotExists(name)
                         .init(name)
                         .recordExecFinish(pid);
-    }
-
-
-    /**---------------------------
-        ✨ Add Custom Function
-    -----------------------------*/
-    function safeAddFunction(BundleRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("safeAddFunction");
-        check(name.isNotEmpty(), "Empty Name");
-        functions.customs[name.safeCalcHash()]
-                .safeAssign(name)
-                .safeAssign(selector)
-                .safeAssign(implementation);
-        functions.safeUpdateCurrentFunction(name);
-        return functions.recordExecFinish(pid);
-    }
-
-
-    /**---------------------------------------------
-        🔏 Load and Add Custom Function from Env
-    -----------------------------------------------*/
-    function safeLoadAndAdd(BundleRegistry storage functions, string memory envKey, string memory name, bytes4 selector, address implementation) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("safeLoadAndAdd");
-        functions.customs[name.safeCalcHash()]
-                    .loadAndAssignFromEnv(envKey, name, selector);
-        functions.safeUpdateCurrentFunction(name);
-        return functions.recordExecFinish(pid);
     }
 
 
     /**-------------------------------------
         🧺 Add Custom Function to Bundle
     ---------------------------------------*/
-    function addToBundle(BundleRegistry storage functions, Function storage functionInfo) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("addToBundle", "function");
-        functions.findCurrentBundle().safeAdd(functionInfo);
-        return functions.recordExecFinish(pid);
+    function addToBundle(BundleRegistry storage bundle, Function storage functionInfo) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("addToBundle", "function");
+        bundle.findCurrentBundle().safeAdd(functionInfo);
+        return bundle.recordExecFinish(pid);
     }
-    function addToBundle(BundleRegistry storage functions, Function[] storage functionInfos) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("addToBundle", "functions"); // TODO params
-        functions.findCurrentBundle().safeAdd(functionInfos);
-        return functions.recordExecFinish(pid);
+    function addToBundle(BundleRegistry storage bundle, Function[] storage functionInfos) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("addToBundle", "bundle"); // TODO params
+        bundle.findCurrentBundle().safeAdd(functionInfos);
+        return bundle.recordExecFinish(pid);
     }
 
 
     /**------------------
         🪟 Set Facade
     --------------------*/
-    function set(BundleRegistry storage functions, string memory name, address facade) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("set");
-        functions.bundles[name.safeCalcHash()]
+    function set(BundleRegistry storage bundle, string memory name, address facade) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("set");
+        bundle.bundles[name.safeCalcHash()]
                     .assertExists()
                     .safeAssign(facade);
-        return functions.recordExecFinish(pid);
+        return bundle.recordExecFinish(pid);
     }
-    function set(BundleRegistry storage functions, address facade) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("set");
-        return functions.set(functions.findCurrentBundleName(), facade).recordExecFinish(pid);
+    function set(BundleRegistry storage bundle, address facade) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("set");
+        return bundle.set(bundle.findCurrentBundleName(), facade).recordExecFinish(pid);
     }
 
 
     /**------------------------------------------------
-        🔼 Update Current Context Function & Bundle
+        🔼 Update Current Context
     --------------------------------------------------*/
-    /**----- 🧩 Function -------*/
-    function safeUpdateCurrentFunction(BundleRegistry storage functions, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("safeUpdateCurrentFunction");
-        functions.currentFunctionName = name.assertNotEmpty();
-        return functions.recordExecFinish(pid);
-    }
-    /**----- 🧺 Bundle -------*/
-    function safeUpdateCurrentBundle(BundleRegistry storage functions, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("safeUpdateCurrentBundle");
-        functions.currentBundleName = name.assertNotEmpty();
-        return functions.recordExecFinish(pid);
+    function safeUpdateCurrentBundle(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("safeUpdateCurrentBundle");
+        bundle.currentBundleName = name.assertNotEmpty();
+        return bundle.recordExecFinish(pid);
     }
 
 
     /**-----------------------------------------------
         ♻️ Reset Current Context Function & Bundle
     -------------------------------------------------*/
-    function reset(BundleRegistry storage functions) internal returns(BundleRegistry storage) {
-        uint pid = functions.recordExecStart("reset");
-        delete functions.currentFunctionName;
-        delete functions.currentBundleName;
-        return functions.recordExecFinish(pid);
+    function reset(BundleRegistry storage bundle) internal returns(BundleRegistry storage) {
+        uint pid = bundle.recordExecStart("reset");
+        delete bundle.currentBundleName;
+        return bundle.recordExecFinish(pid);
     }
 
 
     /**-------------------------------
         🔍 Find Function & Bundle
     ---------------------------------*/
-    /**----- 🧩 Function -------*/
-    function findFunction(BundleRegistry storage functions, string memory name) internal returns(Function storage) {
-        uint pid = functions.recordExecStart("findFunction");
-        return functions.customs[name.safeCalcHash()].assertExists().finishProcess(pid);
+    function findBundle(BundleRegistry storage bundle, string memory name) internal returns(Bundle storage) {
+        uint pid = bundle.recordExecStart("findBundle");
+        return bundle.bundles[name.safeCalcHash()].recordExecFinish(pid);
     }
-    function findCurrentFunction(BundleRegistry storage functions) internal returns(Function storage) {
-        uint pid = functions.recordExecStart("findCurrentFunction");
-        return functions.findFunction(functions.findCurrentFunctionName()).finishProcess(pid);
+    function findCurrentBundle(BundleRegistry storage bundle) internal returns(Bundle storage) {
+        uint pid = bundle.recordExecStart("findCurrentBundle");
+        return bundle.findBundle(bundle.findCurrentBundleName()).recordExecFinish(pid);
     }
-        function findCurrentFunctionName(BundleRegistry storage functions) internal returns(string memory) {
-            uint pid = functions.recordExecStart("findCurrentFunctionName");
-            return functions.currentFunctionName.assertNotEmpty().recordExecFinish(pid);
-        }
-
-    /**----- 🧺 Bundle -------*/
-    function findBundle(BundleRegistry storage functions, string memory name) internal returns(Bundle storage) {
-        uint pid = functions.recordExecStart("findBundle");
-        return functions.bundles[name.safeCalcHash()].recordExecFinish(pid);
-    }
-    function findCurrentBundle(BundleRegistry storage functions) internal returns(Bundle storage) {
-        uint pid = functions.recordExecStart("findCurrentBundle");
-        return functions.findBundle(functions.findCurrentBundleName()).recordExecFinish(pid);
-    }
-        function findCurrentBundleName(BundleRegistry storage functions) internal returns(string memory) {
-            uint pid = functions.recordExecStart("findCurrentBundleName");
-            return functions.currentBundleName.assertNotEmpty().recordExecFinish(pid);
+        function findCurrentBundleName(BundleRegistry storage bundle) internal returns(string memory) {
+            uint pid = bundle.recordExecStart("findCurrentBundleName");
+            return bundle.currentBundleName.assertNotEmpty().recordExecFinish(pid);
         }
 
 
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
-    function genUniqueBundleName(BundleRegistry storage functions) internal returns(string memory name) {
-        uint pid = functions.recordExecStart("genUniqueBundleName");
+    function genUniqueBundleName(BundleRegistry storage bundle) internal returns(string memory name) {
+        uint pid = bundle.recordExecStart("genUniqueBundleName");
         ScanRange storage range = Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = Config().DEFAULT_BUNDLE_NAME.toSequential(i);
-            if (functions.existsBundle(name).isFalse()) return name.recordExecFinish(pid);
+            if (bundle.existsBundle(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
     }
@@ -201,22 +151,22 @@ library BundleRegistryLib {
     /**-------------------------------
         🧐 Inspectors & Assertions
     ---------------------------------*/
-    function existsBundle(BundleRegistry storage functions, string memory name) internal returns(bool) {
-        return functions.bundles[name.safeCalcHash()].hasName();
+    function existsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
+        return bundle.bundles[name.safeCalcHash()].hasName();
     }
-    function notExistsBundle(BundleRegistry storage functions, string memory name) internal returns(bool) {
-        return functions.existsBundle(name).isNot();
+    function notExistsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
+        return bundle.existsBundle(name).isNot();
     }
-    function assertBundleNotExists(BundleRegistry storage functions, string memory name) internal returns(BundleRegistry storage) {
-        check(functions.notExistsBundle(name), "Bundle Already Exists");
-        return functions;
+    function assertBundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
+        check(bundle.notExistsBundle(name), "Bundle Already Exists");
+        return bundle;
     }
 
-    function existsCurrentBundle(BundleRegistry storage functions) internal returns(bool) {
-        return functions.currentBundleName.isNotEmpty();
+    function existsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
+        return bundle.currentBundleName.isNotEmpty();
     }
-    function notExistsCurrentBundle(BundleRegistry storage functions) internal returns(bool) {
-        return functions.existsCurrentBundle().isNot();
+    function notExistsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
+        return bundle.existsCurrentBundle().isNot();
     }
 
 
@@ -229,16 +179,16 @@ library BundleRegistryLib {
     function recordExecStart(BundleRegistry storage, string memory funcName, string memory params) internal returns(uint) {
         return Debug.recordExecStart(LIB_NAME, funcName, params);
     }
-    function recordExecStart(BundleRegistry storage functions, string memory funcName) internal returns(uint) {
-        return functions.recordExecStart(funcName, "");
+    function recordExecStart(BundleRegistry storage bundle, string memory funcName) internal returns(uint) {
+        return bundle.recordExecStart(funcName, "");
     }
 
     /**
         Record Finish
      */
-    function recordExecFinish(BundleRegistry storage functions, uint pid) internal returns(BundleRegistry storage) {
+    function recordExecFinish(BundleRegistry storage bundle, uint pid) internal returns(BundleRegistry storage) {
         Debug.recordExecFinish(pid);
-        return functions;
+        return bundle;
     }
 
 }
