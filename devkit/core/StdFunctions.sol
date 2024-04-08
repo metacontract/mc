@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Core
+// Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
-
+// Methods
 import {StdFunctionsLib} from "devkit/method/core/StdFunctionsLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
-/*****************************************
-    🏛 Meta Contract Standard Functions
-******************************************/
+
+/****************************
+    🏛 Standard Functions
+*****************************/
 struct StdFunctions {
     Function initSetAdmin;
     Function getDeps;
