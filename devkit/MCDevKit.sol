@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Registries
+// Core Registries
 import {FunctionRegistry} from "devkit/core/functions/FunctionRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/dictionary/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/core/proxy/ProxyRegistry.sol";
 
 // Global Methods
-import {MCSetupLib} from "devkit/global/MCSetupLib.sol";
-import {MCBundleLib} from "devkit/global/MCBundleLib.sol";
-import {MCDeployLib} from "devkit/global/MCDeployLib.sol";
-import {MCFinderLib} from "devkit/global/MCFinderLib.sol";
-import {MCContextLib} from "devkit/global/MCContextLib.sol";
-import {MCTestLib} from "devkit/global/MCTestLib.sol";
-import {MCDebugLib} from "devkit/global/MCDebugLib.sol";
+import {MCSetupLib} from "devkit/method/MCSetupLib.sol";
+import {MCBundleLib} from "devkit/method/MCBundleLib.sol";
+import {MCDeployLib} from "devkit/method/MCDeployLib.sol";
+import {MCFinderLib} from "devkit/method/MCFinderLib.sol";
+import {MCContextLib} from "devkit/method/MCContextLib.sol";
+import {MCTestLib} from "devkit/method/MCTestLib.sol";
+import {MCDebugLib} from "devkit/method/MCDebugLib.sol";
 
 
 /********************************

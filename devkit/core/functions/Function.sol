@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FunctionLib} from "./FunctionLib.sol";
-import {ProcessLib} from "devkit/debug/ProcessLib.sol";
-import {LogLib} from "devkit/debug/LogLib.sol";
+import {FunctionLib} from "devkit/method/core/FunctionLib.sol";
+import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {LogLib} from "devkit/method/debug/LogLib.sol";
 
 
 /**==================

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Debug} from "./Debug.sol";
+import {Debug} from "devkit/debug/Debug.sol";
 // Types
 import {Function} from "devkit/core/functions/Function.sol";
 

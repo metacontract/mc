@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Logger} from "./Logger.sol";
+import {Logger} from "devkit/debug/Logger.sol";
 import {Function} from "devkit/core/functions/Function.sol";
 
 import {StringUtils} from "devkit/utils/StringUtils.sol";
