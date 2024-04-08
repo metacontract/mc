@@ -3,6 +3,8 @@ pragma solidity ^0.8.24;
 
 // Core Registries
 import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
+import {StdFunctions} from "devkit/core/StdFunctions.sol";
+import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/dictionary/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/core/proxy/ProxyRegistry.sol";
 
@@ -20,7 +22,9 @@ import {MCDebugLib} from "devkit/method/MCDebugLib.sol";
     🌟 Meta Contract DevKit
 *********************************/
 struct MCDevKit {
+    StdFunctions std;
     FunctionRegistry functions;
+    BundleRegistry bundle;
     DictionaryRegistry dictionary;
     ProxyRegistry proxy;
 }

@@ -13,7 +13,7 @@ import {AddressUtils} from "../../utils/AddressUtils.sol";
     using AddressUtils for address;
 // Core
 import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/functions/Bundle.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
 
 import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
 
