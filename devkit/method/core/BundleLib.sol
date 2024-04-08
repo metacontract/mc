@@ -22,47 +22,36 @@ import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 
 library BundleLib {
-    string constant LIB_NAME = "Bundle";
-    function recordExecStart(string memory funcName, string memory params) internal returns(uint) {
-        return Debug.recordExecStart(LIB_NAME, funcName, params);
-    }
-    function recordExecStart(string memory funcName) internal returns(uint) {
-        return recordExecStart(funcName, "");
-    }
-    function recordExecFinish(Bundle storage bundle, uint pid) internal returns(Bundle storage) {
-        Debug.recordExecFinish(pid);
-        return bundle;
-    }
 
     /**---------------------------
         📥 Assign Bundle
     -----------------------------*/
     function safeAssign(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = recordExecStart("safeAssign");
+        uint pid = bundle.startProcess("safeAssign");
         bundle.name = name.assertNotEmpty();
-        return bundle.recordExecFinish(pid);
+        return bundle.finishProcess(pid);
     }
 
     function safeAssign(Bundle storage bundle, address facade) internal returns(Bundle storage) {
-        uint pid = recordExecStart("safeAssign");
+        uint pid = bundle.startProcess("safeAssign");
         bundle.facade = facade.assertIsContract();
-        return bundle.recordExecFinish(pid);
+        return bundle.finishProcess(pid);
     }
 
     function safeAdd(Bundle storage bundle, Function storage functionInfo) internal returns(Bundle storage) {
-        uint pid = recordExecStart("safeAdd");
+        uint pid = bundle.startProcess("safeAdd");
         check(bundle.hasNot(functionInfo), "Already added");
         bundle.functionInfos.push(
             functionInfo.assertImplIsContract()
         );
-        return bundle.recordExecFinish(pid);
+        return bundle.finishProcess(pid);
     }
     function safeAdd(Bundle storage bundle, Function[] storage functionInfos) internal returns(Bundle storage) {
-        uint pid = recordExecStart("safeAdd");
+        uint pid = bundle.startProcess("safeAdd");
         for (uint i; i < functionInfos.length; ++i) {
             bundle.safeAdd(functionInfos[i]);
         }
-        return bundle.recordExecFinish(pid);
+        return bundle.finishProcess(pid);
     }
 
 

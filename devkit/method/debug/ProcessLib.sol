@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {Debug} from "devkit/debug/Debug.sol";
 // Types
 import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 
@@ -21,6 +22,22 @@ library ProcessLib {
     function finishProcess(Function storage func, uint pid) internal returns(Function storage) {
         Debug.recordExecFinish(pid);
         return func;
+    }
+
+
+    /**----------------
+        🧺 Bundle
+    ------------------*/
+    function startProcess(Bundle storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("Bundle", name, params);
+    }
+    function startProcess(Bundle storage bundle, string memory name) internal returns(uint) {
+        return bundle.startProcess(name, "");
+    }
+
+    function finishProcess(Bundle storage bundle, uint pid) internal returns(Bundle storage) {
+        Debug.recordExecFinish(pid);
+        return bundle;
     }
 
 

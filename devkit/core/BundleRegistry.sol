@@ -121,11 +121,11 @@ library BundleRegistryLib {
     ---------------------------------*/
     function findBundle(BundleRegistry storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.recordExecStart("findBundle");
-        return bundle.bundles[name.safeCalcHash()].recordExecFinish(pid);
+        return bundle.bundles[name.safeCalcHash()].finishProcess(pid);
     }
     function findCurrentBundle(BundleRegistry storage bundle) internal returns(Bundle storage) {
         uint pid = bundle.recordExecStart("findCurrentBundle");
-        return bundle.findBundle(bundle.findCurrentBundleName()).recordExecFinish(pid);
+        return bundle.findBundle(bundle.findCurrentBundleName()).finishProcess(pid);
     }
         function findCurrentBundleName(BundleRegistry storage bundle) internal returns(string memory) {
             uint pid = bundle.recordExecStart("findCurrentBundleName");
