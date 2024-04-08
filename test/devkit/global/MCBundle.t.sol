@@ -87,7 +87,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
         mc.use(functionName, selector, impl);
 
-        vm.expectRevert(ERR.message("Name Already Exist").toBytes());
+        vm.expectRevert(ERR.message(ERR.STR_ALREADY_ASSIGNED).toBytes());
         mc.use(functionName, selector, impl);
     }
 
