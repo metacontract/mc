@@ -11,7 +11,8 @@ import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Bundle);
 
 // Validation
-import {Valid, valid} from "devkit/error/Valid.sol";
+import {validate} from "devkit/error/Validate.sol";
+import {Require} from "devkit/error/Require.sol";
 // Core Type
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
@@ -49,7 +50,7 @@ library BundleRegistryLib {
     }
     function safeInit(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("safeInit");
-        Valid.isNotEmpty(name);
+        Require.isNotEmpty(name);
         return bundle.assertBundleNotExists(name)
                         .init(name)
                         .finishProcess(pid);
@@ -92,7 +93,7 @@ library BundleRegistryLib {
     --------------------------------------------------*/
     function safeUpdateCurrentBundle(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("safeUpdateCurrentBundle");
-        Valid.isNotEmpty(name);
+        Require.isNotEmpty(name);
         bundle.currentBundleName = name;
         return bundle.finishProcess(pid);
     }
@@ -121,7 +122,7 @@ library BundleRegistryLib {
     }
         function findCurrentBundleName(BundleRegistry storage bundle) internal returns(string memory) {
             uint pid = bundle.startProcess("findCurrentBundleName");
-            Valid.isNotEmpty(bundle.currentBundleName);
+            Require.isNotEmpty(bundle.currentBundleName);
             return bundle.currentBundleName;
             // return bundle.currentBundleName.recordExecFinish(pid);
         }

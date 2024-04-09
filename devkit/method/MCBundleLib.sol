@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
-import {valid} from "devkit/error/Valid.sol";
+import {validate} from "devkit/error/Validate.sol";
 import {ERR} from "devkit/error/Error.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
@@ -70,7 +70,7 @@ library MCBundleLib {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        valid(mc.functions.find(name).isComplete(), "Invalid Function Name");
+        validate(mc.functions.find(name).isComplete(), "Invalid Function Name");
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------
@@ -100,7 +100,7 @@ library MCBundleLib {
     --------------------*/
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
-        valid(mc.bundle.existsCurrentBundle(), ERR.NOT_INIT);
+        validate(mc.bundle.existsCurrentBundle(), ERR.NOT_INIT);
         mc.bundle.set(mc.bundle.findCurrentBundleName(), facade);
         return mc.recordExecFinish(pid);
     }

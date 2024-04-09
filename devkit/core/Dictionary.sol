@@ -12,8 +12,7 @@ import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 
 // Validation
-import {Valid} from "devkit/error/Valid.sol";
-import {Params} from "devkit/debug/Params.sol";
+import {Require} from "devkit/error/Require.sol";import {Params} from "devkit/debug/Params.sol";
 // Core Type
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -45,7 +44,7 @@ library DictionaryLib {
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("deploy");
-        Valid.isNotZero(owner);
+        Require.isNotZero(owner);
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return Dictionary({
             addr: address(new DictionaryEtherscan(owner)),

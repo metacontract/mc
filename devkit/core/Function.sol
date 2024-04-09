@@ -15,7 +15,7 @@ import {TypeSafetyUtils, BuildStatus} from "devkit/utils/type/TypeSafetyUtils.so
     using TypeSafetyUtils for Function global;
 
 // Validation
-import {Valid} from "devkit/error/Valid.sol";
+import {Require} from "devkit/error/Require.sol";
 // Loader
 import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 
@@ -53,7 +53,7 @@ library FunctionLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
-        Valid.notLocked(func.buildStatus);
+        Require.notLocked(func.buildStatus);
         func.name = name;
         func.asBuilding();
         return func;
@@ -63,7 +63,7 @@ library FunctionLib {
         🎯 Assign Selector
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
-        Valid.notLocked(func.buildStatus);
+        Require.notLocked(func.buildStatus);
         func.selector = selector;
         func.asBuilding();
         return func;
@@ -73,7 +73,7 @@ library FunctionLib {
         🔌 Assign Implementation
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
-        Valid.notLocked(func.buildStatus);
+        Require.notLocked(func.buildStatus);
         func.implementation = implementation;
         func.asBuilding();
         return func;
@@ -88,8 +88,8 @@ library FunctionLib {
     }
     function build(Function storage func) internal returns(Function storage) {
         // TODO
-        Valid.assigned(func.selector);
-        Valid.contractAssigned(func.implementation);
+        Require.assigned(func.selector);
+        Require.contractAssigned(func.implementation);
         func.buildStatus = BuildStatus.Built;
         return func;
     }
@@ -101,8 +101,8 @@ library FunctionLib {
 
     // function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
     //     uint pid = func.startProcess("fetch");
-    //     Valid.isUnassigned(func.name);
-    //     Valid.isNotEmpty(envKey);
+    //     Require.isUnassigned(func.name);
+    //     Require.isNotEmpty(envKey);
     //     return func;
     // }
     // function fetchAndAssign(Function storage func, string memory envKey, bytes4 selector) internal returns(Function storage) {
@@ -119,15 +119,15 @@ library FunctionLib {
     //                 .finishProcess(pid);
     // }
     // function loadAndAssignFromEnv(Function storage func) internal returns(Function storage) {
-    //     Valid.isNotEmpty(func.name);
-    //     Valid.isNotEmpty(func.selector);
+    //     Require.isNotEmpty(func.name);
+    //     Require.isNotEmpty(func.selector);
     //     return func.loadAndAssignFromEnv(func.name, func.name, func.selector);
     // }
     // function safeLoadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
     //     uint pid = func.startProcess("safeLoadAndAssignFromEnv");
-    //     Valid.isNotEmpty(envKey);
-    //     Valid.isNotEmpty(name);
-    //     Valid.isNotEmpty(selector);
+    //     Require.isNotEmpty(envKey);
+    //     Require.isNotEmpty(name);
+    //     Require.isNotEmpty(selector);
     //     return func.loadAndAssignFromEnv(envKey, name, selector).finishProcess(pid);
     // }
 

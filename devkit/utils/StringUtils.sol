@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {valid} from "devkit/error/Valid.sol";
+import {validate} from "devkit/error/Validate.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "./ForgeHelper.sol";
@@ -24,7 +24,7 @@ library StringUtils {
         return keccak256(abi.encode(name));
     }
     function safeCalcHash(string memory name) internal returns(bytes32) {
-        valid(name.isNotEmpty(), "Calc Hash");
+        validate(name.isNotEmpty(), "Calc Hash");
         return name.calcHash();
     }
 
@@ -105,7 +105,7 @@ library StringUtils {
         return bytes(str).length == 0;
     }
     function assertEmpty(string memory str) internal returns(string memory) {
-        valid(str.isEmpty(), "String Not Empty");
+        validate(str.isEmpty(), "String Not Empty");
         return str;
     }
 
@@ -114,7 +114,7 @@ library StringUtils {
         return str.isEmpty().isNot();
     }
     function assertNotEmpty(string memory str) internal returns(string memory) {
-        valid(str.isNotEmpty(), "Empty String");
+        validate(str.isNotEmpty(), "Empty String");
         return str;
     }
 
