@@ -207,9 +207,9 @@ library Inspector {
     function existsInDeployed(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
         return proxies.deployed[name.safeCalcHash()].exists();
     }
-    function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.mocks[name.safeCalcHash()].exists();
-    }
+    // function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
+    //     return proxies.mocks[name.safeCalcHash()].exists();
+    // }
 
 
     /**====================
@@ -275,7 +275,7 @@ library Inspector {
     function existsInDeployed(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
         return dictionaries.deployed[name.safeCalcHash()].exists();
     }
-    function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-        return dictionaries.mocks[name.safeCalcHash()].exists();
-    }
+    // function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
+    //     return dictionaries.mocks[name.safeCalcHash()].exists();
+    // }
 }

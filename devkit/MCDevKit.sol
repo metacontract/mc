@@ -7,6 +7,7 @@ import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
+import {MockRegistry} from "devkit/core/MockRegistry.sol";
 
 // Global Methods
 import {MCSetupLib} from "devkit/method/MCSetupLib.sol";
@@ -27,6 +28,7 @@ struct MCDevKit {
     BundleRegistry bundle;
     DictionaryRegistry dictionary;
     ProxyRegistry proxy;
+    MockRegistry mock;
 }
 using MCSetupLib for MCDevKit global;
 using MCBundleLib for MCDevKit global;

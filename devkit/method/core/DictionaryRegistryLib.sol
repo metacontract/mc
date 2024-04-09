@@ -35,12 +35,7 @@ library DictionaryRegistryLib {
     function add(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         uint pid = dictionaries.startProcess("add");
         bytes32 nameHash = name.calcHash();
-        if (dictionary.isNotMock()) {
-            dictionaries.deployed[nameHash] = dictionary;
-        }
-        if (dictionary.isMock()) {
-            dictionaries.mocks[nameHash] = dictionary;
-        }
+        dictionaries.deployed[nameHash] = dictionary;
         return dictionaries.finishProcess(pid);
     }
 
@@ -88,10 +83,6 @@ library DictionaryRegistryLib {
         uint pid = dictionaries.startProcess("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists().finishProcessInStorage(pid);
     }
-    function findMockDictionary(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
-        uint pid = dictionaries.startProcess("findMockDictionary");
-        return dictionaries.mocks[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
-    }
 
 
     /**-----------------------------
@@ -113,13 +104,4 @@ library DictionaryRegistryLib {
         return dictionaries.genUniqueName(Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
     }
 
-    function genUniqueMockName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        uint pid = dictionaries.startProcess("genUniqueName");
-        ScanRange memory range = Config().SCAN_RANGE;
-        for (uint i = range.START; i <= range.END; ++i) {
-            name = Config().DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
-            if (dictionaries.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
-        }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
-    }
 }

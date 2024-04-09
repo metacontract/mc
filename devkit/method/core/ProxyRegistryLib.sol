@@ -34,12 +34,7 @@ library ProxyRegistryLib {
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         uint pid = proxies.startProcess("add");
         bytes32 nameHash = name.calcHash();
-        if (proxy.isNotMock()) {
-            proxies.deployed[nameHash] = proxy;
-        }
-        if (proxy.isMock()) {
-            proxies.mocks[nameHash] = proxy;
-        }
+        proxies.deployed[nameHash] = proxy;
         return proxies.finishProcess(pid);
     }
 
@@ -86,10 +81,6 @@ library ProxyRegistryLib {
         uint pid = proxies.startProcess("findCurrentProxy");
         return proxies.currentProxy.assertExists().finishProcessInStorage(pid);
     }
-    function findSimpleMockProxy(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
-        uint pid = proxies.startProcess("findSimpleMockProxy");
-        return proxies.mocks[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
-    }
 
 
     /**-----------------------------
@@ -105,14 +96,5 @@ library ProxyRegistryLib {
         throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
-    function genUniqueMockName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        uint pid = proxies.startProcess("genUniqueMockName");
-        ScanRange memory range = Config().SCAN_RANGE;
-        for (uint i = range.START; i <= range.END; ++i) {
-            name = Config().DEFAULT_PROXY_MOCK_NAME.toSequential(i);
-            if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
-        }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
-    }
 
 }

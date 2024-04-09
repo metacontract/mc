@@ -15,7 +15,6 @@ import {Inspector} from "devkit/method/inspector/Inspector.sol";
 =========================*/
 struct ProxyRegistry {
     mapping(bytes32 nameHash => Proxy) deployed;
-    mapping(bytes32 nameHash => Proxy) mocks;
     Proxy currentProxy;
 }
 using ProxyRegistryLib for ProxyRegistry global;
