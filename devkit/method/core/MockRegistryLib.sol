@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 // Error & Debug
 import {ERR, throwError} from "devkit/error/Error.sol";
-import {check} from "devkit/error/Validation.sol";
+import {check, Check} from "devkit/error/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config, ScanRange} from "devkit/config/Config.sol";
@@ -19,90 +19,65 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 
 import {MockRegistry} from "devkit/core/MockRegistry.sol";
+import {Naming} from "devkit/method/naming/Naming.sol";
+    using Naming for mapping(string => Dictionary);
+    using Naming for mapping(string => Proxy);
 
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    📘 Dictionary Registry
-        📥 Add Dictionary
-        🔼 Update Current Context Dictionary
-        ♻️ Reset Current Context Dictionary
-        🔍 Find Dictionary
-        🏷 Generate Unique Name
+    🏭 Mock Registry
+        📥 Add
+            Mock Dictionary
+            Mock Proxy
+        🔍 Find
+            Mock Dictionary
+            Mock Proxy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library MockRegistryLib {
-    /**------------------------
-        📥 Add Dictionary
-    --------------------------*/
+
+    /**-------------
+        📥 Add
+    ---------------*/
+    /*----- Mock Dictionary -----*/
     function add(MockRegistry storage mock, string memory name, Dictionary memory dictionary) internal returns(MockRegistry storage) {
         uint pid = mock.startProcess("add");
-        bytes32 nameHash = name.calcHash();
-        mock.dictionary[nameHash] = dictionary;
+        Check.isNotEmpty(name);
+        check(dictionary.isNotEmpty(), "Empty Dictionary");
+        mock.dictionary[name] = dictionary;
         return mock.finishProcess(pid);
     }
+    function add(MockRegistry storage mock, Dictionary memory dictionary) internal returns(MockRegistry storage) {
+        return add(mock, mock.dictionary.genUniqueMockName(), dictionary);
+    }
 
-    function safeAdd(MockRegistry storage mock, string memory name, Dictionary memory dictionary) internal returns(MockRegistry storage) {
-        uint pid = mock.startProcess("safeAdd");
-        return mock .add(name.assertNotEmpty(), dictionary.assertNotEmpty())
-                            .finishProcess(pid);
+    /*----- Mock Proxy -----*/
+    function add(MockRegistry storage mock, string memory name, Proxy memory proxy) internal returns(MockRegistry storage) {
+        uint pid = mock.startProcess("add");
+        Check.isNotEmpty(name);
+        check(proxy.isNotEmpty(), "Empty Proxy");
+        mock.proxy[name] = proxy;
+        return mock.finishProcess(pid);
+    }
+    function add(MockRegistry storage mock, Proxy memory proxy) internal returns(MockRegistry storage) {
+        return add(mock, mock.proxy.genUniqueMockName(), proxy);
     }
 
 
-    /**------------------------
-        🔍 Find Dictionary
-    --------------------------*/
-    function find(MockRegistry storage mock, string memory name) internal returns(Dictionary storage) {
-        uint pid = mock.startProcess("find");
-        return mock.dictionary[name.safeCalcHash()]
-                            .assertExists()
-                            .finishProcessInStorage(pid);
-    }
+    /**-------------
+        🔍 Find
+    ---------------*/
+    /*----- Mock Dictionary -----*/
     function findMockDictionary(MockRegistry storage mock, string memory name) internal returns(Dictionary storage) {
         uint pid = mock.startProcess("findMockDictionary");
-        return mock.dictionary[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
-    }
-    function findSimpleMockProxy(MockRegistry storage mock, string memory name) internal returns(Proxy storage) {
-        uint pid = mock.startProcess("findSimpleMockProxy");
-        return mock.proxy[name.safeCalcHash()].assertExists().finishProcessInStorage(pid);
+        Check.isNotEmpty(name);
+        return mock.dictionary[name].assertExists().finishProcessInStorage(pid);
     }
 
-
-    /**-----------------------------
-        🏷 Generate Unique Name
-    -------------------------------*/
-    // function genUniqueName(MockRegistry storage mock, string memory baseName) internal returns(string memory name) {
-    //     uint pid = mock.startProcess("genUniqueName");
-    //     ScanRange memory range = Config().SCAN_RANGE;
-    //     for (uint i = range.START; i <= range.END; ++i) {
-    //         name = baseName.toSequential(i);
-    //         if (mock.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
-    //     }
-    //     throwError(ERR.FIND_NAME_OVER_RANGE);
-    // }
-    // function genUniqueName(MockRegistry storage mock) internal returns(string memory name) {
-    //     return mock.genUniqueName(Config().DEFAULT_DICTIONARY_NAME);
-    // }
-    // function genUniqueDuplicatedName(MockRegistry storage mock) internal returns(string memory name) {
-    //     return mock.genUniqueName(Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
-    // }
-
-    // function genUniqueMockName(MockRegistry storage mock) internal returns(string memory name) {
-    //     uint pid = mock.startProcess("genUniqueName");
-    //     ScanRange memory range = Config().SCAN_RANGE;
-    //     for (uint i = range.START; i <= range.END; ++i) {
-    //         name = Config().DEFAULT_DICTIONARY_MOCK_NAME.toSequential(i);
-    //         if (mock.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
-    //     }
-    //     throwError(ERR.FIND_NAME_OVER_RANGE);
-    // }
-
-    // function genUniqueMockName(MockRegistry storage mock) internal returns(string memory name) {
-    //     uint pid = mock.startProcess("genUniqueMockName");
-    //     ScanRange memory range = Config().SCAN_RANGE;
-    //     for (uint i = range.START; i <= range.END; ++i) {
-    //         name = Config().DEFAULT_PROXY_MOCK_NAME.toSequential(i);
-    //         if (mock.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
-    //     }
-    //     throwError(ERR.FIND_NAME_OVER_RANGE);
-    // }
+    /*----- Mock Proxy -----*/
+    function findMockProxy(MockRegistry storage mock, string memory name) internal returns(Proxy storage) {
+        uint pid = mock.startProcess("findMockProxy");
+        Check.isNotEmpty(name);
+        return mock.proxy[name].assertExists().finishProcessInStorage(pid);
+    }
 
 }

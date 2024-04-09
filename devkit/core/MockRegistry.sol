@@ -15,8 +15,8 @@ import {Inspector} from "devkit/method/inspector/Inspector.sol";
     🏭 Mock Registry
 ========================*/
 struct MockRegistry {
-    mapping(bytes32 nameHash => Proxy) proxy;
-    mapping(bytes32 nameHash => Dictionary) dictionary;
+    mapping(string name => Proxy) proxy;
+    mapping(string name => Dictionary) dictionary;
 }
 using MockRegistryLib for MockRegistry global;
 //  Support Methods

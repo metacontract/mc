@@ -170,6 +170,10 @@ library Inspector {
         return proxy;
     }
 
+    function notExists(Proxy storage proxy) internal returns(bool) {
+        return proxy.exists().isFalse();
+    }
+
     function isNotEmpty(Proxy memory proxy) internal returns(bool) {
         return proxy.addr.isContract();
     }
@@ -221,6 +225,10 @@ library Inspector {
     function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
         check(dictionary.exists(), "Dictionary Not Exists");
         return dictionary;
+    }
+
+    function notExists(Dictionary storage dictionary) internal returns(bool) {
+        return dictionary.exists().isFalse();
     }
 
     function isNotEmpty(Dictionary memory dictionary) internal returns(bool) {
