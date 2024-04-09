@@ -39,12 +39,3 @@ library Check {
         check(addr.isContract(), ERR.NOT_CONTRACT);
     }
 }
-
-library Require {
-    function assigned(bytes4 str) internal {
-        check(str.isNotEmpty(), ERR.RQ_SELECTOR);
-    }
-    function contractAssigned(address addr) internal {
-        check(addr.isContract(), ERR.RQ_CONTRACT);
-    }
-}
