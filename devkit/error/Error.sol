@@ -22,6 +22,8 @@ library ERR {
     string constant NOT_CONTRACT = "Not Contract Address";
     string constant STR_ALREADY_ASSIGNED = "String Already Assigned";
     string constant B4_ALREADY_ASSIGNED = "Bytes4 Already Assigned";
+    string constant ZERO_ADDRESS = "Zero Address";
+
     // Require
     string constant RQ_SELECTOR = "Selector is required.";
     string constant RQ_CONTRACT = "Contract is required.";

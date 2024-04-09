@@ -59,4 +59,8 @@ library Valid {
     function isNotEmpty(Dictionary memory dictionary) internal {
         valid(dictionary.isNotEmpty(), ERR.EMPTY_DICTIONARY);
     }
+
+    function isNotZero(address addr) internal {
+        valid(addr.isNotZero(), ERR.ZERO_ADDRESS);
+    }
 }
