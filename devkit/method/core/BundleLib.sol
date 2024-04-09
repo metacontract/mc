@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {check} from "devkit/error/validation/Validation.sol";
-import {Require} from "devkit/error/validation/Require.sol";
+import {valid} from "devkit/error/Valid.sol";
+import {Valid} from "devkit/error/Valid.sol";
 // Utils
 import {console2} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/utils/StringUtils.sol";
@@ -23,42 +23,3 @@ import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 
 
-/**~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    🗂️ Bundle
-        📥 Assign Bundle
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-library BundleLib {
-    /**---------------------------
-        📥 Assign Bundle
-    -----------------------------*/
-    function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignName");
-        Require.notEmptyString(name);
-        bundle.name = name;
-        return bundle.finishProcess(pid);
-    }
-
-    function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunction");
-        check(bundle.hasNot(func), "Already added");
-        bundle.functions.push(
-            func.assertImplIsContract()
-        );
-        return bundle.finishProcess(pid);
-    }
-    function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunctions");
-        for (uint i; i < functions.length; ++i) {
-            bundle.pushFunction(functions[i]);
-        }
-        return bundle.finishProcess(pid);
-    }
-
-    function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignFacade");
-        Require.isContract(facade);
-        bundle.facade = facade;
-        return bundle.finishProcess(pid);
-    }
-
-}

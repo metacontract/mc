@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 // Error & Debug
 import {ERR, throwError} from "devkit/error/Error.sol";
-import {check, Check} from "devkit/error/validation/Validation.sol";
+import {valid, Valid} from "devkit/error/Valid.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config, ScanRange} from "devkit/config/Config.sol";
@@ -41,8 +41,8 @@ library MockRegistryLib {
     /*----- Mock Dictionary -----*/
     function add(MockRegistry storage mock, string memory name, Dictionary memory dictionary) internal returns(MockRegistry storage) {
         uint pid = mock.startProcess("add");
-        Check.isNotEmpty(name);
-        check(dictionary.isNotEmpty(), "Empty Dictionary");
+        Valid.isNotEmpty(name);
+        valid(dictionary.isNotEmpty(), "Empty Dictionary");
         mock.dictionary[name] = dictionary;
         return mock.finishProcess(pid);
     }
@@ -53,8 +53,8 @@ library MockRegistryLib {
     /*----- Mock Proxy -----*/
     function add(MockRegistry storage mock, string memory name, Proxy memory proxy) internal returns(MockRegistry storage) {
         uint pid = mock.startProcess("add");
-        Check.isNotEmpty(name);
-        check(proxy.isNotEmpty(), "Empty Proxy");
+        Valid.isNotEmpty(name);
+        valid(proxy.isNotEmpty(), "Empty Proxy");
         mock.proxy[name] = proxy;
         return mock.finishProcess(pid);
     }
@@ -69,14 +69,14 @@ library MockRegistryLib {
     /*----- Mock Dictionary -----*/
     function findMockDictionary(MockRegistry storage mock, string memory name) internal returns(Dictionary storage) {
         uint pid = mock.startProcess("findMockDictionary");
-        Check.isNotEmpty(name);
+        Valid.isNotEmpty(name);
         return mock.dictionary[name].assertExists().finishProcessInStorage(pid);
     }
 
     /*----- Mock Proxy -----*/
     function findMockProxy(MockRegistry storage mock, string memory name) internal returns(Proxy storage) {
         uint pid = mock.startProcess("findMockProxy");
-        Check.isNotEmpty(name);
+        Valid.isNotEmpty(name);
         return mock.proxy[name].assertExists().finishProcessInStorage(pid);
     }
 

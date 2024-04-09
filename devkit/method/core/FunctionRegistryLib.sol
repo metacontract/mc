@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Error & Debug
-import {check} from "devkit/error/validation/Validation.sol";
+import {valid} from "devkit/error/Valid.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
@@ -34,7 +34,7 @@ library FunctionRegistryLib {
     -----------------------------*/
     function safeAddFunction(FunctionRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = functions.startProcess("safeAddFunction");
-        check(name.isNotEmpty(), "Empty Name");
+        valid(name.isNotEmpty(), "Empty Name");
         functions.customs[name]
                 .safeAssign(name)
                 .safeAssign(selector)

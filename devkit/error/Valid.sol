@@ -13,29 +13,40 @@ import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 
 /// @dev like `require`
-function check(bool condition, string memory errorBody) {
+function valid(bool condition, string memory errorBody) {
     if (condition.isFalse()) throwError(errorBody);
 }
-function check(bool condition, string memory errorBody, string memory errorDetail) {
-    check(condition, errorBody.append(errorDetail));
+function valid(bool condition, string memory errorBody, string memory errorDetail) {
+    valid(condition, errorBody.append(errorDetail));
 }
 
-library Check {
+library Valid {
     function isUnassigned(string storage str) internal {
-        check(str.isEmpty(), ERR.STR_ALREADY_ASSIGNED);
+        valid(str.isEmpty(), ERR.STR_ALREADY_ASSIGNED);
     }
     function isNotEmpty(string memory str) internal {
-        check(str.isNotEmpty(), ERR.EMPTY_STR);
+        valid(str.isNotEmpty(), ERR.EMPTY_STR);
     }
 
     function isUnassigned(bytes4 b4) internal {
-        check(b4.isEmpty(), ERR.B4_ALREADY_ASSIGNED);
+        valid(b4.isEmpty(), ERR.B4_ALREADY_ASSIGNED);
     }
     function isNotEmpty(bytes4 b4) internal {
-        check(b4.isNotEmpty(), ERR.EMPTY_B4);
+        valid(b4.isNotEmpty(), ERR.EMPTY_B4);
     }
 
     function isContract(address addr) internal {
-        check(addr.isContract(), ERR.NOT_CONTRACT);
+        valid(addr.isContract(), ERR.NOT_CONTRACT);
+    }
+
+    function notEmptyString(string memory str) internal {
+        valid(str.isNotEmpty(), ERR.RQ_NOT_EMPTY_STRING);
+    }
+
+    function assigned(bytes4 b4) internal {
+        valid(b4.isNotEmpty(), ERR.RQ_SELECTOR);
+    }
+    function contractAssigned(address addr) internal {
+        valid(addr.isContract(), ERR.RQ_CONTRACT);
     }
 }

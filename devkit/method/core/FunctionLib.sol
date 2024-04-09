@@ -2,8 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {check, Check} from "devkit/error/validation/Validation.sol";
-import {Require} from "devkit/error/validation/Require.sol";
+import {valid, Valid} from "devkit/error/Valid.sol";
 // Utils
 import {ForgeHelper, loadAddressFrom} from "../../utils/ForgeHelper.sol";
 import {StringUtils} from "../../utils/StringUtils.sol";
@@ -29,10 +28,10 @@ library FunctionLib {
     --------------------------*/
     function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
         uint pid = func.startProcess("safeAssign");
-        Check.isUnassigned(func.name);
-        Check.isNotEmpty(name);
-        Check.isNotEmpty(selector);
-        Check.isContract(implementation);
+        Valid.isUnassigned(func.name);
+        Valid.isNotEmpty(name);
+        Valid.isNotEmpty(selector);
+        Valid.isContract(implementation);
         func.name = name;
         func.selector = selector;
         func.implementation = implementation;
@@ -44,8 +43,8 @@ library FunctionLib {
         return func;
     }
     function build(Function storage func) internal returns(Function storage) {
-        Require.assigned(func.selector);
-        Require.contractAssigned(func.implementation);
+        Valid.assigned(func.selector);
+        Valid.contractAssigned(func.implementation);
         func.buildStatus = BuildStatus.Built;
         return func;
     }
@@ -76,7 +75,7 @@ library FunctionLib {
     }
     function safeAssign(Function storage func, string memory name) internal returns(Function storage) {
         uint pid = func.startProcess("safeAssign");
-        Check.isNotEmpty(name);
+        Valid.isNotEmpty(name);
         return func .assertEmptyName()
                     .assign(name)
                     .finishProcess(pid);
@@ -85,7 +84,7 @@ library FunctionLib {
     /**----- Selector --------*/
     function safeAssign(Function storage func, bytes4 selector) internal returns(Function storage) {
         uint pid = func.startProcess("safeAssign");
-        Check.isNotEmpty(selector);
+        Valid.isNotEmpty(selector);
         return func .assertEmptySelector()
                     .assign(selector)
                     .finishProcess(pid);
@@ -98,7 +97,7 @@ library FunctionLib {
     /**----- Implementation --------*/
     function safeAssign(Function storage func, address implementation) internal returns(Function storage) {
         uint pid = func.startProcess("safeAssign");
-        Check.isContract(implementation);
+        Valid.isContract(implementation);
         return func .assertEmptyImpl()
                     .assign(implementation)
                     .finishProcess(pid);
@@ -109,8 +108,8 @@ library FunctionLib {
     }
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch");
-        Check.isUnassigned(func.name);
-        Check.isNotEmpty(envKey);
+        Valid.isUnassigned(func.name);
+        Valid.isNotEmpty(envKey);
         return func;
     }
     function fetchAndAssign(Function storage func, string memory envKey, bytes4 selector) internal returns(Function storage) {
@@ -127,15 +126,15 @@ library FunctionLib {
                     .finishProcess(pid);
     }
     function loadAndAssignFromEnv(Function storage func) internal returns(Function storage) {
-        Check.isNotEmpty(func.name);
-        Check.isNotEmpty(func.selector);
+        Valid.isNotEmpty(func.name);
+        Valid.isNotEmpty(func.selector);
         return func.loadAndAssignFromEnv(func.name, func.name, func.selector);
     }
     function safeLoadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
         uint pid = func.startProcess("safeLoadAndAssignFromEnv");
-        Check.isNotEmpty(envKey);
-        Check.isNotEmpty(name);
-        Check.isNotEmpty(selector);
+        Valid.isNotEmpty(envKey);
+        Valid.isNotEmpty(name);
+        Valid.isNotEmpty(selector);
         return func.loadAndAssignFromEnv(envKey, name, selector).finishProcess(pid);
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {check, Check} from "devkit/error/validation/Validation.sol";
+import {valid, Valid} from "devkit/error/Valid.sol";
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
@@ -47,35 +47,35 @@ library Inspector {
     }
 
     function assertExists(Function storage func) internal returns(Function storage) {
-        check(func.exists(), "func does not exists");
+        valid(func.exists(), "func does not exists");
         return func;
     }
 
     function assertEmptyName(Function storage func) internal returns(Function storage) {
-        Check.isUnassigned(func.name);
+        Valid.isUnassigned(func.name);
         return func;
     }
     function assertEmptySelector(Function storage func) internal returns(Function storage) {
-        Check.isUnassigned(func.selector);
+        Valid.isUnassigned(func.selector);
         return func;
     }
     function assertEmptyImpl(Function storage func) internal returns(Function storage) {
-        check(func.implementation.isNotContract(), "Implementation Already Exist");
+        valid(func.implementation.isNotContract(), "Implementation Already Exist");
         return func;
     }
 
     function assertNotEmpty(Function storage func) internal returns(Function storage) {
-        check(func.exists(), "Empty Deployed Contract");
+        valid(func.exists(), "Empty Deployed Contract");
         return func;
     }
 
     function assertNotIncludedIn(Function storage func, Bundle storage bundleInfo) internal returns(Function storage) {
-        check(bundleInfo.hasNot(func), "Already exists in the Bundel");
+        valid(bundleInfo.hasNot(func), "Already exists in the Bundel");
         return func;
     }
 
     function assertImplIsContract(Function storage func) internal returns(Function storage) {
-        check(func.implementation.isContract(), "Implementation Not Contract");
+        valid(func.implementation.isContract(), "Implementation Not Contract");
         return func;
     }
 
@@ -85,7 +85,7 @@ library Inspector {
                 func.implementation.isContract();
     }
     function assertComplete(Function storage func) internal returns(Function storage) {
-        check(func.isComplete(), "Function Info Not Complete");
+        valid(func.isComplete(), "Function Info Not Complete");
         return func;
     }
 
@@ -112,7 +112,7 @@ library Inspector {
                 bundle.facade.isContract();
     }
     function assertComplete(Bundle storage bundle) internal returns(Bundle storage) {
-        check(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
+        valid(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
         return bundle;
     }
 
@@ -132,11 +132,11 @@ library Inspector {
         return bundle.exists().isNot();
     }
     function assertExists(Bundle storage bundle) internal returns(Bundle storage) {
-        check(bundle.exists(), "Bundle Info Not Exists");
+        valid(bundle.exists(), "Bundle Info Not Exists");
         return bundle;
     }
     function assertNotExists(Bundle storage bundle) internal returns(Bundle storage) {
-        check(bundle.notExists(), "Bundle Info Already Exists");
+        valid(bundle.notExists(), "Bundle Info Already Exists");
         return bundle;
     }
 
@@ -151,7 +151,7 @@ library Inspector {
         return bundle.existsBundle(name).isNot();
     }
     function assertBundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
-        check(bundle.notExistsBundle(name), "Bundle Already Exists");
+        valid(bundle.notExistsBundle(name), "Bundle Already Exists");
         return bundle;
     }
 
@@ -170,7 +170,7 @@ library Inspector {
         return proxy.addr.isContract();
     }
     function assertExists(Proxy storage proxy) internal returns(Proxy storage) {
-        check(proxy.exists(), "Proxy Not Exist");
+        valid(proxy.exists(), "Proxy Not Exist");
         return proxy;
     }
 
@@ -182,7 +182,7 @@ library Inspector {
         return proxy.addr.isContract();
     }
     function assertNotEmpty(Proxy memory proxy) internal returns(Proxy memory) {
-        check(proxy.isNotEmpty(), "Empty Proxy");
+        valid(proxy.isNotEmpty(), "Empty Proxy");
         return proxy;
     }
 
@@ -205,7 +205,7 @@ library Inspector {
         return kind != ProxyKind.undefined;
     }
     function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {
-        check(kind.isNotUndefined(), "Undefined Proxy Kind");
+        valid(kind.isNotUndefined(), "Undefined Proxy Kind");
         return kind;
     }
 
@@ -227,7 +227,7 @@ library Inspector {
         return dictionary.addr.isContract();
     }
     function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        check(dictionary.exists(), "Dictionary Not Exists");
+        valid(dictionary.exists(), "Dictionary Not Exists");
         return dictionary;
     }
 
@@ -239,7 +239,7 @@ library Inspector {
         return dictionary.addr.isContract();
     }
     function assertNotEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        check(dictionary.isNotEmpty(), "Empty Dictionary");
+        valid(dictionary.isNotEmpty(), "Empty Dictionary");
         return dictionary;
     }
 
@@ -247,7 +247,7 @@ library Inspector {
         return IDictionary(dictionary.addr).supportsInterface(selector);
     }
     function assertSupports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
-        check(dictionary.isSupported(selector), "Unsupported Selector");
+        valid(dictionary.isSupported(selector), "Unsupported Selector");
         return dictionary;
     }
 
@@ -256,7 +256,7 @@ library Inspector {
         return success;
     }
     function assertVerifiable(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        check(dictionary.isVerifiable(), "Dictionary Not Verifiable");
+        valid(dictionary.isVerifiable(), "Dictionary Not Verifiable");
         return dictionary;
     }
 
@@ -277,7 +277,7 @@ library Inspector {
         return kind != DictionaryKind.undefined;
     }
     function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
-        check(kind.isNotUndefined(), "Undefined Dictionary Kind");
+        valid(kind.isNotUndefined(), "Undefined Dictionary Kind");
         return kind;
     }
 

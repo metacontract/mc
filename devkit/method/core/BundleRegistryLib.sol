@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Error & Debug
-import {check} from "devkit/error/validation/Validation.sol";
+import {valid} from "devkit/error/Valid.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
@@ -46,7 +46,7 @@ library BundleRegistryLib {
     }
     function safeInit(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("safeInit");
-        check(name.isNotEmpty(), "Empty Name");
+        valid(name.isNotEmpty(), "Empty Name");
         return bundle.assertBundleNotExists(name)
                         .init(name)
                         .finishProcess(pid);
