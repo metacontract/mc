@@ -19,7 +19,7 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    🏠 UCS Proxy Registry
+    🏠 Proxy Registry
     << Primary >>
         📥 Add Proxy
         🔼 Update Current Context Proxy
@@ -118,18 +118,6 @@ library ProxyRegistryLib {
             if (proxies.existsInMocks(name).isFalse()) return name.recordExecFinish(pid);
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
-    }
-
-
-
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function existsInDeployed(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.deployed[name.safeCalcHash()].exists();
-    }
-    function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.mocks[name.safeCalcHash()].exists();
     }
 
 }

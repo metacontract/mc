@@ -154,53 +154,6 @@ library DictionaryLib {
 
 
 
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function exists(Dictionary storage dictionary) internal returns(bool) {
-        return dictionary.addr.isContract();
-    }
-    function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        check(dictionary.exists(), "Dictionary Not Exists");
-        return dictionary;
-    }
-
-    function isNotEmpty(Dictionary memory dictionary) internal returns(bool) {
-        return dictionary.addr.isContract();
-    }
-    function assertNotEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        check(dictionary.isNotEmpty(), "Empty Dictionary");
-        return dictionary;
-    }
-
-    function isSupported(Dictionary memory dictionary, bytes4 selector) internal view returns(bool) {
-        return IDictionary(dictionary.addr).supportsInterface(selector);
-    }
-    function assertSupports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
-        check(dictionary.isSupported(selector), "Unsupported Selector");
-        return dictionary;
-    }
-
-    function isVerifiable(Dictionary memory dictionary) internal returns(bool) {
-        (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IBeacon.implementation.selector));
-        return success;
-    }
-    function assertVerifiable(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        check(dictionary.isVerifiable(), "Dictionary Not Verifiable");
-        return dictionary;
-    }
-
-    function isMock(Dictionary memory dictionary) internal pure returns(bool) {
-        return dictionary.kind == DictionaryKind.Mock;
-    }
-    function isNotMock(Dictionary memory dictionary) internal returns(bool) {
-        return dictionary.isMock().isNot();
-    }
-    // function isUUPS(Dictionary dictionary) internal returns(bool) {
-    //     return UUPSUpgradeable(dictionary.toAddress()).proxiableUUID() == ERC1967Utils.IMPLEMENTATION_SLOT;
-    // }
-
-
     // function assignLabel(Dictionary storage dictionary, string memory name) internal returns(Dictionary storage) {
     //     ForgeHelper.assignLabel(dictionary.addr, name);
     //     return dictionary;

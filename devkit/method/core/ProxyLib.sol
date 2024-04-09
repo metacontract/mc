@@ -100,36 +100,4 @@ library ProxyLib {
 
     // function changeDictionary(Proxy storage proxy) internal {}
 
-
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function exists(Proxy storage proxy) internal returns(bool) {
-        return proxy.addr.isContract();
-    }
-    function assertExists(Proxy storage proxy) internal returns(Proxy storage) {
-        check(proxy.exists(), "Proxy Not Exist");
-        return proxy;
-    }
-
-    function isNotEmpty(Proxy memory proxy) internal returns(bool) {
-        return proxy.addr.isContract();
-    }
-    function assertNotEmpty(Proxy memory proxy) internal returns(Proxy memory) {
-        check(proxy.isNotEmpty(), "Empty Proxy");
-        return proxy;
-    }
-
-    function isMock(Proxy memory proxy) internal pure returns(bool) {
-        return proxy.kind == ProxyKind.Mock;
-    }
-    function isNotMock(Proxy memory proxy) internal returns(bool) {
-        return proxy.isMock().isNot();
-    }
-
-    function assignLabel(Proxy storage proxy, string memory name) internal returns(Proxy storage) {
-        ForgeHelper.assignLabel(proxy.addr, name);
-        return proxy;
-    }
-
 }

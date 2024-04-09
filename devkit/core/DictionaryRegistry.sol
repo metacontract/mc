@@ -6,10 +6,11 @@ import {Dictionary} from "./Dictionary.sol";
 // Methods
 import {DictionaryRegistryLib} from "devkit/method/core/DictionaryRegistryLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {Inspector} from "devkit/method/inspector/Inspector.sol";
 
 
 /**============================
-    📚 Dictionary Registry
+    📘 Dictionary Registry
 ==============================*/
 struct DictionaryRegistry {
     mapping(bytes32 nameHash => Dictionary) deployed;
@@ -17,4 +18,6 @@ struct DictionaryRegistry {
     Dictionary currentDictionary;
 }
 using DictionaryRegistryLib for DictionaryRegistry global;
+//  Support Methods
 using ProcessLib for DictionaryRegistry global;
+using Inspector for DictionaryRegistry global;

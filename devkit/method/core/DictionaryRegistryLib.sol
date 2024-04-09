@@ -129,17 +129,4 @@ library DictionaryRegistryLib {
         }
         throwError(ERR.FIND_NAME_OVER_RANGE);
     }
-
-
-
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function existsInDeployed(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-        return dictionaries.deployed[name.safeCalcHash()].exists();
-    }
-    function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-        return dictionaries.mocks[name.safeCalcHash()].exists();
-    }
-
 }

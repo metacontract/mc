@@ -6,10 +6,11 @@ import {Proxy} from "devkit/core/Proxy.sol";
 // Methods
 import {ProxyRegistryLib} from "devkit/method/core/ProxyRegistryLib.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {Inspector} from "devkit/method/inspector/Inspector.sol";
 
 
 /**=======================
-    🏠 Proxy Registry
+    📕 Proxy Registry
 =========================*/
 struct ProxyRegistry {
     mapping(bytes32 nameHash => Proxy) deployed;
@@ -17,4 +18,6 @@ struct ProxyRegistry {
     Proxy currentProxy;
 }
 using ProxyRegistryLib for ProxyRegistry global;
+//  Support Methods
 using ProcessLib for ProxyRegistry global;
+using Inspector for ProxyRegistry global;

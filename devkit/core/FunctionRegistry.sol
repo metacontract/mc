@@ -9,11 +9,12 @@ import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 
 /**===========================
-    🧩 Functions Registry
+    📗 Functions Registry
 =============================*/
 struct FunctionRegistry {
     mapping(bytes32 nameHash => Function) customs;
     string currentName;
 }
 using FunctionRegistryLib for FunctionRegistry global;
+//  Support Methods
 using ProcessLib for FunctionRegistry global;

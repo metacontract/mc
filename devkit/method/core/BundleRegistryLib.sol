@@ -20,7 +20,7 @@ import {StdFunctions} from "devkit/core/StdFunctions.sol";
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 
 /**-------------------------------
-    🧩 Functions Registry
+    🧩 Bundle Registry
 ---------------------------------*/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,26 +138,4 @@ library BundleRegistryLib {
         throwError(ERR.FIND_NAME_OVER_RANGE);
     }
 
-
-
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function existsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
-        return bundle.bundles[name.safeCalcHash()].hasName();
-    }
-    function notExistsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
-        return bundle.existsBundle(name).isNot();
-    }
-    function assertBundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
-        check(bundle.notExistsBundle(name), "Bundle Already Exists");
-        return bundle;
-    }
-
-    function existsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
-        return bundle.currentBundleName.isNotEmpty();
-    }
-    function notExistsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
-        return bundle.existsCurrentBundle().isNot();
-    }
 }
