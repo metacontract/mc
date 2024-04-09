@@ -26,6 +26,8 @@ library ERR {
     string constant RQ_SELECTOR = "Selector is required.";
     string constant RQ_CONTRACT = "Contract is required.";
     string constant RQ_NOT_EMPTY_STRING = "String is empty.";
+    string constant DICTIONARY_NOT_EXISTS = "Dictionary Not Exists";
+    string constant EMPTY_DICTIONARY = "Empty Dictionary";
     string constant LOCKED_OBJECT = "Locaked Object";
 
     // string constant STR_EXISTS = "String Already Exist";

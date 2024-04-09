@@ -12,6 +12,7 @@ import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
+import {Dictionary} from "devkit/core/Dictionary.sol";
 
 /// @dev like `require`
 function valid(bool condition, string memory errorBody) {
@@ -53,5 +54,9 @@ library Valid {
 
     function notLocked(BuildStatus status) internal {
         valid(status != BuildStatus.Locked, ERR.LOCKED_OBJECT);
+    }
+
+    function isNotEmpty(Dictionary memory dictionary) internal {
+        valid(dictionary.isNotEmpty(), ERR.EMPTY_DICTIONARY);
     }
 }

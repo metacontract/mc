@@ -15,8 +15,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctionsArgs} from "devkit/method/core/StdFunctionsLib.sol";
     using StdFunctionsArgs for address;
 //  proxy
-import {Proxy} from "devkit/core/Proxy.sol";
-import {ProxyLib} from "devkit/method/core/ProxyLib.sol";
+import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 
 import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Dictionary);
