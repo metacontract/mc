@@ -3,8 +3,9 @@ pragma solidity ^0.8.24;
 
 // Core Type
 import {Proxy} from "devkit/core/Proxy.sol";
-// Methods
+// Core Method
 import {ProxyRegistryLib} from "devkit/method/core/ProxyRegistryLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Inspector} from "devkit/method/inspector/Inspector.sol";
 

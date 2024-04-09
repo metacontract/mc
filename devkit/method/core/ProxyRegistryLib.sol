@@ -18,21 +18,16 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 
 import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
 
+
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     🏠 Proxy Registry
-    << Primary >>
         📥 Add Proxy
         🔼 Update Current Context Proxy
         ♻️ Reset Current Context Proxy
         🔍 Find Proxy
         🏷 Generate Unique Name
-    << Helper >>
-        🧐 Inspectors & Assertions
-        🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library ProxyRegistryLib {
-
-
     /**-------------------
         📥 Add Proxy
     ---------------------*/

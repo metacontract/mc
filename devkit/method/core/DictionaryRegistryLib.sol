@@ -19,23 +19,16 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 
-/******************************
-    📚 Dictionary Registry
-*******************************/
+
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    📘 Dictionary Registry
         📥 Add Dictionary
         🔼 Update Current Context Dictionary
         ♻️ Reset Current Context Dictionary
         🔍 Find Dictionary
         🏷 Generate Unique Name
-    << Helper >>
-        🧐 Inspectors & Assertions
-        🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library DictionaryRegistryLib {
-
-
     /**------------------------
         📥 Add Dictionary
     --------------------------*/

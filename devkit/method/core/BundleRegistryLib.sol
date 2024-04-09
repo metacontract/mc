@@ -19,12 +19,9 @@ import {StdFunctions} from "devkit/core/StdFunctions.sol";
 
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
 
-/**-------------------------------
-    🧩 Bundle Registry
----------------------------------*/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    📙 Bundle Registry
         🌱 Init Bundle
         ✨ Add Custom Function
         🔏 Load and Assign Custom Function from Env
@@ -33,12 +30,9 @@ import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
         🔼 Update Current Context Function & Bundle
         🔍 Find Function & Bundle
         🏷 Generate Unique Name
-    << Helper >>
         🔍 Find Custom Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library BundleRegistryLib {
-
-
     /**---------------------
         🌱 Init Bundle
     -----------------------*/

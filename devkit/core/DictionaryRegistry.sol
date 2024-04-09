@@ -3,8 +3,9 @@ pragma solidity ^0.8.24;
 
 // Core Type
 import {Dictionary} from "./Dictionary.sol";
-// Methods
+// Core Method
 import {DictionaryRegistryLib} from "devkit/method/core/DictionaryRegistryLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Inspector} from "devkit/method/inspector/Inspector.sol";
 

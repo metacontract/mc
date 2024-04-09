@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Methods
+// Core Method
 import {ProxyLib} from "devkit/method/core/ProxyLib.sol";
-import {ProxyKindLib} from "devkit/method/core/ProxyKindLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Inspector} from "devkit/method/inspector/Inspector.sol";
 
@@ -30,4 +30,4 @@ using Inspector for Proxy global;
         Verifiable,
         Mock
     }
-    using ProxyKindLib for ProxyKind global;
+    using Inspector for ProxyKind global;

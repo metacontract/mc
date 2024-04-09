@@ -190,6 +190,17 @@ library Inspector {
         return proxy;
     }
 
+    /**~~~~~~~~~~~~~~~~~~~
+        🏠 Proxy Kind
+    ~~~~~~~~~~~~~~~~~~~~~*/
+    function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
+        return kind != ProxyKind.undefined;
+    }
+    function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {
+        check(kind.isNotUndefined(), "Undefined Proxy Kind");
+        return kind;
+    }
+
     /**=======================
         🏠 Proxy Registry
     =========================*/
@@ -247,6 +258,16 @@ library Inspector {
     //     return UUPSUpgradeable(dictionary.toAddress()).proxiableUUID() == ERC1967Utils.IMPLEMENTATION_SLOT;
     // }
 
+    /**------------------------
+        📚 Dictionary Kind
+    --------------------------*/
+    function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
+        return kind != DictionaryKind.undefined;
+    }
+    function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
+        check(kind.isNotUndefined(), "Undefined Dictionary Kind");
+        return kind;
+    }
 
     /**============================
         📚 Dictionary Registry

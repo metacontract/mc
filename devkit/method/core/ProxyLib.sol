@@ -27,22 +27,15 @@ import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
 import {Proxy, ProxyKind} from "devkit/core/Proxy.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
-/**---------------
-    🏠 Proxy
------------------*/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    🏠 Proxy
         🚀 Deploy Proxy
-        🤖 Create Mock Proxy
     << Helper >>
         🧪 Test Utils
-        🐞 Debug
-        🧐 Inspectors & Assertions
+        🤖 Create Mock Proxy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library ProxyLib {
-
-
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/

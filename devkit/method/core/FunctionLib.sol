@@ -19,14 +19,8 @@ import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
 
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    🧩 Function
         📥 Assign Function
-        🔼 Update Current Context Proxy
-        🔍 Find Proxy
-        🏷 Generate Unique Name
-    << Helper >>
-        🧐 Inspectors & Assertions
-        🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library FunctionLib {
     /**------------------------

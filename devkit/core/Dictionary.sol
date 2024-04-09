@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Methods
+// Core Method
 import {DictionaryLib} from "devkit/method/core/DictionaryLib.sol";
-import {DictionaryKindLib} from "devkit/method/core/DictionaryKindLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Inspector} from "devkit/method/inspector/Inspector.sol";
 
@@ -29,4 +29,4 @@ using Inspector for Dictionary global;
         Verifiable,
         Mock
     }
-    using DictionaryKindLib for DictionaryKind global;
+    using Inspector for DictionaryKind global;

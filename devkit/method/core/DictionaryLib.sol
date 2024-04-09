@@ -31,20 +31,14 @@ import {ERC1967Utils} from "@oz.mc/proxy/ERC1967/ERC1967Utils.sol";
 import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
-/**------------------------
-    📚 Dictionary
---------------------------*/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    📚 Dictionary
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
-        🧩 Set Function
+        🧩 Set Function or Bundle
         🪟 Upgrade Facade
         🤖 Create Mock Dictionary
-    << Helper >>
-        🧐 Inspectors & Assertions
-        🐞 Debug
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library DictionaryLib {
     /**-------------------------
@@ -103,7 +97,7 @@ library DictionaryLib {
 
 
     /**-----------------------------
-        🧩 Set Function & Bundle
+        🧩 Set Function or Bundle
     -------------------------------*/
     function set(Dictionary memory dictionary, Function memory functionInfo) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(functionInfo.name));

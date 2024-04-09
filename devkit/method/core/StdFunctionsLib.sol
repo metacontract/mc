@@ -23,14 +23,12 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 
-/*****************************************
-    🏛 Meta Contract Standard Functions
-******************************************/
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    🔏 Assign and Load Standard Functions
-    🐣 Deploy Standard Functions If Not Exists
-    🧺 Configure Standard Bundles
+    🏛 Standard Functions
+        🔏 Assign and Load Standard Functions
+        🐣 Deploy Standard Functions If Not Exists
+        🧺 Configure Standard Bundles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library StdFunctionsLib {
 

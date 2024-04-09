@@ -19,17 +19,14 @@ import {StdFunctions} from "devkit/core/StdFunctions.sol";
 
 import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 
-/**---------------------------
-    🧩 Functions Registry
------------------------------*/
+
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    << Primary >>
+    📗 Functions Registry
         ✨ Add Custom Function
         🔏 Load and Assign Custom Function from Env
         🔼 Update Current Context Function
+        ♻️ Reset Current Context Function & Bundle
         🔍 Find Function
-    << Helper >>
-        🔍 Find Custom Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library FunctionRegistryLib {
     /**---------------------------
@@ -60,7 +57,7 @@ library FunctionRegistryLib {
 
 
     /**------------------------------------------------
-        🔼 Update Current Context
+        🔼 Update Current Context Function
     --------------------------------------------------*/
     function safeUpdateCurrentFunction(FunctionRegistry storage functions, string memory name) internal returns(FunctionRegistry storage) {
         uint pid = functions.startProcess("safeUpdateCurrentFunction");

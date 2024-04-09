@@ -3,8 +3,9 @@ pragma solidity ^0.8.24;
 
 // Core Type
 import {Function} from "devkit/core/Function.sol";
-// Methods
+// Core Method
 import {FunctionRegistryLib} from "devkit/method/core/FunctionRegistryLib.sol";
+// Support Method
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 
 

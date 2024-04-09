@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Methods
+// Core Method
 import {FunctionLib} from "devkit/method/core/FunctionLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Parser} from "devkit/method/debug/Parser.sol";
 import {Dumper} from "devkit/method/debug/Dumper.sol";

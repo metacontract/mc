@@ -3,8 +3,9 @@ pragma solidity ^0.8.24;
 
 // Core Type
 import {Function} from "devkit/core/Function.sol";
-// Methods
+// Core Method
 import {BundleLib} from "devkit/method/core/BundleLib.sol";
+// Support Methods
 import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
 import {Parser} from "devkit/method/debug/Parser.sol";
 import {Inspector} from "devkit/method/inspector/Inspector.sol";

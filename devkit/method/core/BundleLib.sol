@@ -21,8 +21,12 @@ import {Function} from "devkit/core/Function.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 
-library BundleLib {
 
+/**~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    🗂️ Bundle
+        📥 Assign Bundle
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+library BundleLib {
     /**---------------------------
         📥 Assign Bundle
     -----------------------------*/
