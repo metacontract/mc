@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {throwError, ERR} from "./Error.sol";
+import {throwError, ERR} from "devkit/error/Error.sol";
 // Utils
 import {BoolUtils} from "devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Errors & Debug
-import {check} from "devkit/error/Validation.sol";
+import {check} from "devkit/error/validation/Validation.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Utils
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
@@ -74,10 +74,10 @@ library ProxyLib {
     /**-------------------------
         🤖 Create Mock Proxy
     ---------------------------*/
-    function createSimpleMockProxy(Function[] memory functionInfos) internal returns(Proxy memory) {
+    function createSimpleMockProxy(Function[] memory functions) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("createSimpleMockProxy");
         return Proxy({
-            addr: address(new SimpleMockProxy(functionInfos)),
+            addr: address(new SimpleMockProxy(functions)),
             kind: ProxyKind.Mock
         }).finishProcess(pid);
     }

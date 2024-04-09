@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {check, Check} from "devkit/error/Validation.sol";
+import {check, Check} from "devkit/error/validation/Validation.sol";
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
@@ -98,8 +98,8 @@ library Inspector {
         🗂️ Bundle
     =================*/
     function has(Bundle storage bundle, Function storage functionInfo) internal view returns(bool flag) {
-        for (uint i; i < bundle.functionInfos.length; ++i) {
-            if (functionInfo.isEqual(bundle.functionInfos[i])) return true;
+        for (uint i; i < bundle.functions.length; ++i) {
+            if (functionInfo.isEqual(bundle.functions[i])) return true;
         }
     }
     function hasNot(Bundle storage bundle, Function storage functionInfo) internal returns(bool) {
@@ -108,7 +108,7 @@ library Inspector {
 
     function isComplete(Bundle storage bundle) internal returns(bool) {
         return  bundle.name.isNotEmpty() &&
-                bundle.functionInfos.length != 0 &&
+                bundle.functions.length != 0 &&
                 bundle.facade.isContract();
     }
     function assertComplete(Bundle storage bundle) internal returns(Bundle storage) {
@@ -125,7 +125,7 @@ library Inspector {
 
     function exists(Bundle storage bundle) internal returns(bool) {
         return  bundle.name.isNotEmpty() ||
-                bundle.functionInfos.length != 0 ||
+                bundle.functions.length != 0 ||
                 bundle.facade.isNotContract();
     }
     function notExists(Bundle storage bundle) internal returns(bool) {

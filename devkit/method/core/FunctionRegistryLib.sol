@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Error & Debug
-import {check} from "devkit/error/Validation.sol";
+import {check} from "devkit/error/validation/Validation.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config

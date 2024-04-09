@@ -16,7 +16,7 @@ import {Inspector} from "devkit/method/inspector/Inspector.sol";
 ==================*/
 struct Bundle {
     string name;
-    Function[] functionInfos;
+    Function[] functions;
     address facade;
 }
 using BundleLib for Bundle global;

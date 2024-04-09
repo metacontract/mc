@@ -10,11 +10,11 @@ import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
     @title Mock Proxy Contract
  */
 contract SimpleMockProxy is OZProxy {
-    constructor (Function[] memory functionInfos) {
-        for (uint i; i < functionInfos.length; ++i) {
+    constructor (Function[] memory functions) {
+        for (uint i; i < functions.length; ++i) {
             SimpleMockProxyLib.set({
-                selector: functionInfos[i].selector,
-                implementation: functionInfos[i].implementation
+                selector: functions[i].selector,
+                implementation: functions[i].implementation
             });
         }
     }

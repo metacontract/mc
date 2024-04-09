@@ -27,7 +27,7 @@ library Parser {
     function parse(Bundle storage bundle) internal returns(string memory message) {
         message = message.append("Facade: ").append(bundle.facade);
 
-        Function[] memory _funcs = bundle.functionInfos;
+        Function[] memory _funcs = bundle.functions;
         for (uint i; i < _funcs.length; ++i) {
             message = message.br().append(_funcs[i].parse());
         }

@@ -116,11 +116,11 @@ library StdFunctionsLib {
         /**===== Each Std Bundle =====*/
         function configureStdBundle_AllFunctions(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("configureStdBundle_AllFunctions");
-            std.all .safeAssign("ALL_FUNCTIONS")
-                    .safeAdd(std.initSetAdmin)
-                    .safeAdd(std.getDeps)
-                    .safeAdd(std.clone)
-                    .safeAssign(address(new StdFacade()));
+            std.all .assignName("ALL_FUNCTIONS")
+                    .pushFunction(std.initSetAdmin)
+                    .pushFunction(std.getDeps)
+                    .pushFunction(std.clone)
+                    .assignFacade(address(new StdFacade()));
             return std.finishProcess(pid);
         }
 

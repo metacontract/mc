@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {check} from "devkit/error/Validation.sol";
+import {check} from "devkit/error/validation/Validation.sol";
 // Utils
 import {vm} from "./ForgeHelper.sol";
 import {BoolUtils} from "./BoolUtils.sol";

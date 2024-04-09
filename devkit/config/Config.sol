@@ -80,7 +80,7 @@ library ConfigLib {
     // }
 
     // function defaultFunctionInfos(MCDevKit storage mc) internal returns(Function[] storage) {
-    //     return mc.functions.std.allFunctions.functionInfos;
+    //     return mc.functions.std.allFunctions.functions;
     // }
     // function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {
     //     return mc.functions.genUniqueBundleName();

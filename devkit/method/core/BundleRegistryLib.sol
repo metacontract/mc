@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Error & Debug
-import {check} from "devkit/error/Validation.sol";
+import {check} from "devkit/error/validation/Validation.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
@@ -40,7 +40,7 @@ library BundleRegistryLib {
     -----------------------*/
     function init(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("init");
-        bundle.bundles[name].safeAssign(name);
+        bundle.bundles[name].assignName(name);
         bundle.safeUpdateCurrentBundle(name);
         return bundle.finishProcess(pid);
     }
@@ -58,12 +58,12 @@ library BundleRegistryLib {
     ---------------------------------------*/
     function addToBundle(BundleRegistry storage bundle, Function storage functionInfo) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("addToBundle", "function");
-        bundle.findCurrentBundle().safeAdd(functionInfo);
+        bundle.findCurrentBundle().pushFunction(functionInfo);
         return bundle.finishProcess(pid);
     }
-    function addToBundle(BundleRegistry storage bundle, Function[] storage functionInfos) internal returns(BundleRegistry storage) {
+    function addToBundle(BundleRegistry storage bundle, Function[] storage functions) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("addToBundle", "bundle"); // TODO params
-        bundle.findCurrentBundle().safeAdd(functionInfos);
+        bundle.findCurrentBundle().pushFunctions(functions);
         return bundle.finishProcess(pid);
     }
 
@@ -75,7 +75,7 @@ library BundleRegistryLib {
         uint pid = bundle.startProcess("set");
         bundle.bundles[name]
                     .assertExists()
-                    .safeAssign(facade);
+                    .assignFacade(facade);
         return bundle.finishProcess(pid);
     }
     function set(BundleRegistry storage bundle, address facade) internal returns(BundleRegistry storage) {

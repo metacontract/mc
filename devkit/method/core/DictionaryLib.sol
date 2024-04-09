@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {check} from "devkit/error/Validation.sol";
+import {check} from "devkit/error/validation/Validation.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Utils
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
@@ -110,10 +110,10 @@ library DictionaryLib {
     function set(Dictionary memory dictionary, Bundle storage bundleInfo) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(bundleInfo.name));
 
-        Function[] memory functionInfos = bundleInfo.functionInfos;
+        Function[] memory functions = bundleInfo.functions;
 
-        for (uint i; i < functionInfos.length; ++i) {
-            dictionary.set(functionInfos[i]);
+        for (uint i; i < functions.length; ++i) {
+            dictionary.set(functions[i]);
         }
 
         // TODO Generate Facade
@@ -138,10 +138,10 @@ library DictionaryLib {
     /**------------------------------
         🤖 Create Mock Dictionary
     --------------------------------*/
-    function createMockDictionary(address owner, Function[] memory functionInfos) internal returns(Dictionary memory) {
+    function createMockDictionary(address owner, Function[] memory functions) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("createMockDictionary");
         return Dictionary({
-            addr: address(new MockDictionary(owner, functionInfos)),
+            addr: address(new MockDictionary(owner, functions)),
             kind: DictionaryKind.Mock
         }).finishProcess(pid);
     }

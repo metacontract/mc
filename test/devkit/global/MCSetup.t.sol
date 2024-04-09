@@ -19,10 +19,10 @@ contract DevKitTest_MCSetup is MCDevKitTest {
         assertTrue(mc.std.getDeps.isGetDeps());
         assertTrue(mc.std.clone.isClone());
 
-        assertTrue(mc.std.all.functionInfos.length == 3);
-        assertTrue(mc.std.all.functionInfos[0].isInitSetAdmin());
-        assertTrue(mc.std.all.functionInfos[1].isGetDeps());
-        assertTrue(mc.std.all.functionInfos[2].isClone());
+        assertTrue(mc.std.all.functions.length == 3);
+        assertTrue(mc.std.all.functions[0].isInitSetAdmin());
+        assertTrue(mc.std.all.functions[1].isGetDeps());
+        assertTrue(mc.std.all.functions[2].isClone());
     }
 
 }

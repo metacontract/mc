@@ -64,7 +64,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         assertEq(func.name, functionName);
         assertEq(func.selector, selector);
         assertEq(func.implementation, impl);
-        assertTrue(bundle.functionInfos[functionsIndex].isEqual(func));
+        assertTrue(bundle.functions[functionsIndex].isEqual(func));
         assertEq(mc.functions.currentName, functionName);
     }
 

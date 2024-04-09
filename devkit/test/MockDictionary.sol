@@ -10,9 +10,9 @@ import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
     @title Mock Dictionary Contract
  */
 contract MockDictionary is DictionaryEtherscan {
-    constructor (address owner, Function[] memory functionInfos) DictionaryEtherscan(owner) {
-        for (uint i; i < functionInfos.length; ++i) {
-            setImplementation(functionInfos[i].selector, functionInfos[i].implementation);
+    constructor (address owner, Function[] memory functions) DictionaryEtherscan(owner) {
+        for (uint i; i < functions.length; ++i) {
+            setImplementation(functions[i].selector, functions[i].implementation);
         }
     }
 }
