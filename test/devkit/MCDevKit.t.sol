@@ -33,7 +33,7 @@ contract MCDevKitTest is Test {
         string memory name = "TestBundleName";
         mc.init(name);
 
-        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
         assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 }

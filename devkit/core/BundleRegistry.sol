@@ -14,7 +14,7 @@ import {Inspector} from "devkit/method/inspector/Inspector.sol";
     📙 Bundle Registry
 ==========================*/
 struct BundleRegistry {
-    mapping(bytes32 nameHash => Bundle) bundles;
+    mapping(string name => Bundle) bundles;
     string currentBundleName;
 }
 using BundleRegistryLib for BundleRegistry global;

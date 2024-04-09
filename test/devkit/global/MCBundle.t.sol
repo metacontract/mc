@@ -21,7 +21,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         string memory name = "TestBundleName";
         mc.init(name);
 
-        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
         assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
@@ -29,26 +29,26 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     // function test_Success_init_withoutName() public {}
 
     function test_Success_ensureInit_beforeInit() public {
-        string memory name = mc.bundle.genUniqueBundleName();
+        string memory name = mc.bundle.genUniqueName();
 
         mc.ensureInit();
 
-        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
         assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
     function test_Success_ensureInit_afterInit() public {
-        string memory name = mc.bundle.genUniqueBundleName();
+        string memory name = mc.bundle.genUniqueName();
 
         mc.init();
 
-        assertTrue(mc.bundle.bundles[name.safeCalcHash()].name.isEqual(name));
+        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
         assertTrue(mc.bundle.currentBundleName.isEqual(name));
 
-        string memory name2 = mc.bundle.genUniqueBundleName();
+        string memory name2 = mc.bundle.genUniqueName();
         mc.ensureInit();
 
-        assertTrue(mc.bundle.bundles[name2.safeCalcHash()].name.isEmpty());
+        assertTrue(mc.bundle.bundles[name2].name.isEmpty());
         assertTrue(mc.bundle.currentBundleName.isEqual(name));
     }
 
@@ -57,10 +57,10 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         🔗 Use Function
     -----------------------*/
     function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal {
-        Bundle memory bundle = mc.bundle.bundles[bundleName.safeCalcHash()];
+        Bundle memory bundle = mc.bundle.bundles[bundleName];
         assertEq(bundle.name, bundleName);
         assertEq(bundle.facade, address(0));
-        Function memory func = mc.functions.customs[functionName.safeCalcHash()];
+        Function memory func = mc.functions.customs[functionName];
         assertEq(func.name, functionName);
         assertEq(func.selector, selector);
         assertEq(func.implementation, impl);
@@ -69,7 +69,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Success_use() public {
-        string memory bundleName = mc.bundle.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -80,7 +80,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Revert_use_withSameName() public {
-        string memory bundleName = mc.bundle.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -92,7 +92,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_Success_use_withDifferentName() public {
-        string memory bundleName = mc.bundle.genUniqueBundleName();
+        string memory bundleName = mc.bundle.genUniqueName();
 
         string memory functionName = "DummyFunction";
         string memory functionName2 = "DummyFunction2";

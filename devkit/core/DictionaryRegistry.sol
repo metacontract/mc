@@ -14,7 +14,7 @@ import {Inspector} from "devkit/method/inspector/Inspector.sol";
     📘 Dictionary Registry
 ==============================*/
 struct DictionaryRegistry {
-    mapping(bytes32 nameHash => Dictionary) deployed;
+    mapping(string name => Dictionary) deployed;
     Dictionary currentDictionary;
 }
 using DictionaryRegistryLib for DictionaryRegistry global;

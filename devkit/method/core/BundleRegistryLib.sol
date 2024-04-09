@@ -18,6 +18,8 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
 
 import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
+import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+    using MappingAnalyzer for mapping(string => Bundle);
 
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +40,7 @@ library BundleRegistryLib {
     -----------------------*/
     function init(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("init");
-        bundle.bundles[name.safeCalcHash()].safeAssign(name);
+        bundle.bundles[name].safeAssign(name);
         bundle.safeUpdateCurrentBundle(name);
         return bundle.finishProcess(pid);
     }
@@ -71,7 +73,7 @@ library BundleRegistryLib {
     --------------------*/
     function set(BundleRegistry storage bundle, string memory name, address facade) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("set");
-        bundle.bundles[name.safeCalcHash()]
+        bundle.bundles[name]
                     .assertExists()
                     .safeAssign(facade);
         return bundle.finishProcess(pid);
@@ -107,7 +109,7 @@ library BundleRegistryLib {
     ---------------------------------*/
     function findBundle(BundleRegistry storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("findBundle");
-        return bundle.bundles[name.safeCalcHash()].finishProcess(pid);
+        return bundle.bundles[name].finishProcess(pid);
     }
     function findCurrentBundle(BundleRegistry storage bundle) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("findCurrentBundle");
@@ -122,14 +124,8 @@ library BundleRegistryLib {
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
-    function genUniqueBundleName(BundleRegistry storage bundle) internal returns(string memory name) {
-        uint pid = bundle.startProcess("genUniqueBundleName");
-        ScanRange storage range = Config().SCAN_RANGE;
-        for (uint i = range.START; i <= range.END; ++i) {
-            name = Config().DEFAULT_BUNDLE_NAME.toSequential(i);
-            if (bundle.existsBundle(name).isFalse()) return name.recordExecFinish(pid);
-        }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
+    function genUniqueName(BundleRegistry storage bundle) internal returns(string memory name) {
+        return bundle.bundles.genUniqueName();
     }
 
 }

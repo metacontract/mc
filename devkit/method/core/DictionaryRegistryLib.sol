@@ -26,7 +26,6 @@ import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
         🔼 Update Current Context Dictionary
         ♻️ Reset Current Context Dictionary
         🔍 Find Dictionary
-        🏷 Generate Unique Name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library DictionaryRegistryLib {
     /**------------------------
@@ -34,8 +33,7 @@ library DictionaryRegistryLib {
     --------------------------*/
     function add(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         uint pid = dictionaries.startProcess("add");
-        bytes32 nameHash = name.calcHash();
-        dictionaries.deployed[nameHash] = dictionary;
+        dictionaries.deployed[name] = dictionary;
         return dictionaries.finishProcess(pid);
     }
 
@@ -75,33 +73,13 @@ library DictionaryRegistryLib {
     --------------------------*/
     function find(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("find");
-        return dictionaries.deployed[name.safeCalcHash()]
+        return dictionaries.deployed[name]
                             .assertExists()
                             .finishProcessInStorage(pid);
     }
     function findCurrentDictionary(DictionaryRegistry storage dictionaries) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("findCurrentDictionary");
         return dictionaries.currentDictionary.assertExists().finishProcessInStorage(pid);
-    }
-
-
-    /**-----------------------------
-        🏷 Generate Unique Name
-    -------------------------------*/
-    function genUniqueName(DictionaryRegistry storage dictionaries, string memory baseName) internal returns(string memory name) {
-        uint pid = dictionaries.startProcess("genUniqueName");
-        ScanRange memory range = Config().SCAN_RANGE;
-        for (uint i = range.START; i <= range.END; ++i) {
-            name = baseName.toSequential(i);
-            if (dictionaries.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
-        }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
-    }
-    function genUniqueName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        return dictionaries.genUniqueName(Config().DEFAULT_DICTIONARY_NAME);
-    }
-    function genUniqueDuplicatedName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-        return dictionaries.genUniqueName(Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
     }
 
 }

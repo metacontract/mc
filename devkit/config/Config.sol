@@ -22,6 +22,7 @@ struct Configuration {
     string DEFAULT_PROXY_NAME;
     string DEFAULT_PROXY_MOCK_NAME;
     string DEFAULT_BUNDLE_NAME;
+    string DEFAULT_FUNCTION_NAME;
 
     ScanRange SCAN_RANGE;
 }
@@ -47,6 +48,7 @@ library ConfigLib {
         config.DEFAULT_PROXY_NAME = "Proxy";
         config.DEFAULT_PROXY_MOCK_NAME = "MockProxy";
         config.DEFAULT_BUNDLE_NAME = "Bundle";
+        config.DEFAULT_FUNCTION_NAME = "Function";
 
         config.SCAN_RANGE.START = 1;
         config.SCAN_RANGE.END = 5;

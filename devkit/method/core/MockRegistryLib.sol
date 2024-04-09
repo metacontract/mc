@@ -19,9 +19,9 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 
 import {MockRegistry} from "devkit/core/MockRegistry.sol";
-import {Naming} from "devkit/method/naming/Naming.sol";
-    using Naming for mapping(string => Dictionary);
-    using Naming for mapping(string => Proxy);
+import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+    using MappingAnalyzer for mapping(string => Dictionary);
+    using MappingAnalyzer for mapping(string => Proxy);
 
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,9 +63,9 @@ library MockRegistryLib {
     }
 
 
-    /**-------------
+    /**--------------
         🔍 Find
-    ---------------*/
+    ----------------*/
     /*----- Mock Dictionary -----*/
     function findMockDictionary(MockRegistry storage mock, string memory name) internal returns(Dictionary storage) {
         uint pid = mock.startProcess("findMockDictionary");

@@ -25,7 +25,6 @@ import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
         🔼 Update Current Context Proxy
         ♻️ Reset Current Context Proxy
         🔍 Find Proxy
-        🏷 Generate Unique Name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library ProxyRegistryLib {
     /**-------------------
@@ -33,8 +32,7 @@ library ProxyRegistryLib {
     ---------------------*/
     function add(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         uint pid = proxies.startProcess("add");
-        bytes32 nameHash = name.calcHash();
-        proxies.deployed[nameHash] = proxy;
+        proxies.deployed[name] = proxy;
         return proxies.finishProcess(pid);
     }
 
@@ -74,27 +72,12 @@ library ProxyRegistryLib {
     ---------------------*/
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("find");
-        return proxies.deployed[name.safeCalcHash()]
+        return proxies.deployed[name]
                         .assertExists().finishProcessInStorage(pid);
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("findCurrentProxy");
         return proxies.currentProxy.assertExists().finishProcessInStorage(pid);
     }
-
-
-    /**-----------------------------
-        🏷 Generate Unique Name
-    -------------------------------*/
-    function genUniqueName(ProxyRegistry storage proxies) internal returns(string memory name) {
-        uint pid = proxies.startProcess("genUniqueName");
-        ScanRange memory range = Config().SCAN_RANGE;
-        for (uint i = range.START; i <= range.END; ++i) {
-            name = Config().DEFAULT_PROXY_NAME.toSequential(i);
-            if (proxies.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
-        }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
-    }
-
 
 }

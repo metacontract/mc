@@ -35,7 +35,7 @@ library FunctionRegistryLib {
     function safeAddFunction(FunctionRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = functions.startProcess("safeAddFunction");
         check(name.isNotEmpty(), "Empty Name");
-        functions.customs[name.safeCalcHash()]
+        functions.customs[name]
                 .safeAssign(name)
                 .safeAssign(selector)
                 .safeAssign(implementation);
@@ -49,7 +49,7 @@ library FunctionRegistryLib {
     -----------------------------------------------*/
     function safeLoadAndAdd(FunctionRegistry storage functions, string memory envKey, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = functions.startProcess("safeLoadAndAdd");
-        functions.customs[name.safeCalcHash()]
+        functions.customs[name]
                     .loadAndAssignFromEnv(envKey, name, selector);
         functions.safeUpdateCurrentFunction(name);
         return functions.finishProcess(pid);
@@ -81,7 +81,7 @@ library FunctionRegistryLib {
     ---------------------------------*/
     function find(FunctionRegistry storage functions, string memory name) internal returns(Function storage) {
         uint pid = functions.startProcess("findFunction");
-        return functions.customs[name.safeCalcHash()].assertExists().finishProcess(pid);
+        return functions.customs[name].assertExists().finishProcess(pid);
     }
     function findCurrentFunction(FunctionRegistry storage functions) internal returns(Function storage) {
         uint pid = functions.startProcess("findCurrentFunction");

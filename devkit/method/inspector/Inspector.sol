@@ -42,6 +42,10 @@ library Inspector {
         return func;
     }
 
+    function notExists(Function storage func) internal returns(bool) {
+        return func.exists().isFalse();
+    }
+
     function assertExists(Function storage func) internal returns(Function storage) {
         check(func.exists(), "func does not exists");
         return func;
@@ -141,7 +145,7 @@ library Inspector {
         🗂️ Bundle Registry
     =========================*/
     function existsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
-        return bundle.bundles[name.safeCalcHash()].hasName();
+        return bundle.bundles[name].hasName();
     }
     function notExistsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
         return bundle.existsBundle(name).isNot();
@@ -209,10 +213,10 @@ library Inspector {
         🏠 Proxy Registry
     =========================*/
     function existsInDeployed(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.deployed[name.safeCalcHash()].exists();
+        return proxies.deployed[name].exists();
     }
     // function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-    //     return proxies.mocks[name.safeCalcHash()].exists();
+    //     return proxies.mocks[name].exists();
     // }
 
 
@@ -281,9 +285,9 @@ library Inspector {
         📚 Dictionary Registry
     ==============================*/
     function existsInDeployed(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-        return dictionaries.deployed[name.safeCalcHash()].exists();
+        return dictionaries.deployed[name].exists();
     }
     // function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-    //     return dictionaries.mocks[name.safeCalcHash()].exists();
+    //     return dictionaries.mocks[name].exists();
     // }
 }
