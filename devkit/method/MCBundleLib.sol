@@ -78,7 +78,7 @@ library MCBundleLib {
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addFunction");
-            mc.functions.safeAddFunction(name, selector, implementation);
+            mc.functions.insert(name, selector, implementation);
             return mc.recordExecFinish(pid);
         }
         /**-------------------------------------

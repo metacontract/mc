@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Error & Debug
-import {valid} from "devkit/error/Valid.sol";
+import {Valid, valid} from "devkit/error/Valid.sol";
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
@@ -22,39 +22,22 @@ import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     📗 Functions Registry
-        ✨ Add Custom Function
-        🔏 Load and Assign Custom Function from Env
+        🗳️ Insert Custom Function
         🔼 Update Current Context Function
         ♻️ Reset Current Context Function & Bundle
         🔍 Find Function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library FunctionRegistryLib {
-    /**---------------------------
-        ✨ Add Custom Function
-    -----------------------------*/
-    function safeAddFunction(FunctionRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
-        uint pid = functions.startProcess("safeAddFunction");
-        valid(name.isNotEmpty(), "Empty Name");
-        functions.customs[name]
-                .safeAssign(name)
-                .safeAssign(selector)
-                .safeAssign(implementation);
-        functions.safeUpdateCurrentFunction(name);
+    /**------------------------------
+        🗳️ Insert Custom Function
+    --------------------------------*/
+    function insert(FunctionRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
+        uint pid = functions.startProcess("insert");
+        Valid.isNotEmpty(name);
+        functions.customs[name].assign(name, selector, implementation).lock();
+        functions.safeUpdateCurrentFunction(name); // TODO
         return functions.finishProcess(pid);
     }
-
-
-    /**---------------------------------------------
-        🔏 Load and Add Custom Function from Env
-    -----------------------------------------------*/
-    function safeLoadAndAdd(FunctionRegistry storage functions, string memory envKey, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
-        uint pid = functions.startProcess("safeLoadAndAdd");
-        functions.customs[name]
-                    .loadAndAssignFromEnv(envKey, name, selector);
-        functions.safeUpdateCurrentFunction(name);
-        return functions.finishProcess(pid);
-    }
-
 
     /**------------------------------------------------
         🔼 Update Current Context Function
@@ -65,7 +48,6 @@ library FunctionRegistryLib {
         return functions.finishProcess(pid);
     }
 
-
     /**-----------------------------------------------
         ♻️ Reset Current Context Function & Bundle
     -------------------------------------------------*/
@@ -74,7 +56,6 @@ library FunctionRegistryLib {
         delete functions.currentName;
         return functions.finishProcess(pid);
     }
-
 
     /**-------------------------------
         🔍 Find Function

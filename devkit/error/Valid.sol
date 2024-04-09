@@ -11,6 +11,7 @@ import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
+import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
 
 /// @dev like `require`
 function valid(bool condition, string memory errorBody) {
@@ -48,5 +49,9 @@ library Valid {
     }
     function contractAssigned(address addr) internal {
         valid(addr.isContract(), ERR.RQ_CONTRACT);
+    }
+
+    function notLocked(BuildStatus status) internal {
+        valid(status != BuildStatus.Locked, ERR.LOCKED_OBJECT);
     }
 }

@@ -22,6 +22,8 @@ import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.so
 import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 
 import {StdFunctions} from "devkit/core/StdFunctions.sol";
+// Loader
+import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 
 
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,27 +48,33 @@ library StdFunctionsLib {
         /**===== Each Std Function =====*/
         function assignAndLoad_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("assignAndLoad_InitSetAdmin");
-            std.initSetAdmin.safeAssign("InitSetAdmin")
-                            .safeAssign(InitSetAdmin.initSetAdmin.selector)
-                            .loadAndAssignFromEnv()
+            string memory name = "InitSetAdmin";
+            bytes4 selector = InitSetAdmin.initSetAdmin.selector;
+            address implementation = loadAddressFrom(name); // TODO
+            std.initSetAdmin.assign(name, selector, implementation)
+                            // .lock()
                             .dump();
             return std.finishProcess(pid);
         }
 
         function assignAndLoad_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("assignAndLoad_GetDeps");
-            std.getDeps .safeAssign("GetDeps")
-                        .safeAssign(GetDeps.getDeps.selector)
-                        .loadAndAssignFromEnv()
+            string memory name = "GetDeps";
+            bytes4 selector = GetDeps.getDeps.selector;
+            address implementation = loadAddressFrom(name);
+            std.getDeps .assign(name, selector, implementation)
+                        // .lock()
                         .dump();
             return std.finishProcess(pid);
         }
 
         function assignAndLoad_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("assignAndLoad_Clone");
-            std.clone   .safeAssign("Clone")
-                        .safeAssign(Clone.clone.selector)
-                        .loadAndAssignFromEnv()
+            string memory name = "Clone";
+            bytes4 selector = Clone.clone.selector;
+            address implementation = loadAddressFrom(name);
+            std.clone   .assign(name, selector, implementation)
+                        // .lock()
                         .dump();
             return std.finishProcess(pid);
         }
@@ -84,21 +92,21 @@ library StdFunctionsLib {
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (std.initSetAdmin.implementation.isNotContract()) {
-                std.initSetAdmin.safeAssign(address(new InitSetAdmin()));
+                std.initSetAdmin.assignImplementation(address(new InitSetAdmin()));
             }
             return std;
         }
 
         function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (!std.getDeps.implementation.isContract()) {
-                std.getDeps.safeAssign(address(new GetDeps()));
+                std.getDeps.assignImplementation(address(new GetDeps()));
             }
             return std;
         }
 
         function deployIfNotExists_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
             if (!std.clone.implementation.isContract()) {
-                std.clone.safeAssign(address(new Clone()));
+                std.clone.assignImplementation(address(new Clone()));
             }
             return std;
         }
