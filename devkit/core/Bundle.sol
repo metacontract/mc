@@ -9,6 +9,7 @@ import {Parser} from "devkit/method/debug/Parser.sol";
     using Parser for Bundle global;
 import {Inspector} from "devkit/method/inspector/Inspector.sol";
     using Inspector for Bundle global;
+import {TypeSafetyUtils, BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
 
 // Core Type
 import {Function} from "devkit/core/Function.sol";
@@ -24,15 +25,18 @@ struct Bundle {
     string name;
     Function[] functions;
     address facade;
+    BuildStatus buildStatus;
 }
-
-/**~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    🗂️ Core Methods
-        📥 Assign Bundle
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 library BundleLib {
+    /**~~~~~~~~~~~~~~~~~~~~~~
+        📥 Assign Name
+        🧩 Push Function
+        🧩 Push Functions
+        🪟 Assign Facade
+    ~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     /**---------------------------
-        📥 Assign Bundle
+        📥 Assign Name
     -----------------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignName");
@@ -41,6 +45,9 @@ library BundleLib {
         return bundle.finishProcess(pid);
     }
 
+    /**---------------------------
+        📥 Push Function
+    -----------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
         valid(bundle.hasNot(func), "Already added");
@@ -57,6 +64,9 @@ library BundleLib {
         return bundle.finishProcess(pid);
     }
 
+    /**---------------------------
+        📥 Assign Facade
+    -----------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignFacade");
         Valid.isContract(facade);
