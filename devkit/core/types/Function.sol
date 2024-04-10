@@ -76,11 +76,11 @@ library FunctionLib {
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch");
-        Require.isUnassigned(func.name);
+        Require.notLocked(func.status);
         Require.notEmpty(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
-        return func;
+        return func.building().finishProcess(pid);
     }
 
 }

@@ -13,7 +13,6 @@ import {Function} from "devkit/core/types/Function.sol";
 import {Bundle} from "devkit/core/types/Bundle.sol";
 import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
-import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 
 using TypeGuard for TypeStatus global;
 enum TypeStatus { Uninitialized, Building, Built, Locked }
@@ -122,24 +121,4 @@ library TypeGuard {
         stdFunctions.status = TypeStatus.Locked;
         return stdFunctions;
     }
-
-
-    // /**==========================
-    //     🗼 Standard Bundle
-    // ============================*/
-    // function building(StdBundle storage stdBundle) internal returns(StdBundle storage) {
-    //     stdBundle.status.building();
-    //     return stdBundle;
-    // }
-    // function build(StdBundle storage stdBundle) internal returns(StdBundle storage) {
-    //     Require.isComplete(stdBundle.all);
-    //     stdBundle.status = TypeStatus.Built;
-    //     return stdBundle;
-    // }
-    // function lock(StdBundle storage stdBundle) internal returns(StdBundle storage) {
-    //     Require.isBuilt(stdBundle.status);
-    //     stdBundle.status = TypeStatus.Locked;
-    //     return stdBundle;
-    // }
-
 }

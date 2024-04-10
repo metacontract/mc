@@ -39,35 +39,33 @@ struct StdRegistry {
 library StdRegistryLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🟢 Complete Standard Registry
-        🐣 Deploy Standard Functions If Not Exists
-        🧺 Configure Standard Bundles
+        🔧 Configure Standard Bundles
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     function complete(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("complete");
+        Require.notLocked(registry.status);
         registry.functions.complete();
         registry.configureStdBundle();
         return registry.build().lock().finishProcess(pid);
     }
 
     /**----------------------------------
-        🧺 Configure Standard Bundles
+        🔧 Configure Standard Bundles
     ------------------------------------*/
     function configureStdBundle(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("configureStdBundle");
-        Require.notLocked(registry.all.status);
-        return registry .configureStdBundle_AllFunctions()
-                        .finishProcess(pid);
+        return registry.configureStdBundle_All().finishProcess(pid);
     }
-
         /**===== Each Std Bundle =====*/
-        function configureStdBundle_AllFunctions(StdRegistry storage registry) internal returns(StdRegistry storage) {
-            uint pid = registry.startProcess("configureStdBundle_AllFunctions");
-            registry.all .assignName("ALL_FUNCTIONS")
-                    .pushFunction(registry.functions.initSetAdmin)
-                    .pushFunction(registry.functions.getDeps)
-                    .pushFunction(registry.functions.clone)
-                    .assignFacade(address(new StdFacade()))
-                    .build();
+        function configureStdBundle_All(StdRegistry storage registry) internal returns(StdRegistry storage) {
+            uint pid = registry.startProcess("configureStdBundle_All");
+            Require.notLocked(registry.all.status);
+            registry.all.assignName("ALL_STD_FUNCTIONS")
+                        .pushFunction(registry.functions.initSetAdmin)
+                        .pushFunction(registry.functions.getDeps)
+                        .pushFunction(registry.functions.clone)
+                        .assignFacade(address(new StdFacade()))
+                        .build();
             return registry.finishProcess(pid);
         }
 

@@ -47,10 +47,10 @@ library StdFunctionsLib {
         uint pid = stdFunctions.startProcess("complete");
         stdFunctions.fetch();
         stdFunctions.deployIfNotExists();
-        stdFunctions.initSetAdmin.build();
-        stdFunctions.getDeps.build();
-        stdFunctions.clone.build();
-        return stdFunctions.build().finishProcess(pid);
+        stdFunctions.initSetAdmin.build().lock();
+        stdFunctions.getDeps.build().lock();
+        stdFunctions.clone.build().lock();
+        return stdFunctions.build().lock().finishProcess(pid);
     }
 
     /**-----------------------------------------
@@ -106,21 +106,21 @@ library StdFunctionsLib {
     }
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (std.initSetAdmin.implementation.isNotContract()) {
+            if (std.initSetAdmin.notExists()) {
                 std.initSetAdmin.assignImplementation(address(new InitSetAdmin()));
             }
             return std;
         }
 
         function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (!std.getDeps.implementation.isContract()) {
+            if (std.getDeps.notExists()) {
                 std.getDeps.assignImplementation(address(new GetDeps()));
             }
             return std;
         }
 
         function deployIfNotExists_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (!std.clone.implementation.isContract()) {
+            if (std.clone.notExists()) {
                 std.clone.assignImplementation(address(new Clone()));
             }
             return std;

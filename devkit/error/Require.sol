@@ -25,7 +25,6 @@ import {Dictionary, DictionaryKind} from "devkit/core/types/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
 import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
-import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 
 
 library Require {
@@ -201,8 +200,5 @@ library Require {
     }
     function isComplete(StdFunctions storage stdFunctions) internal {
         validate(stdFunctions.status.isComplete(), "Registry Not Complete");
-    }
-    function isComplete(StdBundle storage stdBundle) internal {
-        validate(stdBundle.status.isComplete(), "Registry Not Complete");
     }
 }
