@@ -41,12 +41,14 @@ library ProxyRegistryLib {
     /**---------------------
         🗳️ Insert Proxy
     -----------------------*/
-    function insert(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
+    function insert(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
         uint pid = registry.startProcess("insert");
         Require.notEmpty(name);
         Require.notEmpty(proxy);
+        Require.notExists(registry, name);
         registry.proxies[name] = proxy;
-        return registry.finishProcess(pid);
+        registry.current.update(name);
+        return registry.findCurrent().build().lock().finishProcessInStorage(pid);
     }
 
 
@@ -56,6 +58,7 @@ library ProxyRegistryLib {
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
         uint pid = registry.startProcess("find");
         Require.notEmpty(name);
+        Require.isComplete(registry, name);
         Proxy storage proxy = registry.proxies[name];
         Require.exists(proxy);
         return proxy.finishProcessInStorage(pid);

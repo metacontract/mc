@@ -166,4 +166,7 @@ library TypeGuard {
         proxy.status = TypeStatus.Locked;
         return proxy;
     }
+    function isComplete(Proxy storage proxy) internal returns(bool) {
+        return proxy.status.isComplete();
+    }
 }

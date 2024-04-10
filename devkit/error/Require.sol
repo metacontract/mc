@@ -124,6 +124,14 @@ library Require {
         return kind;
     }
 
+    function notExists(ProxyRegistry storage registry, string memory name) internal {
+        validate(registry.proxies[name].notExists(), "Proxy Already Exists");
+    }
+    function isComplete(ProxyRegistry storage registry, string memory name) internal {
+        validate(registry.proxies[name].isComplete(), "Proxy Not Complete");
+    }
+
+
     /**====================
         📚 Dictionary
     ======================*/

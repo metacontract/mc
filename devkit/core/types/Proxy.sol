@@ -43,7 +43,7 @@ library ProxyLib {
     -----------------------*/
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
-        Require.isNotEmpty(dictionary);
+        Require.notEmpty(dictionary);
         return Proxy({
             addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
             kind: ProxyKind.Verifiable,
