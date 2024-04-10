@@ -40,7 +40,7 @@ library MCDeployLib {
         uint pid = mc.recordExecStart("deploy");
         // uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
         Dictionary memory dictionary = mc.deployDictionary(name, bundleInfo, owner);
-        mc.deployProxy(name, dictionary, initData);
+        mc.proxy.deploy(name, dictionary, initData);
         return mc.recordExecFinish(pid);
         // TODO gen and set facade
     }

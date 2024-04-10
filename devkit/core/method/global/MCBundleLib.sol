@@ -25,8 +25,6 @@ import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol"
         🪟 Use Facade
 ************************************************/
 library MCBundleLib {
-    string constant LIB_NAME = "MCBundleLib";
-
 
     /**---------------------------
         🌱 Init Custom Bundle
@@ -36,9 +34,8 @@ library MCBundleLib {
         mc.bundle.init(name);
         return mc.recordExecFinish(pid);
     }
-
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.init(mc.bundle.genUniqueName());
+        return init(mc, mc.bundle.genUniqueName());
     }
 
     //

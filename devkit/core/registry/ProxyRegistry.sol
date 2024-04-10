@@ -12,7 +12,8 @@ import {Require} from "devkit/error/Require.sol";
 // Context
 import {Current} from "devkit/core/method/context/Current.sol";
 // Core Type
-import {Proxy} from "devkit/core/types/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/core/types/Proxy.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
 
 
 /**=======================
@@ -24,6 +25,17 @@ struct ProxyRegistry {
     Current current;
 }
 library ProxyRegistryLib {
+
+    /**---------------------
+        🚀 Deploy Proxy
+    -----------------------*/
+    function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
+        uint pid = registry.startProcess("deploy");
+        Require.isNotEmpty(dictionary);
+        registry.insert(name, ProxyLib.deploy(dictionary, initData));
+        return registry.findCurrent().finishProcessInStorage(pid);
+    }
+
 
     /**---------------------
         🗳️ Insert Proxy
