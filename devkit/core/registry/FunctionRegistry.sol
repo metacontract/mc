@@ -22,16 +22,10 @@ struct FunctionRegistry {
     Current current;
 }
 library FunctionRegistryLib {
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🗳️ Insert Custom Function
-        🔼 Update Current Context Function
-        ♻️ Reset Current Context Function & Bundle
-        🔍 Find Function
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    /**------------------------------
-        🗳️ Insert Custom Function
-    --------------------------------*/
+    /**-------------------------
+        🗳️ Insert Function
+    ---------------------------*/
     function insert(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = registry.startProcess("insert");
         Require.notEmpty(name);
@@ -41,9 +35,9 @@ library FunctionRegistryLib {
     }
 
 
-    /**-------------------------------
+    /**----------------------
         🔍 Find Function
-    ---------------------------------*/
+    ------------------------*/
     function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage) {
         uint pid = registry.startProcess("find");
         Require.notEmpty(name);

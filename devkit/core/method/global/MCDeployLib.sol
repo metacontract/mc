@@ -106,22 +106,21 @@ library MCDeployLib {
         Dictionary memory dictionary = DictionaryLib  .deploy(owner)
                                                         .set(bundleInfo)
                                                         .upgradeFacade(bundleInfo.facade);
-        mc.dictionary   .safeAdd(name, dictionary)
-                        .safeUpdate(dictionary);
+        mc.dictionary.insert(name, dictionary);
         return dictionary.finishProcess(pid);
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.deployed.genUniqueName(), mc.bundle.findCurrent(), Config().defaultOwner());
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.deployed.genUniqueName(), bundleInfo, Config().defaultOwner());
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.deployed.genUniqueName(), mc.bundle.findCurrent(), owner);
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), owner);
     }
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, bundleInfo, Config().defaultOwner());
@@ -130,7 +129,7 @@ library MCDeployLib {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), owner);
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.deployed.genUniqueName(), bundleInfo, owner);
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, owner);
     }
 
 
@@ -140,18 +139,17 @@ library MCDeployLib {
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("duplicateDictionary", Params.append(name, targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
-        mc.dictionary   .safeAdd(name, newDictionary)
-                        .safeUpdate(newDictionary);
+        mc.dictionary.insert(name, newDictionary);
         return mc.recordExecFinish(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.duplicateDictionary(name, mc.findCurrentDictionary());
     }
     function duplicateDictionary(MCDevKit storage mc, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(mc.dictionary.deployed.genUniqueDuplicatedName(), targetDictionary);
+        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), targetDictionary);
     }
     function duplicateDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(mc.dictionary.deployed.genUniqueDuplicatedName(), mc.findCurrentDictionary());
+        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), mc.findCurrentDictionary());
     }
 
 }

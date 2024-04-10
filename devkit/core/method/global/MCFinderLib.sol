@@ -70,7 +70,7 @@ library MCFinderLib {
         📚 Find Dictionary
     --------------------------*/
     function findCurrentDictionary(MCDevKit storage mc) internal returns(Dictionary storage) {
-        return mc.dictionary.findCurrentDictionary();
+        return mc.dictionary.findCurrent();
     }
     function findDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
         return mc.dictionary.find(name);

@@ -70,8 +70,7 @@ library MCTestLib {
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("createMockDictionary", Params.append(name, owner));
         Dictionary memory mockDictionary = DictionaryLib.createMockDictionary(owner, functions);
-        mc.dictionary   .safeAdd(name, mockDictionary)
-                        .safeUpdate(mockDictionary);
+        mc.dictionary.insert(name, mockDictionary);
         return mc.recordExecFinish(pid);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Bundle storage bundleInfo) internal returns(MCDevKit storage) {

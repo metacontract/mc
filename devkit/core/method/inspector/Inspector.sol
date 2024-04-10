@@ -201,8 +201,8 @@ library Inspector {
     /**============================
         📚 Dictionary Registry
     ==============================*/
-    function existsInDeployed(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-        return dictionaries.deployed[name].exists();
+    function existsInDeployed(DictionaryRegistry storage registry, string memory name) internal returns(bool) {
+        return registry.dictionaries[name].exists();
     }
     // function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
     //     return dictionaries.mocks[name].exists();
