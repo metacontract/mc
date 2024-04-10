@@ -91,7 +91,7 @@ library MCBundleLib {
             return mc.recordExecFinish(pid);
         }
         function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
-            mc.bundle.findCurrent().pushFunction(mc.findCurrentFunction());
+            mc.bundle.findCurrent().pushFunction(mc.functions.findCurrent());
             return mc;
         }
 

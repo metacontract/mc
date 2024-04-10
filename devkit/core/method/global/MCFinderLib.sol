@@ -45,10 +45,10 @@ library MCFinderLib {
         uint pid = mc.recordExecStart("findFunction");
         return mc.functions.find(name);
     }
-    function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
-        uint pid = mc.recordExecStart("findCurrentFunction", "");
-        return mc.functions.findCurrentFunction();
-    }
+    // function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
+    //     uint pid = mc.recordExecStart("findCurrentFunction", "");
+    //     return mc.functions.findCurrentFunction();
+    // }
 
     /**-------------------
         🏠 Find Proxy

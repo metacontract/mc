@@ -60,12 +60,12 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         Bundle memory bundle = mc.bundle.bundles[bundleName];
         assertEq(bundle.name, bundleName);
         assertEq(bundle.facade, address(0));
-        Function memory func = mc.functions.customs[functionName];
+        Function memory func = mc.functions.functions[functionName];
         assertEq(func.name, functionName);
         assertEq(func.selector, selector);
         assertEq(func.implementation, impl);
         assertTrue(bundle.functions[functionsIndex].isEqual(func));
-        assertEq(mc.functions.currentName, functionName);
+        assertEq(mc.functions.current.name, functionName);
     }
 
     function test_Success_use() public {

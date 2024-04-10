@@ -16,9 +16,9 @@ library MCContextLib {
     -------------------------------*/
     function reset(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("reset");
-        mc.dictionary.reset();
-        mc.functions.reset();
-        mc.proxy.reset();
+        mc.dictionary.current.reset();
+        mc.functions.current.reset();
+        // mc.proxy.current.reset();
         return mc.recordExecFinish(pid);
     }
 

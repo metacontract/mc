@@ -8,6 +8,8 @@ import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for DictionaryRegistry global;
 
+// Context
+import {Current} from "devkit/core/method/context/Current.sol";
 // Core Type
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
 import {Require} from "devkit/error/Require.sol";
@@ -19,13 +21,12 @@ import {Require} from "devkit/error/Require.sol";
 using DictionaryRegistryLib for DictionaryRegistry global;
 struct DictionaryRegistry {
     mapping(string name => Dictionary) deployed;
+    Current current;
     Dictionary currentDictionary;
 }
 library DictionaryRegistryLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         📥 Add Dictionary
-        🔼 Update Current Context Dictionary
-        ♻️ Reset Current Context Dictionary
         🔍 Find Dictionary
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 

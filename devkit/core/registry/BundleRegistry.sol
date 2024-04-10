@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-/**--------------------------
-    Apply Support Methods
-----------------------------*/
+/**---------------------
+    Support Methods
+-----------------------*/
 import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for BundleRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
@@ -53,15 +53,15 @@ library BundleRegistryLib {
     /**--------------------
         🔍 Find Bundle
     ----------------------*/
-    function find(BundleRegistry storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("find");
-        return bundle.bundles[name].finishProcess(pid);
+    function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
+        uint pid = registry.startProcess("find");
+        return registry.bundles[name].finishProcess(pid);
     }
-    function findCurrent(BundleRegistry storage bundle) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("findCurrent");
-        string memory name = bundle.current.name;
+    function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
+        uint pid = registry.startProcess("findCurrent");
+        string memory name = registry.current.name;
         Require.notEmpty(name);
-        return bundle.find(name).finishProcess(pid);
+        return registry.find(name).finishProcess(pid);
     }
 
     /**-----------------------------
