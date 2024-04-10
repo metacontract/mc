@@ -105,7 +105,7 @@ library Inspector {
     }
 
     function existsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
-        return bundle.currentBundleName.isNotEmpty();
+        return bundle.current.name.isNotEmpty();
     }
     function notExistsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
         return bundle.existsCurrentBundle().isNot();

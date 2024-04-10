@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
+import {Require} from "devkit/error/Require.sol";
 import {validate} from "devkit/error/Validate.sol";
 import {ERR} from "devkit/error/Error.sol";
 // Utils
@@ -32,7 +33,7 @@ library MCBundleLib {
     -----------------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("init", Params.append(name));
-        mc.bundle.safeInit(name);
+        mc.bundle.init(name);
         return mc.recordExecFinish(pid);
     }
 
@@ -86,11 +87,11 @@ library MCBundleLib {
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
             uint pid = mc.recordExecStart("addToBundle");
-            mc.bundle.addToBundle(functionInfo);
+            mc.bundle.findCurrent().pushFunction(functionInfo);
             return mc.recordExecFinish(pid);
         }
         function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
-            mc.bundle.addToBundle(mc.findCurrentFunction());
+            mc.bundle.findCurrent().pushFunction(mc.findCurrentFunction());
             return mc;
         }
 
@@ -101,7 +102,7 @@ library MCBundleLib {
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
         validate(mc.bundle.existsCurrentBundle(), ERR.NOT_INIT);
-        mc.bundle.set(mc.bundle.findCurrentBundleName(), facade);
+        mc.bundle.findCurrent().assignFacade(facade);
         return mc.recordExecFinish(pid);
     }
 

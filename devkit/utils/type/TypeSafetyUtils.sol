@@ -8,7 +8,7 @@ pragma solidity ^0.8.24;
 // import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
 //     using Bytes4Utils for bytes4;
 
-enum BuildStatus { Building, Built, Locked }
+enum BuildStatus { Uninitialized, Building, Built, Locked }
 
 library TypeSafetyUtils {
 

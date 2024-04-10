@@ -22,7 +22,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.init(name);
 
         assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.current.name.isEqual(name));
     }
 
     // verify genUniqueBundleName
@@ -34,7 +34,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.ensureInit();
 
         assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.current.name.isEqual(name));
     }
 
     function test_Success_ensureInit_afterInit() public {
@@ -43,13 +43,13 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.init();
 
         assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.current.name.isEqual(name));
 
         string memory name2 = mc.bundle.genUniqueName();
         mc.ensureInit();
 
         assertTrue(mc.bundle.bundles[name2].name.isEmpty());
-        assertTrue(mc.bundle.currentBundleName.isEqual(name));
+        assertTrue(mc.bundle.current.name.isEqual(name));
     }
 
 

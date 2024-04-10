@@ -70,8 +70,11 @@ library Require {
         return bundle;
     }
     function notExists(Bundle storage bundle) internal returns(Bundle storage) {
-        validate(bundle.notExists(), "Bundle Info Already Exists");
+        validate(bundle.notExists(), "Bundle Already Exists");
         return bundle;
+    }
+    function isUnassigned(Bundle storage bundle) internal {
+        validate(bundle.hasNotName(), "Bundle Already Assigned.");
     }
 
     /**=======================

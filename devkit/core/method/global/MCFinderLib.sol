@@ -31,12 +31,12 @@ library MCFinderLib {
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(Bundle storage) {
-        return mc.bundle.findBundle(name);
+        return mc.bundle.find(name);
     }
-    function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
-        uint pid = mc.recordExecStart("findCurrentBundleName", "");
-        return mc.bundle.findCurrentBundleName();
-    }
+    // function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
+    //     uint pid = mc.recordExecStart("findCurrentBundleName", "");
+    //     return mc.bundle.findCurrentBundleName();
+    // }
 
     /**----------------------
         🧩 Find Function
