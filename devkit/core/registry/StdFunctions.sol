@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
+/**---------------------
+    Support Methods
+-----------------------*/
+import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
+    using ProcessLib for StdFunctions global;
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+    using TypeGuard for StdFunctions global;
+import {Require} from "devkit/error/Require.sol";
 
 // Core Types
 import {Function} from "devkit/core/types/Function.sol";
-import {Bundle} from "devkit/core/types/Bundle.sol";
-// Support Method
-import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
-    using ProcessLib for StdFunctions global;
 // MC Std
 import {Clone} from "mc-std/functions/Clone.sol";
 import {GetDeps} from "mc-std/functions/GetDeps.sol";
@@ -14,84 +18,92 @@ import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
 import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
 import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
-// Loader
-import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 // Utils
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 
 
 /**==========================
-    🏛 Standard Functions
+    🏰 Standard Functions
 ============================*/
 using StdFunctionsLib for StdFunctions global;
 struct StdFunctions {
     Function initSetAdmin;
     Function getDeps;
     Function clone;
-    Bundle all;
+    TypeStatus status;
 }
 library StdFunctionsLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🔏 Assign and Load Standard Functions
-        🐣 Deploy Standard Functions If Not Exists
-        🧺 Configure Standard Bundles
+        🟢 Complete Standard Functions
+        📨 Fetch Standard Functions from Env
+        🚀 Deploy Standard Functions If Not Exists
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    /**------------------------------------------
-        🔏 Assign and Load Standard Functions
-    --------------------------------------------*/
-    function assignAndLoad(StdFunctions storage std) internal returns(StdFunctions storage) {
-        uint pid = std.startProcess("assignAndLoad");
-        return std  .assignAndLoad_InitSetAdmin()
-                    .assignAndLoad_GetDeps()
-                    .assignAndLoad_Clone()
-                    .finishProcess(pid);
+    /**------------------------------------
+        🟢 Complete Standard Functions
+    --------------------------------------*/
+    function complete(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+        uint pid = stdFunctions.startProcess("complete");
+        stdFunctions.fetch();
+        stdFunctions.deployIfNotExists();
+        stdFunctions.initSetAdmin.build();
+        stdFunctions.getDeps.build();
+        stdFunctions.clone.build();
+        stdFunctions.build();
+        return stdFunctions.finishProcess(pid);
+    }
+
+    /**-----------------------------------------
+        📨 Fetch Standard Functions from Env
+    -------------------------------------------*/
+    function fetch(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+        uint pid = stdFunctions.startProcess("fetch");
+        return stdFunctions .fetch_InitSetAdmin()
+                            .fetch_GetDeps()
+                            .fetch_Clone()
+                            .finishProcess(pid);
     }
 
         /**===== Each Std Function =====*/
-        function assignAndLoad_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("assignAndLoad_InitSetAdmin");
-            string memory name = "InitSetAdmin";
-            bytes4 selector = InitSetAdmin.initSetAdmin.selector;
-            address implementation = loadAddressFrom(name); // TODO
-            std.initSetAdmin.assign(name, selector, implementation)
-                            // .lock()
-                            .dump();
-            return std.finishProcess(pid);
+        function fetch_InitSetAdmin(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+            uint pid = stdFunctions.startProcess("fetch_InitSetAdmin");
+            Require.notLocked(stdFunctions.initSetAdmin.status);
+            stdFunctions.initSetAdmin   .fetch("InitSetAdmin")
+                                        .assignSelector(InitSetAdmin.initSetAdmin.selector)
+                                        .dump();
+            return stdFunctions.finishProcess(pid);
         }
 
-        function assignAndLoad_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("assignAndLoad_GetDeps");
-            string memory name = "GetDeps";
-            bytes4 selector = GetDeps.getDeps.selector;
-            address implementation = loadAddressFrom(name);
-            std.getDeps .assign(name, selector, implementation)
-                        // .lock()
-                        .dump();
-            return std.finishProcess(pid);
+        function fetch_GetDeps(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+            uint pid = stdFunctions.startProcess("fetch_GetDeps");
+            Require.notLocked(stdFunctions.getDeps.status);
+            stdFunctions.getDeps.fetch("GetDeps")
+                                .assignSelector(GetDeps.getDeps.selector)
+                                .dump();
+            return stdFunctions.finishProcess(pid);
         }
 
-        function assignAndLoad_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("assignAndLoad_Clone");
-            string memory name = "Clone";
-            bytes4 selector = Clone.clone.selector;
-            address implementation = loadAddressFrom(name);
-            std.clone   .assign(name, selector, implementation)
-                        // .lock()
-                        .dump();
-            return std.finishProcess(pid);
+        function fetch_Clone(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+            uint pid = stdFunctions.startProcess("fetch_Clone");
+            Require.notLocked(stdFunctions.clone.status);
+            stdFunctions.clone  .fetch("Clone")
+                                .assignSelector(Clone.clone.selector)
+                                .dump();
+            return stdFunctions.finishProcess(pid);
         }
 
 
     /**-----------------------------------------------
-        🐣 Deploy Standard Functions If Not Exists
+        🚀 Deploy Standard Functions If Not Exists
         TODO versioning
     -------------------------------------------------*/
     function deployIfNotExists(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("deployIfNotExists");
         return std  .deployIfNotExists_InitSetAdmin()
                     .deployIfNotExists_GetDeps()
-                    .deployIfNotExists_Clone();
+                    .deployIfNotExists_Clone()
+                    .finishProcess(pid);
     }
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
@@ -114,37 +126,5 @@ library StdFunctionsLib {
             }
             return std;
         }
-
-
-    /**----------------------------------
-        🧺 Configure Standard Bundles
-    ------------------------------------*/
-    function configureStdBundle(StdFunctions storage std) internal returns(StdFunctions storage) {
-        uint pid = std.startProcess("configureStdBundle");
-        return std  .configureStdBundle_AllFunctions()
-                    .finishProcess(pid);
-    }
-
-        /**===== Each Std Bundle =====*/
-        function configureStdBundle_AllFunctions(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("configureStdBundle_AllFunctions");
-            std.all .assignName("ALL_FUNCTIONS")
-                    .pushFunction(std.initSetAdmin)
-                    .pushFunction(std.getDeps)
-                    .pushFunction(std.clone)
-                    .assignFacade(address(new StdFacade()));
-            return std.finishProcess(pid);
-        }
-
-}
-
-
-/****************************************************
-    🧩 Std Ops Primitive Utils for Arguments
-*****************************************************/
-library StdFunctionsArgs {
-    function initSetAdminBytes(address admin) internal view returns(bytes memory) {
-        return abi.encodeCall(InitSetAdmin.initSetAdmin, admin);
-    }
 
 }

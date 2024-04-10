@@ -29,7 +29,7 @@ library FunctionRegistryLib {
     function insert(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = registry.startProcess("insert");
         Require.notEmpty(name);
-        registry.functions[name].assign(name, selector, implementation).lock();
+        registry.functions[name].assign(name, selector, implementation).build();
         registry.current.update(name);
         return registry.finishProcess(pid);
     }

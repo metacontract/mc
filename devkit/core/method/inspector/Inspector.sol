@@ -47,12 +47,12 @@ library Inspector {
         return func.exists().isFalse();
     }
 
-    function isComplete(Function storage func) internal returns(bool) {
-        return  func.name.isNotEmpty() &&
-                func.selector.isNotEmpty() &&
-                func.implementation.isContract();
-        // return func.buildStatus == BuildStatus.Built;
-    }
+    // function isComplete(Function storage func) internal returns(bool) {
+    //     return  func.name.isNotEmpty() &&
+    //             func.selector.isNotEmpty() &&
+    //             func.implementation.isContract();
+    //     // return func.buildStatus == BuildStatus.Built;
+    // }
 
     function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));

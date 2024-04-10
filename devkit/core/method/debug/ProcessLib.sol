@@ -7,7 +7,9 @@ import {Function} from "devkit/core/types/Function.sol";
 import {FunctionRegistry} from "devkit/core/registry/FunctionRegistry.sol";
 import {Bundle} from "devkit/core/types/Bundle.sol";
 import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
+import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
+import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 import {Proxy} from "devkit/core/types/Proxy.sol";
 import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
@@ -87,8 +89,24 @@ library ProcessLib {
     }
 
 
+    /**-------------------------
+        🏛 Standard Registry
+    ---------------------------*/
+    function startProcess(StdRegistry storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("StdRegistryLib", name, params);
+    }
+    function startProcess(StdRegistry storage std, string memory name) internal returns(uint) {
+        return std.startProcess(name, "");
+    }
+
+    function finishProcess(StdRegistry storage std, uint pid) internal returns(StdRegistry storage) {
+        Debug.recordExecFinish(pid);
+        return std;
+    }
+
+
     /**--------------------------
-        🏛 Standard Functions
+        🏰 Standard Functions
     ----------------------------*/
     function startProcess(StdFunctions storage, string memory name, string memory params) internal returns(uint) {
         return Debug.recordExecStart("StdFunctionsLib", name, params);
@@ -98,6 +116,22 @@ library ProcessLib {
     }
 
     function finishProcess(StdFunctions storage std, uint pid) internal returns(StdFunctions storage) {
+        Debug.recordExecFinish(pid);
+        return std;
+    }
+
+
+    /**------------------------
+        🗼 Standard Bundle
+    --------------------------*/
+    function startProcess(StdBundle storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("StdRegistryLib", name, params);
+    }
+    function startProcess(StdBundle storage std, string memory name) internal returns(uint) {
+        return std.startProcess(name, "");
+    }
+
+    function finishProcess(StdBundle storage std, uint pid) internal returns(StdBundle storage) {
         Debug.recordExecFinish(pid);
         return std;
     }

@@ -9,7 +9,7 @@ contract DeployStdDictionary is MCScriptWithoutSetup {
     using DeployLib for MCDevKit;
 
     function setUp() public {
-        mc.std.assignAndLoad();
+        mc.std.functions.fetch();
     }
 
     function run() public startBroadcastWith("DEPLOYER_PRIV_KEY") {

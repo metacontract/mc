@@ -12,7 +12,9 @@ import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
-import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
+import {UintUtils} from "devkit/utils/UintUtils.sol";
+    using UintUtils for uint256;
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
 // Core Types
 import {Function} from "devkit/core/types/Function.sol";
 import {Bundle} from "devkit/core/types/Bundle.sol";
@@ -24,6 +26,21 @@ import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
 
 
 library Require {
+    /**
+        Type Guard
+     */
+    function isBuilt(TypeStatus status) internal {
+        validate(status.isBuilt(), "Not Built Yet");
+    }
+
+    function notZero(uint256 num) internal {
+        validate(num.isNotZero(), "Zero Number");
+    }
+
+    function assigned(string memory str) internal {
+        validate(str.isNotEmpty(), "Not Assigned");
+    }
+
     /**==================
         🧩 Function
     ====================*/
@@ -53,8 +70,8 @@ library Require {
     function implIsContract(Function storage func) internal {
         validate(func.implementation.isContract(), "Implementation Not Contract");
     }
-    function Complete(Function storage func) internal {
-        validate(func.isComplete(), "Function Info Not Complete");
+    function isComplete(Function storage func) internal {
+        validate(func.isComplete(), "Function Not Complete");
     }
 
 
@@ -75,6 +92,9 @@ library Require {
     }
     function isUnassigned(Bundle storage bundle) internal {
         validate(bundle.hasNotName(), "Bundle Already Assigned.");
+    }
+    function hasNot(Bundle storage bundle, Function storage func) internal {
+        validate(bundle.hasNot(func), "Bundle has same Function");
     }
 
     /**=======================
@@ -157,8 +177,8 @@ library Require {
         validate(addr.isContract(), ERR.RQ_CONTRACT);
     }
 
-    function notLocked(BuildStatus status) internal {
-        validate(status != BuildStatus.Locked, ERR.LOCKED_OBJECT);
+    function notLocked(TypeStatus status) internal {
+        validate(status != TypeStatus.Locked, ERR.LOCKED_OBJECT);
     }
 
     function isNotEmpty(Dictionary memory dictionary) internal {

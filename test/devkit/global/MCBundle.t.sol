@@ -87,7 +87,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
         mc.use(functionName, selector, impl);
 
-        vm.expectRevert(ERR.message(ERR.LOCKED_OBJECT).toBytes());
+        vm.expectRevert(ERR.message("Bundle has same Function").toBytes()); // TODO
         mc.use(functionName, selector, impl);
     }
 

@@ -12,7 +12,7 @@ import {Params} from "devkit/debug/Params.sol";
 import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
 //  functions
 import {Bundle} from "devkit/core/types/Bundle.sol";
-import {StdFunctionsArgs} from "devkit/core/registry/StdFunctions.sol";
+import {StdFunctionsArgs} from "devkit/core/registry/StdRegistry.sol";
     using StdFunctionsArgs for address;
 //  proxy
 import {Proxy, ProxyLib} from "devkit/core/types/Proxy.sol";

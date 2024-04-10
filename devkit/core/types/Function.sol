@@ -11,8 +11,8 @@ import {Dumper} from "devkit/core/method/debug/Dumper.sol";
     using Dumper for Function global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for Function global;
-import {TypeSafetyUtils, BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
-    using TypeSafetyUtils for Function global;
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+    using TypeGuard for Function global;
 // Validation
 import {Require} from "devkit/error/Require.sol";
 // Loader
@@ -27,107 +27,60 @@ struct Function { /// @dev Function may be different depending on the op version
     string name;
     bytes4 selector;
     address implementation;
-    BuildStatus buildStatus;
+    TypeStatus status;
 }
 library FunctionLib {
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🌈 Assign
-        📛 Assign Name
-        🎯 Assign Selector
-        🔌 Assign Implementation
-        👷‍♂️ Build
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
     /**---------------
         🌈 Assign
     -----------------*/
     function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
+        uint pid = func.startProcess("assign");
         func.assignName(name);
         func.assignSelector(selector);
         func.assignImplementation(implementation);
-        return func;
+        return func.finishProcess(pid);
     }
 
     /**--------------------
         📛 Assign Name
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
-        Require.notLocked(func.buildStatus);
+        uint pid = func.startProcess("assignName");
+        Require.notLocked(func.status);
         func.name = name;
-        func.asBuilding();
-        return func;
+        return func.building().finishProcess(pid);
     }
 
     /**------------------------
         🎯 Assign Selector
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
-        Require.notLocked(func.buildStatus);
+        uint pid = func.startProcess("assignSelector");
+        Require.notLocked(func.status);
         func.selector = selector;
-        func.asBuilding();
-        return func;
+        return func.building().finishProcess(pid);
     }
 
     /**------------------------------
-        🔌 Assign Implementation
+        🎨 Assign Implementation
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
-        Require.notLocked(func.buildStatus);
+        uint pid = func.startProcess("assignImplementation");
+        Require.notLocked(func.status);
         func.implementation = implementation;
-        func.asBuilding();
-        return func;
+        return func.building().finishProcess(pid);
     }
 
-    /**--------------
-        👷‍♂️ Build
-    ----------------*/
-    function asBuilding(Function storage func) internal returns(Function storage) {
-        func.buildStatus = BuildStatus.Building;
+    /**-----------------------
+        📨 Fetch Function
+    -------------------------*/
+    function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
+        uint pid = func.startProcess("fetch");
+        Require.isUnassigned(func.name);
+        Require.notEmpty(envKey);
+        func.assignName(envKey);
+        func.assignImplementation(loadAddressFrom(envKey));
         return func;
     }
-    function build(Function storage func) internal returns(Function storage) {
-        // TODO
-        Require.assigned(func.selector);
-        Require.contractAssigned(func.implementation);
-        func.buildStatus = BuildStatus.Built;
-        return func;
-    }
-    function lock(Function storage func) internal returns(Function storage) {
-        func.buildStatus = BuildStatus.Locked;
-        return func;
-    }
-
-
-    // function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
-    //     uint pid = func.startProcess("fetch");
-    //     Require.isUnassigned(func.name);
-    //     Require.isNotEmpty(envKey);
-    //     return func;
-    // }
-    // function fetchAndAssign(Function storage func, string memory envKey, bytes4 selector) internal returns(Function storage) {
-    //     uint pid = func.startProcess("fetchAndAssign");
-    //     func.assign(envKey, selector, loadAddressFrom(envKey));
-    //     return func.finishProcess(pid);
-    // }
-
-    // function loadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
-    //     uint pid = func.startProcess("loadAndAssignFromEnv");
-    //     return func .assign(name)
-    //                 .assign(selector)
-    //                 .assign(loadAddressFrom(envKey))
-    //                 .finishProcess(pid);
-    // }
-    // function loadAndAssignFromEnv(Function storage func) internal returns(Function storage) {
-    //     Require.isNotEmpty(func.name);
-    //     Require.isNotEmpty(func.selector);
-    //     return func.loadAndAssignFromEnv(func.name, func.name, func.selector);
-    // }
-    // function safeLoadAndAssignFromEnv(Function storage func, string memory envKey, string memory name, bytes4 selector) internal returns(Function storage) {
-    //     uint pid = func.startProcess("safeLoadAndAssignFromEnv");
-    //     Require.isNotEmpty(envKey);
-    //     Require.isNotEmpty(name);
-    //     Require.isNotEmpty(selector);
-    //     return func.loadAndAssignFromEnv(envKey, name, selector).finishProcess(pid);
-    // }
 
 }

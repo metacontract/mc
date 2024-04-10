@@ -37,7 +37,7 @@ function Config() pure returns(Configuration storage ref) {
 \================*/
 library ConfigLib {
     function load(Configuration storage config) internal {
-        config.DEBUG_MODE = false;
+        config.DEBUG_MODE = true;
         config.DEFAULT_LOG_LEVEL = LogLevel.Warn;
 
         config.SETUP_STD_FUNCS = true;
