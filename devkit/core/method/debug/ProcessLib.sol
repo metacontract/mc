@@ -16,6 +16,9 @@ import {MockRegistry} from "devkit/core/registry/MockRegistry.sol";
 import {Current} from "devkit/core/method/context/Current.sol";
 
 
+/**=================
+    ⛓️ Process
+===================*/
 library ProcessLib {
     function finishProcess(uint pid) internal {
         Debug.recordExecFinish(pid);
