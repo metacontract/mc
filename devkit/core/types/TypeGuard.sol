@@ -143,6 +143,9 @@ library TypeGuard {
         dictionary.status = TypeStatus.Locked;
         return dictionary;
     }
+    function isComplete(Dictionary storage dictionary) internal returns(bool) {
+        return dictionary.status.isComplete();
+    }
 
 
     /**===============

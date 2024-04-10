@@ -50,7 +50,7 @@ library DictionaryLib {
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("deploy");
-        Require.isNotZero(owner);
+        Require.notZero(owner);
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return Dictionary({
             addr: address(new DictionaryEtherscan(owner)),

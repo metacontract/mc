@@ -151,6 +151,13 @@ library Require {
         validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
     }
 
+    function notExists(DictionaryRegistry storage registry, string memory name) internal {
+        validate(registry.dictionaries[name].notExists(), "Dictionary Already Exists");
+    }
+    function isComplete(DictionaryRegistry storage registry, string memory name) internal {
+        validate(registry.dictionaries[name].isComplete(), "Dictionary Not Complete");
+    }
+
 
     function isUnassigned(string storage str) internal {
         validate(str.isEmpty(), ERR.STR_ALREADY_ASSIGNED);
@@ -189,7 +196,7 @@ library Require {
         validate(dictionary.isNotEmpty(), ERR.EMPTY_DICTIONARY);
     }
 
-    function isNotZero(address addr) internal {
+    function notZero(address addr) internal {
         validate(addr.isNotZero(), ERR.ZERO_ADDRESS);
     }
 

@@ -26,14 +26,17 @@ struct DictionaryRegistry {
 }
 library DictionaryRegistryLib {
 
-    /**---------------------
-        🚀 Deploy Proxy
-    -----------------------*/
+    /**--------------------------
+        🚀 Deploy Dictionary
+    ----------------------------*/
     function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("deploy");
-        // Require.isNotEmpty(dictionary); TODO
-        registry.insert(name, DictionaryLib.deploy(owner));
-        registry.findCurrent().set(bundle).upgradeFacade(bundle.facade);
+        Require.notEmpty(name);
+        Require.exists(bundle);
+        Require.notZero(owner);
+        Dictionary memory dictionary = DictionaryLib.deploy(owner);
+        dictionary.set(bundle).upgradeFacade(bundle.facade);
+        registry.insert(name, dictionary);
         return registry.findCurrent().finishProcessInStorage(pid);
     }
 
@@ -45,9 +48,10 @@ library DictionaryRegistryLib {
         uint pid = registry.startProcess("insert");
         Require.notEmpty(name);
         Require.notEmpty(dictionary);
+        Require.notExists(registry, name);
         registry.dictionaries[name] = dictionary;
         registry.current.update(name);
-        return registry.findCurrent().finishProcessInStorage(pid);
+        return registry.findCurrent().build().lock().finishProcessInStorage(pid);
     }
 
 
@@ -57,6 +61,7 @@ library DictionaryRegistryLib {
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("find");
         Require.notEmpty(name);
+        Require.isComplete(registry, name);
         Dictionary storage dictionary = registry.dictionaries[name];
         Require.exists(dictionary);
         return dictionary.finishProcessInStorage(pid);
