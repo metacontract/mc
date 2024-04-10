@@ -11,7 +11,8 @@ import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
 // Context
 import {Current} from "devkit/core/method/context/Current.sol";
 // Core Type
-import {Dictionary} from "devkit/core/types/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
 import {Require} from "devkit/error/Require.sol";
 
 
@@ -25,15 +26,28 @@ struct DictionaryRegistry {
 }
 library DictionaryRegistryLib {
 
+    /**---------------------
+        🚀 Deploy Proxy
+    -----------------------*/
+    function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage) {
+        uint pid = registry.startProcess("deploy");
+        // Require.isNotEmpty(dictionary); TODO
+        registry.insert(name, DictionaryLib.deploy(owner));
+        registry.findCurrent().set(bundle).upgradeFacade(bundle.facade);
+        return registry.findCurrent().finishProcessInStorage(pid);
+    }
+
+
     /**---------------------------
         🗳️ Insert Dictionary
     -----------------------------*/
-    function insert(DictionaryRegistry storage registry, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
+    function insert(DictionaryRegistry storage registry, string memory name, Dictionary memory dictionary) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("insert");
         Require.notEmpty(name);
         Require.notEmpty(dictionary);
         registry.dictionaries[name] = dictionary;
-        return registry.finishProcess(pid);
+        registry.current.update(name);
+        return registry.findCurrent().finishProcessInStorage(pid);
     }
 
 
