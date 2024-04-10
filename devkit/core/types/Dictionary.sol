@@ -14,6 +14,8 @@ import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 // Validation
 import {Require} from "devkit/error/Require.sol";
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+    using TypeGuard for Dictionary global;
 
 // Mock
 import {MockDictionary} from "devkit/utils/mocks/MockDictionary.sol";
@@ -33,6 +35,7 @@ using DictionaryLib for Dictionary global;
 struct Dictionary {
     address addr;
     DictionaryKind kind;
+    TypeStatus status;
 }
 library DictionaryLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,65 +54,66 @@ library DictionaryLib {
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return Dictionary({
             addr: address(new DictionaryEtherscan(owner)),
-            kind: DictionaryKind.Verifiable
+            kind: DictionaryKind.Verifiable,
+            status: TypeStatus.Building
         }).finishProcess(pid);
     }
 
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    function duplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
+    function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("duplicate");
-        return deploy(ForgeHelper.msgSender())
-                .duplicateFunctionsFrom(targetDictionary).finishProcess(pid);
-    }
-        function duplicateFunctionsFrom(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-            uint pid = ProcessLib.startDictionaryLibProcess("duplicateFunctionsFrom");
-            address toAddr = toDictionary.addr;
-            address fromAddr = fromDictionary.addr;
+        Require.notEmpty(toDictionary);
+        Require.notEmpty(fromDictionary);
 
-            bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
-            for (uint i; i < _selectors.length; ++i) {
-                bytes4 _selector = _selectors[i];
-                if (_selector.isEmpty()) continue;
-                IDictionary(toAddr).setImplementation({
-                    functionSelector: _selector,
-                    implementation: IDictionary(fromAddr).getImplementation(_selector)
-                });
-            }
+        address toAddr = toDictionary.addr;
+        address fromAddr = fromDictionary.addr;
 
-            return toDictionary.finishProcess(pid);
+        bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
+        for (uint i; i < _selectors.length; ++i) {
+            bytes4 _selector = _selectors[i];
+            if (_selector.isEmpty()) continue;
+            toDictionary.set(_selector, IDictionary(fromAddr).getImplementation(_selector));
         }
-    function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("safeDuplicate");
-        Require.notEmpty(targetDictionary);
-        return targetDictionary.duplicate().finishProcess(pid);
+
+        return toDictionary.finishProcess(pid);
+    }
+    function duplicate(Dictionary memory fromDictionary) internal returns(Dictionary memory) {
+        return duplicate(deploy(ForgeHelper.msgSender()), fromDictionary);
     }
 
 
     /**-----------------------------
         🧩 Set Function or Bundle
     -------------------------------*/
-    function set(Dictionary memory dictionary, Function memory functionInfo) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(functionInfo.name));
+    function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
+        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(selector, implementation));
+        Require.isContract(dictionary.addr);
+        Require.notEmpty(selector);
+        Require.isContract(implementation);
         IDictionary(dictionary.addr).setImplementation({
-            functionSelector: functionInfo.selector,
-            implementation: functionInfo.implementation
+            functionSelector: selector,
+            implementation: implementation
         });
         return dictionary.finishProcess(pid);
     }
-    function set(Dictionary memory dictionary, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(bundleInfo.name));
+    function set(Dictionary memory dictionary, Function memory func) internal returns(Dictionary memory) {
+        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(func.name));
+        return set(dictionary, func.selector, func.implementation).finishProcess(pid);
+    }
+    function set(Dictionary memory dictionary, Bundle storage bundle) internal returns(Dictionary memory) {
+        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(bundle.name));
 
-        Function[] memory functions = bundleInfo.functions;
+        Function[] memory functions = bundle.functions;
 
         for (uint i; i < functions.length; ++i) {
-            dictionary.set(functions[i]);
+            set(dictionary, functions[i]);
         }
 
         // TODO Generate Facade
         // if (dictionary.isVerifiable()) {
-        //     dictionary.upgradeFacade(bundleInfo.facade);
+        //     dictionary.upgradeFacade(bundle.facade);
         // }
 
         return dictionary.finishProcess(pid);
@@ -121,7 +125,8 @@ library DictionaryLib {
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
-        Require.verifiable(dictionary);
+        Require.isContract(newFacade);
+        // Require.verifiable(dictionary); TODO without CALL
         DictionaryEtherscan(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);
     }
@@ -134,7 +139,8 @@ library DictionaryLib {
         uint pid = ProcessLib.startDictionaryLibProcess("createMockDictionary");
         return Dictionary({
             addr: address(new MockDictionary(owner, functions)),
-            kind: DictionaryKind.Mock
+            kind: DictionaryKind.Mock,
+            status: TypeStatus.Building
         }).finishProcess(pid);
     }
 

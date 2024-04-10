@@ -144,9 +144,11 @@ library Require {
         return dictionary;
     }
     /*---- Dictionary Kind -----*/
-    function NotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
+    function notUndefined(DictionaryKind kind) internal {
         validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
-        return kind;
+    }
+    function notUndefined(ProxyKind kind) internal {
+        validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
     }
 
 
@@ -160,7 +162,7 @@ library Require {
     function isUnassigned(bytes4 b4) internal {
         validate(b4.isEmpty(), ERR.B4_ALREADY_ASSIGNED);
     }
-    function isNotEmpty(bytes4 b4) internal {
+    function notEmpty(bytes4 b4) internal {
         validate(b4.isNotEmpty(), ERR.EMPTY_B4);
     }
 

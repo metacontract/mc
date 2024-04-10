@@ -10,6 +10,8 @@ import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for ProxyKind global;
 // Validation
 import {Require} from "devkit/error/Require.sol";// Core Type
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+    using TypeGuard for Proxy global;
 
 // Mock
 import {SimpleMockProxy} from "devkit/utils/mocks/SimpleMockProxy.sol";
@@ -28,6 +30,7 @@ using ProxyLib for Proxy global;
 struct Proxy {
     address addr;
     ProxyKind kind;
+    TypeStatus status;
 }
 library ProxyLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,7 +46,8 @@ library ProxyLib {
         Require.isNotEmpty(dictionary);
         return Proxy({
             addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
-            kind: ProxyKind.Verifiable
+            kind: ProxyKind.Verifiable,
+            status: TypeStatus.Building
         }).finishProcess(pid);
     }
 
@@ -54,7 +58,8 @@ library ProxyLib {
         uint pid = ProcessLib.startProxyLibProcess("createSimpleMockProxy");
         return Proxy({
             addr: address(new SimpleMockProxy(functions)),
-            kind: ProxyKind.Mock
+            kind: ProxyKind.Mock,
+            status: TypeStatus.Building
         }).finishProcess(pid);
     }
 }

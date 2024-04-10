@@ -11,6 +11,8 @@ import {Require} from "devkit/error/Require.sol";
 // Core Types
 import {Function} from "devkit/core/types/Function.sol";
 import {Bundle} from "devkit/core/types/Bundle.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
 import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
 
@@ -120,5 +122,45 @@ library TypeGuard {
         Require.isBuilt(stdFunctions.status);
         stdFunctions.status = TypeStatus.Locked;
         return stdFunctions;
+    }
+
+
+    /**====================
+        📚 Dictionary
+    ======================*/
+    function building(Dictionary storage dictionary) internal returns(Dictionary storage) {
+        dictionary.status.building();
+        return dictionary;
+    }
+    function build(Dictionary storage dictionary) internal returns(Dictionary storage) {
+        Require.isContract(dictionary.addr);
+        Require.notUndefined(dictionary.kind);
+        dictionary.status = TypeStatus.Built;
+        return dictionary;
+    }
+    function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
+        Require.isBuilt(dictionary.status);
+        dictionary.status = TypeStatus.Locked;
+        return dictionary;
+    }
+
+
+    /**===============
+        🏠 Proxy
+    =================*/
+    function building(Proxy storage proxy) internal returns(Proxy storage) {
+        proxy.status.building();
+        return proxy;
+    }
+    function build(Proxy storage proxy) internal returns(Proxy storage) {
+        Require.isContract(proxy.addr);
+        Require.notUndefined(proxy.kind);
+        proxy.status = TypeStatus.Built;
+        return proxy;
+    }
+    function lock(Proxy storage proxy) internal returns(Proxy storage) {
+        Require.isBuilt(proxy.status);
+        proxy.status = TypeStatus.Locked;
+        return proxy;
     }
 }
