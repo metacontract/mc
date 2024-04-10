@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-/**--------------------------
-    Apply Support Methods
-----------------------------*/
+/**---------------------
+    Support Methods
+-----------------------*/
 import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for Function global;
 import {Parser} from "devkit/core/method/debug/Parser.sol";
@@ -13,7 +13,6 @@ import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for Function global;
 import {TypeSafetyUtils, BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
     using TypeSafetyUtils for Function global;
-
 // Validation
 import {Require} from "devkit/error/Require.sol";
 // Loader
