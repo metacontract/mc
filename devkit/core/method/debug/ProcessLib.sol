@@ -13,6 +13,7 @@ import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
 import {MockRegistry} from "devkit/core/registry/MockRegistry.sol";
+import {Current} from "devkit/core/method/context/Current.sol";
 
 
 library ProcessLib {
@@ -183,4 +184,16 @@ library ProcessLib {
         Debug.recordExecFinish(pid);
         return mock;
     }
+
+
+    /**------------------------
+        📸 Current Context
+    --------------------------*/
+    function startProcess(Current storage, string memory name, string memory params) internal returns(uint) {
+        return Debug.recordExecStart("CurrentLib", name, params);
+    }
+    function startProcess(Current storage current, string memory name) internal returns(uint) {
+        return current.startProcess(name, "");
+    }
+
 }
