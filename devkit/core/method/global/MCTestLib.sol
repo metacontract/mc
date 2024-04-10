@@ -37,11 +37,10 @@ library MCTestLib {
         string memory params = Params.append(name);
         // for (uint i; i < functions.length; ++i) {
         //     params = params.comma().append(functions[i].name);
-        // }
+        // } TODO
         uint pid = mc.recordExecStart("createSimpleMockProxy", params);
         Proxy memory simpleMockProxy = ProxyLib.createSimpleMockProxy(functions);
-        mc.proxy.safeAdd(name, simpleMockProxy)
-                .safeUpdate(simpleMockProxy);
+        mc.proxy.insert(name, simpleMockProxy);
         return mc.recordExecFinish(pid);
     }
     function createSimpleMockProxy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {

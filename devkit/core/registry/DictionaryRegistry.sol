@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-/**--------------------------
-    Apply Support Methods
-----------------------------*/
+/**---------------------
+    Support Methods
+-----------------------*/
 import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for DictionaryRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
@@ -22,7 +22,6 @@ using DictionaryRegistryLib for DictionaryRegistry global;
 struct DictionaryRegistry {
     mapping(string name => Dictionary) dictionaries;
     Current current;
-    Dictionary currentDictionary;
 }
 library DictionaryRegistryLib {
 

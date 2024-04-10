@@ -149,11 +149,11 @@ library Inspector {
     /**=======================
         🏠 Proxy Registry
     =========================*/
-    function existsInDeployed(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-        return proxies.deployed[name].exists();
+    function existsInDeployed(ProxyRegistry storage registry, string memory name) internal returns(bool) {
+        return registry.proxies[name].exists();
     }
-    // function existsInMocks(ProxyRegistry storage proxies, string memory name) internal returns(bool) {
-    //     return proxies.mocks[name].exists();
+    // function existsInMocks(ProxyRegistry storage registry, string memory name) internal returns(bool) {
+    //     return registry.mocks[name].exists();
     // }
 
 

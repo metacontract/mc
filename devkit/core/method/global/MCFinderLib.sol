@@ -57,7 +57,7 @@ library MCFinderLib {
         return mc.proxy.find(name);
     }
     function findCurrentProxy(MCDevKit storage mc) internal returns(Proxy storage) {
-        return mc.proxy.findCurrentProxy();
+        return mc.proxy.findCurrent();
     }
     // function findMockProxy(MCDevKit storage mc, string memory name) internal returns(MockProxy) {
     //     return mc.test.findMockProxy(name);

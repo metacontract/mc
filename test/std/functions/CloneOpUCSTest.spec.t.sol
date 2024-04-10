@@ -9,10 +9,10 @@ contract CloneOpSpecMCTest is MCTest {
     address proxy;
 
     function setUp() public {
-        proxy = mc.createSimpleMockProxy("MyProxy")
-                    // .set(mc.functions.stdOps.clone.toOp())
-                    // .set(mc.functions.stdOps.initSetAdmin.toOp())
-                    .toProxyAddress();
+        // proxy = mc.createSimpleMockProxy("MyProxy")
+        //             // .set(mc.functions.stdOps.clone.toOp())
+        //             // .set(mc.functions.stdOps.initSetAdmin.toOp())
+        //             .toProxyAddress();
         // mc.getCurrentDictionary();
         // mc.getCurrentProxy();
 // CloneOp(proxy).clone("");

@@ -74,8 +74,7 @@ library MCDeployLib {
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("deployProxy", Params.append(dictionary.addr, initData));
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
-        mc.proxy.safeAdd(name, proxy)
-                .safeUpdate(proxy);
+        mc.proxy.insert(name, proxy);
         return mc.recordExecFinish(pid);
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
@@ -91,10 +90,10 @@ library MCDeployLib {
         return mc.deployProxy(name, mc.findCurrentDictionary(), initData);
     }
     function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.deployed.genUniqueName(), mc.findCurrentDictionary(), initData);
+        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), initData);
     }
     function deployProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.deployed.genUniqueName(), mc.findCurrentDictionary(), Config().defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), Config().defaultOwner().initSetAdminBytes());
     }
 
 
