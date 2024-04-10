@@ -50,8 +50,7 @@ library StdFunctionsLib {
         stdFunctions.initSetAdmin.build();
         stdFunctions.getDeps.build();
         stdFunctions.clone.build();
-        stdFunctions.build();
-        return stdFunctions.finishProcess(pid);
+        return stdFunctions.build().finishProcess(pid);
     }
 
     /**-----------------------------------------

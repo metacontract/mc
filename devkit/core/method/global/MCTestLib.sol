@@ -47,13 +47,13 @@ library MCTestLib {
         return mc.createSimpleMockProxy(name, bundleInfo.functions);
     }
     function createSimpleMockProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createSimpleMockProxy(name, mc.std.bundle.all);
+        return mc.createSimpleMockProxy(name, mc.std.all);
     }
     // function createSimpleMockProxy(MCDevKit storage mc, Function[] memory functions) internal returns(MCDevKit storage) {
     //     return mc.createSimpleMockProxy(mc.proxy.genUniqueMockName(), functions);
     // }
     // function createSimpleMockProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-    //     return mc.createSimpleMockProxy(mc.proxy.genUniqueMockName(), mc.std.bundle.all);
+    //     return mc.createSimpleMockProxy(mc.proxy.genUniqueMockName(), mc.std.all);
     // }
 
 
@@ -76,13 +76,13 @@ library MCTestLib {
         return mc.createMockDictionary(name, owner, bundleInfo.functions);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, owner, mc.std.bundle.all);
+        return mc.createMockDictionary(name, owner, mc.std.all);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, Config().defaultOwner(), mc.std.bundle.all);
+        return mc.createMockDictionary(name, Config().defaultOwner(), mc.std.all);
     }
     // function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-    //     return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config().defaultOwner(), mc.std.bundle.all);
+    //     return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config().defaultOwner(), mc.std.all);
     // }
 
 

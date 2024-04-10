@@ -21,9 +21,10 @@ import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 // Utils
 import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
+// Validation
+import {Require} from "devkit/error/Require.sol";
 
 import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
-import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 
 
 /**==========================
@@ -32,11 +33,12 @@ import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 using StdRegistryLib for StdRegistry global;
 struct StdRegistry {
     StdFunctions functions;
-    StdBundle bundle;
+    Bundle all;
+    TypeStatus status;
 }
 library StdRegistryLib {
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🔏 Assign and Load Standard Functions
+        🟢 Complete Standard Registry
         🐣 Deploy Standard Functions If Not Exists
         🧺 Configure Standard Bundles
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -44,7 +46,7 @@ library StdRegistryLib {
         uint pid = registry.startProcess("complete");
         registry.functions.complete();
         registry.configureStdBundle();
-        return registry.finishProcess(pid);
+        return registry.build().lock().finishProcess(pid);
     }
 
     /**----------------------------------
@@ -52,14 +54,15 @@ library StdRegistryLib {
     ------------------------------------*/
     function configureStdBundle(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("configureStdBundle");
-        return registry  .configureStdBundle_AllFunctions()
-                    .finishProcess(pid);
+        Require.notLocked(registry.all.status);
+        return registry .configureStdBundle_AllFunctions()
+                        .finishProcess(pid);
     }
 
         /**===== Each Std Bundle =====*/
         function configureStdBundle_AllFunctions(StdRegistry storage registry) internal returns(StdRegistry storage) {
             uint pid = registry.startProcess("configureStdBundle_AllFunctions");
-            registry.bundle.all .assignName("ALL_FUNCTIONS")
+            registry.all .assignName("ALL_FUNCTIONS")
                     .pushFunction(registry.functions.initSetAdmin)
                     .pushFunction(registry.functions.getDeps)
                     .pushFunction(registry.functions.clone)

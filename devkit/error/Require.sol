@@ -23,6 +23,9 @@ import {Proxy, ProxyKind} from "devkit/core/types/Proxy.sol";
 import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
 import {Dictionary, DictionaryKind} from "devkit/core/types/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
+import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
+import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
+import {StdBundle} from "devkit/core/registry/StdBundle.sol";
 
 
 library Require {
@@ -78,7 +81,7 @@ library Require {
     /**===============
         🗂️ Bundle
     =================*/
-    function Complete(Bundle storage bundle) internal returns(Bundle storage) {
+    function isComplete(Bundle storage bundle) internal returns(Bundle storage) {
         validate(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
         return bundle;
     }
@@ -187,5 +190,19 @@ library Require {
 
     function isNotZero(address addr) internal {
         validate(addr.isNotZero(), ERR.ZERO_ADDRESS);
+    }
+
+
+    /**==========================
+        🏛 Standard Registry
+    ============================*/
+    function isComplete(StdRegistry storage registry) internal {
+        validate(registry.status.isComplete(), "Registry Not Complete");
+    }
+    function isComplete(StdFunctions storage stdFunctions) internal {
+        validate(stdFunctions.status.isComplete(), "Registry Not Complete");
+    }
+    function isComplete(StdBundle storage stdBundle) internal {
+        validate(stdBundle.status.isComplete(), "Registry Not Complete");
     }
 }

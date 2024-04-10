@@ -14,6 +14,5 @@ import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
     🗼 Standard Bundle
 ============================*/
 struct StdBundle {
-    Bundle all;
     TypeStatus status;
 }

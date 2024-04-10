@@ -71,11 +71,11 @@ library Inspector {
         return bundle.has(functionInfo).isFalse();
     }
 
-    function isComplete(Bundle storage bundle) internal returns(bool) {
-        return  bundle.name.isNotEmpty() &&
-                bundle.functions.length != 0 &&
-                bundle.facade.isContract();
-    }
+    // function isComplete(Bundle storage bundle) internal returns(bool) {
+    //     return  bundle.name.isNotEmpty() &&
+    //             bundle.functions.length != 0 &&
+    //             bundle.facade.isContract();
+    // }
 
     function hasName(Bundle storage bundle) internal returns(bool) {
         return bundle.name.isNotEmpty();

@@ -14,7 +14,7 @@ library DeployLib {
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
         mc.deployStdFunctions();
-        mc.deployDictionary(mc.std.bundle.all);
+        mc.deployDictionary(mc.std.all);
         return mc;
     }
 }
