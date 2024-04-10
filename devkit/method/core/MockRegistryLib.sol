@@ -16,71 +16,12 @@ import {StringUtils} from "devkit/utils/StringUtils.sol";
 import {BoolUtils} from "devkit/utils/BoolUtils.sol";
     using BoolUtils for bool;
 // Core
-import {Proxy} from "devkit/core/Proxy.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
 
-import {MockRegistry} from "devkit/core/MockRegistry.sol";
-import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+import {MockRegistry} from "devkit/core/registry/MockRegistry.sol";
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Dictionary);
     using MappingAnalyzer for mapping(string => Proxy);
 
 
-/**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    🏭 Mock Registry
-        📥 Add
-            Mock Dictionary
-            Mock Proxy
-        🔍 Find
-            Mock Dictionary
-            Mock Proxy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-library MockRegistryLib {
-
-    /**-------------
-        📥 Add
-    ---------------*/
-    /*----- Mock Dictionary -----*/
-    function add(MockRegistry storage mock, string memory name, Dictionary memory dictionary) internal returns(MockRegistry storage) {
-        uint pid = mock.startProcess("add");
-        Require.notEmpty(name);
-        validate(dictionary.isNotEmpty(), "Empty Dictionary");
-        mock.dictionary[name] = dictionary;
-        return mock.finishProcess(pid);
-    }
-    function add(MockRegistry storage mock, Dictionary memory dictionary) internal returns(MockRegistry storage) {
-        return add(mock, mock.dictionary.genUniqueMockName(), dictionary);
-    }
-
-    /*----- Mock Proxy -----*/
-    function add(MockRegistry storage mock, string memory name, Proxy memory proxy) internal returns(MockRegistry storage) {
-        uint pid = mock.startProcess("add");
-        Require.notEmpty(name);
-        validate(proxy.isNotEmpty(), "Empty Proxy");
-        mock.proxy[name] = proxy;
-        return mock.finishProcess(pid);
-    }
-    function add(MockRegistry storage mock, Proxy memory proxy) internal returns(MockRegistry storage) {
-        return add(mock, mock.proxy.genUniqueMockName(), proxy);
-    }
-
-
-    /**--------------
-        🔍 Find
-    ----------------*/
-    /*----- Mock Dictionary -----*/
-    function findMockDictionary(MockRegistry storage mock, string memory name) internal returns(Dictionary storage) {
-        uint pid = mock.startProcess("findMockDictionary");
-        Require.notEmpty(name);
-        Require.exists(mock.dictionary[name]);
-        return mock.dictionary[name].finishProcessInStorage(pid);
-    }
-
-    /*----- Mock Proxy -----*/
-    function findMockProxy(MockRegistry storage mock, string memory name) internal returns(Proxy storage) {
-        uint pid = mock.startProcess("findMockProxy");
-        Require.notEmpty(name);
-        Require.exists(mock.proxy[name]);
-        return mock.proxy[name].finishProcessInStorage(pid);
-    }
-
-}

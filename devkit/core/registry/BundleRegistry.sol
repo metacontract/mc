@@ -3,19 +3,19 @@ pragma solidity ^0.8.24;
 /**--------------------------
     Apply Support Methods
 ----------------------------*/
-import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for BundleRegistry global;
-import {Inspector} from "devkit/method/inspector/Inspector.sol";
+import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for BundleRegistry global;
-import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Bundle);
 
 // Validation
 import {validate} from "devkit/error/Validate.sol";
 import {Require} from "devkit/error/Require.sol";
 // Core Type
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
 
 
 /**========================

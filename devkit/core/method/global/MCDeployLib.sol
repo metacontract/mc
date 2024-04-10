@@ -9,15 +9,15 @@ import {validate} from "devkit/error/Validate.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
-import {StdFunctionsArgs} from "devkit/method/core/StdFunctionsLib.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {StdFunctionsArgs} from "devkit/core/registry/StdFunctions.sol";
     using StdFunctionsArgs for address;
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/core/types/Proxy.sol";
 
-import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Dictionary);
     using MappingAnalyzer for mapping(string => Proxy);
 

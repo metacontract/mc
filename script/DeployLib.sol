@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {StdFunctions} from "devkit/core/StdFunctions.sol";
+import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
 
 library DeployLib {
     using DeployLib for MCDevKit;

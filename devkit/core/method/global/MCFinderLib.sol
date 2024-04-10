@@ -4,12 +4,12 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Core
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
 //  proxy
-import {Proxy} from "devkit/core/Proxy.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
 //  dictionary
-import {Dictionary} from "devkit/core/Dictionary.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
 
 
 /**********************************

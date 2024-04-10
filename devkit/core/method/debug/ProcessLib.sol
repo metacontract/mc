@@ -3,16 +3,16 @@ pragma solidity ^0.8.24;
 
 import {Debug} from "devkit/debug/Debug.sol";
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {FunctionRegistry} from "devkit/core/FunctionRegistry.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
-import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
-import {StdFunctions} from "devkit/core/StdFunctions.sol";
-import {Proxy} from "devkit/core/Proxy.sol";
-import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
-import {MockRegistry} from "devkit/core/MockRegistry.sol";
+import {Function} from "devkit/core/types/Function.sol";
+import {FunctionRegistry} from "devkit/core/registry/FunctionRegistry.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
+import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
+import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
+import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
+import {MockRegistry} from "devkit/core/registry/MockRegistry.sol";
 
 
 library ProcessLib {

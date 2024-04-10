@@ -3,21 +3,22 @@ pragma solidity ^0.8.24;
 /**--------------------------
     Apply Support Methods
 ----------------------------*/
-import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for Dictionary global;
-import {Inspector} from "devkit/method/inspector/Inspector.sol";
+import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for Dictionary global;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 
 // Validation
-import {Require} from "devkit/error/Require.sol";import {Params} from "devkit/debug/Params.sol";
+import {Require} from "devkit/error/Require.sol";
+import {Params} from "devkit/debug/Params.sol";
 // Core Type
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
 // Test
-import {MockDictionary} from "devkit/test/MockDictionary.sol";
+import {MockDictionary} from "devkit/utils/mocks/MockDictionary.sol";
 // External Libs
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";

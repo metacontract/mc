@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 ----------------------------*/
 
 // Core Type
-import {Proxy} from "devkit/core/Proxy.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
 
 
 /**===============

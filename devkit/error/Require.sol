@@ -14,13 +14,13 @@ import {AddressUtils} from "devkit/utils/AddressUtils.sol";
     using AddressUtils for address;
 import {BuildStatus} from "devkit/utils/type/TypeSafetyUtils.sol";
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
-import {BundleRegistry} from "devkit/core/BundleRegistry.sol";
-import {Proxy, ProxyKind} from "devkit/core/Proxy.sol";
-import {ProxyRegistry} from "devkit/core/ProxyRegistry.sol";
-import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
-import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
+import {Function} from "devkit/core/types/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
+import {Proxy, ProxyKind} from "devkit/core/types/Proxy.sol";
+import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
+import {Dictionary, DictionaryKind} from "devkit/core/types/Dictionary.sol";
+import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
 
 
 library Require {

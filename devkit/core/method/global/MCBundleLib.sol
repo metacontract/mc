@@ -9,10 +9,10 @@ import {ERR} from "devkit/error/Error.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
 
-import {MappingAnalyzer} from "devkit/method/inspector/MappingAnalyzer.sol";
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Bundle);
 
 /***********************************************

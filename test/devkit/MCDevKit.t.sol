@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Function} from "devkit/core/types/Function.sol";
 
 import {TestHelper} from "../utils/TestHelper.sol";
     using TestHelper for Function;

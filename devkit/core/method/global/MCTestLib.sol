@@ -7,12 +7,12 @@ import {Config} from "devkit/config/Config.sol";
 import {Params} from "devkit/debug/Params.sol";
 // Core
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
+import {Proxy, ProxyLib} from "devkit/core/types/Proxy.sol";
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
 
 
 /******************************************

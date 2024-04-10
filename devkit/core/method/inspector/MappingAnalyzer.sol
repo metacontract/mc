@@ -4,10 +4,10 @@ pragma solidity ^0.8.24;
 import {throwError, ERR} from "devkit/error/Error.sol";
 import {Config, ScanRange} from "devkit/config/Config.sol";
 // Core Types
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {Proxy} from "devkit/core/Proxy.sol";
+import {Bundle} from "devkit/core/types/Bundle.sol";
+import {Function} from "devkit/core/types/Function.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
+import {Proxy} from "devkit/core/types/Proxy.sol";
 // Utils
 import {StringUtils} from "devkit/utils/StringUtils.sol";
     using StringUtils for string;

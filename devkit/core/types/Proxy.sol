@@ -3,18 +3,18 @@ pragma solidity ^0.8.24;
 /**--------------------------
     Apply Support Methods
 ----------------------------*/
-import {ProcessLib} from "devkit/method/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for Proxy global;
-import {Inspector} from "devkit/method/inspector/Inspector.sol";
+import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for Proxy global;
     using Inspector for ProxyKind global;
 
 // Validation
 import {Require} from "devkit/error/Require.sol";// Core Type
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Dictionary} from "devkit/core/types/Dictionary.sol";
+import {Function} from "devkit/core/types/Function.sol";
 // Test
-import {SimpleMockProxy} from "devkit/test/SimpleMockProxy.sol";
+import {SimpleMockProxy} from "devkit/utils/mocks/SimpleMockProxy.sol";
 // External Lib
 import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
 
