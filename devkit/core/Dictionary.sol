@@ -79,7 +79,8 @@ library DictionaryLib {
         }
     function safeDuplicate(Dictionary memory targetDictionary) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("safeDuplicate");
-        return targetDictionary.assertNotEmpty().duplicate().finishProcess(pid);
+        Require.notEmpty(targetDictionary);
+        return targetDictionary.duplicate().finishProcess(pid);
     }
 
 
@@ -117,7 +118,8 @@ library DictionaryLib {
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
-        DictionaryEtherscan(dictionary.assertVerifiable().addr).upgradeFacade(newFacade);
+        Require.verifiable(dictionary);
+        DictionaryEtherscan(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);
     }
 

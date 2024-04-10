@@ -25,9 +25,9 @@ import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/DictionaryRegistry.sol";
 
 
-/**-------------------------------
-    🧐 Inspectors & Assertions
----------------------------------*/
+/**--------------------
+    🧐 Inspectors
+----------------------*/
 library Inspector {
     /**==================
         🧩 Function
@@ -47,47 +47,11 @@ library Inspector {
         return func.exists().isFalse();
     }
 
-    function assertExists(Function storage func) internal returns(Function storage) {
-        validate(func.exists(), "func does not exists");
-        return func;
-    }
-
-    function assertEmptyName(Function storage func) internal returns(Function storage) {
-        Require.isUnassigned(func.name);
-        return func;
-    }
-    function assertEmptySelector(Function storage func) internal returns(Function storage) {
-        Require.isUnassigned(func.selector);
-        return func;
-    }
-    function assertEmptyImpl(Function storage func) internal returns(Function storage) {
-        validate(func.implementation.isNotContract(), "Implementation Already Exist");
-        return func;
-    }
-
-    function assertNotEmpty(Function storage func) internal returns(Function storage) {
-        validate(func.exists(), "Empty Deployed Contract");
-        return func;
-    }
-
-    function assertNotIncludedIn(Function storage func, Bundle storage bundleInfo) internal returns(Function storage) {
-        validate(bundleInfo.hasNot(func), "Already exists in the Bundel");
-        return func;
-    }
-
-    function assertImplIsContract(Function storage func) internal returns(Function storage) {
-        validate(func.implementation.isContract(), "Implementation Not Contract");
-        return func;
-    }
-
     function isComplete(Function storage func) internal returns(bool) {
         return  func.name.isNotEmpty() &&
                 func.selector.isNotEmpty() &&
                 func.implementation.isContract();
-    }
-    function assertComplete(Function storage func) internal returns(Function storage) {
-        validate(func.isComplete(), "Function Info Not Complete");
-        return func;
+        // return func.buildStatus == BuildStatus.Built;
     }
 
     function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
@@ -112,10 +76,6 @@ library Inspector {
                 bundle.functions.length != 0 &&
                 bundle.facade.isContract();
     }
-    function assertComplete(Bundle storage bundle) internal returns(Bundle storage) {
-        validate(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
-        return bundle;
-    }
 
     function hasName(Bundle storage bundle) internal returns(bool) {
         return bundle.name.isNotEmpty();
@@ -132,28 +92,16 @@ library Inspector {
     function notExists(Bundle storage bundle) internal returns(bool) {
         return bundle.exists().isNot();
     }
-    function assertExists(Bundle storage bundle) internal returns(Bundle storage) {
-        validate(bundle.exists(), "Bundle Info Not Exists");
-        return bundle;
-    }
-    function assertNotExists(Bundle storage bundle) internal returns(Bundle storage) {
-        validate(bundle.notExists(), "Bundle Info Already Exists");
-        return bundle;
-    }
 
 
     /**=======================
-        🗂️ Bundle Registry
+        📙 Bundle Registry
     =========================*/
     function existsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
         return bundle.bundles[name].hasName();
     }
     function notExistsBundle(BundleRegistry storage bundle, string memory name) internal returns(bool) {
         return bundle.existsBundle(name).isNot();
-    }
-    function assertBundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
-        validate(bundle.notExistsBundle(name), "Bundle Already Exists");
-        return bundle;
     }
 
     function existsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
@@ -170,10 +118,6 @@ library Inspector {
     function exists(Proxy storage proxy) internal returns(bool) {
         return proxy.addr.isContract();
     }
-    function assertExists(Proxy storage proxy) internal returns(Proxy storage) {
-        validate(proxy.exists(), "Proxy Not Exist");
-        return proxy;
-    }
 
     function notExists(Proxy storage proxy) internal returns(bool) {
         return proxy.exists().isFalse();
@@ -181,10 +125,6 @@ library Inspector {
 
     function isNotEmpty(Proxy memory proxy) internal returns(bool) {
         return proxy.addr.isContract();
-    }
-    function assertNotEmpty(Proxy memory proxy) internal returns(Proxy memory) {
-        validate(proxy.isNotEmpty(), "Empty Proxy");
-        return proxy;
     }
 
     function isMock(Proxy memory proxy) internal pure returns(bool) {
@@ -205,10 +145,6 @@ library Inspector {
     function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
         return kind != ProxyKind.undefined;
     }
-    function assertNotUndefined(ProxyKind kind) internal returns(ProxyKind) {
-        validate(kind.isNotUndefined(), "Undefined Proxy Kind");
-        return kind;
-    }
 
     /**=======================
         🏠 Proxy Registry
@@ -227,10 +163,6 @@ library Inspector {
     function exists(Dictionary storage dictionary) internal returns(bool) {
         return dictionary.addr.isContract();
     }
-    function assertExists(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        validate(dictionary.exists(), "Dictionary Not Exists");
-        return dictionary;
-    }
 
     function notExists(Dictionary storage dictionary) internal returns(bool) {
         return dictionary.exists().isFalse();
@@ -239,26 +171,14 @@ library Inspector {
     function isNotEmpty(Dictionary memory dictionary) internal returns(bool) {
         return dictionary.addr.isContract();
     }
-    function assertNotEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        validate(dictionary.isNotEmpty(), "Empty Dictionary");
-        return dictionary;
-    }
 
     function isSupported(Dictionary memory dictionary, bytes4 selector) internal view returns(bool) {
         return IDictionary(dictionary.addr).supportsInterface(selector);
-    }
-    function assertSupports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
-        validate(dictionary.isSupported(selector), "Unsupported Selector");
-        return dictionary;
     }
 
     function isVerifiable(Dictionary memory dictionary) internal returns(bool) {
         (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IBeacon.implementation.selector));
         return success;
-    }
-    function assertVerifiable(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        validate(dictionary.isVerifiable(), "Dictionary Not Verifiable");
-        return dictionary;
     }
 
     function isMock(Dictionary memory dictionary) internal pure returns(bool) {
@@ -276,10 +196,6 @@ library Inspector {
     --------------------------*/
     function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
         return kind != DictionaryKind.undefined;
-    }
-    function assertNotUndefined(DictionaryKind kind) internal returns(DictionaryKind) {
-        validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
-        return kind;
     }
 
     /**============================

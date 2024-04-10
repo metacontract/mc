@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 // Error & Debug
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {validate} from "devkit/error/Validate.sol";
+import {Require} from "devkit/error/Require.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config, ScanRange} from "devkit/config/Config.sol";
@@ -38,7 +39,9 @@ library ProxyRegistryLib {
 
     function safeAdd(ProxyRegistry storage proxies, string memory name, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         uint pid = proxies.startProcess("safeAdd");
-        return proxies  .add(name.assertNotEmpty(), proxy.assertNotEmpty())
+        Require.notEmpty(name);
+        Require.notEmpty(proxy);
+        return proxies  .add(name, proxy)
                         .finishProcess(pid);
     }
 
@@ -48,7 +51,8 @@ library ProxyRegistryLib {
     --------------------------------------*/
     function safeUpdate(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         uint pid = proxies.startProcess("safeUpdate");
-        return proxies.update(proxy.assertNotEmpty()).finishProcess(pid);
+        Require.notEmpty(proxy);
+        return proxies.update(proxy).finishProcess(pid);
     }
     function update(ProxyRegistry storage proxies, Proxy memory proxy) internal returns(ProxyRegistry storage) {
         uint pid = proxies.startProcess("update");
@@ -72,12 +76,13 @@ library ProxyRegistryLib {
     ---------------------*/
     function find(ProxyRegistry storage proxies, string memory name) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("find");
-        return proxies.deployed[name]
-                        .assertExists().finishProcessInStorage(pid);
+        Require.exists(proxies.deployed[name]);
+        return proxies.deployed[name].finishProcessInStorage(pid);
     }
     function findCurrentProxy(ProxyRegistry storage proxies) internal returns(Proxy storage) {
         uint pid = proxies.startProcess("findCurrentProxy");
-        return proxies.currentProxy.assertExists().finishProcessInStorage(pid);
+        Require.exists(proxies.currentProxy);
+        return proxies.currentProxy.finishProcessInStorage(pid);
     }
 
 }

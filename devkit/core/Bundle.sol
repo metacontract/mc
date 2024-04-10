@@ -51,9 +51,8 @@ library BundleLib {
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
         validate(bundle.hasNot(func), "Already added");
-        bundle.functions.push(
-            func.assertImplIsContract()
-        );
+        Require.implIsContract(func);
+        bundle.functions.push(func);
         return bundle.finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {

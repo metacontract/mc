@@ -50,9 +50,9 @@ library BundleRegistryLib {
     }
     function safeInit(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("safeInit");
-        Require.isNotEmpty(name);
-        return bundle.assertBundleNotExists(name)
-                        .init(name)
+        Require.notEmpty(name);
+        Require.bundleNotExists(bundle, name);
+        return bundle   .init(name)
                         .finishProcess(pid);
     }
 
@@ -77,9 +77,8 @@ library BundleRegistryLib {
     --------------------*/
     function set(BundleRegistry storage bundle, string memory name, address facade) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("set");
-        bundle.bundles[name]
-                    .assertExists()
-                    .assignFacade(facade);
+        Require.exists(bundle.bundles[name]);
+        bundle.bundles[name].assignFacade(facade);
         return bundle.finishProcess(pid);
     }
     function set(BundleRegistry storage bundle, address facade) internal returns(BundleRegistry storage) {
@@ -93,7 +92,7 @@ library BundleRegistryLib {
     --------------------------------------------------*/
     function safeUpdateCurrentBundle(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         uint pid = bundle.startProcess("safeUpdateCurrentBundle");
-        Require.isNotEmpty(name);
+        Require.notEmpty(name);
         bundle.currentBundleName = name;
         return bundle.finishProcess(pid);
     }
@@ -122,7 +121,7 @@ library BundleRegistryLib {
     }
         function findCurrentBundleName(BundleRegistry storage bundle) internal returns(string memory) {
             uint pid = bundle.startProcess("findCurrentBundleName");
-            Require.isNotEmpty(bundle.currentBundleName);
+            Require.notEmpty(bundle.currentBundleName);
             return bundle.currentBundleName;
             // return bundle.currentBundleName.recordExecFinish(pid);
         }

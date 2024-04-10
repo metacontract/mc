@@ -34,7 +34,7 @@ library FunctionRegistryLib {
     --------------------------------*/
     function insert(FunctionRegistry storage functions, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = functions.startProcess("insert");
-        Require.isNotEmpty(name);
+        Require.notEmpty(name);
         functions.customs[name].assign(name, selector, implementation).lock();
         functions.safeUpdateCurrentFunction(name); // TODO
         return functions.finishProcess(pid);
@@ -63,7 +63,8 @@ library FunctionRegistryLib {
     ---------------------------------*/
     function find(FunctionRegistry storage functions, string memory name) internal returns(Function storage) {
         uint pid = functions.startProcess("findFunction");
-        return functions.customs[name].assertExists().finishProcess(pid);
+        Require.exists(functions.customs[name]);
+        return functions.customs[name].finishProcess(pid);
     }
     function findCurrentFunction(FunctionRegistry storage functions) internal returns(Function storage) {
         uint pid = functions.startProcess("findCurrentFunction");

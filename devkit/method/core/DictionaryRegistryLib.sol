@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 // Error & Debug
 import {ERR, throwError} from "devkit/error/Error.sol";
 import {validate} from "devkit/error/Validate.sol";
+import {Require} from "devkit/error/Require.sol";
 import {Debug} from "devkit/debug/Debug.sol";
 // Config
 import {Config, ScanRange} from "devkit/config/Config.sol";
@@ -39,7 +40,9 @@ library DictionaryRegistryLib {
 
     function safeAdd(DictionaryRegistry storage dictionaries, string memory name, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         uint pid = dictionaries.startProcess("safeAdd");
-        return dictionaries .add(name.assertNotEmpty(), dictionary.assertNotEmpty())
+        Require.notEmpty(name);
+        Require.notEmpty(dictionary);
+        return dictionaries .add(name, dictionary)
                             .finishProcess(pid);
     }
 
@@ -49,7 +52,8 @@ library DictionaryRegistryLib {
     -------------------------------------------*/
     function safeUpdate(DictionaryRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         uint pid = dictionaries.startProcess("safeUpdate");
-        return dictionaries .update(dictionary.assertNotEmpty()).finishProcess(pid);
+        Require.notEmpty(dictionary);
+        return dictionaries .update(dictionary).finishProcess(pid);
     }
     function update(DictionaryRegistry storage dictionaries, Dictionary memory dictionary) internal returns(DictionaryRegistry storage) {
         uint pid = dictionaries.startProcess("update");
@@ -73,13 +77,13 @@ library DictionaryRegistryLib {
     --------------------------*/
     function find(DictionaryRegistry storage dictionaries, string memory name) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("find");
-        return dictionaries.deployed[name]
-                            .assertExists()
-                            .finishProcessInStorage(pid);
+        Require.exists(dictionaries.deployed[name]);
+        return dictionaries.deployed[name].finishProcessInStorage(pid);
     }
     function findCurrentDictionary(DictionaryRegistry storage dictionaries) internal returns(Dictionary storage) {
         uint pid = dictionaries.startProcess("findCurrentDictionary");
-        return dictionaries.currentDictionary.assertExists().finishProcessInStorage(pid);
+        Require.exists(dictionaries.currentDictionary);
+        return dictionaries.currentDictionary.finishProcessInStorage(pid);
     }
 
 }
