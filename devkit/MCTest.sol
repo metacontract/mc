@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Config} from "devkit/config/Config.sol";
-import {DecodeErrorString} from "devkit/error/DecodeErrorString.sol";
+import {DecodeErrorString} from "devkit/log/error/DecodeErrorString.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test

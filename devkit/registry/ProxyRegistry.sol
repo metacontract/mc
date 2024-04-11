@@ -10,7 +10,7 @@ import {Inspector} from "devkit/utils/inspector/Inspector.sol";
 import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Proxy);
 // Validation
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Core Type
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
@@ -34,8 +34,8 @@ library ProxyRegistryLib {
     ---------------------------------*/
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
         uint pid = registry.startProcess("deploy");
-        Require.notEmpty(name);
-        Require.notEmpty(dictionary);
+        Validate.notEmpty(name);
+        Validate.notEmpty(dictionary);
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         registry.register(name, proxy);
         return registry.findCurrent().finishProcessInStorage(pid);
@@ -46,9 +46,9 @@ library ProxyRegistryLib {
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
         uint pid = registry.startProcess("register");
-        Require.notEmpty(name);
-        Require.notEmpty(proxy);
-        Require.notRegistered(registry, name);
+        Validate.notEmpty(name);
+        Validate.notEmpty(proxy);
+        Validate.notRegistered(registry, name);
         Proxy storage proxyStorage = registry.proxies[name] = proxy;
         proxyStorage.build().lock();
         registry.current.update(name);
@@ -60,16 +60,16 @@ library ProxyRegistryLib {
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
         uint pid = registry.startProcess("find");
-        Require.notEmpty(name);
-        Require.validRegistration(registry, name);
+        Validate.notEmpty(name);
+        Validate.validRegistration(registry, name);
         Proxy storage proxy = registry.proxies[name];
-        Require.valid(proxy);
+        Validate.valid(proxy);
         return proxy.finishProcessInStorage(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         return registry.find(name).finishProcessInStorage(pid);
     }
 

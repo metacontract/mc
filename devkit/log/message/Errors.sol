@@ -5,15 +5,8 @@ pragma solidity ^0.8.24;
 import {StdStyle} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
-    using StringUtils for string;
-// Debug
-import {Logger} from "devkit/debug/Logger.sol";
 
-function throwError(string memory errorBody) {
-    Logger.logError(errorBody);
-    revert(ERR.message(errorBody));
-}
-
+/// @title Error Message
 library ERR {
     string constant HEADER = "\u2716 DevKit Error: ";
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";

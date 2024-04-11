@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {throwError, ERR} from "devkit/error/Error.sol";
-import {validate} from "devkit/error/Validate.sol";
+import {throwError} from "devkit/log/error/ThrowError.sol";
+import {ERR} from "devkit/log/message/Errors.sol";
 // Utils
 import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
     using BoolUtils for bool;
@@ -27,8 +27,15 @@ import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
 import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
+/// @dev like `require`
+function validate(bool condition, string memory errorBody) {
+    if (condition.isFalse()) throwError(errorBody);
+}
+function validate(bool condition, string memory errorBody, string memory errorDetail) {
+    validate(condition, errorBody.append(errorDetail));
+}
 
-library Require {
+library Validate {
     /**
         Type Guard
      */
@@ -60,10 +67,10 @@ library Require {
     }
 
     function EmptyName(Function storage func) internal {
-        Require.isUnassigned(func.name);
+        Validate.isUnassigned(func.name);
     }
     function EmptySelector(Function storage func) internal {
-        Require.isUnassigned(func.selector);
+        Validate.isUnassigned(func.selector);
     }
     function EmptyImpl(Function storage func) internal {
         validate(func.implementation.isNotContract(), "Implementation Already Exist");

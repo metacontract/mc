@@ -6,7 +6,7 @@ import {MCDevKitTest} from "devkit/MCTest.sol";
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 import {Config} from "devkit/config/Config.sol";
-import {ERR} from "devkit/error/Error.sol";
+import {ERR} from "devkit/log/message/Errors.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";

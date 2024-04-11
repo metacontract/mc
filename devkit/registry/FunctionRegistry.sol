@@ -6,7 +6,7 @@ pragma solidity ^0.8.24;
 import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
 using ProcessLib for FunctionRegistry global;
 // Validation
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";
@@ -29,7 +29,7 @@ library FunctionRegistryLib {
     ----------------------------*/
     function register(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = registry.startProcess("register");
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         registry.functions[name].assign(name, selector, implementation).build().lock();
         registry.current.update(name);
         return registry.finishProcess(pid);
@@ -40,16 +40,16 @@ library FunctionRegistryLib {
     ------------------------*/
     function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage) {
         uint pid = registry.startProcess("find");
-        Require.notEmpty(name);
-        Require.validRegistration(registry, name);
+        Validate.notEmpty(name);
+        Validate.validRegistration(registry, name);
         Function storage func = registry.functions[name];
-        Require.valid(func);
+        Validate.valid(func);
         return func.finishProcess(pid);
     }
     function findCurrent(FunctionRegistry storage registry) internal returns(Function storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         return registry.find(name).finishProcess(pid);
     }
 

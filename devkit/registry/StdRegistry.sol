@@ -11,7 +11,7 @@ import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
     using AddressUtils for address;
 // Validation
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -42,7 +42,7 @@ library StdRegistryLib {
     ------------------------------------*/
     function complete(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("complete");
-        Require.notLocked(registry.status);
+        Validate.notLocked(registry.status);
         registry.functions.complete();
         registry.configureStdBundle();
         return registry.build().lock().finishProcess(pid);
@@ -58,7 +58,7 @@ library StdRegistryLib {
         /**===== Each Std Bundle =====*/
         function configureStdBundle_All(StdRegistry storage registry) internal returns(StdRegistry storage) {
             uint pid = registry.startProcess("configureStdBundle_All");
-            Require.notLocked(registry.all.status);
+            Validate.notLocked(registry.all.status);
             registry.all.assignName("ALL_STD_FUNCTIONS")
                         .pushFunction(registry.functions.initSetAdmin)
                         .pushFunction(registry.functions.getDeps)

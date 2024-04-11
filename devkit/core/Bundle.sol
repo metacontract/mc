@@ -12,8 +12,8 @@ import {Inspector} from "devkit/utils/inspector/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Bundle global;
 // Validation
-import {validate} from "devkit/error/Validate.sol";
-import {Require} from "devkit/error/Require.sol";
+import {validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Core Type
 import {Function} from "devkit/core/Function.sol";
@@ -36,8 +36,8 @@ library BundleLib {
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignName");
-        Require.notLocked(bundle.status);
-        Require.notEmpty(name);
+        Validate.notLocked(bundle.status);
+        Validate.notEmpty(name);
         bundle.name = name;
         return bundle.building().finishProcess(pid);
     }
@@ -47,9 +47,9 @@ library BundleLib {
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
-        Require.notLocked(bundle.status);
-        Require.isComplete(func);
-        Require.hasNot(bundle, func);
+        Validate.notLocked(bundle.status);
+        Validate.isComplete(func);
+        Validate.hasNot(bundle, func);
         bundle.functions.push(func);
         return bundle.building().finishProcess(pid);
     }
@@ -66,7 +66,7 @@ library BundleLib {
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignFacade");
-        Require.isContract(facade);
+        Validate.isContract(facade);
         bundle.facade = facade;
         return bundle.building().finishProcess(pid);
     }

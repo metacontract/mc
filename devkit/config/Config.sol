@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {LogLevel} from "devkit/debug/Debug.sol";
+import {LogLevel} from "devkit/log/debug/Debug.sol";
 
 
 /**----------------------

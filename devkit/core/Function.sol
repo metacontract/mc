@@ -12,7 +12,7 @@ import {Dumper} from "devkit/utils/debug/Dumper.sol";
 import {Inspector} from "devkit/utils/inspector/Inspector.sol";
     using Inspector for Function global;
 // Validation
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Function global;
 // Loader
@@ -47,7 +47,7 @@ library FunctionLib {
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
         uint pid = func.startProcess("assignName");
-        Require.notLocked(func.status);
+        Validate.notLocked(func.status);
         func.name = name;
         return func.building().finishProcess(pid);
     }
@@ -57,7 +57,7 @@ library FunctionLib {
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
         uint pid = func.startProcess("assignSelector");
-        Require.notLocked(func.status);
+        Validate.notLocked(func.status);
         func.selector = selector;
         return func.building().finishProcess(pid);
     }
@@ -67,7 +67,7 @@ library FunctionLib {
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
         uint pid = func.startProcess("assignImplementation");
-        Require.notLocked(func.status);
+        Validate.notLocked(func.status);
         func.implementation = implementation;
         return func.building().finishProcess(pid);
     }
@@ -77,8 +77,8 @@ library FunctionLib {
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch");
-        Require.notLocked(func.status);
-        Require.notEmpty(envKey);
+        Validate.notLocked(func.status);
+        Validate.notEmpty(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
         return func.building().finishProcess(pid);

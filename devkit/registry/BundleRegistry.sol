@@ -10,7 +10,7 @@ import {Inspector} from "devkit/utils/inspector/Inspector.sol";
 import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Bundle);
 // Validation
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Core Type
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -34,9 +34,9 @@ library BundleRegistryLib {
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
         uint pid = registry.startProcess("init");
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         Bundle storage bundle = registry.bundles[name];
-        Require.isUnassigned(bundle);
+        Validate.isUnassigned(bundle);
         bundle.assignName(name);
         registry.current.update(name);
         return registry.finishProcess(pid);
@@ -47,16 +47,16 @@ library BundleRegistryLib {
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
         uint pid = registry.startProcess("find");
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         // Warning.isComplete(registry, name); TODO
         Bundle storage bundle = registry.bundles[name];
-        // Require.valid(bundle); TODO
+        // Validate.valid(bundle); TODO
         return bundle.finishProcess(pid);
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Require.notEmpty(name);
+        Validate.notEmpty(name);
         return registry.find(name).finishProcess(pid);
     }
 

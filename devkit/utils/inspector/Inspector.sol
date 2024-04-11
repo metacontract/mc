@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {validate} from "devkit/error/Validate.sol";
-import {Require} from "devkit/error/Require.sol";
+import {validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";

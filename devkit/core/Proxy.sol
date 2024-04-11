@@ -9,7 +9,7 @@ import {Inspector} from "devkit/utils/inspector/Inspector.sol";
     using Inspector for Proxy global;
     using Inspector for ProxyKind global;
 // Validation
-import {Require} from "devkit/error/Require.sol";// Core Type
+import {Validate} from "devkit/validate/Validate.sol";// Core Type
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Proxy global;
 
@@ -39,7 +39,7 @@ library ProxyLib {
     -----------------------*/
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
-        Require.notEmpty(dictionary);
+        Validate.notEmpty(dictionary);
         return Proxy({
             addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
             kind: ProxyKind.Verifiable,

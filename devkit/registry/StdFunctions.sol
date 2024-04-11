@@ -7,7 +7,7 @@ import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for StdFunctions global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for StdFunctions global;
-import {Require} from "devkit/error/Require.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -67,7 +67,7 @@ library StdFunctionsLib {
         /**===== Each Std Function =====*/
         function fetch_InitSetAdmin(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_InitSetAdmin");
-            Require.notLocked(stdFunctions.initSetAdmin.status);
+            Validate.notLocked(stdFunctions.initSetAdmin.status);
             stdFunctions.initSetAdmin   .fetch("InitSetAdmin")
                                         .assignSelector(InitSetAdmin.initSetAdmin.selector)
                                         .dump();
@@ -76,7 +76,7 @@ library StdFunctionsLib {
 
         function fetch_GetDeps(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_GetDeps");
-            Require.notLocked(stdFunctions.getDeps.status);
+            Validate.notLocked(stdFunctions.getDeps.status);
             stdFunctions.getDeps.fetch("GetDeps")
                                 .assignSelector(GetDeps.getDeps.selector)
                                 .dump();
@@ -85,7 +85,7 @@ library StdFunctionsLib {
 
         function fetch_Clone(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_Clone");
-            Require.notLocked(stdFunctions.clone.status);
+            Validate.notLocked(stdFunctions.clone.status);
             stdFunctions.clone  .fetch("Clone")
                                 .assignSelector(Clone.clone.selector)
                                 .dump();

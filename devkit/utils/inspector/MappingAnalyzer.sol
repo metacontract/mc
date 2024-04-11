@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {throwError, ERR} from "devkit/error/Error.sol";
+import {throwError} from "devkit/log/error/ThrowError.sol";
+import {ERR} from "devkit/log/message/Errors.sol";
 import {Config, ScanRange} from "devkit/config/Config.sol";
 // Core Types
 import {Bundle} from "devkit/core/Bundle.sol";

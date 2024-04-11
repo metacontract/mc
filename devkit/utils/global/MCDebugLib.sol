@@ -3,8 +3,8 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Debug
-import {Debug} from "devkit/debug/Debug.sol";
-import {Logger} from "devkit/debug/Logger.sol";
+import {Debug} from "devkit/log/debug/Debug.sol";
+import {Logger} from "devkit/log/debug/Logger.sol";
 
 
 /***********************************************

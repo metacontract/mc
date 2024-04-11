@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Utils
-import {console2, StdStyle} from "../utils/ForgeHelper.sol";
+import {console2, StdStyle} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
@@ -19,12 +19,12 @@ struct DebugState {
     uint nextPid;
 }
     enum LogLevel {
-        Disable,
-        Debug,
-        Info,
-        Warn,
-        Error,
-        Critical
+        Disable,    // Display no message
+        Debug,      // Display all messages including debug details
+        Info,       // Display info, warning, and error messages
+        Warn,       // Display warning and error messages
+        Error,      // Display error messages only
+        Critical    // Display critical error messages only
     }
     struct Process {
         string libName;
