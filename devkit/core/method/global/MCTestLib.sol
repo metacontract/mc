@@ -40,7 +40,7 @@ library MCTestLib {
         // } TODO
         uint pid = mc.recordExecStart("createSimpleMockProxy", params);
         Proxy memory simpleMockProxy = ProxyLib.createSimpleMockProxy(functions);
-        mc.proxy.insert(name, simpleMockProxy);
+        mc.proxy.register(name, simpleMockProxy);
         return mc.recordExecFinish(pid);
     }
     function createSimpleMockProxy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
@@ -69,7 +69,7 @@ library MCTestLib {
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("createMockDictionary", Params.append(name, owner));
         Dictionary memory mockDictionary = DictionaryLib.createMockDictionary(owner, functions);
-        mc.dictionary.insert(name, mockDictionary);
+        mc.dictionary.register(name, mockDictionary);
         return mc.recordExecFinish(pid);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Bundle storage bundleInfo) internal returns(MCDevKit storage) {

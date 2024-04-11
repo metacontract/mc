@@ -114,6 +114,13 @@ library Require {
         validate(proxy.exists(), "Proxy Not Exist");
         return proxy;
     }
+    function isComplete(Proxy storage proxy) internal {
+        validate(proxy.isComplete(), "Proxy Not Complete");
+    }
+    function valid(Proxy storage proxy) internal {
+        exists(proxy);
+        isComplete(proxy);
+    }
     function notEmpty(Proxy memory proxy) internal returns(Proxy memory) {
         validate(proxy.isNotEmpty(), "Empty Proxy");
         return proxy;
@@ -124,10 +131,10 @@ library Require {
         return kind;
     }
 
-    function notExists(ProxyRegistry storage registry, string memory name) internal {
+    function notRegistered(ProxyRegistry storage registry, string memory name) internal {
         validate(registry.proxies[name].notExists(), "Proxy Already Exists");
     }
-    function isComplete(ProxyRegistry storage registry, string memory name) internal {
+    function validRegistration(ProxyRegistry storage registry, string memory name) internal {
         validate(registry.proxies[name].isComplete(), "Proxy Not Complete");
     }
 
@@ -138,6 +145,13 @@ library Require {
     function exists(Dictionary storage dictionary) internal returns(Dictionary storage) {
         validate(dictionary.exists(), "Dictionary Not Exists");
         return dictionary;
+    }
+    function isComplete(Dictionary storage dictionary) internal {
+        validate(dictionary.isComplete(), "Dictionary Not Complete");
+    }
+    function valid(Dictionary storage dictionary) internal {
+        exists(dictionary);
+        isComplete(dictionary);
     }
     function notEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
         validate(dictionary.isNotEmpty(), "Empty Dictionary");
@@ -159,11 +173,11 @@ library Require {
         validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
     }
 
-    function notExists(DictionaryRegistry storage registry, string memory name) internal {
+    function notRegistered(DictionaryRegistry storage registry, string memory name) internal {
         validate(registry.dictionaries[name].notExists(), "Dictionary Already Exists");
     }
-    function isComplete(DictionaryRegistry storage registry, string memory name) internal {
-        validate(registry.dictionaries[name].isComplete(), "Dictionary Not Complete");
+    function validRegistration(DictionaryRegistry storage registry, string memory name) internal {
+        validate(registry.dictionaries[name].isComplete(), "Dictionary Not Registered");
     }
 
 

@@ -3,18 +3,18 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {console2} from "forge-std/console2.sol";
 import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for ProxyRegistry global;
+// Validation
 import {Require} from "devkit/error/Require.sol";
 
-// Context
-import {Current} from "devkit/core/method/context/Current.sol";
 // Core Type
 import {Proxy, ProxyLib} from "devkit/core/types/Proxy.sol";
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
+// Context
+import {Current} from "devkit/core/method/context/Current.sol";
 
 
 /**=======================
@@ -27,36 +27,31 @@ struct ProxyRegistry {
 }
 library ProxyRegistryLib {
 
-    /**---------------------
-        🚀 Deploy Proxy
-    -----------------------*/
+    /**-------------------------------
+        🚀 Deploy & Register Proxy
+    ---------------------------------*/
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
         uint pid = registry.startProcess("deploy");
         Require.notEmpty(name);
         Require.isNotEmpty(dictionary);
-        registry.insert(name, ProxyLib.deploy(dictionary, initData));
+        Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
+        registry.register(name, proxy);
         return registry.findCurrent().finishProcessInStorage(pid);
     }
 
 
-    /**---------------------
-        🗳️ Insert Proxy
-    -----------------------*/
-    function insert(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
-        uint pid = registry.startProcess("insert");
+    /**-----------------------
+        🗳️ Register Proxy
+    -------------------------*/
+    function register(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
+        uint pid = registry.startProcess("register");
         Require.notEmpty(name);
         Require.notEmpty(proxy);
-        Require.notExists(registry, name);
-        Proxy storage proxy_ = registry.proxies[name] = proxy;
-        // proxy_ = proxy;
-        // registry.proxies[name] = proxy;
+        Require.notRegistered(registry, name);
+        Proxy storage proxyStorage = registry.proxies[name] = proxy;
+        proxyStorage.build().lock();
         registry.current.update(name);
-        proxy_.build().lock();
-console2.log(proxy_.addr);
-console2.log(uint8(proxy_.kind));
-console2.log(uint8(proxy_.status));
-        return proxy_.finishProcessInStorage(pid);
-        // return proxy_.build().lock().finishProcessInStorage(pid);
+        return proxyStorage.finishProcessInStorage(pid);
     }
 
 
@@ -66,9 +61,9 @@ console2.log(uint8(proxy_.status));
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
         uint pid = registry.startProcess("find");
         Require.notEmpty(name);
-        Require.isComplete(registry, name);
+        Require.validRegistration(registry, name);
         Proxy storage proxy = registry.proxies[name];
-        Require.exists(proxy);
+        Require.valid(proxy);
         return proxy.finishProcessInStorage(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage) {

@@ -74,7 +74,7 @@ library MCDeployLib {
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("deployProxy", Params.append(dictionary.addr, initData));
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
-        mc.proxy.insert(name, proxy);
+        mc.proxy.register(name, proxy);
         return mc.recordExecFinish(pid);
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
@@ -105,7 +105,7 @@ library MCDeployLib {
         Dictionary memory dictionary = DictionaryLib  .deploy(owner)
                                                         .set(bundleInfo)
                                                         .upgradeFacade(bundleInfo.facade);
-        mc.dictionary.insert(name, dictionary);
+        mc.dictionary.register(name, dictionary);
         return dictionary.finishProcess(pid);
     }
 
@@ -138,7 +138,7 @@ library MCDeployLib {
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("duplicateDictionary", Params.append(name, targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
-        mc.dictionary.insert(name, newDictionary);
+        mc.dictionary.register(name, newDictionary);
         return mc.recordExecFinish(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
