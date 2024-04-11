@@ -75,9 +75,9 @@ library MCFinderLib {
     function findDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
         return mc.dictionary.find(name);
     }
-    function findMockDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
-        return mc.mock.findMockDictionary(name);
-    }
+    // function findMockDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary storage) {
+    //     return mc.mock.findMockDictionary(name);
+    // }
 
     function toDictionaryAddress(MCDevKit storage mc) internal returns(address) {
         return mc.findCurrentDictionary().addr;

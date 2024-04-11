@@ -22,8 +22,9 @@ import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
         🤲 Set Storage Reader
 *******************************************/
 library MCTestLib {
-    string constant LIB_NAME = "MCTestLib";
 
+    function createMock(MCDevKit storage mc, Bundle storage bundle) internal {}
+    function createMock(MCDevKit storage mc, Function storage func) internal {}
 
     /**---------------------
         🏠 Mocking Proxy
@@ -39,7 +40,7 @@ library MCTestLib {
         //     params = params.comma().append(functions[i].name);
         // } TODO
         uint pid = mc.recordExecStart("createSimpleMockProxy", params);
-        Proxy memory simpleMockProxy = ProxyLib.createSimpleMockProxy(functions);
+        Proxy memory simpleMockProxy = ProxyLib.createProxySimpleMock(functions);
         mc.proxy.register(name, simpleMockProxy);
         return mc.recordExecFinish(pid);
     }

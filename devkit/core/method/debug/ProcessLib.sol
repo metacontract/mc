@@ -13,7 +13,6 @@ import {Proxy} from "devkit/core/types/Proxy.sol";
 import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
-import {MockRegistry} from "devkit/core/registry/MockRegistry.sol";
 import {Current} from "devkit/core/method/context/Current.sol";
 
 
@@ -187,22 +186,6 @@ library ProcessLib {
     function finishProcess(DictionaryRegistry storage dictionaries, uint pid) internal returns(DictionaryRegistry storage) {
         Debug.recordExecFinish(pid);
         return dictionaries;
-    }
-
-
-    /**---------------------
-        🏭 Mock Registry
-    -----------------------*/
-    function startProcess(MockRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return Debug.recordExecStart("MockRegistryLib", name, params);
-    }
-    function startProcess(MockRegistry storage mock, string memory name) internal returns(uint) {
-        return mock.startProcess(name, "");
-    }
-
-    function finishProcess(MockRegistry storage mock, uint pid) internal returns(MockRegistry storage) {
-        Debug.recordExecFinish(pid);
-        return mock;
     }
 
 
