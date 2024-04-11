@@ -35,7 +35,6 @@ library FunctionRegistryLib {
         return registry.finishProcess(pid);
     }
 
-
     /**----------------------
         🔍 Find Function
     ------------------------*/
