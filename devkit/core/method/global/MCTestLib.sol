@@ -28,8 +28,18 @@ library MCTestLib {
     /**-----------------------------
         🌞 Mocking Meta Contract
     -------------------------------*/
-    function createMock(MCDevKit storage mc, Bundle storage bundle) internal {}
-    function createMock(MCDevKit storage mc, Function storage func) internal {}
+    function createMock(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("createMock", Params.append(bundle.name));
+        createProxySimpleMock(mc, bundle);
+        return mc.recordExecFinish(pid);
+    }
+    function createMock(MCDevKit storage mc, Function storage func) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("createMock", Params.append(func.name));
+        Function[] memory funcs = new Function[](1);
+        funcs[0] = func;
+        createProxySimpleMock(mc, funcs);
+        return mc.recordExecFinish(pid);
+    }
 
 
     /**---------------------
@@ -48,14 +58,17 @@ library MCTestLib {
         mc.proxy.register(name, proxyMock);
         return mc.recordExecFinish(pid);
     }
-    function createProxySimpleMock(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-        return createProxySimpleMock(mc, name, bundleInfo.functions);
+    function createProxySimpleMock(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, name, bundle.functions);
     }
     function createProxySimpleMock(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return createProxySimpleMock(mc, name, mc.std.all);
     }
     function createProxySimpleMock(MCDevKit storage mc, Function[] memory functions) internal returns(MCDevKit storage) {
         return createProxySimpleMock(mc, mc.proxy.genUniqueMockName(), functions);
+    }
+    function createProxySimpleMock(MCDevKit storage mc, Bundle memory bundle) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, mc.proxy.genUniqueMockName(), bundle.functions);
     }
     function createProxySimpleMock(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return createProxySimpleMock(mc, mc.proxy.genUniqueMockName(), mc.std.all);
