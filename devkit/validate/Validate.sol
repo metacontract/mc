@@ -2,7 +2,9 @@
 pragma solidity ^0.8.24;
 
 import {throwError} from "devkit/log/error/ThrowError.sol";
-import {ERR} from "devkit/log/message/Errors.sol";
+import {ERR} from "devkit/log/message/ERR.sol";
+import {Debug, LogLevel} from "devkit/log/debug/Debug.sol";
+import {Logger} from "devkit/log/debug/Logger.sol";
 // Utils
 import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
     using BoolUtils for bool;
@@ -27,15 +29,27 @@ import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
 import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
+
 /// @dev like `require`
-function validate(bool condition, string memory errorBody) {
-    if (condition.isFalse()) throwError(errorBody);
+function validate(ValidationType validationType, bool condition, string memory messageBody, string memory messageDetail) {
+    if (condition) return;
+    Logger.log(messageBody.append(messageDetail));
+    if (validationType == MUST) revert(ERR.message(messageBody)); // TODO
+}
+function validate(bool condition, string memory logMessage) {
+    validate(MUST, condition, logMessage, "");
 }
 function validate(bool condition, string memory errorBody, string memory errorDetail) {
     validate(condition, errorBody.append(errorDetail));
 }
 
+ValidationType constant MUST = ValidationType.MUST;
+ValidationType constant SHOULD = ValidationType.SHOULD;
+
+enum ValidationType { MUST, SHOULD }
+
 library Validate {
+
     /**
         Type Guard
      */
@@ -102,6 +116,13 @@ library Validate {
         exists(bundle);
         isComplete(bundle);
     }
+    function SHOULD_valid(Bundle storage bundle) internal {
+        validate(SHOULD, bundle.exists(), "Bundle Not Exists", "");
+        // exists(bundle);
+        validate(SHOULD, bundle.isComplete(), "Bundle Not Complete", "");
+        // isComplete(bundle);
+    }
+
     function exists(Bundle storage bundle) internal {
         validate(bundle.exists(), "Bundle Info Not Exists");
     }
@@ -122,6 +143,9 @@ library Validate {
     function bundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
         validate(bundle.notExistsBundle(name), "Bundle Already Exists");
         return bundle;
+    }
+    function SHOULD_beCompleted(BundleRegistry storage registry, string memory name) internal {
+        validate(SHOULD, registry.bundles[name].isComplete(), "Incompleted Bundle", "");
     }
 
     /**==============
@@ -203,6 +227,9 @@ library Validate {
     }
     function notEmpty(string memory str) internal {
         validate(str.isNotEmpty(), ERR.EMPTY_STR);
+    }
+    function MUST_notEmpty(string memory str) internal {
+        validate(MUST, str.isNotEmpty(), "Current Bundle Not Found", "");
     }
 
     function isUnassigned(bytes4 b4) internal {

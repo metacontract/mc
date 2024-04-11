@@ -47,16 +47,16 @@ library BundleRegistryLib {
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
         uint pid = registry.startProcess("find");
-        Validate.notEmpty(name);
-        // Warning.isComplete(registry, name); TODO
+        Validate.MUST_notEmpty(name);
+        Validate.SHOULD_beCompleted(registry, name);
         Bundle storage bundle = registry.bundles[name];
-        // Validate.valid(bundle); TODO
+        Validate.SHOULD_valid(bundle);
         return bundle.finishProcess(pid);
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.notEmpty(name);
+        Validate.MUST_notEmpty(name);
         return registry.find(name).finishProcess(pid);
     }
 

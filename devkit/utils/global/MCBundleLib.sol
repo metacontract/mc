@@ -5,7 +5,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";
 import {validate} from "devkit/validate/Validate.sol";
-import {ERR} from "devkit/log/message/Errors.sol";
+import {ERR} from "devkit/log/message/ERR.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/log/debug/Params.sol";
