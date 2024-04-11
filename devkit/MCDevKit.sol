@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Core Registries
+// Registries
 import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
 import {BundleRegistry} from "devkit/registry/BundleRegistry.sol";

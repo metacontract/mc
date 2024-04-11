@@ -13,7 +13,7 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
-import {Current} from "devkit/utils/context/Current.sol";
+import {Current} from "devkit/registry/context/Current.sol";
 
 
 /**=================

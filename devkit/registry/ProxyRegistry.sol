@@ -16,7 +16,7 @@ import {Require} from "devkit/error/Require.sol";
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 // Context
-import {Current} from "devkit/utils/context/Current.sol";
+import {Current} from "devkit/registry/context/Current.sol";
 
 
 /**=======================

@@ -6,7 +6,6 @@ pragma solidity ^0.8.24;
 import {Params} from "devkit/debug/Params.sol";
 import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for Current global;
-
 // Validation
 import {Require} from "devkit/error/Require.sol";
 
@@ -19,6 +18,7 @@ struct Current {
     string name;
 }
 library CurrentLib {
+
     /**-------------------------------
         🔄 Update Current Context
     ---------------------------------*/

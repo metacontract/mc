@@ -9,7 +9,7 @@ using ProcessLib for FunctionRegistry global;
 import {Require} from "devkit/error/Require.sol";
 
 // Context
-import {Current} from "devkit/utils/context/Current.sol";
+import {Current} from "devkit/registry/context/Current.sol";
 // Core Type
 import {Function} from "devkit/core/Function.sol";
 
