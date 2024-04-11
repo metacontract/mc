@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
+import {console2} from "forge-std/console2.sol";
 import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
@@ -46,9 +47,16 @@ library ProxyRegistryLib {
         Require.notEmpty(name);
         Require.notEmpty(proxy);
         Require.notExists(registry, name);
-        registry.proxies[name] = proxy;
+        Proxy storage proxy_ = registry.proxies[name] = proxy;
+        // proxy_ = proxy;
+        // registry.proxies[name] = proxy;
         registry.current.update(name);
-        return registry.findCurrent().build().lock().finishProcessInStorage(pid);
+        proxy_.build().lock();
+console2.log(proxy_.addr);
+console2.log(uint8(proxy_.kind));
+console2.log(uint8(proxy_.status));
+        return proxy_.finishProcessInStorage(pid);
+        // return proxy_.build().lock().finishProcessInStorage(pid);
     }
 
 

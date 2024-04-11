@@ -37,7 +37,8 @@ library DictionaryRegistryLib {
         Dictionary memory dictionary = DictionaryLib.deploy(owner);
         dictionary.set(bundle).upgradeFacade(bundle.facade);
         registry.insert(name, dictionary);
-        return registry.findCurrent().finishProcessInStorage(pid);
+        return registry.dictionaries[name].finishProcessInStorage(pid);
+        // return registry.findCurrent().finishProcessInStorage(pid);
     }
 
 
@@ -51,7 +52,8 @@ library DictionaryRegistryLib {
         Require.notExists(registry, name);
         registry.dictionaries[name] = dictionary;
         registry.current.update(name);
-        return registry.findCurrent().build().lock().finishProcessInStorage(pid);
+        return registry.dictionaries[name].build().lock().finishProcessInStorage(pid);
+        // return registry.findCurrent().build().lock().finishProcessInStorage(pid);
     }
 
 
