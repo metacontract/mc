@@ -11,10 +11,10 @@ import {Dumper} from "devkit/core/method/debug/Dumper.sol";
     using Dumper for Function global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for Function global;
-import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
-    using TypeGuard for Function global;
 // Validation
 import {Require} from "devkit/error/Require.sol";
+import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+    using TypeGuard for Function global;
 // Loader
 import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 
@@ -30,6 +30,7 @@ struct Function { /// @dev Function may be different depending on the op version
     TypeStatus status;
 }
 library FunctionLib {
+
     /**---------------
         🌈 Assign
     -----------------*/

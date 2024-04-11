@@ -17,6 +17,7 @@ import {UintUtils} from "devkit/utils/UintUtils.sol";
 import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
 // Core Types
 import {Function} from "devkit/core/types/Function.sol";
+import {FunctionRegistry} from "devkit/core/registry/FunctionRegistry.sol";
 import {Bundle} from "devkit/core/types/Bundle.sol";
 import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
 import {Proxy, ProxyKind} from "devkit/core/types/Proxy.sol";
@@ -50,6 +51,13 @@ library Require {
         validate(func.exists(), "func does not exists");
         // validate(func.isBuilt(), "func does not exists"); // TODO
     }
+    function isComplete(Function storage func) internal {
+        validate(func.isComplete(), "Function Not Complete");
+    }
+    function valid(Function storage func) internal {
+        exists(func);
+        isComplete(func);
+    }
 
     function EmptyName(Function storage func) internal {
         Require.isUnassigned(func.name);
@@ -72,8 +80,8 @@ library Require {
     function implIsContract(Function storage func) internal {
         validate(func.implementation.isContract(), "Implementation Not Contract");
     }
-    function isComplete(Function storage func) internal {
-        validate(func.isComplete(), "Function Not Complete");
+    function validRegistration(FunctionRegistry storage registry, string memory name) internal {
+        validate(registry.functions[name].isComplete(), "Function Not Complete");
     }
 
 

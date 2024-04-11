@@ -23,13 +23,13 @@ struct FunctionRegistry {
 }
 library FunctionRegistryLib {
 
-    /**-------------------------
-        🗳️ Insert Function
-    ---------------------------*/
-    function insert(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
-        uint pid = registry.startProcess("insert");
+    /**--------------------------
+        🗳️ Register Function
+    ----------------------------*/
+    function register(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
+        uint pid = registry.startProcess("register");
         Require.notEmpty(name);
-        registry.functions[name].assign(name, selector, implementation).build();
+        registry.functions[name].assign(name, selector, implementation).build().lock();
         registry.current.update(name);
         return registry.finishProcess(pid);
     }
@@ -41,8 +41,9 @@ library FunctionRegistryLib {
     function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage) {
         uint pid = registry.startProcess("find");
         Require.notEmpty(name);
+        Require.validRegistration(registry, name);
         Function storage func = registry.functions[name];
-        Require.exists(func);
+        Require.valid(func);
         return func.finishProcess(pid);
     }
     function findCurrent(FunctionRegistry storage registry) internal returns(Function storage) {
