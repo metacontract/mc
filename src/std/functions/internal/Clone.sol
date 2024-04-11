@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+
+import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
+import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
+
+/**
+    < MC Standard Function >
+    @title Clone
+    @custom:version 0.1.0
+    @custom:schema v0.1.0
+ */
+library Clone {
+    /// DO NOT USE STORAGE DIRECTLY !!!
+    event ProxyCloned(address proxy);
+
+    function _clone(bytes calldata initData) internal returns (address proxy) {
+        proxy = address(new ERC7546ProxyEtherscan(ERC7546Utils.getDictionary(), initData));
+        emit ProxyCloned(proxy);
+    }
+
+}
