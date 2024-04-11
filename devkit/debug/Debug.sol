@@ -4,9 +4,9 @@ pragma solidity ^0.8.24;
 // Utils
 import {console2, StdStyle} from "../utils/ForgeHelper.sol";
     using StdStyle for string;
-import {StringUtils} from "../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
-import {BoolUtils} from "devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
     using BoolUtils for bool;
 import {Logger} from "./Logger.sol";
 

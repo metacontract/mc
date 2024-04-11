@@ -3,13 +3,13 @@ pragma solidity ^0.8.24;
 
 import {MCDevKitTest} from "devkit/MCTest.sol";
 
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 import {Config} from "devkit/config/Config.sol";
 import {ERR} from "devkit/error/Error.sol";
 
-import {Bundle} from "devkit/core/types/Bundle.sol";
-import {Function} from "devkit/core/types/Function.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {ERR} from "devkit/error/Error.sol";
 // Utils
 import {console2, StdStyle, vm} from "../utils/ForgeHelper.sol";
-import {StringUtils} from "../utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
 // Debug
 import {Debug, Process} from "./Debug.sol";
 

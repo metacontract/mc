@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Utils
 import {StdStyle} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 // Debug
 import {Logger} from "devkit/debug/Logger.sol";

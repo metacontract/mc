@@ -3,11 +3,11 @@
 
 // import {Test, console2} from "forge-std/Test.sol";
 // import {MCDevKit} from "devkit/MCDevKit.sol";
-// import {Function} from "devkit/core/types/Function.sol";
+// import {Function} from "devkit/core/Function.sol";
 
 // import {TestHelper} from "../utils/TestHelper.sol";
 //     using TestHelper for Function;
-// import {StringUtils} from "devkit/utils/StringUtils.sol";
+// import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
 //     using StringUtils for string;
 
 // contract MCDevKitTest is Test {

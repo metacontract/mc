@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Core
-import {Function} from "devkit/core/types/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 // External Lib
 import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
 

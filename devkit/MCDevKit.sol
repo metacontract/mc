@@ -2,20 +2,20 @@
 pragma solidity ^0.8.24;
 
 // Core Registries
-import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
-import {FunctionRegistry} from "devkit/core/registry/FunctionRegistry.sol";
-import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
-import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
-import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
+import {StdRegistry} from "devkit/registry/StdRegistry.sol";
+import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
+import {BundleRegistry} from "devkit/registry/BundleRegistry.sol";
+import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
+import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
 
 // Global Methods
-import {MCSetupLib} from "devkit/core/method/global/MCSetupLib.sol";
-import {MCBundleLib} from "devkit/core/method/global/MCBundleLib.sol";
-import {MCDeployLib} from "devkit/core/method/global/MCDeployLib.sol";
-import {MCFinderLib} from "devkit/core/method/global/MCFinderLib.sol";
-import {MCContextLib} from "devkit/core/method/global/MCContextLib.sol";
-import {MCTestLib} from "devkit/core/method/global/MCTestLib.sol";
-import {MCDebugLib} from "devkit/core/method/global/MCDebugLib.sol";
+import {MCSetupLib} from "devkit/utils/global/MCSetupLib.sol";
+import {MCBundleLib} from "devkit/utils/global/MCBundleLib.sol";
+import {MCDeployLib} from "devkit/utils/global/MCDeployLib.sol";
+import {MCFinderLib} from "devkit/utils/global/MCFinderLib.sol";
+import {MCContextLib} from "devkit/utils/global/MCContextLib.sol";
+import {MCTestLib} from "devkit/utils/global/MCTestLib.sol";
+import {MCDebugLib} from "devkit/utils/global/MCDebugLib.sol";
 
 
 /********************************

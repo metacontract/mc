@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
-import {AddressUtils} from "devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
     using AddressUtils for address;
-import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
 
 

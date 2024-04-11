@@ -3,9 +3,9 @@ pragma solidity ^0.8.24;
 
 import {throwError, ERR} from "devkit/error/Error.sol";
 // Utils
-import {BoolUtils} from "devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
     using BoolUtils for bool;
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 
 /// @dev like `require`

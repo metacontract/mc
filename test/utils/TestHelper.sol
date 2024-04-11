@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AddressUtils} from "devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
     using AddressUtils for address;
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 
-import {Function} from "devkit/core/types/Function.sol";
+import {Function} from "devkit/core/Function.sol";
 // import {Bundle} from "./Bundle.sol";
 
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";

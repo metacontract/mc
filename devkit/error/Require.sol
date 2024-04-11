@@ -4,28 +4,28 @@ pragma solidity ^0.8.24;
 import {throwError, ERR} from "devkit/error/Error.sol";
 import {validate} from "devkit/error/Validate.sol";
 // Utils
-import {BoolUtils} from "devkit/utils/BoolUtils.sol";
+import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
     using BoolUtils for bool;
-import {StringUtils} from "devkit/utils/StringUtils.sol";
+import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
-import {Bytes4Utils} from "devkit/utils/Bytes4Utils.sol";
+import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
     using Bytes4Utils for bytes4;
-import {AddressUtils} from "devkit/utils/AddressUtils.sol";
+import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
     using AddressUtils for address;
-import {UintUtils} from "devkit/utils/UintUtils.sol";
+import {UintUtils} from "devkit/utils/primitive/UintUtils.sol";
     using UintUtils for uint256;
-import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
+import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Core Types
-import {Function} from "devkit/core/types/Function.sol";
-import {FunctionRegistry} from "devkit/core/registry/FunctionRegistry.sol";
-import {Bundle} from "devkit/core/types/Bundle.sol";
-import {BundleRegistry} from "devkit/core/registry/BundleRegistry.sol";
-import {Proxy, ProxyKind} from "devkit/core/types/Proxy.sol";
-import {ProxyRegistry} from "devkit/core/registry/ProxyRegistry.sol";
-import {Dictionary, DictionaryKind} from "devkit/core/types/Dictionary.sol";
-import {DictionaryRegistry} from "devkit/core/registry/DictionaryRegistry.sol";
-import {StdRegistry} from "devkit/core/registry/StdRegistry.sol";
-import {StdFunctions} from "devkit/core/registry/StdFunctions.sol";
+import {Function} from "devkit/core/Function.sol";
+import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
+import {Bundle} from "devkit/core/Bundle.sol";
+import {BundleRegistry} from "devkit/registry/BundleRegistry.sol";
+import {Proxy, ProxyKind} from "devkit/core/Proxy.sol";
+import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
+import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
+import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
+import {StdRegistry} from "devkit/registry/StdRegistry.sol";
+import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
 
 library Require {
@@ -88,13 +88,15 @@ library Require {
     /**===============
         🗂️ Bundle
     =================*/
-    function isComplete(Bundle storage bundle) internal returns(Bundle storage) {
+    function isComplete(Bundle storage bundle) internal {
         validate(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
-        return bundle;
     }
-    function exists(Bundle storage bundle) internal returns(Bundle storage) {
+    function valid(Bundle storage bundle) internal {
+        exists(bundle);
+        isComplete(bundle);
+    }
+    function exists(Bundle storage bundle) internal {
         validate(bundle.exists(), "Bundle Info Not Exists");
-        return bundle;
     }
     function notExists(Bundle storage bundle) internal returns(Bundle storage) {
         validate(bundle.notExists(), "Bundle Already Exists");
