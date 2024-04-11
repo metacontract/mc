@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
+// Validation
+import {Require} from "devkit/error/Require.sol";
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {Config} from "devkit/config/Config.sol";
@@ -17,14 +19,18 @@ import {Dictionary, DictionaryLib} from "devkit/core/types/Dictionary.sol";
 
 /******************************************
     🧪 Test
+        🌞 Mocking Meta Contract
         🏠 Mocking Proxy
         📚 Mocking Dictionary
         🤲 Set Storage Reader
 *******************************************/
 library MCTestLib {
-
+    /**-----------------------------
+        🌞 Mocking Meta Contract
+    -------------------------------*/
     function createMock(MCDevKit storage mc, Bundle storage bundle) internal {}
     function createMock(MCDevKit storage mc, Function storage func) internal {}
+
 
     /**---------------------
         🏠 Mocking Proxy
@@ -34,28 +40,26 @@ library MCTestLib {
         @param name The name of the MockProxy, used as a key in the `mc.test.mockProxies` mapping and as a label name in the Forge test runner. If not provided, sequential default names from `MockProxy0` to `MockProxy4` will be used.
         @param functions The function contract infos to be registered with the SimpleMockProxy. A bundle can also be specified. Note that the SimpleMockProxy cannot have its functions changed later. If no functions are provided, defaultBundle will be used.
     */
-    function createSimpleMockProxy(MCDevKit storage mc, string memory name, Function[] memory functions) internal returns(MCDevKit storage) {
-        string memory params = Params.append(name);
-        // for (uint i; i < functions.length; ++i) {
-        //     params = params.comma().append(functions[i].name);
-        // } TODO
-        uint pid = mc.recordExecStart("createSimpleMockProxy", params);
-        Proxy memory simpleMockProxy = ProxyLib.createProxySimpleMock(functions);
-        mc.proxy.register(name, simpleMockProxy);
+    function createProxySimpleMock(MCDevKit storage mc, string memory name, Function[] memory functions) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("createProxySimpleMock", Params.append(name)); // TODO append functions
+        Require.notEmpty(name);
+        // TODO Check Functions?
+        Proxy memory proxyMock = ProxyLib.createSimpleMock(functions);
+        mc.proxy.register(name, proxyMock);
         return mc.recordExecFinish(pid);
     }
-    function createSimpleMockProxy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-        return mc.createSimpleMockProxy(name, bundleInfo.functions);
+    function createProxySimpleMock(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, name, bundleInfo.functions);
     }
-    function createSimpleMockProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createSimpleMockProxy(name, mc.std.all);
+    function createProxySimpleMock(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, name, mc.std.all);
     }
-    // function createSimpleMockProxy(MCDevKit storage mc, Function[] memory functions) internal returns(MCDevKit storage) {
-    //     return mc.createSimpleMockProxy(mc.proxy.genUniqueMockName(), functions);
-    // }
-    // function createSimpleMockProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-    //     return mc.createSimpleMockProxy(mc.proxy.genUniqueMockName(), mc.std.all);
-    // }
+    function createProxySimpleMock(MCDevKit storage mc, Function[] memory functions) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, mc.proxy.genUniqueMockName(), functions);
+    }
+    function createProxySimpleMock(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return createProxySimpleMock(mc, mc.proxy.genUniqueMockName(), mc.std.all);
+    }
 
 
     /**-------------------------
@@ -69,8 +73,10 @@ library MCTestLib {
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("createMockDictionary", Params.append(name, owner));
-        Dictionary memory mockDictionary = DictionaryLib.createMockDictionary(owner, functions);
-        mc.dictionary.register(name, mockDictionary);
+        Require.notEmpty(name);
+        // TODO Check Functions?
+        Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
+        mc.dictionary.register(name, dictionaryMock);
         return mc.recordExecFinish(pid);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
@@ -82,9 +88,9 @@ library MCTestLib {
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.createMockDictionary(name, Config().defaultOwner(), mc.std.all);
     }
-    // function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-    //     return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config().defaultOwner(), mc.std.all);
-    // }
+    function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), Config().defaultOwner(), mc.std.all);
+    }
 
 
     /**--------------------------

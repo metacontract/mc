@@ -48,10 +48,10 @@ library ProxyLib {
     }
 
     /**--------------------------
-        🤖 Create Mock Proxy
+        🤖 Create Proxy Mock
     ----------------------------*/
-    function createProxySimpleMock(Function[] memory functions) internal returns(Proxy memory) {
-        uint pid = ProcessLib.startProxyLibProcess("createProxySimpleMock");
+    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory) {
+        uint pid = ProcessLib.startProxyLibProcess("createSimpleMock");
         return Proxy({
             addr: address(new ProxySimpleMock(functions)),
             kind: ProxyKind.Mock,

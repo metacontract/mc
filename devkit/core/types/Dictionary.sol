@@ -133,10 +133,10 @@ library DictionaryLib {
 
 
     /**------------------------------
-        🤖 Create Mock Dictionary
+        🤖 Create Dictionary Mock
     --------------------------------*/
-    function createMockDictionary(address owner, Function[] memory functions) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("createMockDictionary");
+    function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory) {
+        uint pid = ProcessLib.startDictionaryLibProcess("createMock");
         return Dictionary({
             addr: address(new DictionaryMock(owner, functions)),
             kind: DictionaryKind.Mock,

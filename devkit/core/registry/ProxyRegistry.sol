@@ -7,6 +7,8 @@ import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for ProxyRegistry global;
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
+    using MappingAnalyzer for mapping(string => Proxy);
 // Validation
 import {Require} from "devkit/error/Require.sol";
 
@@ -33,7 +35,7 @@ library ProxyRegistryLib {
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
         uint pid = registry.startProcess("deploy");
         Require.notEmpty(name);
-        Require.isNotEmpty(dictionary);
+        Require.notEmpty(dictionary);
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         registry.register(name, proxy);
         return registry.findCurrent().finishProcessInStorage(pid);
@@ -69,6 +71,16 @@ library ProxyRegistryLib {
         string memory name = registry.current.name;
         Require.notEmpty(name);
         return registry.find(name).finishProcessInStorage(pid);
+    }
+
+    /**-----------------------------
+        🏷 Generate Unique Name
+    -------------------------------*/
+    function genUniqueName(ProxyRegistry storage registry) internal returns(string memory name) {
+        return registry.proxies.genUniqueName();
+    }
+    function genUniqueMockName(ProxyRegistry storage registry) internal returns(string memory name) {
+        return registry.proxies.genUniqueMockName();
     }
 
 }

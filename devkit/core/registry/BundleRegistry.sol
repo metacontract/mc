@@ -67,8 +67,8 @@ library BundleRegistryLib {
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
-    function genUniqueName(BundleRegistry storage bundle) internal returns(string memory name) {
-        return bundle.bundles.genUniqueName();
+    function genUniqueName(BundleRegistry storage registry) internal returns(string memory name) {
+        return registry.bundles.genUniqueName();
     }
 
 }

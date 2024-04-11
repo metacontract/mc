@@ -7,6 +7,8 @@ import {ProcessLib} from "devkit/core/method/debug/ProcessLib.sol";
     using ProcessLib for DictionaryRegistry global;
 import {Inspector} from "devkit/core/method/inspector/Inspector.sol";
     using Inspector for DictionaryRegistry global;
+import {MappingAnalyzer} from "devkit/core/method/inspector/MappingAnalyzer.sol";
+    using MappingAnalyzer for mapping(string => Dictionary);
 // Validation
 import {Require} from "devkit/error/Require.sol";
 
@@ -72,6 +74,16 @@ library DictionaryRegistryLib {
         string memory name = registry.current.name;
         Require.notEmpty(name);
         return registry.find(name).finishProcessInStorage(pid);
+    }
+
+    /**-----------------------------
+        🏷 Generate Unique Name
+    -------------------------------*/
+    function genUniqueName(DictionaryRegistry storage registry) internal returns(string memory name) {
+        return registry.dictionaries.genUniqueName();
+    }
+    function genUniqueMockName(DictionaryRegistry storage registry) internal returns(string memory name) {
+        return registry.dictionaries.genUniqueMockName();
     }
 
 }
