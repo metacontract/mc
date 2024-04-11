@@ -39,7 +39,6 @@ library ProxyRegistryLib {
         return registry.findCurrent().finishProcessInStorage(pid);
     }
 
-
     /**-----------------------
         🗳️ Register Proxy
     -------------------------*/
@@ -53,7 +52,6 @@ library ProxyRegistryLib {
         registry.current.update(name);
         return proxyStorage.finishProcessInStorage(pid);
     }
-
 
     /**-------------------
         🔍 Find Proxy

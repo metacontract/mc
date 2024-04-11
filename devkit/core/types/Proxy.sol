@@ -13,10 +13,10 @@ import {Require} from "devkit/error/Require.sol";// Core Type
 import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
     using TypeGuard for Proxy global;
 
-// Mock
-import {ProxySimpleMock} from "devkit/mocks/ProxySimpleMock.sol";
-// External Lib
+// External Lib Contract
 import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
+// Mock Contract
+import {ProxySimpleMock} from "devkit/mocks/ProxySimpleMock.sol";
 
 // Core Types
 import {Dictionary} from "devkit/core/types/Dictionary.sol";
@@ -33,15 +33,11 @@ struct Proxy {
     TypeStatus status;
 }
 library ProxyLib {
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🚀 Deploy Proxy
-        🤖 Create Mock Proxy
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
         Require.notEmpty(dictionary);
         return Proxy({
@@ -54,14 +50,15 @@ library ProxyLib {
     /**--------------------------
         🤖 Create Mock Proxy
     ----------------------------*/
-    function createSimpleMockProxy(Function[] memory functions) internal returns(Proxy memory) {
-        uint pid = ProcessLib.startProxyLibProcess("createSimpleMockProxy");
+    function createProxySimpleMock(Function[] memory functions) internal returns(Proxy memory) {
+        uint pid = ProcessLib.startProxyLibProcess("createProxySimpleMock");
         return Proxy({
             addr: address(new ProxySimpleMock(functions)),
             kind: ProxyKind.Mock,
             status: TypeStatus.Building
         }).finishProcess(pid);
     }
+
 }
 
 
