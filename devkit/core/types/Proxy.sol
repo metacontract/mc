@@ -14,7 +14,7 @@ import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
     using TypeGuard for Proxy global;
 
 // Mock
-import {SimpleMockProxy} from "devkit/utils/mocks/SimpleMockProxy.sol";
+import {ProxySimpleMock} from "devkit/mocks/ProxySimpleMock.sol";
 // External Lib
 import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
 
@@ -57,7 +57,7 @@ library ProxyLib {
     function createSimpleMockProxy(Function[] memory functions) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("createSimpleMockProxy");
         return Proxy({
-            addr: address(new SimpleMockProxy(functions)),
+            addr: address(new ProxySimpleMock(functions)),
             kind: ProxyKind.Mock,
             status: TypeStatus.Building
         }).finishProcess(pid);

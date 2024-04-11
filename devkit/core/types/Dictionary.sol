@@ -18,7 +18,7 @@ import {TypeGuard, TypeStatus} from "devkit/core/types/TypeGuard.sol";
     using TypeGuard for Dictionary global;
 
 // Mock
-import {MockDictionary} from "devkit/utils/mocks/MockDictionary.sol";
+import {DictionaryMock} from "devkit/mocks/DictionaryMock.sol";
 // External Libs
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
@@ -138,7 +138,7 @@ library DictionaryLib {
     function createMockDictionary(address owner, Function[] memory functions) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("createMockDictionary");
         return Dictionary({
-            addr: address(new MockDictionary(owner, functions)),
+            addr: address(new DictionaryMock(owner, functions)),
             kind: DictionaryKind.Mock,
             status: TypeStatus.Building
         }).finishProcess(pid);
