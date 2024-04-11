@@ -28,11 +28,6 @@ struct BundleRegistry {
     Current current;
 }
 library BundleRegistryLib {
-    /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        🌱 Init Bundle
-        🔍 Find Bundle
-        🏷 Generate Unique Name
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     /**---------------------
         🌱 Init Bundle
@@ -41,10 +36,8 @@ library BundleRegistryLib {
         uint pid = registry.startProcess("init");
         Require.notEmpty(name);
         Bundle storage bundle = registry.bundles[name];
-
         Require.isUnassigned(bundle);
         bundle.assignName(name);
-
         registry.current.update(name);
         return registry.finishProcess(pid);
     }
@@ -54,7 +47,11 @@ library BundleRegistryLib {
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
         uint pid = registry.startProcess("find");
-        return registry.bundles[name].finishProcess(pid);
+        Require.notEmpty(name);
+        // Warning.isComplete(registry, name); TODO
+        Bundle storage bundle = registry.bundles[name];
+        Require.valid(bundle);
+        return bundle.finishProcess(pid);
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
         uint pid = registry.startProcess("findCurrent");
