@@ -30,6 +30,9 @@ import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
 
+/**=================
+    ✅ Validate
+===================*/
 library Validate {
     enum Type { MUST, SHOULD }
     Type constant MUST = Type.MUST;
@@ -40,37 +43,39 @@ library Validate {
         Logger.log(messageBody.append(messageDetail));
         if (T == MUST) revert(ERR.message(messageBody)); // TODO
     }
-    function validate(bool condition, string memory logMessage) internal {
-        validate(MUST, condition, logMessage, "");
-    }
-    function validate(bool condition, string memory errorBody, string memory errorDetail) internal {
-        validate(condition, errorBody.append(errorDetail));
-    }
 
-    /**
-        Type Guard
-     */
-    function isBuilt(TypeStatus status) internal {
-        validate(status.isBuilt(), "Not Built Yet");
-    }
 
+    /**===================
+        🔒 Type Guard
+    =====================*/
+    function MUST_beBuilt(TypeStatus status) internal {
+        validate(MUST, status.isBuilt(), "Not Built Yet", "");
+    }
+    // function MUST_beCompleted(TypeStatus status) internal {
+    //     validate(MUST, status.isComplete(), "", "");
+    // }
+
+
+    /**==================
+        🧱 Primitives
+    ====================*/
     function notZero(uint256 num) internal {
-        validate(num.isNotZero(), "Zero Number");
+        validate(MUST, num.isNotZero(), "Zero Number", "");
     }
 
     function assigned(string memory str) internal {
-        validate(str.isNotEmpty(), "Not Assigned");
+        validate(MUST, str.isNotEmpty(), "Not Assigned", "");
     }
 
     /**==================
         🧩 Function
     ====================*/
     function exists(Function storage func) internal {
-        validate(func.exists(), "func does not exists");
-        // validate(func.isBuilt(), "func does not exists"); // TODO
+        validate(MUST, func.exists(), "func does not exists", "");
+        // validate(MUST, func.isBuilt(), "func does not exists", ""); // TODO
     }
     function isComplete(Function storage func) internal {
-        validate(func.isComplete(), "Function Not Complete");
+        validate(MUST, func.isComplete(), "Function Not Complete", "");
     }
     function valid(Function storage func) internal {
         exists(func);
@@ -78,28 +83,28 @@ library Validate {
     }
 
     function EmptyName(Function storage func) internal {
-        Validate.isUnassigned(func.name);
+        isUnassigned(func.name);
     }
     function EmptySelector(Function storage func) internal {
-        Validate.isUnassigned(func.selector);
+        isUnassigned(func.selector);
     }
     function EmptyImpl(Function storage func) internal {
-        validate(func.implementation.isNotContract(), "Implementation Already Exist");
+        validate(MUST, func.implementation.isNotContract(), "Implementation Already Exist", "");
     }
 
     function NotEmpty(Function storage func) internal {
-        validate(func.exists(), "Empty Deployed Contract");
+        validate(MUST, func.exists(), "Empty Deployed Contract", "");
     }
 
     function NotIncludedIn(Function storage func, Bundle storage bundleInfo) internal {
-        validate(bundleInfo.hasNot(func), "Already exists in the Bundel");
+        validate(MUST, bundleInfo.hasNot(func), "Already exists in the Bundel", "");
     }
 
     function implIsContract(Function storage func) internal {
-        validate(func.implementation.isContract(), "Implementation Not Contract");
+        validate(MUST, func.implementation.isContract(), "Implementation Not Contract", "");
     }
     function validRegistration(FunctionRegistry storage registry, string memory name) internal {
-        validate(registry.functions[name].isComplete(), "Function Not Complete");
+        validate(MUST, registry.functions[name].isComplete(), "Function Not Complete", "");
     }
 
 
@@ -107,7 +112,7 @@ library Validate {
         🗂️ Bundle
     =================*/
     function isComplete(Bundle storage bundle) internal {
-        validate(bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
+        validate(MUST, bundle.isComplete(), "Bundle Info Not Complete", bundle.parse());
     }
     function valid(Bundle storage bundle) internal {
         exists(bundle);
@@ -121,24 +126,24 @@ library Validate {
     }
 
     function exists(Bundle storage bundle) internal {
-        validate(bundle.exists(), "Bundle Info Not Exists");
+        validate(MUST, bundle.exists(), "Bundle Info Not Exists", "");
     }
     function notExists(Bundle storage bundle) internal returns(Bundle storage) {
-        validate(bundle.notExists(), "Bundle Already Exists");
+        validate(MUST, bundle.notExists(), "Bundle Already Exists", "");
         return bundle;
     }
     function isUnassigned(Bundle storage bundle) internal {
-        validate(bundle.hasNotName(), "Bundle Already Assigned.");
+        validate(MUST, bundle.hasNotName(), "Bundle Already Assigned.", "");
     }
     function hasNot(Bundle storage bundle, Function storage func) internal {
-        validate(bundle.hasNot(func), "Bundle has same Function");
+        validate(MUST, bundle.hasNot(func), "Bundle has same Function", "");
     }
 
     /**=======================
         📙 Bundle Registry
     =========================*/
     function bundleNotExists(BundleRegistry storage bundle, string memory name) internal returns(BundleRegistry storage) {
-        validate(bundle.notExistsBundle(name), "Bundle Already Exists");
+        validate(MUST, bundle.notExistsBundle(name), "Bundle Already Exists", "");
         return bundle;
     }
     function SHOULD_beCompleted(BundleRegistry storage registry, string memory name) internal {
@@ -155,31 +160,31 @@ library Validate {
         🏠 Proxy
     ================*/
     function exists(Proxy storage proxy) internal returns(Proxy storage) {
-        validate(proxy.exists(), "Proxy Not Exist");
+        validate(MUST, proxy.exists(), "Proxy Not Exist", "");
         return proxy;
     }
     function isComplete(Proxy storage proxy) internal {
-        validate(proxy.isComplete(), "Proxy Not Complete");
+        validate(MUST, proxy.isComplete(), "Proxy Not Complete", "");
     }
     function valid(Proxy storage proxy) internal {
         exists(proxy);
         isComplete(proxy);
     }
     function notEmpty(Proxy memory proxy) internal returns(Proxy memory) {
-        validate(proxy.isNotEmpty(), "Empty Proxy");
+        validate(MUST, proxy.isNotEmpty(), "Empty Proxy", "");
         return proxy;
     }
     /*---- Proxy Kind -----*/
     function NotUndefined(ProxyKind kind) internal returns(ProxyKind) {
-        validate(kind.isNotUndefined(), "Undefined Proxy Kind");
+        validate(MUST, kind.isNotUndefined(), "Undefined Proxy Kind", "");
         return kind;
     }
 
     function notRegistered(ProxyRegistry storage registry, string memory name) internal {
-        validate(registry.proxies[name].notExists(), "Proxy Already Exists");
+        validate(MUST, registry.proxies[name].notExists(), "Proxy Already Exists", "");
     }
     function validRegistration(ProxyRegistry storage registry, string memory name) internal {
-        validate(registry.proxies[name].isComplete(), "Proxy Not Complete");
+        validate(MUST, registry.proxies[name].isComplete(), "Proxy Not Complete", "");
     }
 
 
@@ -187,86 +192,86 @@ library Validate {
         📚 Dictionary
     ======================*/
     function exists(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        validate(dictionary.exists(), "Dictionary Not Exists");
+        validate(MUST, dictionary.exists(), "Dictionary Not Exists", "");
         return dictionary;
     }
     function isComplete(Dictionary storage dictionary) internal {
-        validate(dictionary.isComplete(), "Dictionary Not Complete");
+        validate(MUST, dictionary.isComplete(), "Dictionary Not Complete", "");
     }
     function valid(Dictionary storage dictionary) internal {
         exists(dictionary);
         isComplete(dictionary);
     }
     function notEmpty(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        validate(dictionary.isNotEmpty(), "Empty Dictionary");
+        validate(MUST, dictionary.isNotEmpty(), "Empty Dictionary", "");
         return dictionary;
     }
     function Supports(Dictionary storage dictionary, bytes4 selector) internal returns(Dictionary storage) {
-        validate(dictionary.isSupported(selector), "Unsupported Selector");
+        validate(MUST, dictionary.isSupported(selector), "Unsupported Selector", "");
         return dictionary;
     }
     function verifiable(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        validate(dictionary.isVerifiable(), "Dictionary Not Verifiable");
+        validate(MUST, dictionary.isVerifiable(), "Dictionary Not Verifiable", "");
         return dictionary;
     }
     /*---- Dictionary Kind -----*/
     function notUndefined(DictionaryKind kind) internal {
-        validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
+        validate(MUST, kind.isNotUndefined(), "Undefined Dictionary Kind", "");
     }
     function notUndefined(ProxyKind kind) internal {
-        validate(kind.isNotUndefined(), "Undefined Dictionary Kind");
+        validate(MUST, kind.isNotUndefined(), "Undefined Dictionary Kind", "");
     }
 
     function notRegistered(DictionaryRegistry storage registry, string memory name) internal {
-        validate(registry.dictionaries[name].notExists(), "Dictionary Already Exists");
+        validate(MUST, registry.dictionaries[name].notExists(), "Dictionary Already Exists", "");
     }
     function validRegistration(DictionaryRegistry storage registry, string memory name) internal {
-        validate(registry.dictionaries[name].isComplete(), "Dictionary Not Registered");
+        validate(MUST, registry.dictionaries[name].isComplete(), "Dictionary Not Registered", "");
     }
 
 
     function isUnassigned(string storage str) internal {
-        validate(str.isEmpty(), ERR.STR_ALREADY_ASSIGNED);
+        validate(MUST, str.isEmpty(), ERR.STR_ALREADY_ASSIGNED, "");
     }
     function notEmpty(string memory str) internal {
-        validate(str.isNotEmpty(), ERR.EMPTY_STR);
+        validate(MUST, str.isNotEmpty(), ERR.EMPTY_STR, "");
     }
     function MUST_notEmpty(string memory str) internal {
         validate(MUST, str.isNotEmpty(), "Current Bundle Not Found", "");
     }
 
     function isUnassigned(bytes4 b4) internal {
-        validate(b4.isEmpty(), ERR.B4_ALREADY_ASSIGNED);
+        validate(MUST, b4.isEmpty(), ERR.B4_ALREADY_ASSIGNED, "");
     }
     function notEmpty(bytes4 b4) internal {
-        validate(b4.isNotEmpty(), ERR.EMPTY_B4);
+        validate(MUST, b4.isNotEmpty(), ERR.EMPTY_B4, "");
     }
 
     function isContract(address addr) internal {
-        validate(addr.isContract(), ERR.NOT_CONTRACT);
+        validate(MUST, addr.isContract(), ERR.NOT_CONTRACT, "");
     }
 
     function notEmptyString(string memory str) internal {
-        validate(str.isNotEmpty(), ERR.RQ_NOT_EMPTY_STRING);
+        validate(MUST, str.isNotEmpty(), ERR.RQ_NOT_EMPTY_STRING, "");
     }
 
     function assigned(bytes4 b4) internal {
-        validate(b4.isNotEmpty(), ERR.RQ_SELECTOR);
+        validate(MUST, b4.isNotEmpty(), ERR.RQ_SELECTOR, "");
     }
     function contractAssigned(address addr) internal {
-        validate(addr.isContract(), ERR.RQ_CONTRACT);
+        validate(MUST, addr.isContract(), ERR.RQ_CONTRACT, "");
     }
 
     function notLocked(TypeStatus status) internal {
-        validate(status != TypeStatus.Locked, ERR.LOCKED_OBJECT);
+        validate(MUST, status != TypeStatus.Locked, ERR.LOCKED_OBJECT, "");
     }
 
     function isNotEmpty(Dictionary memory dictionary) internal {
-        validate(dictionary.isNotEmpty(), ERR.EMPTY_DICTIONARY);
+        validate(MUST, dictionary.isNotEmpty(), ERR.EMPTY_DICTIONARY, "");
     }
 
     function notZero(address addr) internal {
-        validate(addr.isNotZero(), ERR.ZERO_ADDRESS);
+        validate(MUST, addr.isNotZero(), ERR.ZERO_ADDRESS, "");
     }
 
 
@@ -274,9 +279,9 @@ library Validate {
         🏛 Standard Registry
     ============================*/
     function isComplete(StdRegistry storage registry) internal {
-        validate(registry.status.isComplete(), "Registry Not Complete");
+        validate(MUST, registry.status.isComplete(), "Registry Not Complete", "");
     }
     function isComplete(StdFunctions storage stdFunctions) internal {
-        validate(stdFunctions.status.isComplete(), "Registry Not Complete");
+        validate(MUST, stdFunctions.status.isComplete(), "Registry Not Complete", "");
     }
 }
