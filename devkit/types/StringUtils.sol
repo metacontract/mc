@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";
-import {Debug} from "devkit/log/debug/Debug.sol";
+import {Debugger} from "devkit/log/debug/Debugger.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
@@ -96,7 +96,7 @@ library StringUtils {
         Record Finish
      */
     function recordExecFinish(string memory str, uint pid) internal returns(string memory) {
-        Debug.recordExecFinish(pid);
+        Debugger.recordExecFinish(pid);
         return str;
     }
 

@@ -2,14 +2,18 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
+import {Config} from "devkit/config/Config.sol";
 
 /**********************************
     🏗 Setup
         🧩 Setup Standard Funcs
 ***********************************/
 library MCSetupLib {
-    string constant LIB_NAME = "MCSetupLib";
-
+    function loadConfig(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        uint pid = mc.recordExecStart("loadConfig");
+        Config().load();
+        return mc.recordExecFinish(pid);
+    }
 
     /**----------------------------
         🧩 Setup Standard Funcs

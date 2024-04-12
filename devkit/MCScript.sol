@@ -12,8 +12,8 @@ import {MCScriptBase} from "./MCBase.sol";
 // ⭐️ MC SCRIPT
 abstract contract MCScript is MCScriptBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
+        mc.loadConfig();
+        mc.startDebug();
         if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
@@ -21,7 +21,7 @@ abstract contract MCScript is MCScriptBase {
 // ⭐️ MC SCRIPT without Setup
 abstract contract MCScriptWithoutSetup is MCScriptBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
+        mc.loadConfig();
+        mc.startDebug();
     }
 }
