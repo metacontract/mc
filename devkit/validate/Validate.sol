@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {throwError} from "devkit/log/error/ThrowError.sol";
 import {ERR} from "devkit/log/message/ERR.sol";
 import {Debug, LogLevel} from "devkit/log/debug/Debug.sol";
+import {Parser} from "devkit/log/debug/Parser.sol";
 import {Logger} from "devkit/log/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
@@ -114,7 +115,7 @@ library Validate {
         validate(MUST, bundle.status.notInitialized(), "Bundle already initialized", "");
     }
     function MUST_completed(Bundle storage bundle) internal {
-        validate(MUST, bundle.isComplete(), "Bundle Not Complete", bundle.parse());
+        validate(MUST, bundle.isComplete(), "Bundle Not Complete", Parser.parse(bundle));
     }
     function SHOULD_completed(Bundle storage bundle) internal {
         validate(SHOULD, bundle.isComplete(), "Bundle Not Complete", "");

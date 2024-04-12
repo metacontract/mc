@@ -32,7 +32,7 @@ library Parser {
 
         Function[] memory _funcs = bundle.functions;
         for (uint i; i < _funcs.length; ++i) {
-            message = message.br().append(_funcs[i].parse());
+            message = message.br().append(parse(_funcs[i]));
         }
     }
 
