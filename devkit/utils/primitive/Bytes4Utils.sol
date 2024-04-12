@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 // Utils
 import {vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "./StringUtils.sol";
@@ -36,7 +36,7 @@ library Bytes4Utils {
         return selector == bytes4(0);
     }
     function assertEmpty(bytes4 selector) internal returns(bytes4) {
-        validate(selector.isEmpty(), "Selector Not Empty");
+        Validate.notEmpty(selector);
         return selector;
     }
 
@@ -44,7 +44,7 @@ library Bytes4Utils {
         return selector.isEmpty().isFalse();
     }
     function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
-        validate(selector.isNotEmpty(), "Empty Selector");
+        Validate.notEmpty(selector);
         return selector;
     }
 

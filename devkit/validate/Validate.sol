@@ -30,25 +30,22 @@ import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
 
-/// @dev like `require`
-function validate(ValidationType validationType, bool condition, string memory messageBody, string memory messageDetail) {
-    if (condition) return;
-    Logger.log(messageBody.append(messageDetail));
-    if (validationType == MUST) revert(ERR.message(messageBody)); // TODO
-}
-function validate(bool condition, string memory logMessage) {
-    validate(MUST, condition, logMessage, "");
-}
-function validate(bool condition, string memory errorBody, string memory errorDetail) {
-    validate(condition, errorBody.append(errorDetail));
-}
-
-ValidationType constant MUST = ValidationType.MUST;
-ValidationType constant SHOULD = ValidationType.SHOULD;
-
-enum ValidationType { MUST, SHOULD }
-
 library Validate {
+    enum Type { MUST, SHOULD }
+    Type constant MUST = Type.MUST;
+    Type constant SHOULD = Type.SHOULD;
+
+    function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal {
+        if (condition) return;
+        Logger.log(messageBody.append(messageDetail));
+        if (T == MUST) revert(ERR.message(messageBody)); // TODO
+    }
+    function validate(bool condition, string memory logMessage) internal {
+        validate(MUST, condition, logMessage, "");
+    }
+    function validate(bool condition, string memory errorBody, string memory errorDetail) internal {
+        validate(condition, errorBody.append(errorDetail));
+    }
 
     /**
         Type Guard
@@ -146,6 +143,12 @@ library Validate {
     }
     function SHOULD_beCompleted(BundleRegistry storage registry, string memory name) internal {
         validate(SHOULD, registry.bundles[name].isComplete(), "Incompleted Bundle", "");
+    }
+    function MUST_existCurrent(BundleRegistry storage registry) internal {
+        validate(MUST, registry.current.name.isNotEmpty(), "Current Not Exist", "");
+    }
+    function MUST_beInitialized(BundleRegistry storage registry) internal {
+        validate(MUST, registry.current.name.isNotEmpty(), ERR.NOT_INIT, "");
     }
 
     /**==============

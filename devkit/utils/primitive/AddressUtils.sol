@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 // Utils
 import {vm} from "devkit/utils/ForgeHelper.sol";
 import {BoolUtils} from "./BoolUtils.sol";
@@ -31,7 +31,7 @@ library AddressUtils {
         return addr == address(0);
     }
     function assertZero(address addr) internal returns(address) {
-        validate(addr.isZero(), "Address Not Zero");
+        Validate.notZero(addr);
         return addr;
     }
 
@@ -40,7 +40,7 @@ library AddressUtils {
         return addr.isZero().isNot();
     }
     function assertNotZero(address addr) internal returns(address) {
-        validate(addr.isNotZero(), "Zero Address");
+        Validate.notZero(addr);
         return addr;
     }
 
@@ -59,7 +59,7 @@ library AddressUtils {
         return addr.hasCode();
     }
     function assertIsContract(address addr) internal returns(address) {
-        validate(addr.isContract(), "Address Not Contract");
+        Validate.isContract(addr);
         return addr;
     }
 
