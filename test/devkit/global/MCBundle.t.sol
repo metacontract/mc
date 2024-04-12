@@ -3,11 +3,11 @@ pragma solidity ^0.8.24;
 
 import {MCDevKitTest} from "devkit/MCTest.sol";
 
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
-import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
-    using StringUtils for string;
+import {TypeConverter} from "devkit/types/TypeConverter.sol";
+    using TypeConverter for string;
 import {Config} from "devkit/config/Config.sol";
 import {ERR} from "devkit/log/message/ERR.sol";
 

@@ -9,7 +9,7 @@ import {Parser} from "devkit/utils/debug/Parser.sol";
     using Parser for Function global;
 import {Dumper} from "devkit/utils/debug/Dumper.sol";
     using Dumper for Function global;
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for Function global;
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";

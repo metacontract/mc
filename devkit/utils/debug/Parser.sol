@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 // Utils
-import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
+import {StringUtils} from "devkit/types/StringUtils.sol";
     using StringUtils for string;
 
 

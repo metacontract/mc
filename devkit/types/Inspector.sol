@@ -2,12 +2,14 @@
 pragma solidity ^0.8.24;
 
 import {Validate} from "devkit/validate/Validate.sol";
-import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
-    using StringUtils for string;
-import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
-    using BoolUtils for bool;
-import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
-    using Bytes4Utils for bytes4;
+// import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
+//     using StringUtils for string;
+// import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
+//     using BoolUtils for bool;
+// import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
+//     using Bytes4Utils for bytes4;
+import {Inspector} from "devkit/types/Inspector.sol";
+    using Inspector for bool;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // External Library
 import {IBeacon} from "@oz.mc/proxy/beacon/IBeacon.sol";
@@ -267,6 +269,17 @@ library Inspector {
     }
     function isNotContract(address addr) internal returns(bool) {
         return addr.isContract().isNot();
+    }
+    /// ✅ Bool
+    function isNot(bool flag) internal pure returns(bool) {
+        return !flag;
+    }
+    function isFalse(bool flag) internal pure returns(bool) {
+        return flag == false;
+    }
+    /// #️⃣ Uint
+    function isNotZero(uint256 num) internal pure returns(bool) {
+        return num != 0;
     }
 
 }

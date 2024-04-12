@@ -4,10 +4,10 @@ pragma solidity ^0.8.24;
 import {ERR} from "devkit/log/message/ERR.sol";
 // Utils
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
-import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
+import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
 import {Debug, Process} from "./Debug.sol";
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
 //================

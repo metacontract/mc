@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
-    using StringUtils for string;
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+// import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
+//     using StringUtils for string;
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
     using Inspector for address;
 

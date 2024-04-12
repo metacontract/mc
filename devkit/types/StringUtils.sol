@@ -7,10 +7,10 @@ import {Debug} from "devkit/log/debug/Debug.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
-import {Bytes4Utils} from "./Bytes4Utils.sol";
-    using Bytes4Utils for bytes4;
-import {BoolUtils} from "./BoolUtils.sol";
-    using BoolUtils for bool;
+import {TypeConverter} from "devkit/types//TypeConverter.sol";
+    using TypeConverter for bytes4;
+// import {BoolUtils} from "./BoolUtils.sol";
+//     using BoolUtils for bool;
 
 /**=====================\
 |   🖋 String Utils     |
@@ -28,9 +28,9 @@ library StringUtils {
         return name.calcHash();
     }
 
-    function loadAddress(string memory envKey) internal returns(address) {
-        return ForgeHelper.loadAddressFromEnv(envKey);
-    }
+    // function loadAddress(string memory envKey) internal returns(address) {
+    //     return ForgeHelper.loadAddressFromEnv(envKey);
+    // }
 
     function substring(string memory str, uint n) internal pure returns (string memory) {
         bytes memory strBytes = bytes(str);
@@ -43,14 +43,6 @@ library StringUtils {
 
     function toSequential(string memory str, uint i) internal returns(string memory) {
         return i == 1 ? str : str.append(i);
-    }
-
-
-    /**-----------------------
-        🔀 Type Convertor
-    -------------------------*/
-    function toBytes(string memory str) internal returns (bytes memory) {
-        return bytes(str);
     }
 
 

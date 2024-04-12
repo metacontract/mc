@@ -7,8 +7,10 @@ pragma solidity ^0.8.24;
 //     using AddressUtils for address;
 // import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
 //     using Bytes4Utils for bytes4;
-import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
-    using BoolUtils for bool;
+import {Inspector} from "devkit/types/Inspector.sol";
+    using Inspector for bool;
+import {TypeConverter} from "devkit/types/TypeConverter.sol";
+    using TypeConverter for bool;
 import {Validate} from "devkit/validate/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";

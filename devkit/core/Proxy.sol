@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 -----------------------*/
 import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for Proxy global;
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for Proxy global;
     using Inspector for ProxyKind global;
 // Validation

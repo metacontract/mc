@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 -----------------------*/
 import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for BundleRegistry global;
-import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for BundleRegistry global;
 import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
     using MappingAnalyzer for mapping(string => Bundle);
