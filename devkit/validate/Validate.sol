@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {throwError} from "devkit/log/error/ThrowError.sol";
 import {ERR} from "devkit/log/message/ERR.sol";
 import {Debug, LogLevel} from "devkit/log/debug/Debug.sol";
 import {Parser} from "devkit/log/debug/Parser.sol";
@@ -202,4 +201,12 @@ library Validate {
     function MUST_Completed(StdFunctions storage stdFunctions) internal {
         validate(MUST, stdFunctions.status.isComplete(), "Registry Not Complete", "");
     }
+
+    /**=======================
+        🏷️ Name Generator
+    =========================*/
+    function MUST_FoundInRange() internal {
+        validate(MUST, false, ERR.FIND_NAME_OVER_RANGE, "");
+    }
+
 }

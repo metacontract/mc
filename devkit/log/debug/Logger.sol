@@ -46,6 +46,10 @@ library Logger {
                 .append(parseLocations())
         );
     }
+    function logAndRevert(string memory message) internal {
+        logError(message);
+        revert(ERR.message(message));
+    }
     // function logCritical(string memory message) internal  {
     //     console2.log(message);
     // }

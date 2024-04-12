@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {throwError} from "devkit/log/error/ThrowError.sol";
-import {ERR} from "devkit/log/message/ERR.sol";
+import {Validate} from "devkit/validate/Validate.sol";
 import {Config, ScanRange} from "devkit/config/Config.sol";
 // Core Types
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -14,7 +13,7 @@ import {StringUtils} from "devkit/types/StringUtils.sol";
     using StringUtils for string;
 
 /**=======================
-    🗺️ Name Generator
+    🏷️ Name Generator
 =========================*/
 library NameGenerator {
 
@@ -27,7 +26,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (bundle[name].hasNotName()) return name; // TODO
         }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
+        Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Bundle) storage bundle) internal returns(string memory name) {
         return genUniqueName(bundle, Config().DEFAULT_BUNDLE_NAME);
@@ -43,7 +42,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (func[name].notExists()) return name;
         }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
+        Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Function) storage func) internal returns(string memory name) {
         return genUniqueName(func, Config().DEFAULT_FUNCTION_NAME);
@@ -59,7 +58,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (dictionary[name].notExists()) return name;
         }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
+        Validate.MUST_FoundInRange();
     }
     /*----- Dictionary -----*/
     function genUniqueName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
@@ -100,7 +99,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (proxy[name].notExists()) return name;
         }
-        throwError(ERR.FIND_NAME_OVER_RANGE);
+        Validate.MUST_FoundInRange();
     }
     /*----- Proxy -----*/
     function genUniqueName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {
