@@ -13,11 +13,10 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
     using StringUtils for string;
 
-/***********************************
-    🗺️ Mapping Analyzer
-        🆕 Generate Unique Name
-************************************/
-library MappingAnalyzer {
+/**=======================
+    🗺️ Name Generator
+=========================*/
+library NameGenerator {
 
     /**------------------------
         🗂️ Bundle Mapping

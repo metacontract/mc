@@ -7,8 +7,8 @@ import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for DictionaryRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for DictionaryRegistry global;
-import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
-    using MappingAnalyzer for mapping(string => Dictionary);
+import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+    using NameGenerator for mapping(string => Dictionary);
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";
 

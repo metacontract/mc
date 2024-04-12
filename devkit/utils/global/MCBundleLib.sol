@@ -12,8 +12,8 @@ import {Params} from "devkit/log/debug/Params.sol";
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 
-import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
-    using MappingAnalyzer for mapping(string => Bundle);
+import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+    using NameGenerator for mapping(string => Bundle);
 
 /***********************************************
     🗂️ Bundle Configuration

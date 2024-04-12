@@ -17,9 +17,9 @@ import {StdFunctionsArgs} from "devkit/registry/StdRegistry.sol";
 //  proxy
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 
-import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
-    using MappingAnalyzer for mapping(string => Dictionary);
-    using MappingAnalyzer for mapping(string => Proxy);
+import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+    using NameGenerator for mapping(string => Dictionary);
+    using NameGenerator for mapping(string => Proxy);
 
 
 /***********************************************

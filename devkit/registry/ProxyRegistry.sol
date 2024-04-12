@@ -7,8 +7,8 @@ import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for ProxyRegistry global;
-import {MappingAnalyzer} from "devkit/utils/inspector/MappingAnalyzer.sol";
-    using MappingAnalyzer for mapping(string => Proxy);
+import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+    using NameGenerator for mapping(string => Proxy);
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";
 
