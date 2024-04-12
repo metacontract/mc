@@ -18,9 +18,6 @@ import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
 import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
 import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
-// Utils
-import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
-    using AddressUtils for address;
 
 
 /**==========================

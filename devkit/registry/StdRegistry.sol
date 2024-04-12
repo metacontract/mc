@@ -7,9 +7,6 @@ import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
     using ProcessLib for StdRegistry global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for StdRegistry global;
-// Utils
-import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
-    using AddressUtils for address;
 // Validation
 import {Validate} from "devkit/validate/Validate.sol";
 
