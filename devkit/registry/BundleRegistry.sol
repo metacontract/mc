@@ -34,9 +34,9 @@ library BundleRegistryLib {
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
         uint pid = registry.startProcess("init");
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
-        Validate.isUnassigned(bundle);
+        Validate.MUST_notInitialized(bundle);
         bundle.assignName(name);
         registry.current.update(name);
         return registry.finishProcess(pid);
@@ -47,16 +47,15 @@ library BundleRegistryLib {
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
         uint pid = registry.startProcess("find");
-        Validate.MUST_notEmpty(name);
-        Validate.SHOULD_beCompleted(registry, name);
+        Validate.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
-        Validate.SHOULD_valid(bundle);
+        Validate.SHOULD_completed(bundle);
         return bundle.finishProcess(pid);
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.MUST_notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         return registry.find(name).finishProcess(pid);
     }
 

@@ -34,8 +34,8 @@ library ProxyRegistryLib {
     ---------------------------------*/
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
         uint pid = registry.startProcess("deploy");
-        Validate.notEmpty(name);
-        Validate.notEmpty(dictionary);
+        Validate.MUST_NotEmptyName(name);
+        Validate.MUST_haveContract(dictionary);
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         registry.register(name, proxy);
         return registry.findCurrent().finishProcessInStorage(pid);
@@ -46,9 +46,10 @@ library ProxyRegistryLib {
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
         uint pid = registry.startProcess("register");
-        Validate.notEmpty(name);
-        Validate.notEmpty(proxy);
-        Validate.notRegistered(registry, name);
+        Validate.MUST_NotEmptyName(name);
+        Validate.MUST_haveContract(proxy);
+        Validate.MUST_haveKind(proxy);
+        Validate.MUST_notRegistered(registry, name);
         Proxy storage proxyStorage = registry.proxies[name] = proxy;
         proxyStorage.build().lock();
         registry.current.update(name);
@@ -60,16 +61,16 @@ library ProxyRegistryLib {
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
         uint pid = registry.startProcess("find");
-        Validate.notEmpty(name);
-        Validate.validRegistration(registry, name);
+        Validate.MUST_NotEmptyName(name);
+        Validate.MUST_registered(registry, name);
         Proxy storage proxy = registry.proxies[name];
-        Validate.valid(proxy);
+        Validate.MUST_completed(proxy);
         return proxy.finishProcessInStorage(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         return registry.find(name).finishProcessInStorage(pid);
     }
 

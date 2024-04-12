@@ -28,6 +28,10 @@ import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
     🧐 Inspectors
 ----------------------*/
 library Inspector {
+    using Inspector for string;
+    using Inspector for bytes4;
+    using Inspector for address;
+
     /**==================
         🧩 Function
     ====================*/
@@ -125,6 +129,9 @@ library Inspector {
     function isNotEmpty(Proxy memory proxy) internal returns(bool) {
         return proxy.addr.isContract();
     }
+    function hasContract(Proxy memory proxy) internal returns(bool) {
+        return proxy.addr.isContract();
+    }
 
     function isMock(Proxy memory proxy) internal pure returns(bool) {
         return proxy.kind == ProxyKind.Mock;
@@ -206,4 +213,62 @@ library Inspector {
     // function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
     //     return dictionaries.mocks[name].exists();
     // }
+
+
+
+    /**===================
+        🧱 Primitives
+    =====================*/
+    /// 📝 String
+    function isAssigned(string storage str) internal returns(bool) {
+        return str.isNotEmpty();
+    }
+    function isEmpty(string memory str) internal returns(bool) {
+        return bytes(str).length == 0;
+    }
+    function isNotEmpty(string memory str) internal returns(bool) {
+        return str.isEmpty().isNot();
+    }
+    function isEqual(string memory a, string memory b) internal returns(bool) {
+        return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+    }
+    function isNotEqual(string memory a, string memory b) internal returns(bool) {
+        return a.isEqual(b).isNot();
+    }
+    /// 💾 Bytes4
+    function isAssigned(bytes4 selector) internal pure returns(bool) {
+        return selector.isNotEmpty();
+    }
+    function isEmpty(bytes4 selector) internal pure returns(bool) {
+        return selector == bytes4(0);
+    }
+    function isNotEmpty(bytes4 selector) internal pure returns(bool) {
+        return selector.isEmpty().isFalse();
+    }
+    function isEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
+        return a == b;
+    }
+    function isNotEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
+        return a.isEqual(b).isFalse();
+    }
+    /// 📌 Address
+    function isZero(address addr) internal returns(bool) {
+        return addr == address(0);
+    }
+    function isNotZero(address addr) internal returns(bool) {
+        return addr.isZero().isNot();
+    }
+    function hasCode(address addr) internal returns(bool) {
+        return addr.code.length != 0;
+    }
+    function hasNotCode(address addr) internal returns(bool) {
+        return addr.hasCode().isNot();
+    }
+    function isContract(address addr) internal returns(bool) {
+        return addr.hasCode();
+    }
+    function isNotContract(address addr) internal returns(bool) {
+        return addr.isContract().isNot();
+    }
+
 }

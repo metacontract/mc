@@ -23,52 +23,6 @@ library AddressUtils {
     }
 
 
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    // isZero
-    function isZero(address addr) internal returns(bool) {
-        return addr == address(0);
-    }
-    function assertZero(address addr) internal returns(address) {
-        Validate.notZero(addr);
-        return addr;
-    }
-
-    // isNotZero
-    function isNotZero(address addr) internal returns(bool) {
-        return addr.isZero().isNot();
-    }
-    function assertNotZero(address addr) internal returns(address) {
-        Validate.notZero(addr);
-        return addr;
-    }
-
-    // hasCode
-    function hasCode(address addr) internal returns(bool) {
-        return addr.code.length != 0;
-    }
-
-    // hasNotCode
-    function hasNotCode(address addr) internal returns(bool) {
-        return addr.hasCode().isNot();
-    }
-
-    // isContract
-    function isContract(address addr) internal returns(bool) {
-        return addr.hasCode();
-    }
-    function assertIsContract(address addr) internal returns(address) {
-        Validate.isContract(addr);
-        return addr;
-    }
-
-    // isNotContract
-    function isNotContract(address addr) internal returns(bool) {
-        return addr.isContract().isNot();
-    }
-
-
     /**-------------------------
         🧪 Utils for Testing
     ---------------------------*/

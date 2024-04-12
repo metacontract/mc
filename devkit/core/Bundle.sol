@@ -35,8 +35,8 @@ library BundleLib {
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignName");
-        Validate.notLocked(bundle.status);
-        Validate.notEmpty(name);
+        Validate.MUST_BundleNotLocked(bundle);
+        Validate.MUST_NotEmptyName(name);
         bundle.name = name;
         return bundle.building().finishProcess(pid);
     }
@@ -46,9 +46,9 @@ library BundleLib {
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
-        Validate.notLocked(bundle.status);
-        Validate.isComplete(func);
-        Validate.hasNot(bundle, func);
+        Validate.MUST_BundleNotLocked(bundle);
+        Validate.MUST_completed(func);
+        Validate.MUST_notHave(bundle, func);
         bundle.functions.push(func);
         return bundle.building().finishProcess(pid);
     }
@@ -65,7 +65,7 @@ library BundleLib {
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignFacade");
-        Validate.isContract(facade);
+        Validate.MUST_AddressIsContract(facade);
         bundle.facade = facade;
         return bundle.building().finishProcess(pid);
     }

@@ -24,7 +24,7 @@ library CurrentLib {
     ---------------------------------*/
     function update(Current storage current, string memory name) internal {
         uint pid = current.startProcess("update", Params.append(name));
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         current.name = name;
         ProcessLib.finishProcess(pid);
     }

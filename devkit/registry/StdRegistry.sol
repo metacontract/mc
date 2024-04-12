@@ -42,7 +42,7 @@ library StdRegistryLib {
     ------------------------------------*/
     function complete(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("complete");
-        Validate.notLocked(registry.status);
+        Validate.MUST_StdNotLocked(registry);
         registry.functions.complete();
         registry.configureStdBundle();
         return registry.build().lock().finishProcess(pid);
@@ -58,7 +58,7 @@ library StdRegistryLib {
         /**===== Each Std Bundle =====*/
         function configureStdBundle_All(StdRegistry storage registry) internal returns(StdRegistry storage) {
             uint pid = registry.startProcess("configureStdBundle_All");
-            Validate.notLocked(registry.all.status);
+            Validate.MUST_BundleNotLocked(registry.all);
             registry.all.assignName("ALL_STD_FUNCTIONS")
                         .pushFunction(registry.functions.initSetAdmin)
                         .pushFunction(registry.functions.getDeps)

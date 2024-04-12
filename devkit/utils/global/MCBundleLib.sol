@@ -67,7 +67,7 @@ library MCBundleLib {
     //     return mc;
     // } TODO
     function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        Validate.validRegistration(mc.functions, name);
+        Validate.MUST_registered(mc.functions, name);
         return mc.use(mc.findFunction(name));
     }
         /**---------------------------
@@ -97,7 +97,7 @@ library MCBundleLib {
     --------------------*/
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("set");
-        Validate.MUST_beInitialized(mc.bundle);
+        Validate.MUST_haveCurrent(mc.bundle);
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.recordExecFinish(pid);
     }

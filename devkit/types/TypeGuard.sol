@@ -7,6 +7,8 @@ pragma solidity ^0.8.24;
 //     using AddressUtils for address;
 // import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
 //     using Bytes4Utils for bytes4;
+import {BoolUtils} from "devkit/utils/primitive/BoolUtils.sol";
+    using BoolUtils for bool;
 import {Validate} from "devkit/validate/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -34,9 +36,19 @@ library TypeGuard {
     function isLocked(TypeStatus status) internal returns(bool) {
         return status == TypeStatus.Locked;
     }
+    function isNotLocked(TypeStatus status) internal returns(bool) {
+        return status.isLocked().isNot();
+    }
 
     function isComplete(TypeStatus status) internal returns(bool) {
         return status.isBuilt() || status.isLocked();
+    }
+
+    function initialized(TypeStatus status) internal returns(bool) {
+        return status != TypeStatus.Uninitialized;
+    }
+    function notInitialized(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Uninitialized;
     }
 
 
@@ -48,14 +60,15 @@ library TypeGuard {
         return func;
     }
     function build(Function storage func) internal returns(Function storage) {
-        Validate.assigned(func.name);
-        Validate.assigned(func.selector);
-        Validate.contractAssigned(func.implementation);
+        uint pid = func.startProcess("build");
+        Validate.MUST_nameAssigned(func);
+        Validate.MUST_selectorAssigned(func);
+        Validate.MUST_implementationAssigned(func);
         func.status = TypeStatus.Built;
-        return func;
+        return func.finishProcess(pid);
     }
     function lock(Function storage func) internal returns(Function storage) {
-        Validate.MUST_beBuilt(func.status);
+        Validate.MUST_built(func.status);
         func.status = TypeStatus.Locked;
         return func;
     }
@@ -72,14 +85,14 @@ library TypeGuard {
         return bundle;
     }
     function build(Bundle storage bundle) internal returns(Bundle storage) {
-        Validate.assigned(bundle.name);
-        Validate.notZero(bundle.functions.length);
-        Validate.contractAssigned(bundle.facade);
+        Validate.MUST_NameAssigned(bundle);
+        Validate.MUST_HaveAtLeastOneFunction(bundle);
+        Validate.MUST_FacadeAssigned(bundle);
         bundle.status = TypeStatus.Built;
         return bundle;
     }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
-        Validate.MUST_beBuilt(bundle.status);
+        Validate.MUST_built(bundle.status);
         bundle.status = TypeStatus.Locked;
         return bundle;
     }
@@ -96,13 +109,13 @@ library TypeGuard {
         return registry;
     }
     function build(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        Validate.isComplete(registry.functions);
-        Validate.isComplete(registry.all);
+        Validate.MUST_Completed(registry.functions);
+        Validate.MUST_completed(registry.all);
         registry.status = TypeStatus.Built;
         return registry;
     }
     function lock(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        Validate.MUST_beBuilt(registry.status);
+        Validate.MUST_built(registry.status);
         registry.status = TypeStatus.Locked;
         return registry;
     }
@@ -116,14 +129,14 @@ library TypeGuard {
         return stdFunctions;
     }
     function build(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.isComplete(stdFunctions.initSetAdmin);
-        Validate.isComplete(stdFunctions.getDeps);
-        Validate.isComplete(stdFunctions.clone);
+        Validate.MUST_completed(stdFunctions.initSetAdmin);
+        Validate.MUST_completed(stdFunctions.getDeps);
+        Validate.MUST_completed(stdFunctions.clone);
         stdFunctions.status = TypeStatus.Built;
         return stdFunctions;
     }
     function lock(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.MUST_beBuilt(stdFunctions.status);
+        Validate.MUST_built(stdFunctions.status);
         stdFunctions.status = TypeStatus.Locked;
         return stdFunctions;
     }
@@ -137,13 +150,13 @@ library TypeGuard {
         return dictionary;
     }
     function build(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        Validate.isContract(dictionary.addr);
-        Validate.notUndefined(dictionary.kind);
+        Validate.MUST_contractAssigned(dictionary);
+        Validate.MUST_kindAssigned(dictionary);
         dictionary.status = TypeStatus.Built;
         return dictionary;
     }
     function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        Validate.MUST_beBuilt(dictionary.status);
+        Validate.MUST_built(dictionary.status);
         dictionary.status = TypeStatus.Locked;
         return dictionary;
     }
@@ -160,13 +173,13 @@ library TypeGuard {
         return proxy;
     }
     function build(Proxy storage proxy) internal returns(Proxy storage) {
-        Validate.isContract(proxy.addr);
-        Validate.notUndefined(proxy.kind);
+        Validate.MUST_contractAssigned(proxy);
+        Validate.MUST_kindAssigned(proxy);
         proxy.status = TypeStatus.Built;
         return proxy;
     }
     function lock(Proxy storage proxy) internal returns(Proxy storage) {
-        Validate.MUST_beBuilt(proxy.status);
+        Validate.MUST_built(proxy.status);
         proxy.status = TypeStatus.Locked;
         return proxy;
     }

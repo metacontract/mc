@@ -28,30 +28,4 @@ library Bytes4Utils {
         return vm.toString(selector).substring(10);
     }
 
-
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    function isEmpty(bytes4 selector) internal pure returns(bool) {
-        return selector == bytes4(0);
-    }
-    function assertEmpty(bytes4 selector) internal returns(bytes4) {
-        Validate.notEmpty(selector);
-        return selector;
-    }
-
-    function isNotEmpty(bytes4 selector) internal pure returns(bool) {
-        return selector.isEmpty().isFalse();
-    }
-    function assertNotEmpty(bytes4 selector) internal returns(bytes4) {
-        Validate.notEmpty(selector);
-        return selector;
-    }
-
-    function isEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
-        return a == b;
-    }
-    function isNotEqual(bytes4 a, bytes4 b) internal pure returns(bool) {
-        return a.isEqual(b).isFalse();
-    }
 }

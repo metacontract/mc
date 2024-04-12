@@ -8,6 +8,7 @@ import {ProcessLib} from "devkit/utils/debug/ProcessLib.sol";
 import {Params} from "devkit/log/debug/Params.sol";
 import {Inspector} from "devkit/utils/inspector/Inspector.sol";
     using Inspector for Dictionary global;
+    using Inspector for bytes4;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Type Util
 import {Bytes4Utils} from "devkit/utils/primitive/Bytes4Utils.sol";
@@ -51,7 +52,7 @@ library DictionaryLib {
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("deploy");
-        Validate.notZero(owner);
+        Validate.MUST_AddressIsNotZero(owner);
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return Dictionary({
             addr: address(new DictionaryEtherscan(owner)),
@@ -65,8 +66,8 @@ library DictionaryLib {
     ------------------------------*/
     function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("duplicate");
-        Validate.notEmpty(toDictionary);
-        Validate.notEmpty(fromDictionary);
+        Validate.MUST_haveContract(toDictionary);
+        Validate.MUST_haveContract(fromDictionary);
 
         address toAddr = toDictionary.addr;
         address fromAddr = fromDictionary.addr;
@@ -89,9 +90,9 @@ library DictionaryLib {
     -------------------------------*/
     function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(selector, implementation));
-        Validate.isContract(dictionary.addr);
-        Validate.notEmpty(selector);
-        Validate.isContract(implementation);
+        Validate.MUST_haveContract(dictionary);
+        Validate.MUST_Bytes4NotEmpty(selector);
+        Validate.MUST_AddressIsContract(implementation);
         IDictionary(dictionary.addr).setImplementation({
             functionSelector: selector,
             implementation: implementation
@@ -124,7 +125,7 @@ library DictionaryLib {
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
-        Validate.isContract(newFacade);
+        Validate.MUST_AddressIsContract(newFacade);
         // Validate.verifiable(dictionary); TODO without CALL
         DictionaryEtherscan(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);

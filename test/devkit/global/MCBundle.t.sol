@@ -3,6 +3,9 @@ pragma solidity ^0.8.24;
 
 import {MCDevKitTest} from "devkit/MCTest.sol";
 
+import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+    using Inspector for string;
+
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
 import {Config} from "devkit/config/Config.sol";
@@ -117,7 +120,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
     function test_Revert_useFacade_withoutInit() public {
         address facade = address(new DummyFacade());
-        vm.expectRevert(ERR.message(ERR.NOT_INIT).toBytes());
+        vm.expectRevert(ERR.message("Current Not Exist").toBytes());
         mc.useFacade(facade);
     }
 }

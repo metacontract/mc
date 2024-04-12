@@ -7,6 +7,8 @@ import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
 // Debug
 import {Debug, Process} from "./Debug.sol";
+import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+    using Inspector for string;
 
 //================
 //  📊 Logger

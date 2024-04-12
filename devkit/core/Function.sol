@@ -47,7 +47,7 @@ library FunctionLib {
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
         uint pid = func.startProcess("assignName");
-        Validate.notLocked(func.status);
+        Validate.MUST_FunctionNotLocked(func);
         func.name = name;
         return func.building().finishProcess(pid);
     }
@@ -57,7 +57,7 @@ library FunctionLib {
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
         uint pid = func.startProcess("assignSelector");
-        Validate.notLocked(func.status);
+        Validate.MUST_FunctionNotLocked(func);
         func.selector = selector;
         return func.building().finishProcess(pid);
     }
@@ -67,7 +67,7 @@ library FunctionLib {
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
         uint pid = func.startProcess("assignImplementation");
-        Validate.notLocked(func.status);
+        Validate.MUST_FunctionNotLocked(func);
         func.implementation = implementation;
         return func.building().finishProcess(pid);
     }
@@ -77,8 +77,8 @@ library FunctionLib {
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch");
-        Validate.notLocked(func.status);
-        Validate.notEmpty(envKey);
+        Validate.MUST_FunctionNotLocked(func);
+        Validate.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
         return func.building().finishProcess(pid);

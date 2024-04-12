@@ -24,7 +24,7 @@ library StringUtils {
         return keccak256(abi.encode(name));
     }
     function safeCalcHash(string memory name) internal returns(bytes32) {
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         return name.calcHash();
     }
 
@@ -96,37 +96,6 @@ library StringUtils {
     }
 
 
-    /**-------------------------------
-        🧐 Inspectors & Assertions
-    ---------------------------------*/
-    // isEmpty
-    /// @dev only for memory
-    function isEmpty(string memory str) internal returns(bool) {
-        return bytes(str).length == 0;
-    }
-    function assertEmpty(string memory str) internal returns(string memory) {
-        Validate.notEmpty(str);
-        return str;
-    }
-
-    // isNotEmpty
-    function isNotEmpty(string memory str) internal returns(bool) {
-        return str.isEmpty().isNot();
-    }
-    function assertNotEmpty(string memory str) internal returns(string memory) {
-        Validate.notEmpty(str);
-        return str;
-    }
-
-    // isEqual
-    function isEqual(string memory a, string memory b) internal returns(bool) {
-        return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
-    }
-
-    // isNotEqual
-    function isNotEqual(string memory a, string memory b) internal returns(bool) {
-        return a.isEqual(b).isNot();
-    }
 
 
     /**----------------

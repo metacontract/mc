@@ -67,7 +67,7 @@ library StdFunctionsLib {
         /**===== Each Std Function =====*/
         function fetch_InitSetAdmin(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_InitSetAdmin");
-            Validate.notLocked(stdFunctions.initSetAdmin.status);
+            Validate.MUST_FunctionNotLocked(stdFunctions.initSetAdmin);
             stdFunctions.initSetAdmin   .fetch("InitSetAdmin")
                                         .assignSelector(InitSetAdmin.initSetAdmin.selector)
                                         .dump();
@@ -76,7 +76,7 @@ library StdFunctionsLib {
 
         function fetch_GetDeps(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_GetDeps");
-            Validate.notLocked(stdFunctions.getDeps.status);
+            Validate.MUST_FunctionNotLocked(stdFunctions.getDeps);
             stdFunctions.getDeps.fetch("GetDeps")
                                 .assignSelector(GetDeps.getDeps.selector)
                                 .dump();
@@ -85,7 +85,7 @@ library StdFunctionsLib {
 
         function fetch_Clone(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_Clone");
-            Validate.notLocked(stdFunctions.clone.status);
+            Validate.MUST_FunctionNotLocked(stdFunctions.clone);
             stdFunctions.clone  .fetch("Clone")
                                 .assignSelector(Clone.clone.selector)
                                 .dump();

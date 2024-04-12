@@ -52,7 +52,7 @@ library MCTestLib {
     */
     function createProxySimpleMock(MCDevKit storage mc, string memory name, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("createProxySimpleMock", Params.append(name)); // TODO append functions
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Proxy memory proxyMock = ProxyLib.createSimpleMock(functions);
         mc.proxy.register(name, proxyMock);
@@ -86,7 +86,7 @@ library MCTestLib {
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("createMockDictionary", Params.append(name, owner));
-        Validate.notEmpty(name);
+        Validate.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
         mc.dictionary.register(name, dictionaryMock);

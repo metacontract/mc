@@ -5,6 +5,9 @@ import {AddressUtils} from "devkit/utils/primitive/AddressUtils.sol";
     using AddressUtils for address;
 import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
     using StringUtils for string;
+import {Inspector} from "devkit/utils/inspector/Inspector.sol";
+    using Inspector for string;
+    using Inspector for address;
 
 import {Function} from "devkit/core/Function.sol";
 // import {Bundle} from "./Bundle.sol";
