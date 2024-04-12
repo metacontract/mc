@@ -9,7 +9,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for Proxy global;
     using Inspector for ProxyKind global;
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";// Core Type
+import {Validate} from "devkit/validate/Validate.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Proxy global;
 
