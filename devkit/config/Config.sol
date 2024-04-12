@@ -13,6 +13,7 @@ using ConfigLib for Configuration global;
 struct Configuration {
     bool DEBUG_MODE;
     LogLevel DEFAULT_LOG_LEVEL;
+    bool RECORD_EXECUTION_PROCESS;
 
     bool SETUP_STD_FUNCS;
 
@@ -39,6 +40,7 @@ library ConfigLib {
     function load(Configuration storage config) internal {
         config.DEBUG_MODE = true;
         config.DEFAULT_LOG_LEVEL = LogLevel.Warn;
+        config.RECORD_EXECUTION_PROCESS = true;
 
         config.SETUP_STD_FUNCS = true;
 

@@ -38,17 +38,12 @@ library Logger {
     function logWarn(string memory message) internal  {
         console2.log(message);
     }
-
     function logError(string memory body) internal {
         console2.log(
             ERR.HEADER.red().br()
                 .indent().append(body)
                 .append(parseLocations())
         );
-    }
-    function logAndRevert(string memory message) internal {
-        logError(message);
-        revert(ERR.message(message));
     }
     // function logCritical(string memory message) internal  {
     //     console2.log(message);
