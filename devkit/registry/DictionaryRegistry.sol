@@ -3,14 +3,14 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/log/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
     using ProcessLib for DictionaryRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for DictionaryRegistry global;
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Dictionary);
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 
 // Core Type
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";

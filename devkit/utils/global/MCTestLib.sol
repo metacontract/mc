@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Config} from "devkit/config/Config.sol";
+import {Config} from "devkit/system/Config.sol";
 // Utils
-import {Params} from "devkit/log/debug/Params.sol";
+import {Params} from "devkit/system/debug/Params.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";

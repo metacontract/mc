@@ -8,8 +8,8 @@ import {Inspector} from "devkit/types/Inspector.sol";
 
 import {TypeConverter} from "devkit/types/TypeConverter.sol";
     using TypeConverter for string;
-import {Config} from "devkit/config/Config.sol";
-import {ERR} from "devkit/log/message/ERR.sol";
+import {Config} from "devkit/system/Config.sol";
+import {ERR} from "devkit/system/message/ERR.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 import {vm, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {ERR} from "devkit/log/message/ERR.sol";
-import {Debugger, LogLevel} from "devkit/log/debug/Debugger.sol";
-import {Parser} from "devkit/log/debug/Parser.sol";
-import {Logger} from "devkit/log/debug/Logger.sol";
+import {ERR} from "devkit/system/message/ERR.sol";
+import {Debugger, LogLevel} from "devkit/system/debug/Debugger.sol";
+import {Parser} from "devkit/system/debug/Parser.sol";
+import {Logger} from "devkit/system/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
     using Inspector for bytes4;

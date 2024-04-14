@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Logger} from "devkit/log/debug/Logger.sol";
-import {Parser} from "devkit/log/debug/Parser.sol";
+import {Logger} from "devkit/system/debug/Logger.sol";
+import {Parser} from "devkit/system/debug/Parser.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";

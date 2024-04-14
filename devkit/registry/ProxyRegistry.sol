@@ -3,14 +3,14 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/log/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for ProxyRegistry global;
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Proxy);
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 
 // Core Type
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";

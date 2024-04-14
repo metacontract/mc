@@ -3,14 +3,14 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/log/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
     using ProcessLib for Function global;
-import {Dumper} from "devkit/log/debug/Dumper.sol";
+import {Dumper} from "devkit/system/debug/Dumper.sol";
     using Dumper for Function global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for Function global;
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Function global;
 // Loader

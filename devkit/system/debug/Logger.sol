@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {DEBUG} from "devkit/log/message/DEBUG.sol";
-import {INFO} from "devkit/log/message/INFO.sol";
-import {WARN} from "devkit/log/message/WARN.sol";
-import {ERR} from "devkit/log/message/ERR.sol";
-import {CRITICAL} from "devkit/log/message/CRITICAL.sol";
+import {DEBUG} from "devkit/system/message/DEBUG.sol";
+import {INFO} from "devkit/system/message/INFO.sol";
+import {WARN} from "devkit/system/message/WARN.sol";
+import {ERR} from "devkit/system/message/ERR.sol";
+import {CRITICAL} from "devkit/system/message/CRITICAL.sol";
 // Utils
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";

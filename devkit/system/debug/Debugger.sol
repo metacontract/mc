@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 import {console2, StdStyle} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
 import {Logger} from "./Logger.sol";
-import {Config} from "devkit/config/Config.sol";
+import {Config} from "devkit/system/Config.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 

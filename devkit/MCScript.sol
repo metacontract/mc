@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Config} from "devkit/config/Config.sol";
+import {Config} from "devkit/system/Config.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Script based on Forge Std Script

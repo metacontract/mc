@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Config} from "devkit/config/Config.sol";
+import {Config} from "devkit/system/Config.sol";
 
 /**********************************
     🏗 Setup

@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
-import {Debugger} from "devkit/log/debug/Debugger.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
+import {Debugger} from "devkit/system/debug/Debugger.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;

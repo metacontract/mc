@@ -5,7 +5,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {TypeConverter} from "devkit/types/TypeConverter.sol";
     using TypeConverter for bool;
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";

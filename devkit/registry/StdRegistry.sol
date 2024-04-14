@@ -3,12 +3,12 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/log/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
     using ProcessLib for StdRegistry global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for StdRegistry global;
 // Validation
-import {Validate} from "devkit/validate/Validate.sol";
+import {Validate} from "devkit/system/validate/Validate.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";

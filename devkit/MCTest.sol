@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Config} from "devkit/config/Config.sol";
-import {DecodeErrorString} from "devkit/log/message/DecodeErrorString.sol";
+import {Config} from "devkit/system/Config.sol";
+import {DecodeErrorString} from "devkit/system/message/DecodeErrorString.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
