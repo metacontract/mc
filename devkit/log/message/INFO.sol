@@ -7,7 +7,7 @@ import {StdStyle} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
 
 /// @title Error Message
-library WARN {
+library INFO {
     string constant HEADER = "\u2716 DevKit Error: ";
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
     string constant EMPTY_STR = "Empty String";

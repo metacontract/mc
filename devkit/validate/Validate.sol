@@ -38,7 +38,7 @@ library Validate {
 
     function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal {
         if (condition) return;
-        Logger.log(messageBody.append(messageDetail));
+        Logger.logException(messageBody.append(messageDetail));
         if (T == MUST) revert(ERR.message(messageBody)); // TODO
     }
 

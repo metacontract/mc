@@ -58,9 +58,9 @@ library Debugger {
     function startError() internal {
         setLogLevel(LogLevel.Error);
     }
-    // function startCritical() internal {
-    //     setLogLevel(LogLevel.Critical);
-    // }
+    function startCritical() internal {
+        setLogLevel(LogLevel.Critical);
+    }
     function stopLog() internal {
         setLogLevel(LogLevel.Disable);
     }
@@ -83,9 +83,9 @@ library Debugger {
     function isError() internal returns(bool) {
         return State().logLevel == LogLevel.Error;
     }
-    // function isCritical() internal returns(bool) {
-    //     return State().logLevel == LogLevel.Critical;
-    // }
+    function isCritical() internal returns(bool) {
+        return State().logLevel == LogLevel.Critical;
+    }
 
 
     /**----------------------------

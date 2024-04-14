@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {DEBUG} from "devkit/log/message/DEBUG.sol";
+import {INFO} from "devkit/log/message/INFO.sol";
+import {WARN} from "devkit/log/message/WARN.sol";
 import {ERR} from "devkit/log/message/ERR.sol";
+import {CRITICAL} from "devkit/log/message/CRITICAL.sol";
 // Utils
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
@@ -26,7 +30,7 @@ library Logger {
         if (Debugger.isInfo()) logInfo(message);
         if (Debugger.isWarm()) logWarn(message);
         if (Debugger.isError()) logError(message);
-        // if (Debugger.isCritical()) logCritical(message);
+        if (Debugger.isCritical()) logCritical(message);
     }
 
     function logDebug(string memory message) internal  {
@@ -38,16 +42,20 @@ library Logger {
     function logWarn(string memory message) internal  {
         console2.log(message);
     }
-    function logError(string memory body) internal {
+    function logError(string memory message) internal {
+        console2.log(message);
+    }
+    function logCritical(string memory message) internal  {
+        console2.log(CRITICAL.header(message));
+    }
+
+    function logException(string memory message) internal {
         console2.log(
             ERR.HEADER.red().br()
-                .indent().append(body)
+                .indent().append(message)
                 .append(parseLocations())
         );
     }
-    // function logCritical(string memory message) internal  {
-    //     console2.log(message);
-    // }
 
 
     /**-----------------------
