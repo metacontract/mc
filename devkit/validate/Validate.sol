@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-
+import {vm, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {ERR} from "devkit/log/message/ERR.sol";
 import {Debugger, LogLevel} from "devkit/log/debug/Debugger.sol";
 import {Parser} from "devkit/log/debug/Parser.sol";
@@ -178,6 +178,11 @@ library Validate {
     }
     function MUST_completed(Dictionary storage dictionary) internal {
         validate(MUST, dictionary.isComplete(), "Dictionary Not Complete", "");
+    }
+    function MUST_Verifiable(Dictionary memory dictionary) internal {
+        vm.stopBroadcast();
+        validate(MUST, dictionary.isVerifiable(), "Dictionary Is Not Verifiable", "");
+        vm.startBroadcast(ForgeHelper.getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
     }
     /**============================
         📘 Dictionary Registry

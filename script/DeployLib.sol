@@ -13,7 +13,7 @@ library DeployLib {
     }
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.deployStdFunctions();
+        mc.std.complete();
         mc.deployDictionary(mc.std.all);
         return mc;
     }

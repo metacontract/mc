@@ -123,7 +123,7 @@ library DictionaryLib {
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
         Validate.MUST_AddressIsContract(newFacade);
-        // Validate.verifiable(dictionary); TODO without CALL
+        Validate.MUST_Verifiable(dictionary);
         DictionaryEtherscan(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);
     }
