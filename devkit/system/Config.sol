@@ -6,11 +6,11 @@ import {LogLevel} from "devkit/system/debug/Debugger.sol";
 
 
 /**----------------------
-    📝 Configuration
+    📝 Config
 ------------------------*/
-using ConfigLib for Configuration global;
+using ConfigLib for Config global;
 /// @custom:storage-location erc7201:mc.devkit.config
-struct Configuration {
+struct Config {
     bool DEBUG_MODE;
     LogLevel DEFAULT_LOG_LEVEL;
     bool RECORD_EXECUTION_PROCESS;
@@ -29,15 +29,11 @@ struct Configuration {
 }
     struct ScanRange { uint128 START; uint128 END; }
 
-function Config() pure returns(Configuration storage ref) {
-    assembly { ref.slot := 0x43faf0b0e69b78a7870a9a7da6e0bf9d6f14028444e1b48699a33401cb840400 }
-}
-
 /**===============\
 |   📝 Config     |
 \================*/
 library ConfigLib {
-    function load(Configuration storage config) internal {
+    function load(Config storage config) internal {
         config.DEBUG_MODE = true;
         config.DEFAULT_LOG_LEVEL = LogLevel.Warn;
         config.RECORD_EXECUTION_PROCESS = false;
@@ -56,11 +52,11 @@ library ConfigLib {
         config.SCAN_RANGE.END = 5;
     }
 
-    function defaultOwner(Configuration storage) internal returns(address) {
+    function defaultOwner(Config storage) internal returns(address) {
         return ForgeHelper.msgSender();
     }
 
-    function defaultName(Configuration storage) internal pure returns(string memory) {
+    function defaultName(Config storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 
@@ -88,7 +84,7 @@ library ConfigLib {
     //     return mc.functions.genUniqueBundleName();
     // }
 
-    function defaultInitData(Configuration storage) internal pure returns(bytes memory) {
+    function defaultInitData(Config storage) internal pure returns(bytes memory) {
         return "";
     }
 }

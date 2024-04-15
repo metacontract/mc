@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Config} from "devkit/system/Config.sol";
+import {System} from "devkit/system/System.sol";
 
 /**********************************
     🏗 Setup
@@ -11,7 +11,7 @@ import {Config} from "devkit/system/Config.sol";
 library MCSetupLib {
     function loadConfig(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("loadConfig");
-        Config().load();
+        System.config().load();
         return mc.recordExecFinish(pid);
     }
 

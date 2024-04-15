@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Config} from "devkit/system/Config.sol";
+import {System} from "devkit/system/System.sol";
 import {DecodeErrorString} from "devkit/system/message/DecodeErrorString.sol";
 
 // 💬 ABOUT
@@ -13,9 +13,9 @@ import {MCTestBase} from "./MCBase.sol";
 // ⭐️ MC TEST
 abstract contract MCTest is MCTestBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
-        if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
+        System.config().load();
+        if (System.config().DEBUG_MODE) mc.startDebug();
+        if (System.config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
@@ -47,7 +47,7 @@ abstract contract MCStateFuzzingTest is MCTestBase {
 // 🌟 MC TEST for DevKit
 abstract contract MCDevKitTest is MCTestBase {
     constructor() {
-        Config().load();
+        System.config().load();
         mc.stopLog();
     }
 }

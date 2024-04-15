@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Config} from "devkit/system/Config.sol";
+import {System} from "devkit/system/System.sol";
 // Debug
 import {Debugger} from "devkit/system/debug/Debugger.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
@@ -24,7 +24,7 @@ library MCDebugLib {
     -----------------*/
     function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("startDebug");
-        if (Config().DEBUG_MODE) Debugger.startDebug();
+        if (System.config().DEBUG_MODE) Debugger.startDebug();
         return mc.recordExecFinish(pid);
     }
 

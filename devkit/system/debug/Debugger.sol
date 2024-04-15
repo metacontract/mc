@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 import {console2, StdStyle} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
 import {Logger} from "./Logger.sol";
-import {Config} from "devkit/system/Config.sol";
+import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 
@@ -92,7 +92,7 @@ library Debugger {
         📈 Execution Tracking
     ------------------------------*/
     function recordExecStart(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
-        if (Config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
+        if (System.config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
         pid = State().nextPid;
         State().processes.push(Process(libName, funcName, params));
         Logger.logExecStart(pid, libName, funcName);
@@ -100,7 +100,7 @@ library Debugger {
     }
 
     function recordExecFinish(uint pid) internal {
-        if (Config().RECORD_EXECUTION_PROCESS.isFalse()) return;
+        if (System.config().RECORD_EXECUTION_PROCESS.isFalse()) return;
         Process memory current = State().processes[pid];
         Logger.logExecFinish(pid, current.libName, current.funcName);
     }
