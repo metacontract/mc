@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
     using ProcessLib for Function global;
 import {Dumper} from "devkit/system/debug/Dumper.sol";
     using Dumper for Function global;

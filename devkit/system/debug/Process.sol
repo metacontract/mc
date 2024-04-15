@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {DebuggerLib} from "devkit/system/debug/Debugger.sol";
+import {System} from "devkit/system/System.sol";
+import {Debugger, DebuggerLib} from "devkit/system/debug/Debugger.sol";
+import {Logger} from "devkit/system/debug/Logger.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
+    using Inspector for bool;
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
@@ -19,9 +23,28 @@ import {Current} from "devkit/registry/context/Current.sol";
 /**=================
     ⛓️ Process
 ===================*/
+struct Process {
+    string libName;
+    string funcName;
+    string params;
+}
 library ProcessLib {
+    /**----------------------------
+        📈 Execution Tracking
+    ------------------------------*/
+    function startProcess(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
+        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
+        Debugger storage debugger = System.Debug();
+        pid = debugger.nextPid;
+        debugger.processes.push(Process(libName, funcName, params));
+        Logger.logExecStart(pid, libName, funcName);
+        debugger.nextPid++;
+    }
+
     function finishProcess(uint pid) internal {
-        DebuggerLib.recordExecFinish(pid);
+        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return;
+        Process memory current = System.Debug().processes[pid];
+        Logger.logExecFinish(pid, current.libName, current.funcName);
     }
 
 
@@ -29,14 +52,14 @@ library ProcessLib {
         🧩 Function
     --------------------*/
     function startProcess(Function storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("FunctionLib", name, params);
+        return startProcess("FunctionLib", name, params);
     }
     function startProcess(Function storage func, string memory name) internal returns(uint) {
         return func.startProcess(name, "");
     }
 
     function finishProcess(Function storage func, uint pid) internal returns(Function storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return func;
     }
 
@@ -44,14 +67,14 @@ library ProcessLib {
         🧩 Functions Registry
     ----------------------------*/
     function startProcess(FunctionRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("FunctionRegistry", name, params);
+        return startProcess("FunctionRegistry", name, params);
     }
     function startProcess(FunctionRegistry storage functions, string memory name) internal returns(uint) {
         return functions.startProcess(name, "");
     }
 
     function finishProcess(FunctionRegistry storage functions, uint pid) internal returns(FunctionRegistry storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return functions;
     }
 
@@ -60,14 +83,14 @@ library ProcessLib {
         🗂️ Bundle
     ------------------*/
     function startProcess(Bundle storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("Bundle", name, params);
+        return startProcess("Bundle", name, params);
     }
     function startProcess(Bundle storage bundle, string memory name) internal returns(uint) {
         return bundle.startProcess(name, "");
     }
 
     function finishProcess(Bundle storage bundle, uint pid) internal returns(Bundle storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return bundle;
     }
 
@@ -75,14 +98,14 @@ library ProcessLib {
         🧩 Bundle Registry
     ----------------------------*/
     function startProcess(BundleRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("BundleRegistry", name, params);
+        return startProcess("BundleRegistry", name, params);
     }
     function startProcess(BundleRegistry storage bundle, string memory name) internal returns(uint) {
         return bundle.startProcess(name, "");
     }
 
     function finishProcess(BundleRegistry storage bundle, uint pid) internal returns(BundleRegistry storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return bundle;
     }
 
@@ -91,14 +114,14 @@ library ProcessLib {
         🏛 Standard Registry
     ---------------------------*/
     function startProcess(StdRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("StdRegistryLib", name, params);
+        return startProcess("StdRegistryLib", name, params);
     }
     function startProcess(StdRegistry storage std, string memory name) internal returns(uint) {
         return std.startProcess(name, "");
     }
 
     function finishProcess(StdRegistry storage std, uint pid) internal returns(StdRegistry storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return std;
     }
 
@@ -107,14 +130,14 @@ library ProcessLib {
         🏰 Standard Functions
     ----------------------------*/
     function startProcess(StdFunctions storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("StdFunctionsLib", name, params);
+        return startProcess("StdFunctionsLib", name, params);
     }
     function startProcess(StdFunctions storage std, string memory name) internal returns(uint) {
         return std.startProcess(name, "");
     }
 
     function finishProcess(StdFunctions storage std, uint pid) internal returns(StdFunctions storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return std;
     }
 
@@ -123,7 +146,7 @@ library ProcessLib {
         🏠 Proxy
     -----------------*/
     function startProxyLibProcess(string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("ProxyLib", name, params);
+        return startProcess("ProxyLib", name, params);
     }
     function startProxyLibProcess(string memory name) internal returns(uint) {
         return startProxyLibProcess(name, "");
@@ -142,14 +165,14 @@ library ProcessLib {
         🏠 Proxy Registry
     ------------------------*/
     function startProcess(ProxyRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("ProxyRegistryLib", name, params);
+        return startProcess("ProxyRegistryLib", name, params);
     }
     function startProcess(ProxyRegistry storage proxies, string memory name) internal returns(uint) {
         return proxies.startProcess(name, "");
     }
 
     function finishProcess(ProxyRegistry storage proxies, uint pid) internal returns(ProxyRegistry storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return proxies;
     }
 
@@ -158,7 +181,7 @@ library ProcessLib {
         📚 Dictionary
     ---------------------*/
     function startDictionaryLibProcess(string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("DictionaryLib", name, params);
+        return startProcess("DictionaryLib", name, params);
     }
     function startDictionaryLibProcess(string memory name) internal returns(uint) {
         return startDictionaryLibProcess(name, "");
@@ -177,14 +200,14 @@ library ProcessLib {
         📚 Dictionary Registry
     ------------------------------*/
     function startProcess(DictionaryRegistry storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("DictionaryRegistryLib", name, params);
+        return startProcess("DictionaryRegistryLib", name, params);
     }
     function startProcess(DictionaryRegistry storage dictionaries, string memory name) internal returns(uint) {
         return dictionaries.startProcess(name, "");
     }
 
     function finishProcess(DictionaryRegistry storage dictionaries, uint pid) internal returns(DictionaryRegistry storage) {
-        DebuggerLib.recordExecFinish(pid);
+        finishProcess(pid);
         return dictionaries;
     }
 
@@ -193,7 +216,7 @@ library ProcessLib {
         📸 Current Context
     --------------------------*/
     function startProcess(Current storage, string memory name, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart("CurrentLib", name, params);
+        return startProcess("CurrentLib", name, params);
     }
     function startProcess(Current storage current, string memory name) internal returns(uint) {
         return current.startProcess(name, "");

@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 // Validation
 import {Validate} from "devkit/system/validate/Validate.sol";
 import {System} from "devkit/system/System.sol";
-import {DebuggerLib} from "devkit/system/debug/Debugger.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
 // Utils
 import {StdStyle, ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
     using StdStyle for string;
@@ -97,7 +97,7 @@ library StringUtils {
         Record Finish
      */
     function recordExecFinish(string memory str, uint pid) internal returns(string memory) {
-        DebuggerLib.recordExecFinish(pid);
+        ProcessLib.finishProcess(pid);
         return str;
     }
 

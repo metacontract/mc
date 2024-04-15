@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {Params} from "devkit/system/debug/Params.sol";
-import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
     using ProcessLib for Current global;
 // Validation
 import {Validate} from "devkit/system/validate/Validate.sol";

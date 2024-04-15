@@ -10,7 +10,7 @@ import {CRITICAL} from "devkit/system/message/CRITICAL.sol";
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
-import {Process} from "./Debugger.sol";
+import {Process} from "devkit/system/debug/Process.sol";
 import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;

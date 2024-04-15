@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Debug
-import {DebuggerLib} from "devkit/system/debug/Debugger.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
 
 
@@ -51,7 +51,7 @@ library MCDebugLib {
         🔽 Record Start
     ----------------------*/
     function recordExecStart(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
-        return DebuggerLib.recordExecStart(LIB_NAME, funcName, params);
+        return ProcessLib.startProcess(LIB_NAME, funcName, params);
     }
     function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
         return mc.recordExecStart(funcName, "");
@@ -62,7 +62,7 @@ library MCDebugLib {
         🔼 Record Finish
     -----------------------*/
     function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
-        DebuggerLib.recordExecFinish(pid);
+        ProcessLib.finishProcess(pid);
         return mc;
     }
 

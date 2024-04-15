@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
     using ProcessLib for StdFunctions global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for StdFunctions global;

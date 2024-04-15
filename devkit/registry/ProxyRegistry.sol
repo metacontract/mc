@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/ProcessLib.sol";
+import {ProcessLib} from "devkit/system/debug/Process.sol";
     using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for ProxyRegistry global;
