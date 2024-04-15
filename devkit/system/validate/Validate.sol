@@ -120,10 +120,10 @@ library Validate {
         validate(MUST, bundle.status.notInitialized(), "Bundle already initialized", "");
     }
     function MUST_completed(Bundle storage bundle) internal {
-        validate(MUST, bundle.isComplete(), "Bundle Not Complete", Formatter.toString(bundle));
+        validate(MUST, bundle.isComplete(), "Bundle MUST be Completed", Formatter.toString(bundle));
     }
     function SHOULD_completed(Bundle storage bundle) internal {
-        validate(SHOULD, bundle.isComplete(), "Bundle Not Complete", "");
+        validate(SHOULD, bundle.isComplete(), "Bundle SHOULD be Completed", "");
     }
     function MUST_notHave(Bundle storage bundle, Function storage func) internal {
         validate(MUST, bundle.hasNot(func), "Bundle has same Function", "");
