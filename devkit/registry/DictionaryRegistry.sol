@@ -35,7 +35,7 @@ library DictionaryRegistryLib {
     function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("deploy");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_completed(bundle);
+        // Validate.MUST_completed(bundle);
         Validate.MUST_AddressIsNotZero(owner);
         Dictionary memory dictionary = DictionaryLib.deploy(owner)
                                                     .set(bundle)
