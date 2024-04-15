@@ -11,14 +11,16 @@ import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
 import {Process} from "devkit/system/debug/Process.sol";
+import {Formatter} from "devkit/system/debug/Formatter.sol";
 import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
-//================
-//  📊 Logger
+
+/**===============
+    📊 Logger
+=================*/
 library Logger {
-    using Logger for *;
     using StringUtils for string;
     using StdStyle for string;
 
@@ -62,7 +64,7 @@ library Logger {
         console2.log(
             ERR.HEADER.red().br()
                 .indent().append(message)
-                .append(parseLocations())
+                .append(logLocations())
         );
     }
 
@@ -70,6 +72,13 @@ library Logger {
     /**-----------------------
         🎨 Log Formatting
     -------------------------*/
+    function logLocations() internal returns(string memory locations) {
+        Process[] memory processes = System.Debug().processes;
+        for (uint i = processes.length; i > 0; --i) {
+            locations = locations.append(Formatter.toString(processes[i-1]));
+        }
+    }
+
     function logProcess(string memory message) internal {
         log(message.underline());
     }
@@ -90,34 +99,11 @@ library Logger {
 
     string constant START = "Starting... ";
     function logExecStart(uint pid, string memory libName, string memory funcName) internal {
-        log(formatProc(pid, START, libName, funcName));
+        log(Formatter.formatProc(pid, START, libName, funcName));
     }
     string constant FINISH = "Finished ";
     function logExecFinish(uint pid, string memory libName, string memory funcName) internal {
-        log(formatProc(pid, FINISH, libName, funcName));
-    }
-
-    /**---------------
-        📑 Parser
-    -----------------*/
-    function parseLocations() internal returns(string memory locations) {
-        Process[] memory processes = System.Debug().processes;
-        for (uint i = processes.length; i > 0; --i) {
-            locations = locations.append(formatLocation(processes[i-1]));
-        }
-    }
-
-    string constant AT = "\n\t    at ";
-    function formatLocation(Process memory proc) internal returns(string memory) {
-        return AT.append(proc.libName.dot().append(proc.funcName).parens().append(proc.params.italic())).dim();
-    }
-
-    string constant PID = "pid:";
-    function formatPid(uint pid) internal returns(string memory message) {
-        return message.brackL().append(PID).append(pid).brackR().sp().dim();
-    }
-    function formatProc(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
-        return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
+        log(Formatter.formatProc(pid, FINISH, libName, funcName));
     }
 
 

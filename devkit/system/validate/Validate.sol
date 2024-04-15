@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 import {vm, VmSafe, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {ERR} from "devkit/system/message/ERR.sol";
-import {Parser} from "devkit/system/debug/Parser.sol";
+import {Formatter} from "devkit/system/debug/Formatter.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
@@ -121,7 +121,7 @@ library Validate {
         validate(MUST, bundle.status.notInitialized(), "Bundle already initialized", "");
     }
     function MUST_completed(Bundle storage bundle) internal {
-        validate(MUST, bundle.isComplete(), "Bundle Not Complete", Parser.parse(bundle));
+        validate(MUST, bundle.isComplete(), "Bundle Not Complete", Formatter.toString(bundle));
     }
     function SHOULD_completed(Bundle storage bundle) internal {
         validate(SHOULD, bundle.isComplete(), "Bundle Not Complete", "");

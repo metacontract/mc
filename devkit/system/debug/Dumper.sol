@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Logger} from "devkit/system/debug/Logger.sol";
-import {Parser} from "devkit/system/debug/Parser.sol";
+import {Formatter} from "devkit/system/debug/Formatter.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -17,7 +17,7 @@ library Dumper {
         🧩 Function
     ====================*/
     function dump(Function storage func) internal returns(Function storage) {
-        Logger.log(Parser.parse(func));
+        Logger.log(Formatter.toString(func));
         return func;
     }
 
@@ -25,7 +25,7 @@ library Dumper {
         🗂️ Bundle
     =================*/
     function dump(Bundle storage bundle) internal returns(Bundle storage) {
-        Logger.log(Parser.parse(bundle));
+        Logger.log(Formatter.toString(bundle));
         return bundle;
     }
 
