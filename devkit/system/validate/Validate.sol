@@ -12,8 +12,6 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
     using Inspector for uint256;
 // Utils
-import {StringUtils} from "devkit/types/StringUtils.sol";
-    using StringUtils for string;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";

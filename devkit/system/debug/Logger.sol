@@ -8,7 +8,6 @@ import {ERR} from "devkit/system/message/ERR.sol";
 import {CRITICAL} from "devkit/system/message/CRITICAL.sol";
 // Utils
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
-import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
 import {Process} from "devkit/system/debug/Process.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
@@ -21,7 +20,6 @@ import {Inspector} from "devkit/types/Inspector.sol";
     📊 Logger
 =================*/
 library Logger {
-    using StringUtils for string;
     using StdStyle for string;
     using Formatter for string;
 
