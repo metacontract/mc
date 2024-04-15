@@ -40,7 +40,7 @@ library ConfigLib {
     function load(Configuration storage config) internal {
         config.DEBUG_MODE = true;
         config.DEFAULT_LOG_LEVEL = LogLevel.Warn;
-        config.RECORD_EXECUTION_PROCESS = true;
+        config.RECORD_EXECUTION_PROCESS = false;
 
         config.SETUP_STD_FUNCS = true;
 

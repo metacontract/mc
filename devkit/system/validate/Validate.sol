@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {vm, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {vm, VmSafe, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {ERR} from "devkit/system/message/ERR.sol";
 import {Debugger, LogLevel} from "devkit/system/debug/Debugger.sol";
 import {Parser} from "devkit/system/debug/Parser.sol";
@@ -40,6 +40,14 @@ library Validate {
         if (condition) return;
         Logger.logException(messageBody.append(messageDetail));
         if (T == MUST) revert(ERR.message(messageBody)); // TODO
+    }
+
+    modifier noBroadcast() {
+        (VmSafe.CallerMode mode,,) = vm.readCallers();
+        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
+        _;
+        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.startBroadcast(ForgeHelper.getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
+
     }
 
 
@@ -179,10 +187,8 @@ library Validate {
     function MUST_completed(Dictionary storage dictionary) internal {
         validate(MUST, dictionary.isComplete(), "Dictionary Not Complete", "");
     }
-    function MUST_Verifiable(Dictionary memory dictionary) internal {
-        vm.stopBroadcast();
+    function MUST_Verifiable(Dictionary memory dictionary) internal noBroadcast {
         validate(MUST, dictionary.isVerifiable(), "Dictionary Is Not Verifiable", "");
-        vm.startBroadcast(ForgeHelper.getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
     }
     /**============================
         📘 Dictionary Registry
