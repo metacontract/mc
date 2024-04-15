@@ -10,7 +10,8 @@ import {CRITICAL} from "devkit/system/message/CRITICAL.sol";
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
-import {Debugger, Process} from "./Debugger.sol";
+import {Process} from "./Debugger.sol";
+import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
@@ -21,16 +22,24 @@ library Logger {
     using StringUtils for string;
     using StdStyle for string;
 
+    enum LogLevel {
+        Disable,    // Display no message
+        Debug,      // Display all messages including debug details
+        Info,       // Display info, warning, and error messages
+        Warn,       // Display warning and error messages
+        Error,      // Display error messages only
+        Critical    // Display critical error messages only
+    }
 
     /**------------------
         💬 Logging
     --------------------*/
     function log(string memory message) internal {
-        if (Debugger.isDebug()) logDebug(message);
-        if (Debugger.isInfo()) logInfo(message);
-        if (Debugger.isWarm()) logWarn(message);
-        if (Debugger.isError()) logError(message);
-        if (Debugger.isCritical()) logCritical(message);
+        if (System.Debug().isDebug()) logDebug(message);
+        if (System.Debug().isInfo()) logInfo(message);
+        if (System.Debug().isWarm()) logWarn(message);
+        if (System.Debug().isError()) logError(message);
+        if (System.Debug().isCritical()) logCritical(message);
     }
 
     function logDebug(string memory message) internal  {
@@ -92,7 +101,7 @@ library Logger {
         📑 Parser
     -----------------*/
     function parseLocations() internal returns(string memory locations) {
-        Process[] memory processes = Debugger.State().processes;
+        Process[] memory processes = System.Debug().processes;
         for (uint i = processes.length; i > 0; --i) {
             locations = locations.append(formatLocation(processes[i-1]));
         }

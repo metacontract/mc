@@ -10,21 +10,14 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 
 
+using DebuggerLib for DebuggerState global;
 /// @custom:storage-location erc7201:mc.devkit.debugger
 struct DebuggerState {
-    LogLevel logLevel;
+    Logger.LogLevel logLevel;
     string[] errorLocationStack;
     Process[] processes;
     uint nextPid;
 }
-    enum LogLevel {
-        Disable,    // Display no message
-        Debug,      // Display all messages including debug details
-        Info,       // Display info, warning, and error messages
-        Warn,       // Display warning and error messages
-        Error,      // Display error messages only
-        Critical    // Display critical error messages only
-    }
     struct Process {
         string libName;
         string funcName;
@@ -35,56 +28,50 @@ struct DebuggerState {
 /**=================\
 |   🐞 Debugger     |
 \==================*/
-library Debugger {
-    /**++++++++++++++++++++++++
-        🔵 Debugger State
-    ++++++++++++++++++++++++++*/
-    function State() internal pure returns(DebuggerState storage ref) {
-        assembly { ref.slot := 0x03d3692c02b7cdcaf0187e8ede4101c401cc53a33aa7e03ef4682fcca8a55300 }
-    }
+library DebuggerLib {
 
     /**-------------------------
         🕹️ Logging Control
     ---------------------------*/
-    function startDebug() internal {
-        setLogLevel(LogLevel.Debug);
+    function startDebug(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Debug);
     }
-    function startInfo() internal {
-        setLogLevel(LogLevel.Info);
+    function startInfo(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Info);
     }
-    function startWarn() internal {
-        setLogLevel(LogLevel.Warn);
+    function startWarn(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Warn);
     }
-    function startError() internal {
-        setLogLevel(LogLevel.Error);
+    function startError(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Error);
     }
-    function startCritical() internal {
-        setLogLevel(LogLevel.Critical);
+    function startCritical(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Critical);
     }
-    function stopLog() internal {
-        setLogLevel(LogLevel.Disable);
+    function stopLog(DebuggerState storage debugger) internal {
+        setLogLevel(debugger, Logger.LogLevel.Disable);
     }
-    function setLogLevel(LogLevel level) internal {
-        State().logLevel = level;
+    function setLogLevel(DebuggerState storage debugger, Logger.LogLevel level) internal {
+        debugger.logLevel = level;
     }
 
-    function isDisabled() internal returns(bool) {
-        return State().logLevel == LogLevel.Disable;
+    function isDisabled(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Disable;
     }
-    function isDebug() internal returns(bool) {
-        return State().logLevel == LogLevel.Debug;
+    function isDebug(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Debug;
     }
-    function isInfo() internal returns(bool) {
-        return State().logLevel == LogLevel.Info;
+    function isInfo(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Info;
     }
-    function isWarm() internal returns(bool) {
-        return State().logLevel == LogLevel.Warn;
+    function isWarm(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Warn;
     }
-    function isError() internal returns(bool) {
-        return State().logLevel == LogLevel.Error;
+    function isError(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Error;
     }
-    function isCritical() internal returns(bool) {
-        return State().logLevel == LogLevel.Critical;
+    function isCritical(DebuggerState storage debugger) internal returns(bool) {
+        return debugger.logLevel == Logger.LogLevel.Critical;
     }
 
 
@@ -92,16 +79,16 @@ library Debugger {
         📈 Execution Tracking
     ------------------------------*/
     function recordExecStart(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
-        if (System.config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
-        pid = State().nextPid;
-        State().processes.push(Process(libName, funcName, params));
+        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
+        pid = System.Debug().nextPid;
+        System.Debug().processes.push(Process(libName, funcName, params));
         Logger.logExecStart(pid, libName, funcName);
-        State().nextPid++;
+        System.Debug().nextPid++;
     }
 
     function recordExecFinish(uint pid) internal {
-        if (System.config().RECORD_EXECUTION_PROCESS.isFalse()) return;
-        Process memory current = State().processes[pid];
+        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return;
+        Process memory current = System.Debug().processes[pid];
         Logger.logExecFinish(pid, current.libName, current.funcName);
     }
 }

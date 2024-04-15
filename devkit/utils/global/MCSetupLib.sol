@@ -11,7 +11,7 @@ import {System} from "devkit/system/System.sol";
 library MCSetupLib {
     function loadConfig(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("loadConfig");
-        System.config().load();
+        System.Config().load();
         return mc.recordExecFinish(pid);
     }
 

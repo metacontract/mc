@@ -22,7 +22,7 @@ library NameGenerator {
         🗂️ Bundle Mapping
     --------------------------*/
     function genUniqueName(mapping(string => Bundle) storage bundle, string memory baseName) internal returns(string memory name) {
-        ScanRange memory range = System.config().SCAN_RANGE;
+        ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
             if (bundle[name].hasNotName()) return name; // TODO
@@ -30,7 +30,7 @@ library NameGenerator {
         Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Bundle) storage bundle) internal returns(string memory name) {
-        return genUniqueName(bundle, System.config().DEFAULT_BUNDLE_NAME);
+        return genUniqueName(bundle, System.Config().DEFAULT_BUNDLE_NAME);
     }
 
 
@@ -38,7 +38,7 @@ library NameGenerator {
         🧩 Function Mapping
     ---------------------------*/
     function genUniqueName(mapping(string => Function) storage func, string memory baseName) internal returns(string memory name) {
-        ScanRange memory range = System.config().SCAN_RANGE;
+        ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
             if (func[name].notExists()) return name;
@@ -46,7 +46,7 @@ library NameGenerator {
         Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Function) storage func) internal returns(string memory name) {
-        return genUniqueName(func, System.config().DEFAULT_FUNCTION_NAME);
+        return genUniqueName(func, System.Config().DEFAULT_FUNCTION_NAME);
     }
 
 
@@ -54,7 +54,7 @@ library NameGenerator {
         📚 Dictionary Mapping
     -----------------------------*/
     function genUniqueName(mapping(string => Dictionary) storage dictionary, string memory baseName) internal returns(string memory name) {
-        ScanRange memory range = System.config().SCAN_RANGE;
+        ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
             if (dictionary[name].notExists()) return name;
@@ -63,19 +63,19 @@ library NameGenerator {
     }
     /*----- Dictionary -----*/
     function genUniqueName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.config().DEFAULT_DICTIONARY_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_NAME);
     }
     /*----- Dictionary -----*/
     function genUniqueDuplicatedName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
     }
     /*----- Mock Dictionary -----*/
     function genUniqueMockName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.config().DEFAULT_DICTIONARY_MOCK_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_MOCK_NAME);
     }
     // function genUniqueName(DictionaryRegistry storage dictionaries, string memory baseName) internal returns(string memory name) {
     //     uint pid = dictionaries.startProcess("genUniqueName");
-    //     ScanRange memory range = System.config().SCAN_RANGE;
+    //     ScanRange memory range = System.Config().SCAN_RANGE;
     //     for (uint i = range.START; i <= range.END; ++i) {
     //         name = baseName.toSequential(i);
     //         if (dictionaries.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
@@ -83,10 +83,10 @@ library NameGenerator {
     //     throwError(ERR.FIND_NAME_OVER_RANGE);
     // }
     // function genUniqueName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-    //     return dictionaries.genUniqueName(System.config().DEFAULT_DICTIONARY_NAME);
+    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY_NAME);
     // }
     // function genUniqueDuplicatedName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-    //     return dictionaries.genUniqueName(System.config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
+    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
     // }
 
 
@@ -95,7 +95,7 @@ library NameGenerator {
     -------------------------*/
     /*----- Mock Proxy -----*/
     function genUniqueName(mapping(string => Proxy) storage proxy, string memory baseName) internal returns(string memory name) {
-        ScanRange memory range = System.config().SCAN_RANGE;
+        ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
             if (proxy[name].notExists()) return name;
@@ -104,11 +104,11 @@ library NameGenerator {
     }
     /*----- Proxy -----*/
     function genUniqueName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {
-        return genUniqueName(proxy, System.config().DEFAULT_PROXY_NAME);
+        return genUniqueName(proxy, System.Config().DEFAULT_PROXY_NAME);
     }
     /*----- Mock Proxy -----*/
     function genUniqueMockName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {
-        return genUniqueName(proxy, System.config().DEFAULT_PROXY_MOCK_NAME);
+        return genUniqueName(proxy, System.Config().DEFAULT_PROXY_MOCK_NAME);
     }
 
 }

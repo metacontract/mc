@@ -13,9 +13,9 @@ import {MCTestBase} from "./MCBase.sol";
 // ⭐️ MC TEST
 abstract contract MCTest is MCTestBase {
     constructor() {
-        System.config().load();
-        if (System.config().DEBUG_MODE) mc.startDebug();
-        if (System.config().SETUP_STD_FUNCS) mc.setupStdFunctions();
+        System.Config().load();
+        if (System.Config().DEBUG_MODE) mc.startDebug();
+        if (System.Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
@@ -47,7 +47,7 @@ abstract contract MCStateFuzzingTest is MCTestBase {
 // 🌟 MC TEST for DevKit
 abstract contract MCDevKitTest is MCTestBase {
     constructor() {
-        System.config().load();
+        System.Config().load();
         mc.stopLog();
     }
 }

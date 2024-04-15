@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Debug
-import {Debugger} from "devkit/system/debug/Debugger.sol";
+import {DebuggerLib} from "devkit/system/debug/Debugger.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
 
 
@@ -24,7 +24,7 @@ library MCDebugLib {
     -----------------*/
     function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("startDebug");
-        if (System.config().DEBUG_MODE) Debugger.startDebug();
+        if (System.Config().DEBUG_MODE) System.Debug().startDebug();
         return mc.recordExecFinish(pid);
     }
 
@@ -33,7 +33,7 @@ library MCDebugLib {
         🛑 Stop
     ---------------*/
     function stopLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        Debugger.stopLog();
+        System.Debug().stopLog();
         return mc;
     }
 
@@ -51,7 +51,7 @@ library MCDebugLib {
         🔽 Record Start
     ----------------------*/
     function recordExecStart(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
-        return Debugger.recordExecStart(LIB_NAME, funcName, params);
+        return DebuggerLib.recordExecStart(LIB_NAME, funcName, params);
     }
     function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
         return mc.recordExecStart(funcName, "");
@@ -62,7 +62,7 @@ library MCDebugLib {
         🔼 Record Finish
     -----------------------*/
     function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
-        Debugger.recordExecFinish(pid);
+        DebuggerLib.recordExecFinish(pid);
         return mc;
     }
 

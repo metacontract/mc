@@ -46,25 +46,25 @@ library MCDeployLib {
     }
 
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.config().defaultOwner(), System.config().defaultInitData());
+        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.Config().defaultOwner(), System.Config().defaultInitData());
     }
     // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, facade, owner, System.config().defaultInitData());
+    //     return mc.deploy(name, bundleInfo, facade, owner, System.Config().defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, System.config().defaultInitData(), );
+    //     return mc.deploy(name, bundleInfo, System.Config().defaultInitData(), );
     // }
     // function deploy(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(System.config().defaultName(), bundleInfo, System.config().defaultInitData());
+    //     return mc.deploy(System.Config().defaultName(), bundleInfo, System.Config().defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, mc.functions.findBundle(name), initData);
     // }
     // function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, mc.functions.findBundle(name), System.config().defaultInitData());
+    //     return mc.deploy(name, mc.functions.findBundle(name), System.Config().defaultInitData());
     // }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.config().defaultOwner(), initData);
+        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.Config().defaultOwner(), initData);
     }
 
 
@@ -81,10 +81,10 @@ library MCDeployLib {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, dictionary, System.config().defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(name, dictionary, System.Config().defaultOwner().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.findCurrentDictionary(), System.config().defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(name, mc.findCurrentDictionary(), System.Config().defaultOwner().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, mc.findCurrentDictionary(), initData);
@@ -93,7 +93,7 @@ library MCDeployLib {
         return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), initData);
     }
     function deployProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), System.config().defaultOwner().initSetAdminBytes());
+        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), System.Config().defaultOwner().initSetAdminBytes());
     }
 
 
@@ -110,19 +110,19 @@ library MCDeployLib {
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), System.config().defaultOwner());
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, mc.bundle.findCurrent(), System.config().defaultOwner());
+        return mc.deployDictionary(name, mc.bundle.findCurrent(), System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, System.config().defaultOwner());
+        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), owner);
     }
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, bundleInfo, System.config().defaultOwner());
+        return mc.deployDictionary(name, bundleInfo, System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), owner);

@@ -2,17 +2,17 @@
 pragma solidity ^0.8.24;
 
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {LogLevel} from "devkit/system/debug/Debugger.sol";
+import {Logger} from "devkit/system/debug/Logger.sol";
 
 
 /**----------------------
     📝 Config
 ------------------------*/
-using ConfigLib for Config global;
+using ConfigLib for ConfigState global;
 /// @custom:storage-location erc7201:mc.devkit.config
-struct Config {
+struct ConfigState {
     bool DEBUG_MODE;
-    LogLevel DEFAULT_LOG_LEVEL;
+    Logger.LogLevel DEFAULT_LOG_LEVEL;
     bool RECORD_EXECUTION_PROCESS;
 
     bool SETUP_STD_FUNCS;
@@ -33,9 +33,9 @@ struct Config {
 |   📝 Config     |
 \================*/
 library ConfigLib {
-    function load(Config storage config) internal {
+    function load(ConfigState storage config) internal {
         config.DEBUG_MODE = true;
-        config.DEFAULT_LOG_LEVEL = LogLevel.Warn;
+        config.DEFAULT_LOG_LEVEL = Logger.LogLevel.Warn;
         config.RECORD_EXECUTION_PROCESS = false;
 
         config.SETUP_STD_FUNCS = true;
@@ -52,11 +52,11 @@ library ConfigLib {
         config.SCAN_RANGE.END = 5;
     }
 
-    function defaultOwner(Config storage) internal returns(address) {
+    function defaultOwner(ConfigState storage) internal returns(address) {
         return ForgeHelper.msgSender();
     }
 
-    function defaultName(Config storage) internal pure returns(string memory) {
+    function defaultName(ConfigState storage) internal pure returns(string memory) {
         return "ProjectName"; // TODO
     }
 
@@ -84,7 +84,7 @@ library ConfigLib {
     //     return mc.functions.genUniqueBundleName();
     // }
 
-    function defaultInitData(Config storage) internal pure returns(bytes memory) {
+    function defaultInitData(ConfigState storage) internal pure returns(bytes memory) {
         return "";
     }
 }

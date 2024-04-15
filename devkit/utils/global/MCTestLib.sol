@@ -99,10 +99,10 @@ library MCTestLib {
         return mc.createMockDictionary(name, owner, mc.std.all);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, System.config().defaultOwner(), mc.std.all);
+        return mc.createMockDictionary(name, System.Config().defaultOwner(), mc.std.all);
     }
     function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), System.config().defaultOwner(), mc.std.all);
+        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), System.Config().defaultOwner(), mc.std.all);
     }
 
 
