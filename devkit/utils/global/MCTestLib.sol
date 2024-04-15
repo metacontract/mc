@@ -111,14 +111,7 @@ library MCTestLib {
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("setStorageReader", Params.append(selector, implementation));
-        // dictionary.set(
-        //     Function.create("aaa")
-        //     // Function({
-        //     //     name: "StorageReader",
-        //     //     selector: selector,
-        //     //     implementation: implementation
-        //     // })
-        // );
+        dictionary.set(selector, implementation);
         return mc.recordExecFinish(pid);
     }
     function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
