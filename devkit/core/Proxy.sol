@@ -14,7 +14,7 @@ import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Proxy global;
 
 // External Lib Contract
-import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
+import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
 // Mock Contract
 import {ProxySimpleMock} from "devkit/mocks/ProxySimpleMock.sol";
 
@@ -41,7 +41,7 @@ library ProxyLib {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
         Validate.MUST_haveContract(dictionary);
         return Proxy({
-            addr: address(new ERC7546ProxyEtherscan(dictionary.addr, initData)),
+            addr: address(new UCSProxy(dictionary.addr, initData)),
             kind: ProxyKind.Verifiable,
             status: TypeStatus.Building
         }).finishProcess(pid);

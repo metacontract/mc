@@ -4,13 +4,13 @@ pragma solidity ^0.8.24;
 // Core
 import {Function} from "devkit/core/Function.sol";
 // External Lib
-import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
+import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 
 /**
     @title Mock Dictionary Contract
  */
-contract DictionaryMock is DictionaryEtherscan {
-    constructor (address owner, Function[] memory functions) DictionaryEtherscan(owner) {
+contract DictionaryMock is Dictionary {
+    constructor (address owner, Function[] memory functions) Dictionary(owner) {
         for (uint i; i < functions.length; ++i) {
             setImplementation(functions[i].selector, functions[i].implementation);
         }

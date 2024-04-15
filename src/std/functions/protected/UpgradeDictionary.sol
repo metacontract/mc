@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
+import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {ProtectionBase} from "./utils/ProtectionBase.sol";
 
 /**
@@ -14,7 +14,7 @@ contract UpgradeDictionary is ProtectionBase {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     function upgradeDictionary(address newDictionary) external onlyAdmin {
-        ERC7546Utils.upgradeDictionaryToAndCall({
+        ProxyUtils.upgradeDictionaryToAndCall({
             newDictionary: newDictionary,
             data: ""
         });

@@ -19,7 +19,7 @@ import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {DictionaryMock} from "devkit/mocks/DictionaryMock.sol";
 // External Libs
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
-import {DictionaryEtherscan} from "@ucs.mc/dictionary/DictionaryEtherscan.sol";
+import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -52,7 +52,7 @@ library DictionaryLib {
         Validate.MUST_AddressIsNotZero(owner);
         /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
         return Dictionary({
-            addr: address(new DictionaryEtherscan(owner)),
+            addr: address(new UCSDictionary(owner)),
             kind: DictionaryKind.Verifiable,
             status: TypeStatus.Building
         }).finishProcess(pid);
@@ -124,7 +124,7 @@ library DictionaryLib {
         uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
         Validate.MUST_AddressIsContract(newFacade);
         Validate.MUST_Verifiable(dictionary);
-        DictionaryEtherscan(dictionary.addr).upgradeFacade(newFacade);
+        IDictionary(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);
     }
 
