@@ -10,7 +10,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Dictionary);
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 
 // Core Type
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";

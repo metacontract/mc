@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";

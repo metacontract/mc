@@ -11,7 +11,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bytes4;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Dictionary global;
 

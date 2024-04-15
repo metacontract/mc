@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";

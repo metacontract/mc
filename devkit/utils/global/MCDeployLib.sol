@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 // Utils
 import {Params} from "devkit/system/debug/Params.sol";
 // Core

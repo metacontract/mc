@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 import {ERR} from "devkit/system/message/ERR.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";

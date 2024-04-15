@@ -10,7 +10,7 @@ import {Dumper} from "devkit/system/debug/Dumper.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for Function global;
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for Function global;
 // Loader

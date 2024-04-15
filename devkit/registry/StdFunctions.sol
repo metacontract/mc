@@ -7,7 +7,7 @@ import {ProcessLib} from "devkit/system/debug/Process.sol";
     using ProcessLib for StdFunctions global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
     using TypeGuard for StdFunctions global;
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";

@@ -6,7 +6,7 @@ pragma solidity ^0.8.24;
 import {ProcessLib} from "devkit/system/debug/Process.sol";
 using ProcessLib for FunctionRegistry global;
 // Validation
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";

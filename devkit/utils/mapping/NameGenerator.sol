@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Validate} from "devkit/system/validate/Validate.sol";
+import {Validate} from "devkit/system/Validate.sol";
 import {ScanRange} from "devkit/system/Config.sol";
 import {System} from "devkit/system/System.sol";
 // Core Types
