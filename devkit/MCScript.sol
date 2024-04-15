@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Config} from "devkit/config/Config.sol";
+import {System} from "devkit/system/System.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Script based on Forge Std Script
@@ -12,16 +12,16 @@ import {MCScriptBase} from "./MCBase.sol";
 // ⭐️ MC SCRIPT
 abstract contract MCScript is MCScriptBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
-        if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
+        mc.loadConfig();
+        mc.startDebug();
+        if (System.Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
 // ⭐️ MC SCRIPT without Setup
 abstract contract MCScriptWithoutSetup is MCScriptBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
+        mc.loadConfig();
+        mc.startDebug();
     }
 }

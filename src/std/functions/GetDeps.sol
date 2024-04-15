@@ -3,8 +3,8 @@ pragma solidity ^0.8.22;
 
 import {Dep} from "../storage/Schema.sol";
 
-import {ERC7546Utils} from "@ucs.mc/proxy/ERC7546Utils.sol";
-import {DictionaryBase} from "@ucs.mc/dictionary/DictionaryBase.sol";
+import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
+import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 
 /**
     < MC Standard Function >
@@ -16,7 +16,7 @@ contract GetDeps {
     /// DO NOT USE STORAGE DIRECTLY !!!
 
     function getDeps() external view returns(Dep[] memory) {
-        DictionaryBase dictionary = DictionaryBase(ERC7546Utils.getDictionary()); // TODO IDictionary
+        IDictionary dictionary = IDictionary(ProxyUtils.getDictionary());
         bytes4[] memory selectors = dictionary.supportsInterfaces();
         Dep[] memory deps = new Dep[](selectors.length);
         for (uint i; i < selectors.length; ++i) {

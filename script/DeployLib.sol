@@ -2,20 +2,19 @@
 pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {StdFunctions} from "devkit/ucs/functions/StdFunctions.sol";
 
-
-using DeployLib for MCDevKit;
 library DeployLib {
+    using DeployLib for MCDevKit;
     string internal constant BUNDLE_NAME = "Std";
 
-    function deployStdIfNotExists(MCDevKit storage mc) internal {
-        mc.functions.std.deployIfNotExists();
+    function deployStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        mc.std.functions.deployIfNotExists();
+        return mc;
     }
 
     function deployStdDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        mc.deployStdIfNotExists();
-        mc.deployDictionary(mc.functions.std.all);
+        mc.std.complete();
+        mc.deployDictionary(mc.std.all);
         return mc;
     }
 }

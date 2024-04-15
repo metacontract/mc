@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ERC7546ProxyEvents} from "@ucs.mc/proxy/ERC7546ProxyEvents.sol";
+import {IProxy} from "@ucs.mc/proxy/IProxy.sol";
 import {Dep} from "../storage/Schema.sol";
 
-interface IStd is ERC7546ProxyEvents {
+interface IStd is IProxy {
     function clone(bytes calldata initData) external returns (address proxy);
     function getDeps() external view returns(Dep[] memory);
     function featureToggle(bytes4 selector) external;

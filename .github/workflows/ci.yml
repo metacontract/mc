@@ -42,6 +42,23 @@ jobs:
         run: |
           forge test
 
+  install-with-template-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+      - name: Run forge install
+        run: |
+          mkdir /tmp/install-with-template-test
+          cd /tmp/install-with-template-test
+          forge init mc-example-project -t metacontract/template
+          forge test
+
   # slither:
   #   runs-on: ubuntu-latest
   #   steps:

@@ -4,6 +4,3 @@
 [submodule "lib/ucs-contracts"]
 	path = lib/ucs-contracts
 	url = https://github.com/ecdysisxyz/ucs-contracts
-[submodule "lib/openzeppelin-contracts"]
-	path = lib/openzeppelin-contracts
-	url = https://github.com/openzeppelin/openzeppelin-contracts

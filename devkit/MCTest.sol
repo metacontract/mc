@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Config} from "devkit/config/Config.sol";
-import {DecodeErrorString} from "./error/DecodeErrorString.sol";
+import {System} from "devkit/system/System.sol";
+import {DecodeErrorString} from "devkit/system/message/DecodeErrorString.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
@@ -13,9 +13,9 @@ import {MCTestBase} from "./MCBase.sol";
 // ⭐️ MC TEST
 abstract contract MCTest is MCTestBase {
     constructor() {
-        Config().load();
-        if (Config().DEBUG_MODE) mc.startDebug();
-        if (Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
+        System.Config().load();
+        if (System.Config().DEBUG_MODE) mc.startDebug();
+        if (System.Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
     }
 }
 
@@ -47,7 +47,7 @@ abstract contract MCStateFuzzingTest is MCTestBase {
 // 🌟 MC TEST for DevKit
 abstract contract MCDevKitTest is MCTestBase {
     constructor() {
-        Config().load();
+        System.Config().load();
         mc.stopLog();
     }
 }
