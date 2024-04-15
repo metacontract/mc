@@ -2,7 +2,8 @@
 pragma solidity ^0.8.24;
 import {vm, VmSafe, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {ERR} from "devkit/system/message/ERR.sol";
-import {Formatter} from "devkit/system/debug/Formatter.sol";
+import {Formatter} from "devkit/types/Formatter.sol";
+    using Formatter for string;
 import {Logger} from "devkit/system/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;

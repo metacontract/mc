@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Logger} from "devkit/system/debug/Logger.sol";
-import {Formatter} from "devkit/system/debug/Formatter.sol";
+import {Formatter} from "devkit/types/Formatter.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";

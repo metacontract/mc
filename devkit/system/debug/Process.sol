@@ -48,6 +48,11 @@ library ProcessLib {
     }
 
 
+    function finishProcess(string memory str, uint pid) internal returns(string memory) {
+        finishProcess(pid);
+        return str;
+    }
+
     /**------------------
         🧩 Function
     --------------------*/

@@ -11,7 +11,7 @@ import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 import {StringUtils} from "devkit/types/StringUtils.sol";
 // Debug
 import {Process} from "devkit/system/debug/Process.sol";
-import {Formatter} from "devkit/system/debug/Formatter.sol";
+import {Formatter} from "devkit/types/Formatter.sol";
 import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
@@ -23,6 +23,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 library Logger {
     using StringUtils for string;
     using StdStyle for string;
+    using Formatter for string;
 
     enum LogLevel {
         Disable,    // Display no message

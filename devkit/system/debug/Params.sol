@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {StringUtils} from "devkit/types/StringUtils.sol";
-    using StringUtils for string;
-import {TypeConverter} from "devkit/types/TypeConverter.sol";
-    using TypeConverter for address;
-    using TypeConverter for bytes4;
+import {Formatter} from "devkit/types/Formatter.sol";
+    using Formatter for address;
+    using Formatter for bytes4;
+    using Formatter for string;
 
 
 library Params {

@@ -3,8 +3,6 @@ pragma solidity ^0.8.24;
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
-import {TypeConverter} from "devkit/types/TypeConverter.sol";
-    using TypeConverter for bool;
 import {Validate} from "devkit/system/validate/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";

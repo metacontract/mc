@@ -10,8 +10,8 @@ import {Function} from "devkit/core/Function.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 import {Proxy} from "devkit/core/Proxy.sol";
 // Utils
-import {StringUtils} from "devkit/types/StringUtils.sol";
-    using StringUtils for string;
+import {Formatter} from "devkit/types/Formatter.sol";
+    using Formatter for string;
 
 /**=======================
     🏷️ Name Generator

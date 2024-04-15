@@ -6,8 +6,8 @@ import {MCDevKitTest} from "devkit/MCTest.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
-import {TypeConverter} from "devkit/types/TypeConverter.sol";
-    using TypeConverter for string;
+import {Formatter} from "devkit/types/Formatter.sol";
+    using Formatter for string;
 import {ERR} from "devkit/system/message/ERR.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
