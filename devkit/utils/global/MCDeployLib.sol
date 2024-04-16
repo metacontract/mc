@@ -37,11 +37,11 @@ library MCDeployLib {
         🌞 Deploy Meta Contract
     -------------------------------*/
     function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("deploy");
-        // uint pid = mc.recordExecStart("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
+        uint pid = mc.startProcess("deploy");
+        // uint pid = mc.startProcess("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
         Dictionary memory dictionary = mc.dictionary.deploy(name, bundleInfo, owner);
         mc.proxy.deploy(name, dictionary, initData);
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
         // TODO gen and set facade
     }
 
@@ -72,10 +72,10 @@ library MCDeployLib {
         🏠 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("deployProxy", Params.append(dictionary.addr, initData));
+        uint pid = mc.startProcess("deployProxy", Params.append(dictionary.addr, initData));
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         mc.proxy.register(name, proxy);
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
@@ -101,7 +101,7 @@ library MCDeployLib {
         📚 Deploy Dictionary
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        uint pid = mc.recordExecStart("deployDictionary", Params.append(name, bundleInfo.name, owner));
+        uint pid = mc.startProcess("deployDictionary", Params.append(name, bundleInfo.name, owner));
         Dictionary memory dictionary = DictionaryLib  .deploy(owner)
                                                         .set(bundleInfo)
                                                         .upgradeFacade(bundleInfo.facade);
@@ -136,10 +136,10 @@ library MCDeployLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("duplicateDictionary", Params.append(name, targetDictionary.addr));
+        uint pid = mc.startProcess("duplicateDictionary", Params.append(name, targetDictionary.addr));
         Dictionary memory newDictionary = targetDictionary.duplicate();
         mc.dictionary.register(name, newDictionary);
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         return mc.duplicateDictionary(name, mc.findCurrentDictionary());

@@ -10,18 +10,18 @@ import {System} from "devkit/system/System.sol";
 ***********************************/
 library MCSetupLib {
     function loadConfig(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("loadConfig");
+        uint pid = mc.startProcess("loadConfig");
         System.Config().load();
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
 
     /**----------------------------
         🧩 Setup Standard Funcs
     ------------------------------*/
     function setupStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("setupStdFunctions");
+        uint pid = mc.startProcess("setupStdFunctions");
         mc.std.complete();
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
 
 }

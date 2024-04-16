@@ -27,14 +27,14 @@ library MCFinderLib {
         🗂️ Find Bundle
     ----------------------*/
     // function findCurrentBundle(MCDevKit storage mc) internal returns(Bundle storage) {
-    //     uint pid = mc.recordExecStart("findCurrentBundle");
+    //     uint pid = mc.startProcess("findCurrentBundle");
     //     return mc.functions.findCurrentBundle();
     // }
     function findBundle(MCDevKit storage mc, string memory name) internal returns(Bundle storage) {
         return mc.bundle.find(name);
     }
     // function findCurrentBundleName(MCDevKit storage mc) internal returns(string memory) {
-    //     uint pid = mc.recordExecStart("findCurrentBundleName", "");
+    //     uint pid = mc.startProcess("findCurrentBundleName", "");
     //     return mc.bundle.findCurrentBundleName();
     // }
 
@@ -42,11 +42,11 @@ library MCFinderLib {
         🧩 Find Function
     ------------------------*/
     function findFunction(MCDevKit storage mc, string memory name) internal returns(Function storage) {
-        uint pid = mc.recordExecStart("findFunction");
+        uint pid = mc.startProcess("findFunction");
         return mc.functions.find(name);
     }
     // function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
-    //     uint pid = mc.recordExecStart("findCurrentFunction", "");
+    //     uint pid = mc.startProcess("findCurrentFunction", "");
     //     return mc.functions.findCurrentFunction();
     // }
 

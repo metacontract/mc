@@ -15,11 +15,11 @@ library MCContextLib {
         ♻️ Reset Current Context
     -------------------------------*/
     function reset(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("reset");
+        uint pid = mc.startProcess("reset");
         mc.dictionary.current.reset();
         mc.functions.current.reset();
         // mc.proxy.current.reset();
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
 
 }

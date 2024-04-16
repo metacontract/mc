@@ -17,17 +17,15 @@ import {Logger} from "devkit/system/debug/Logger.sol";
         🔼 Record Finish
 ************************************************/
 library MCDebugLib {
-    string constant LIB_NAME = "MCDebugLib";
 
     /**---------------
         ▶️ Start
     -----------------*/
     function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("startDebug");
+        uint pid = mc.startProcess("startDebug");
         if (System.Config().DEBUG.MODE) System.Debug().startDebug();
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
-
 
     /**-------------
         🛑 Stop
@@ -37,7 +35,6 @@ library MCDebugLib {
         return mc;
     }
 
-
     /**-------------------
         📩 Insert Log
     ---------------------*/
@@ -46,22 +43,20 @@ library MCDebugLib {
         return mc;
     }
 
-
     /**--------------------
         🔽 Record Start
     ----------------------*/
-    function recordExecStart(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
-        return ProcessLib.startProcess(LIB_NAME, funcName, params);
+    function startProcess(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
+        return ProcessLib.startProcess("MC", funcName, params);
     }
-    function recordExecStart(MCDevKit storage mc, string memory funcName) internal returns(uint) {
-        return mc.recordExecStart(funcName, "");
+    function startProcess(MCDevKit storage mc, string memory funcName) internal returns(uint) {
+        return startProcess(mc, funcName, "");
     }
-
 
     /**---------------------
         🔼 Record Finish
     -----------------------*/
-    function recordExecFinish(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
+    function finishProcess(MCDevKit storage mc, uint pid) internal returns(MCDevKit storage) {
         ProcessLib.finishProcess(pid);
         return mc;
     }

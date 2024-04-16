@@ -29,9 +29,9 @@ library MCBundleLib {
         🌱 Init Custom Bundle
     -----------------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("init", Params.append(name));
+        uint pid = mc.startProcess("init", Params.append(name));
         mc.bundle.init(name);
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
     function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return init(mc, mc.bundle.genUniqueName());
@@ -39,11 +39,11 @@ library MCBundleLib {
 
     //
     function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("ensureInit");
+        uint pid = mc.startProcess("ensureInit");
         if (mc.bundle.notExistsCurrentBundle()) {
             mc.init();
         }
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
 
 
@@ -51,11 +51,11 @@ library MCBundleLib {
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("use", Params.append(name, selector, implementation));
+        uint pid = mc.startProcess("use", Params.append(name, selector, implementation));
         return mc   .ensureInit()
                     .addFunction(name, selector, implementation)
                     .addCurrentToBundle()
-                    .recordExecFinish(pid);
+                    .finishProcess(pid);
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return mc.use(ForgeHelper.getLabel(implementation), selector, implementation);
@@ -74,17 +74,17 @@ library MCBundleLib {
             ✨ Add Custom Function
         -----------------------------*/
         function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            uint pid = mc.recordExecStart("addFunction");
+            uint pid = mc.startProcess("addFunction");
             mc.functions.register(name, selector, implementation);
-            return mc.recordExecFinish(pid);
+            return mc.finishProcess(pid);
         }
         /**-------------------------------------
             🧺 Add Custom Function to Bundle
         ---------------------------------------*/
         function addToBundle(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
-            uint pid = mc.recordExecStart("addToBundle");
+            uint pid = mc.startProcess("addToBundle");
             mc.bundle.findCurrent().pushFunction(functionInfo);
-            return mc.recordExecFinish(pid);
+            return mc.finishProcess(pid);
         }
         function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
             mc.bundle.findCurrent().pushFunction(mc.functions.findCurrent());
@@ -96,10 +96,10 @@ library MCBundleLib {
         🪟 Use Facade
     --------------------*/
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.recordExecStart("set");
+        uint pid = mc.startProcess("set");
         Validate.MUST_haveCurrent(mc.bundle);
         mc.bundle.findCurrent().assignFacade(facade);
-        return mc.recordExecFinish(pid);
+        return mc.finishProcess(pid);
     }
 
 }
