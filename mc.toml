@@ -16,7 +16,6 @@ DEFAULT_BUNDLE = 'Bundle'
 DEFAULT_FUNCTION = 'Function'
 
 [scan_range]
-START = 1
 END = 5
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

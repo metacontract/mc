@@ -38,7 +38,7 @@ struct ConfigState {
         string BUNDLE;
         string FUNCTION;
     }
-    struct ScanRange { uint128 START; uint128 END; }
+    struct ScanRange { uint256 END; }
 
 /**===============\
 |   📝 Config     |
@@ -61,8 +61,7 @@ library ConfigLib {
         config.DEFAULT_NAME.BUNDLE = toml.readString(".naming.DEFAULT_BUNDLE");
         config.DEFAULT_NAME.FUNCTION = toml.readString(".naming.DEFAULT_FUNCTION");
         // Scan Range
-        config.SCAN_RANGE.START = uint128(toml.readUint(".scan_range.START"));
-        config.SCAN_RANGE.END = uint128(toml.readUint(".scan_range.END"));
+        config.SCAN_RANGE.END = toml.readUint(".scan_range.END");
     }
 
     function configFile() internal returns(string memory) {
