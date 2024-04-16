@@ -41,6 +41,11 @@ library BundleRegistryLib {
         registry.current.update(name);
         return registry.finishProcess(pid);
     }
+    function ensureInit(BundleRegistry storage registry) internal returns(BundleRegistry storage) {
+        uint pid = registry.startProcess("ensureInit");
+        Validate.SHOULD_ExistCurrentBundle(registry) ? registry : registry.init(registry.genUniqueName());
+        return registry.finishProcess(pid);
+    }
 
     /**--------------------
         🔍 Find Bundle

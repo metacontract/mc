@@ -36,17 +36,17 @@ library MCDeployLib {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/
-    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner, bytes memory initData) internal returns(MCDevKit storage) {
+    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("deploy");
-        // uint pid = mc.startProcess("deploy", PARAMS.append(name).comma().append(bundleInfo.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
-        Dictionary memory dictionary = mc.dictionary.deploy(name, bundleInfo, owner);
+        // uint pid = mc.startProcess("deploy", PARAMS.append(name).comma().append(bundle.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
+        Dictionary memory dictionary = mc.dictionary.deploy(name, bundle, owner);
         mc.proxy.deploy(name, dictionary, initData);
         return mc.finishProcess(pid);
         // TODO gen and set facade
     }
 
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.Config().defaultOwner(), System.Config().defaultInitData());
+        return deploy(mc, mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.Config().defaultOwner(), System.Config().defaultInitData());
     }
     // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, bundleInfo, facade, owner, System.Config().defaultInitData());

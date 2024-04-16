@@ -150,8 +150,9 @@ library Validate {
     /**=======================
         📙 Bundle Registry
     =========================*/
-    function MUST_HaveCurrentBundle(BundleRegistry storage registry) internal {
-        validate(MUST, registry.current.name.isNotEmpty(), ERR.EMPTY_CURRENT_BUNDLE, "");
+    function SHOULD_ExistCurrentBundle(BundleRegistry storage registry) internal returns(bool condition) {
+        condition = registry.current.name.isNotEmpty();
+        validate(SHOULD, condition, ERR.EMPTY_CURRENT_BUNDLE, "");
     }
 
     /**==============

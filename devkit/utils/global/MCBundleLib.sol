@@ -44,11 +44,13 @@ library MCBundleLib {
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("use", Params.append(name, selector, implementation));
+        // Register new function
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_NotEmptySelector(selector);
         Validate.MUST_AddressIsContract(implementation);
-        Validate.MUST_HaveCurrentBundle(mc.bundle);
         mc.functions.register(name, selector, implementation);
+        // Push to current bundle
+        mc.bundle.ensureInit();
         mc.bundle.findCurrent().pushFunction(mc.functions.find(name));
         return mc.finishProcess(pid);
     }
@@ -59,7 +61,6 @@ library MCBundleLib {
         return use(mc, functionInfo.name, functionInfo.selector, functionInfo.implementation);
     }
     function use(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
-        Validate.MUST_registered(mc.functions, functionName);
         return use(mc, mc.findFunction(functionName));
     }
 
@@ -67,9 +68,10 @@ library MCBundleLib {
     /**------------------
         🪟 Use Facade
     --------------------*/
+    /// @notice Assign facade address to current bundle
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("set");
-        Validate.MUST_HaveCurrentBundle(mc.bundle);
+        mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);
     }

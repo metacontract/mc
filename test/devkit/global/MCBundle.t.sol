@@ -49,20 +49,9 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
-        mc.init();
         mc.use(functionName, selector, impl);
 
         assertFunctionAdded(bundleName, 0, functionName, selector, impl);
-    }
-
-    function test_use_Revert_WhenBeforeInit() public {
-        string memory bundleName = mc.bundle.genUniqueName();
-        string memory functionName = "DummyFunction";
-        bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  address(new DummyFunction());
-
-        vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
-        mc.use(functionName, selector, impl);
     }
 
     function test_use_Revert_WithSameName() public {
@@ -71,7 +60,6 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
-        mc.init();
         mc.use(functionName, selector, impl);
 
         vm.expectRevert(ERR.message("Locaked Object").toBytes()); // TODO
@@ -86,7 +74,6 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
-        mc.init();
         mc.use(functionName, selector, impl);
         mc.use(functionName2, selector, impl);
 
@@ -103,9 +90,9 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.useFacade(facade);
     }
 
-    function test_Revert_useFacade_withoutInit() public {
-        address facade = address(new DummyFacade());
-        vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
-        mc.useFacade(facade);
-    }
+    // function test_Revert_useFacade_withoutInit() public {
+    //     address facade = address(new DummyFacade());
+    //     vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
+    //     mc.useFacade(facade);
+    // }
 }
