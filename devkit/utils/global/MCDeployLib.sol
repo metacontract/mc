@@ -22,16 +22,14 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Proxy);
 
 
-/***********************************************
+/***************************************
     🚀 Deployment
         🌞 Deploy Meta Contract
         🏠 Deploy Proxy
         📚 Deploy Dictionary
         🔂 Duplicate Dictionary
-************************************************/
+****************************************/
 library MCDeployLib {
-    string constant LIB_NAME = "MCDeployLib";
-
 
     /**-----------------------------
         🌞 Deploy Meta Contract
@@ -102,24 +100,24 @@ library MCDeployLib {
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
         uint pid = mc.startProcess("deployDictionary", Params.append(name, bundleInfo.name, owner));
-        Dictionary memory dictionary = DictionaryLib  .deploy(owner)
-                                                        .set(bundleInfo)
-                                                        .upgradeFacade(bundleInfo.facade);
+        Dictionary memory dictionary = DictionaryLib.deploy(owner)
+                                                    .set(bundleInfo)
+                                                    .upgradeFacade(bundleInfo.facade);
         mc.dictionary.register(name, dictionary);
         return dictionary.finishProcess(pid);
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), System.Config().defaultOwner());
+        return mc.deployDictionary(mc.bundle.findCurrentName(), mc.bundle.findCurrent(), System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, System.Config().defaultOwner());
+        return mc.deployDictionary(mc.bundle.findCurrentName(), bundleInfo, System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), mc.bundle.findCurrent(), owner);
+        return mc.deployDictionary(mc.bundle.findCurrentName(), mc.bundle.findCurrent(), owner);
     }
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, bundleInfo, System.Config().defaultOwner());
@@ -128,7 +126,7 @@ library MCDeployLib {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), owner);
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.dictionary.dictionaries.genUniqueName(), bundleInfo, owner);
+        return mc.deployDictionary(mc.bundle.findCurrentName(), bundleInfo, owner);
     }
 
 

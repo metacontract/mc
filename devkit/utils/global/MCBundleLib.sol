@@ -4,7 +4,6 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
-import {ERR} from "devkit/system/message/ERR.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Params} from "devkit/system/debug/Params.sol";
@@ -15,20 +14,18 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Bundle);
 
-/***********************************************
+/*********************************
     🗂️ Bundle Configuration
-        🌱 Init Custom Bundle
+        🌱 Init Bundle
         🔗 Use Function
-            ✨ Add Custom Function
-            🧺 Add Custom Function to Bundle
         🪟 Use Facade
         🛠️ Build Bundle
-************************************************/
+**********************************/
 library MCBundleLib {
 
-    /**---------------------------
-        🌱 Init Custom Bundle
-    -----------------------------*/
+    /**--------------------
+        🌱 Init Bundle
+    ----------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("init", Params.append(name));
         mc.bundle.init(name);
@@ -85,4 +82,5 @@ library MCBundleLib {
         mc.bundle.findCurrent().build();
         return mc.finishProcess(pid);
     }
+
 }
