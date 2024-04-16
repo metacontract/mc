@@ -144,7 +144,7 @@ library Validate {
         validate(SHOULD, condition, "Bundle Facade should not be empty", "");
     }
     function MUST_notInitialized(Bundle storage bundle) internal {
-        validate(MUST, bundle.status.notInitialized(), "Bundle already initialized", "");
+        validate(MUST, bundle.status.isUninitialized(), "Bundle already initialized", "");
     }
     function MUST_completed(Bundle storage bundle) internal {
         validate(MUST, bundle.isComplete(), "Bundle MUST be Completed", Formatter.toString(bundle));
@@ -192,7 +192,7 @@ library Validate {
         validate(MUST, registry.proxies[name].isComplete(), "Proxy Not Found", "");
     }
     function MUST_notRegistered(ProxyRegistry storage registry, string memory name) internal {
-        validate(MUST, registry.proxies[name].notExists(), "Proxy Already Exists", "");
+        validate(MUST, registry.proxies[name].isUninitialized(), "Proxy Already Exists", "");
     }
 
     /**====================
@@ -223,7 +223,7 @@ library Validate {
         validate(MUST, registry.dictionaries[name].isComplete(), "Dictionary Not Found", "");
     }
     function MUST_notRegistered(DictionaryRegistry storage registry, string memory name) internal {
-        validate(MUST, registry.dictionaries[name].notExists(), "Dictionary Already Exists", "");
+        validate(MUST, registry.dictionaries[name].isUninitialized(), "Dictionary Already Exists", "");
     }
 
     /**==========================

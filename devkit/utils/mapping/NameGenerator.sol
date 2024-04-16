@@ -41,7 +41,7 @@ library NameGenerator {
         ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
-            if (func[name].notExists()) return name;
+            if (func[name].isUninitialized()) return name;
         }
         Validate.MUST_FoundInRange();
     }
@@ -57,7 +57,7 @@ library NameGenerator {
         ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
-            if (dictionary[name].notExists()) return name;
+            if (dictionary[name].isUninitialized()) return name;
         }
         Validate.MUST_FoundInRange();
     }
@@ -98,7 +98,7 @@ library NameGenerator {
         ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
-            if (proxy[name].notExists()) return name;
+            if (proxy[name].isUninitialized()) return name;
         }
         Validate.MUST_FoundInRange();
     }

@@ -103,21 +103,21 @@ library StdFunctionsLib {
     }
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (std.initSetAdmin.notExists()) {
+            if (std.initSetAdmin.hasNotContract()) {
                 std.initSetAdmin.assignImplementation(address(new InitSetAdmin()));
             }
             return std;
         }
 
         function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (std.getDeps.notExists()) {
+            if (std.getDeps.hasNotContract()) {
                 std.getDeps.assignImplementation(address(new GetDeps()));
             }
             return std;
         }
 
         function deployIfNotExists_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
-            if (std.clone.notExists()) {
+            if (std.clone.hasNotContract()) {
                 std.clone.assignImplementation(address(new Clone()));
             }
             return std;

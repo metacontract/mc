@@ -41,7 +41,7 @@ library TypeGuard {
     function initialized(TypeStatus status) internal returns(bool) {
         return status != TypeStatus.Uninitialized;
     }
-    function notInitialized(TypeStatus status) internal returns(bool) {
+    function isUninitialized(TypeStatus status) internal returns(bool) {
         return status == TypeStatus.Uninitialized;
     }
 
@@ -68,6 +68,9 @@ library TypeGuard {
     }
     function isComplete(Function storage func) internal returns(bool) {
         return func.status.isComplete();
+    }
+    function isUninitialized(Function storage func) internal returns(bool) {
+        return func.status.isUninitialized();
     }
 
 
@@ -163,6 +166,9 @@ library TypeGuard {
     function isComplete(Dictionary storage dictionary) internal returns(bool) {
         return dictionary.status.isComplete();
     }
+    function isUninitialized(Dictionary storage dictionary) internal returns(bool) {
+        return dictionary.status.isUninitialized();
+    }
 
 
     /**===============
@@ -185,5 +191,11 @@ library TypeGuard {
     }
     function isComplete(Proxy storage proxy) internal returns(bool) {
         return proxy.status.isComplete();
+    }
+    function isInitialized(Proxy storage proxy) internal returns(bool) {
+        return proxy.status.initialized();
+    }
+    function isUninitialized(Proxy storage proxy) internal returns(bool) {
+        return proxy.status.isUninitialized();
     }
 }
