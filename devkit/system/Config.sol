@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
+import {Validate} from "devkit/system/Validate.sol";
 
 import {stdToml} from "forge-std/StdToml.sol";
     using stdToml for string;
@@ -44,7 +45,9 @@ struct ConfigState {
 \================*/
 library ConfigLib {
     function load(ConfigState storage config) internal {
-        string memory toml = vm.readFile(string.concat(vm.projectRoot(), "/mc.toml"));
+        string memory path = string.concat(vm.projectRoot(), "/mc.toml");
+        Validate.SHOULD_FileExists(path);
+        string memory toml = vm.readFile(path);
         // Setup Config
         config.SETUP.STD_FUNCS = toml.readBool(".setup.STD_FUNCS");
         // Debug Config
