@@ -52,8 +52,12 @@ library Validate {
     /**================
         📝 Config
     ==================*/
-    function SHOULD_FileExists(string memory path) internal {
-        validate(SHOULD, vm.exists(path), "Config File Not Found", "Please consider creating mc.toml in your project root.");
+    function SHOULD_FileExists(string memory path) internal returns(bool condition) {
+        condition = vm.exists(path);
+        validate(SHOULD, condition, "Config File Not Found", "Please consider creating mc.toml in your project root.");
+    }
+    function MUST_FileExists(string memory path) internal {
+        validate(MUST, vm.exists(path), "Config File Not Found", "Please creating mc.toml in your project root.");
     }
 
 

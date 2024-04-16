@@ -45,9 +45,7 @@ struct ConfigState {
 \================*/
 library ConfigLib {
     function load(ConfigState storage config) internal {
-        string memory path = string.concat(vm.projectRoot(), "/mc.toml");
-        Validate.SHOULD_FileExists(path);
-        string memory toml = vm.readFile(path);
+        string memory toml = vm.readFile(configFile());
         // Setup Config
         config.SETUP.STD_FUNCS = toml.readBool(".setup.STD_FUNCS");
         // Debug Config
@@ -65,6 +63,13 @@ library ConfigLib {
         // Scan Range
         config.SCAN_RANGE.START = uint128(toml.readUint(".scan_range.START"));
         config.SCAN_RANGE.END = uint128(toml.readUint(".scan_range.END"));
+    }
+
+    function configFile() internal returns(string memory) {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/mc.toml");
+        path = Validate.SHOULD_FileExists(path) ? path : string.concat(root, "/lib/mc/mc.toml");
+        Validate.MUST_FileExists(path);
     }
 
     function defaultOwner(ConfigState storage) internal returns(address) {
