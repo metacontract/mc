@@ -31,7 +31,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     /**---------------------
         🔗 Use Function
     -----------------------*/
-    function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal {
+    function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal view {
         Bundle memory bundle = mc.bundle.bundles[bundleName];
         assertEq(bundle.name, bundleName);
         assertEq(bundle.facade, address(0));

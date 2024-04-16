@@ -8,7 +8,7 @@ library DecodeErrorString {
      * @param data ABI-encoded revert reason.
      * @return reason The decoded revert reason as a string.
      */
-    function decodeRevertReason(bytes memory data) public returns (string memory) {
+    function decodeRevertReason(bytes memory data) public view returns (string memory) {
         // Ensure the data is at least 4 + 32 + 32 bytes (function selector + offset + string length)
         if (data.length == 0) {
             revert("reverted with no error message.");
@@ -37,7 +37,7 @@ library DecodeErrorString {
      * @param data Bytes containing the panic code.
      * @return code The decoded panic code as a uint256.
      */
-    function decodePanicCode(bytes memory data) internal  returns (uint256 code) {
+    function decodePanicCode(bytes memory data) internal view returns (uint256 code) {
         if (data.length == 0) {
             revert("reverted with no error message.");
         } else if (data.length < 4) {
@@ -54,7 +54,7 @@ library DecodeErrorString {
      * @param data Bytes containing either a revert reason or a panic code.
      * @return result The decoded message as a string.
      */
-    function decodeRevertReasonAndPanicCode(bytes memory data) internal  returns (string memory result) {
+    function decodeRevertReasonAndPanicCode(bytes memory data) internal returns (string memory result) {
         // Check if the data length corresponds to a panic code (4 bytes for the selector + 32 bytes for the uint256)
         if (data.length == 36) {
             uint256 panicCode = decodePanicCode(data);
@@ -70,7 +70,7 @@ library DecodeErrorString {
      * @param code The panic code as a uint256.
      * @return reason The corresponding human-readable string.
      */
-    function panicCodeToString(uint256 code) private  returns (string memory reason) {
+    function panicCodeToString(uint256 code) private pure returns (string memory reason) {
         if (code == 0x01) {
             return "panic: Division by zero.";
         } else if (code == 0x11) {

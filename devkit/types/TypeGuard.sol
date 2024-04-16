@@ -12,9 +12,9 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
+
 using TypeGuard for TypeStatus global;
 enum TypeStatus { Uninitialized, Building, Built, Locked }
-
 
 /**===================
     🔒 Type Guard
@@ -62,7 +62,7 @@ library TypeGuard {
         return func.finishProcess(pid);
     }
     function lock(Function storage func) internal returns(Function storage) {
-        Validate.MUST_built(func.status);
+        Validate.MUST_Built(func.status);
         func.status = TypeStatus.Locked;
         return func;
     }
@@ -95,7 +95,7 @@ library TypeGuard {
         return bundle.build();
     }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
-        Validate.MUST_built(bundle.status);
+        Validate.MUST_Built(bundle.status);
         bundle.status = TypeStatus.Locked;
         return bundle;
     }
@@ -121,7 +121,7 @@ library TypeGuard {
         return registry;
     }
     function lock(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        Validate.MUST_built(registry.status);
+        Validate.MUST_Built(registry.status);
         registry.status = TypeStatus.Locked;
         return registry;
     }
@@ -142,7 +142,7 @@ library TypeGuard {
         return stdFunctions;
     }
     function lock(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.MUST_built(stdFunctions.status);
+        Validate.MUST_Built(stdFunctions.status);
         stdFunctions.status = TypeStatus.Locked;
         return stdFunctions;
     }
@@ -162,7 +162,7 @@ library TypeGuard {
         return dictionary;
     }
     function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        Validate.MUST_built(dictionary.status);
+        Validate.MUST_Built(dictionary.status);
         dictionary.status = TypeStatus.Locked;
         return dictionary;
     }
@@ -188,7 +188,7 @@ library TypeGuard {
         return proxy;
     }
     function lock(Proxy storage proxy) internal returns(Proxy storage) {
-        Validate.MUST_built(proxy.status);
+        Validate.MUST_Built(proxy.status);
         proxy.status = TypeStatus.Locked;
         return proxy;
     }

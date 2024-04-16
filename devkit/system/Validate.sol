@@ -40,6 +40,7 @@ library Validate {
         if (T == MUST) revert(ERR.message(messageBody)); // TODO
     }
 
+    // Validate without broadcast
     modifier noBroadcast() {
         (VmSafe.CallerMode mode,,) = vm.readCallers();
         if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
@@ -64,7 +65,7 @@ library Validate {
     /**===================
         🔒 Type Guard
     =====================*/
-    function MUST_built(TypeStatus status) internal {
+    function MUST_Built(TypeStatus status) internal {
         validate(MUST, status.isBuilt(), "Not Built Yet", "");
     }
 
