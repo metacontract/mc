@@ -83,6 +83,9 @@ library Validate {
     function MUST_Bytes4NotEmpty(bytes4 b4) internal {
         validate(MUST, b4.isNotEmpty(), ERR.EMPTY_B4, "");
     }
+    function MUST_NotEmptySelector(bytes4 selector) internal {
+        validate(MUST, selector.isNotEmpty(), ERR.EMPTY_B4, "");
+    }
     function MUST_AddressIsContract(address addr) internal {
         validate(MUST, addr.isContract(), ERR.NOT_CONTRACT, "");
     }
@@ -147,8 +150,8 @@ library Validate {
     /**=======================
         📙 Bundle Registry
     =========================*/
-    function MUST_haveCurrent(BundleRegistry storage registry) internal {
-        validate(MUST, registry.current.name.isNotEmpty(), "Current Not Exist", "");
+    function MUST_HaveCurrentBundle(BundleRegistry storage registry) internal {
+        validate(MUST, registry.current.name.isNotEmpty(), ERR.EMPTY_CURRENT_BUNDLE, "");
     }
 
     /**==============

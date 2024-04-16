@@ -3,7 +3,7 @@ STD_FUNCS = true
 
 [debug]
 MODE = true
-RECORD_EXECUTION_PROCESS = false
+RECORD_EXECUTION_PROCESS = true
 DEFAULT_LOG_LEVEL = "Warn"
 
 [naming]

@@ -27,6 +27,7 @@ library ERR {
 
     // string constant STR_EXISTS = "String Already Exist";
     string constant NOT_INIT = "Bundle has not initialized yet, please mc.init() first.";
+    string constant EMPTY_CURRENT_BUNDLE = "Bundle has not initialized yet, please mc.init() first.";
 
     function message(string memory errorBody) internal returns(string memory) {
         return Formatter.append(HEADER, errorBody).bold();

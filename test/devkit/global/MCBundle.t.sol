@@ -19,38 +19,11 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     /**---------------------------
         🌱 Init Custom Bundle
     -----------------------------*/
-    function test_Success_init_withName() public {
+    function test_init_Success_withName() public {
         string memory name = "TestBundleName";
         mc.init(name);
 
         assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.current.name.isEqual(name));
-    }
-
-    // verify genUniqueBundleName
-    // function test_Success_init_withoutName() public {}
-
-    function test_Success_ensureInit_beforeInit() public {
-        string memory name = mc.bundle.genUniqueName();
-
-        mc.ensureInit();
-
-        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.current.name.isEqual(name));
-    }
-
-    function test_Success_ensureInit_afterInit() public {
-        string memory name = mc.bundle.genUniqueName();
-
-        mc.init();
-
-        assertTrue(mc.bundle.bundles[name].name.isEqual(name));
-        assertTrue(mc.bundle.current.name.isEqual(name));
-
-        string memory name2 = mc.bundle.genUniqueName();
-        mc.ensureInit();
-
-        assertTrue(mc.bundle.bundles[name2].name.isEmpty());
         assertTrue(mc.bundle.current.name.isEqual(name));
     }
 
@@ -70,30 +43,42 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         assertEq(mc.functions.current.name, functionName);
     }
 
-    function test_Success_use() public {
+    function test_use_Success() public {
         string memory bundleName = mc.bundle.genUniqueName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
+        mc.init();
         mc.use(functionName, selector, impl);
 
         assertFunctionAdded(bundleName, 0, functionName, selector, impl);
     }
 
-    function test_Revert_use_withSameName() public {
+    function test_use_Revert_WhenBeforeInit() public {
         string memory bundleName = mc.bundle.genUniqueName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
+        vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
+        mc.use(functionName, selector, impl);
+    }
+
+    function test_use_Revert_WithSameName() public {
+        string memory bundleName = mc.bundle.genUniqueName();
+        string memory functionName = "DummyFunction";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl =  address(new DummyFunction());
+
+        mc.init();
         mc.use(functionName, selector, impl);
 
         vm.expectRevert(ERR.message("Locaked Object").toBytes()); // TODO
         mc.use(functionName, selector, impl);
     }
 
-    function test_Success_use_withDifferentName() public {
+    function test_use_Success_WithDifferentName() public {
         string memory bundleName = mc.bundle.genUniqueName();
 
         string memory functionName = "DummyFunction";
@@ -101,6 +86,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
+        mc.init();
         mc.use(functionName, selector, impl);
         mc.use(functionName2, selector, impl);
 
@@ -119,7 +105,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
     function test_Revert_useFacade_withoutInit() public {
         address facade = address(new DummyFacade());
-        vm.expectRevert(ERR.message("Current Not Exist").toBytes());
+        vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
         mc.useFacade(facade);
     }
 }

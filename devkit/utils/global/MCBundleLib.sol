@@ -22,6 +22,7 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
             ✨ Add Custom Function
             🧺 Add Custom Function to Bundle
         🪟 Use Facade
+        🛠️ Build Bundle
 ************************************************/
 library MCBundleLib {
 
@@ -37,59 +38,30 @@ library MCBundleLib {
         return init(mc, mc.bundle.genUniqueName());
     }
 
-    //
-    function ensureInit(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("ensureInit");
-        if (mc.bundle.notExistsCurrentBundle()) {
-            mc.init();
-        }
-        return mc.finishProcess(pid);
-    }
-
 
     /**---------------------
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("use", Params.append(name, selector, implementation));
-        return mc   .ensureInit()
-                    .addFunction(name, selector, implementation)
-                    .addCurrentToBundle()
-                    .finishProcess(pid);
+        Validate.MUST_NotEmptyName(name);
+        Validate.MUST_NotEmptySelector(selector);
+        Validate.MUST_AddressIsContract(implementation);
+        Validate.MUST_HaveCurrentBundle(mc.bundle);
+        mc.functions.register(name, selector, implementation);
+        mc.bundle.findCurrent().pushFunction(mc.functions.find(name));
+        return mc.finishProcess(pid);
     }
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.use(ForgeHelper.getLabel(implementation), selector, implementation);
+        return use(mc, ForgeHelper.getLabel(implementation), selector, implementation);
     }
     function use(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
-        return mc.use(functionInfo.name, functionInfo.selector, functionInfo.implementation);
+        return use(mc, functionInfo.name, functionInfo.selector, functionInfo.implementation);
     }
-    // function use(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc;
-    // } TODO
-    function use(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        Validate.MUST_registered(mc.functions, name);
-        return mc.use(mc.findFunction(name));
+    function use(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
+        Validate.MUST_registered(mc.functions, functionName);
+        return use(mc, mc.findFunction(functionName));
     }
-        /**---------------------------
-            ✨ Add Custom Function
-        -----------------------------*/
-        function addFunction(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-            uint pid = mc.startProcess("addFunction");
-            mc.functions.register(name, selector, implementation);
-            return mc.finishProcess(pid);
-        }
-        /**-------------------------------------
-            🧺 Add Custom Function to Bundle
-        ---------------------------------------*/
-        function addToBundle(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
-            uint pid = mc.startProcess("addToBundle");
-            mc.bundle.findCurrent().pushFunction(functionInfo);
-            return mc.finishProcess(pid);
-        }
-        function addCurrentToBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
-            mc.bundle.findCurrent().pushFunction(mc.functions.findCurrent());
-            return mc;
-        }
 
 
     /**------------------
@@ -97,9 +69,18 @@ library MCBundleLib {
     --------------------*/
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("set");
-        Validate.MUST_haveCurrent(mc.bundle);
+        Validate.MUST_HaveCurrentBundle(mc.bundle);
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);
     }
 
+
+    /**--------------------
+        🛠️ Build Bundle
+    ----------------------*/
+    function buildBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        uint pid = mc.startProcess("buildBundle");
+        mc.bundle.findCurrent().build();
+        return mc.finishProcess(pid);
+    }
 }
