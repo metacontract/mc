@@ -25,7 +25,7 @@ library NameGenerator {
         ScanRange memory range = System.Config().SCAN_RANGE;
         for (uint i = range.START; i <= range.END; ++i) {
             name = baseName.toSequential(i);
-            if (bundle[name].hasNotName()) return name; // TODO
+            if (bundle[name].isUninitialized()) return name; // TODO
         }
         Validate.MUST_FoundInRange();
     }

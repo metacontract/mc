@@ -29,7 +29,7 @@ library Inspector {
     /**==================
         🧩 Function
     ====================*/
-    function hasNotContract(Function storage func) internal returns(bool) {
+    function hasNotContract(Function storage func) internal view returns(bool) {
         return func.implementation.isNotContract();
     }
     function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
@@ -39,28 +39,22 @@ library Inspector {
     /**===============
         🗂️ Bundle
     =================*/
-    function has(Bundle storage bundle, Function storage functionInfo) internal view returns(bool flag) {
+    function has(Bundle storage bundle, Function storage func) internal view returns(bool flag) {
         for (uint i; i < bundle.functions.length; ++i) {
-            if (functionInfo.isEqual(bundle.functions[i])) return true;
+            if (func.isEqual(bundle.functions[i])) return true;
         }
     }
-    function hasNot(Bundle storage bundle, Function storage functionInfo) internal returns(bool) {
-        return bundle.has(functionInfo).isFalse();
-    }
-    function hasName(Bundle storage bundle) internal returns(bool) {
-        return bundle.name.isNotEmpty();
-    }
-    function hasNotName(Bundle storage bundle) internal returns(bool) {
-        return bundle.name.isEmpty();
+    function hasNot(Bundle storage bundle, Function storage func) internal view returns(bool) {
+        return bundle.has(func).isFalse();
     }
     /**=======================
         📙 Bundle Registry
     =========================*/
-    function existsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
+    function hasCurrentBundle(BundleRegistry storage bundle) internal view returns(bool) {
         return bundle.current.name.isNotEmpty();
     }
-    function notExistsCurrentBundle(BundleRegistry storage bundle) internal returns(bool) {
-        return bundle.existsCurrentBundle().isNot();
+    function hasNotCurrentBundle(BundleRegistry storage bundle) internal view returns(bool) {
+        return bundle.hasCurrentBundle().isNot();
     }
 
     /**==============
@@ -72,15 +66,6 @@ library Inspector {
     function isNotUndefined(ProxyKind kind) internal pure returns(bool) {
         return kind != ProxyKind.undefined;
     }
-    /**=======================
-        🏠 Proxy Registry
-    =========================*/
-    function existsInDeployed(ProxyRegistry storage registry, string memory name) internal returns(bool) {
-        return registry.proxies[name].isInitialized();
-    }
-    // function existsInMocks(ProxyRegistry storage registry, string memory name) internal returns(bool) {
-    //     return registry.mocks[name].exists();
-    // }
 
 
     /**====================
@@ -99,34 +84,25 @@ library Inspector {
     function isNotUndefined(DictionaryKind kind) internal pure returns(bool) {
         return kind != DictionaryKind.undefined;
     }
-    /**============================
-        📚 Dictionary Registry
-    ==============================*/
-    function existsInDeployed(DictionaryRegistry storage registry, string memory name) internal returns(bool) {
-        return registry.dictionaries[name].isComplete();
-    }
-    // function existsInMocks(DictionaryRegistry storage dictionaries, string memory name) internal returns(bool) {
-    //     return dictionaries.mocks[name].exists();
-    // }
 
 
     /**===================
         🧱 Primitives
     =====================*/
     /// 📝 String
-    function isAssigned(string storage str) internal returns(bool) {
+    function isAssigned(string storage str) internal pure returns(bool) {
         return str.isNotEmpty();
     }
-    function isEmpty(string memory str) internal returns(bool) {
+    function isEmpty(string memory str) internal pure returns(bool) {
         return bytes(str).length == 0;
     }
-    function isNotEmpty(string memory str) internal returns(bool) {
+    function isNotEmpty(string memory str) internal pure returns(bool) {
         return str.isEmpty().isNot();
     }
-    function isEqual(string memory a, string memory b) internal returns(bool) {
+    function isEqual(string memory a, string memory b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
-    function isNotEqual(string memory a, string memory b) internal returns(bool) {
+    function isNotEqual(string memory a, string memory b) internal pure returns(bool) {
         return a.isEqual(b).isNot();
     }
     /// 💾 Bytes4
@@ -146,22 +122,22 @@ library Inspector {
         return a.isEqual(b).isFalse();
     }
     /// 📌 Address
-    function isZero(address addr) internal returns(bool) {
+    function isZero(address addr) internal pure returns(bool) {
         return addr == address(0);
     }
-    function isNotZero(address addr) internal returns(bool) {
+    function isNotZero(address addr) internal pure returns(bool) {
         return addr.isZero().isNot();
     }
-    function hasCode(address addr) internal returns(bool) {
+    function hasCode(address addr) internal view returns(bool) {
         return addr.code.length != 0;
     }
-    function hasNotCode(address addr) internal returns(bool) {
+    function hasNotCode(address addr) internal view returns(bool) {
         return addr.hasCode().isNot();
     }
-    function isContract(address addr) internal returns(bool) {
+    function isContract(address addr) internal view returns(bool) {
         return addr.hasCode();
     }
-    function isNotContract(address addr) internal returns(bool) {
+    function isNotContract(address addr) internal view returns(bool) {
         return addr.isContract().isNot();
     }
     /// ✅ Bool

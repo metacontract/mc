@@ -102,6 +102,9 @@ library TypeGuard {
     function isComplete(Bundle storage bundle) internal returns(bool) {
         return bundle.status.isComplete();
     }
+    function isUninitialized(Bundle storage bundle) internal returns(bool) {
+        return bundle.status.isUninitialized();
+    }
 
 
     /**==========================
