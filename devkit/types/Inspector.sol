@@ -6,7 +6,6 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // External Library
-import {IBeacon} from "@oz.mc/proxy/beacon/IBeacon.sol";
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -177,7 +176,7 @@ library Inspector {
     }
 
     function isVerifiable(Dictionary memory dictionary) internal returns(bool) {
-        (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IBeacon.implementation.selector));
+        (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IDictionary.implementation.selector));
         return success;
     }
 
