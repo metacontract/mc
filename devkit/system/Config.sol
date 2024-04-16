@@ -68,8 +68,10 @@ library ConfigLib {
     function configFile() internal returns(string memory) {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/mc.toml");
-        path = Validate.SHOULD_FileExists(path) ? path : string.concat(root, "/lib/mc/mc.toml");
+        if (Validate.SHOULD_FileExists(path)) return path;
+        path = string.concat(root, "/lib/mc/mc.toml");
         Validate.MUST_FileExists(path);
+        return path;
     }
 
     function defaultOwner(ConfigState storage) internal returns(address) {
