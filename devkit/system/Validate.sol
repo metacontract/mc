@@ -125,11 +125,23 @@ library Validate {
     function MUST_NameAssigned(Bundle storage bundle) internal {
         validate(MUST, bundle.name.isNotEmpty(), "Bundle Name is required", "");
     }
+    function SHOULD_NameAssigned(Bundle storage bundle) internal returns(bool condition) {
+        condition = bundle.name.isNotEmpty();
+        validate(SHOULD, condition, "Bundle Name should not be empty", "");
+    }
     function MUST_HaveAtLeastOneFunction(Bundle storage bundle) internal {
         validate(MUST, bundle.functions.length.isNotZero(), "At least one function is required", "");
     }
+    function SHOULD_HaveAtLeastOneFunction(Bundle storage bundle) internal returns(bool condition) {
+        condition = bundle.functions.length.isNotZero();
+        validate(SHOULD, condition, "At least one function should not be empty", "");
+    }
     function MUST_FacadeAssigned(Bundle storage bundle) internal {
         validate(MUST, bundle.facade.isContract(), "Bundle Facade is required", "");
+    }
+    function SHOULD_FacadeAssigned(Bundle storage bundle) internal returns(bool condition) {
+        condition = bundle.facade.isContract();
+        validate(SHOULD, condition, "Bundle Facade should not be empty", "");
     }
     function MUST_notInitialized(Bundle storage bundle) internal {
         validate(MUST, bundle.status.notInitialized(), "Bundle already initialized", "");

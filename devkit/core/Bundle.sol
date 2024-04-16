@@ -48,14 +48,14 @@ library BundleLib {
         Validate.MUST_completed(func);
         Validate.MUST_notHave(bundle, func);
         bundle.functions.push(func);
-        return bundle.building().finishProcess(pid);
+        return bundle.tryBuild().finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunctions");
         for (uint i; i < functions.length; ++i) {
             bundle.pushFunction(functions[i]);
         }
-        return bundle.building().finishProcess(pid);
+        return bundle.finishProcess(pid);
     }
 
     /**----------------------
@@ -65,7 +65,7 @@ library BundleLib {
         uint pid = bundle.startProcess("assignFacade");
         Validate.MUST_AddressIsContract(facade);
         bundle.facade = facade;
-        return bundle.building().finishProcess(pid);
+        return bundle.tryBuild().finishProcess(pid);
     }
 
 }

@@ -85,6 +85,12 @@ library TypeGuard {
         bundle.status = TypeStatus.Built;
         return bundle;
     }
+    function tryBuild(Bundle storage bundle) internal returns(Bundle storage) {
+        if (Validate.SHOULD_NameAssigned(bundle).isFalse()) return bundle;
+        if (Validate.SHOULD_HaveAtLeastOneFunction(bundle).isFalse()) return bundle;
+        if (Validate.SHOULD_FacadeAssigned(bundle).isFalse()) return bundle;
+        return bundle.build();
+    }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
         Validate.MUST_built(bundle.status);
         bundle.status = TypeStatus.Locked;

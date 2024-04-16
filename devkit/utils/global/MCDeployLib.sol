@@ -46,14 +46,14 @@ library MCDeployLib {
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
         return deploy(mc, mc.bundle.findCurrent().name, mc.bundle.findCurrent(), System.Config().defaultOwner(), System.Config().defaultInitData());
     }
-    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address facade, address owner) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, facade, owner, System.Config().defaultInitData());
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address facade, address owner) internal returns(MCDevKit storage) {
+    //     return mc.deploy(name, bundle, facade, owner, System.Config().defaultInitData());
     // }
-    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundleInfo, System.Config().defaultInitData(), );
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
+    //     return mc.deploy(name, bundle, System.Config().defaultInitData(), );
     // }
-    // function deploy(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-    //     return mc.deploy(System.Config().defaultName(), bundleInfo, System.Config().defaultInitData());
+    // function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
+    //     return mc.deploy(System.Config().defaultName(), bundle, System.Config().defaultInitData());
     // }
     // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
     //     return mc.deploy(name, mc.functions.findBundle(name), initData);
@@ -98,11 +98,11 @@ library MCDeployLib {
     /**-------------------------
         📚 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        uint pid = mc.startProcess("deployDictionary", Params.append(name, bundleInfo.name, owner));
+    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary memory) {
+        uint pid = mc.startProcess("deployDictionary", Params.append(name, bundle.name, owner));
         Dictionary memory dictionary = DictionaryLib.deploy(owner)
-                                                    .set(bundleInfo)
-                                                    .upgradeFacade(bundleInfo.facade);
+                                                    .set(bundle)
+                                                    .upgradeFacade(bundle.facade);
         mc.dictionary.register(name, dictionary);
         return dictionary.finishProcess(pid);
     }
@@ -113,20 +113,20 @@ library MCDeployLib {
     function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), System.Config().defaultOwner());
     }
-    function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), bundleInfo, System.Config().defaultOwner());
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary memory) {
+        return mc.deployDictionary(mc.bundle.findCurrentName(), bundle, System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(mc.bundle.findCurrentName(), mc.bundle.findCurrent(), owner);
     }
-    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundleInfo) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, bundleInfo, System.Config().defaultOwner());
+    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(Dictionary memory) {
+        return mc.deployDictionary(name, bundle, System.Config().defaultOwner());
     }
     function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(Dictionary memory) {
         return mc.deployDictionary(name, mc.bundle.findCurrent(), owner);
     }
-    function deployDictionary(MCDevKit storage mc, Bundle storage bundleInfo, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), bundleInfo, owner);
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary memory) {
+        return mc.deployDictionary(mc.bundle.findCurrentName(), bundle, owner);
     }
 
 
