@@ -33,7 +33,7 @@ library ProcessLib {
         📈 Execution Tracking
     ------------------------------*/
     function startProcess(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
-        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return 0;
+        if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return 0;
         Debugger storage debugger = System.Debug();
         pid = debugger.nextPid;
         debugger.processes.push(Process(libName, funcName, params));
@@ -42,7 +42,7 @@ library ProcessLib {
     }
 
     function finishProcess(uint pid) internal {
-        if (System.Config().RECORD_EXECUTION_PROCESS.isFalse()) return;
+        if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return;
         Process memory current = System.Debug().processes[pid];
         Logger.logExecFinish(pid, current.libName, current.funcName);
     }

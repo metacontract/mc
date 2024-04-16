@@ -30,7 +30,7 @@ library NameGenerator {
         Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Bundle) storage bundle) internal returns(string memory name) {
-        return genUniqueName(bundle, System.Config().DEFAULT_BUNDLE_NAME);
+        return genUniqueName(bundle, System.Config().DEFAULT_NAME.BUNDLE);
     }
 
 
@@ -46,7 +46,7 @@ library NameGenerator {
         Validate.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Function) storage func) internal returns(string memory name) {
-        return genUniqueName(func, System.Config().DEFAULT_FUNCTION_NAME);
+        return genUniqueName(func, System.Config().DEFAULT_NAME.FUNCTION);
     }
 
 
@@ -63,15 +63,15 @@ library NameGenerator {
     }
     /*----- Dictionary -----*/
     function genUniqueName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY);
     }
     /*----- Dictionary -----*/
     function genUniqueDuplicatedName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY_DUPLICATED);
     }
     /*----- Mock Dictionary -----*/
     function genUniqueMockName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
-        return genUniqueName(dictionary, System.Config().DEFAULT_DICTIONARY_MOCK_NAME);
+        return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY_MOCK);
     }
     // function genUniqueName(DictionaryRegistry storage dictionaries, string memory baseName) internal returns(string memory name) {
     //     uint pid = dictionaries.startProcess("genUniqueName");
@@ -80,13 +80,13 @@ library NameGenerator {
     //         name = baseName.toSequential(i);
     //         if (dictionaries.existsInDeployed(name).isFalse()) return name.recordExecFinish(pid);
     //     }
-    //     throwError(ERR.FIND_NAME_OVER_RANGE);
+    //     throwError(ERR.FIND_OVER_RANGE);
     // }
     // function genUniqueName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY_NAME);
+    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY);
     // }
     // function genUniqueDuplicatedName(DictionaryRegistry storage dictionaries) internal returns(string memory name) {
-    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY_DUPLICATED_NAME);
+    //     return dictionaries.genUniqueName(System.Config().DEFAULT_DICTIONARY_DUPLICATED);
     // }
 
 
@@ -104,11 +104,11 @@ library NameGenerator {
     }
     /*----- Proxy -----*/
     function genUniqueName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {
-        return genUniqueName(proxy, System.Config().DEFAULT_PROXY_NAME);
+        return genUniqueName(proxy, System.Config().DEFAULT_NAME.PROXY);
     }
     /*----- Mock Proxy -----*/
     function genUniqueMockName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {
-        return genUniqueName(proxy, System.Config().DEFAULT_PROXY_MOCK_NAME);
+        return genUniqueName(proxy, System.Config().DEFAULT_NAME.PROXY_MOCK);
     }
 
 }

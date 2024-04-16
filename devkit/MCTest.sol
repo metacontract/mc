@@ -14,8 +14,8 @@ import {MCTestBase} from "./MCBase.sol";
 abstract contract MCTest is MCTestBase {
     constructor() {
         System.Config().load();
-        if (System.Config().DEBUG_MODE) mc.startDebug();
-        if (System.Config().SETUP_STD_FUNCS) mc.setupStdFunctions();
+        if (System.Config().DEBUG.MODE) mc.startDebug();
+        if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
     }
 }
 

@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
 
+import {stdToml} from "forge-std/StdToml.sol";
+    using stdToml for string;
+import {Parser} from "devkit/types/Parser.sol";
+    using Parser for string;
 
 /**----------------------
     📝 Config
@@ -11,22 +15,28 @@ import {Logger} from "devkit/system/debug/Logger.sol";
 using ConfigLib for ConfigState global;
 /// @custom:storage-location erc7201:mc.devkit.config
 struct ConfigState {
-    bool DEBUG_MODE;
-    Logger.LogLevel DEFAULT_LOG_LEVEL;
-    bool RECORD_EXECUTION_PROCESS;
-
-    bool SETUP_STD_FUNCS;
-
-    string DEFAULT_DICTIONARY_NAME;
-    string DEFAULT_DICTIONARY_DUPLICATED_NAME;
-    string DEFAULT_DICTIONARY_MOCK_NAME;
-    string DEFAULT_PROXY_NAME;
-    string DEFAULT_PROXY_MOCK_NAME;
-    string DEFAULT_BUNDLE_NAME;
-    string DEFAULT_FUNCTION_NAME;
-
+    SetupConfig SETUP;
+    DebugConfig DEBUG;
+    NamingConfig DEFAULT_NAME;
     ScanRange SCAN_RANGE;
 }
+    struct SetupConfig {
+        bool STD_FUNCS;
+    }
+    struct DebugConfig {
+        bool MODE;
+        bool RECORD_EXECUTION_PROCESS;
+        Logger.LogLevel DEFAULT_LOG_LEVEL;
+    }
+    struct NamingConfig {
+        string DICTIONARY;
+        string DICTIONARY_DUPLICATED;
+        string DICTIONARY_MOCK;
+        string PROXY;
+        string PROXY_MOCK;
+        string BUNDLE;
+        string FUNCTION;
+    }
     struct ScanRange { uint128 START; uint128 END; }
 
 /**===============\
@@ -34,22 +44,24 @@ struct ConfigState {
 \================*/
 library ConfigLib {
     function load(ConfigState storage config) internal {
-        config.DEBUG_MODE = true;
-        config.DEFAULT_LOG_LEVEL = Logger.LogLevel.Warn;
-        config.RECORD_EXECUTION_PROCESS = false;
-
-        config.SETUP_STD_FUNCS = true;
-
-        config.DEFAULT_DICTIONARY_NAME = "Dictionary";
-        config.DEFAULT_DICTIONARY_DUPLICATED_NAME = "DuplicatedDictionary";
-        config.DEFAULT_DICTIONARY_MOCK_NAME = "MockDictionary";
-        config.DEFAULT_PROXY_NAME = "Proxy";
-        config.DEFAULT_PROXY_MOCK_NAME = "MockProxy";
-        config.DEFAULT_BUNDLE_NAME = "Bundle";
-        config.DEFAULT_FUNCTION_NAME = "Function";
-
-        config.SCAN_RANGE.START = 1;
-        config.SCAN_RANGE.END = 5;
+        string memory toml = vm.readFile(string.concat(vm.projectRoot(), "/mc.toml"));
+        // Setup Config
+        config.SETUP.STD_FUNCS = toml.readBool(".setup.STD_FUNCS");
+        // Debug Config
+        config.DEBUG.MODE = toml.readBool(".debug.MODE");
+        config.DEBUG.RECORD_EXECUTION_PROCESS = toml.readBool(".debug.RECORD_EXECUTION_PROCESS");
+        config.DEBUG.DEFAULT_LOG_LEVEL = toml.readString(".debug.DEFAULT_LOG_LEVEL").toLogLevel();
+        // Naming Config
+        config.DEFAULT_NAME.DICTIONARY = toml.readString(".naming.DEFAULT_DICTIONARY");
+        config.DEFAULT_NAME.DICTIONARY_DUPLICATED = toml.readString(".naming.DEFAULT_DICTIONARY_DUPLICATED");
+        config.DEFAULT_NAME.DICTIONARY_MOCK = toml.readString(".naming.DEFAULT_DICTIONARY_MOCK");
+        config.DEFAULT_NAME.PROXY = toml.readString(".naming.DEFAULT_PROXY");
+        config.DEFAULT_NAME.PROXY_MOCK = toml.readString(".naming.DEFAULT_PROXY_MOCK");
+        config.DEFAULT_NAME.BUNDLE = toml.readString(".naming.DEFAULT_BUNDLE");
+        config.DEFAULT_NAME.FUNCTION = toml.readString(".naming.DEFAULT_FUNCTION");
+        // Scan Range
+        config.SCAN_RANGE.START = uint128(toml.readUint(".scan_range.START"));
+        config.SCAN_RANGE.END = uint128(toml.readUint(".scan_range.END"));
     }
 
     function defaultOwner(ConfigState storage) internal returns(address) {

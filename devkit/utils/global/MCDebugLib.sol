@@ -24,7 +24,7 @@ library MCDebugLib {
     -----------------*/
     function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.recordExecStart("startDebug");
-        if (System.Config().DEBUG_MODE) System.Debug().startDebug();
+        if (System.Config().DEBUG.MODE) System.Debug().startDebug();
         return mc.recordExecFinish(pid);
     }
 

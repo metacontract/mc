@@ -1,0 +1,22 @@
+[setup]
+STD_FUNCS = true
+
+[debug]
+MODE = true
+RECORD_EXECUTION_PROCESS = false
+DEFAULT_LOG_LEVEL = "Warn"
+
+[naming]
+DEFAULT_DICTIONARY = 'Dictionary'
+DEFAULT_DICTIONARY_DUPLICATED = 'DuplicatedDictionary'
+DEFAULT_DICTIONARY_MOCK = 'MockDictionary'
+DEFAULT_PROXY = 'Proxy'
+DEFAULT_PROXY_MOCK = 'MockProxy'
+DEFAULT_BUNDLE = 'Bundle'
+DEFAULT_FUNCTION = 'Function'
+
+[scan_range]
+START = 1
+END = 5
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
