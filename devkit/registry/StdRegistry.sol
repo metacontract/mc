@@ -39,10 +39,10 @@ library StdRegistryLib {
     ------------------------------------*/
     function complete(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("complete");
-        Validate.MUST_StdNotLocked(registry);
         registry.functions.complete();
         registry.configureStdBundle();
-        return registry.build().lock().finishProcess(pid);
+        registry.lock();
+        return registry.finishProcess(pid);
     }
 
     /**----------------------------------
@@ -50,12 +50,14 @@ library StdRegistryLib {
     ------------------------------------*/
     function configureStdBundle(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("configureStdBundle");
-        return registry.configureStdBundle_All().finishProcess(pid);
+        registry.startBuilding();
+        registry.configureStdBundle_All();
+        registry.finishBuilding();
+        return registry.finishProcess(pid);
     }
         /**===== Each Std Bundle =====*/
         function configureStdBundle_All(StdRegistry storage registry) internal returns(StdRegistry storage) {
             uint pid = registry.startProcess("configureStdBundle_All");
-            Validate.MUST_NotLocked(registry.all);
             registry.all.assignName("ALL_STD_FUNCTIONS")
                         .pushFunction(registry.functions.initSetAdmin)
                         .pushFunction(registry.functions.getDeps)

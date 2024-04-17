@@ -241,11 +241,20 @@ library Validate {
     /**==========================
         🏛 Standard Registry
     ============================*/
+    function Completion(StdRegistry storage registry) internal returns(bool) {
+        return (
+            Validate.Completion(registry.functions) &&
+            Validate.Completion(registry.all)
+        );
+    }
     function MUST_Completed(StdRegistry storage registry) internal {
         validate(MUST, registry.status.isComplete(), "Registry Not Complete", "");
     }
-    function MUST_StdNotLocked(StdRegistry storage registry) internal {
+    function MUST_NotLocked(StdRegistry storage registry) internal {
         validate(MUST, registry.status.isNotLocked(), "Std Registry is locked", "");
+    }
+    function MUST_Building(StdRegistry storage registry) internal {
+        validate(MUST, registry.status.isBuilding(), "Std Registry is not building", "");
     }
     /**==========================
         🏰 Standard Functions

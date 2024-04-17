@@ -111,25 +111,22 @@ library TypeGuard {
     /**==========================
         🏛 Standard Registry
     ============================*/
-    function building(StdRegistry storage registry) internal returns(StdRegistry storage) {
+    function startBuilding(StdRegistry storage registry) internal returns(StdRegistry storage) {
+        uint pid = registry.startProcess("startBuilding");
+        Validate.MUST_NotLocked(registry);
         registry.status = TypeStatus.Building;
-        return registry;
+        return registry.finishProcess(pid);
     }
-    function build(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        Validate.MUST_Completed(registry.functions);
-        Validate.MUST_completed(registry.all);
-        registry.status = TypeStatus.Built;
-        return registry;
+    function finishBuilding(StdRegistry storage registry) internal returns(StdRegistry storage) {
+        uint pid = registry.startProcess("finishBuilding");
+        Validate.MUST_Building(registry);
+        if (Validate.Completion(registry)) registry.status = TypeStatus.Built;
+        return registry.finishProcess(pid);
     }
     function lock(StdRegistry storage registry) internal returns(StdRegistry storage) {
+        uint pid = registry.startProcess("lock");
         Validate.MUST_Built(registry.status);
         registry.status = TypeStatus.Locked;
-        return registry;
-    }
-    function finalize(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        uint pid = registry.startProcess("finalize");
-        registry.build();
-        registry.lock();
         return registry.finishProcess(pid);
     }
 
