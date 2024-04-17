@@ -18,54 +18,58 @@ enum TypeStatus { Uninitialized, Building, Built, Locked }
 
 /**===================
     🔒 Type Guard
+    @dev See details in docs/object_lifecycle.md
 =====================*/
 library TypeGuard {
-    function building(TypeStatus status) internal {
-        status = TypeStatus.Building;
+    // Inspect status
+    function isUninitialized(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Uninitialized;
+    }
+    function isInitialized(TypeStatus status) internal returns(bool) {
+        return status != TypeStatus.Uninitialized;
+    }
+    function isBuilding(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Building;
     }
     function isBuilt(TypeStatus status) internal returns(bool) {
         return status == TypeStatus.Built;
     }
-
     function isLocked(TypeStatus status) internal returns(bool) {
         return status == TypeStatus.Locked;
     }
     function isNotLocked(TypeStatus status) internal returns(bool) {
         return status.isLocked().isNot();
     }
-
     function isComplete(TypeStatus status) internal returns(bool) {
         return status.isBuilt() || status.isLocked();
-    }
-
-    function initialized(TypeStatus status) internal returns(bool) {
-        return status != TypeStatus.Uninitialized;
-    }
-    function isUninitialized(TypeStatus status) internal returns(bool) {
-        return status == TypeStatus.Uninitialized;
     }
 
 
     /**==================
         🧩 Function
     ====================*/
-    function building(Function storage func) internal returns(Function storage) {
-        func.status.building();
-        return func;
+    function startBuilding(Function storage func) internal returns(Function storage) {
+        uint pid = func.startProcess("startBuilding");
+        Validate.MUST_NotLocked(func);
+        func.status = TypeStatus.Building;
+        return func.finishProcess(pid);
     }
-    function build(Function storage func) internal returns(Function storage) {
+    function finishBuilding(Function storage func) internal returns(Function storage) {
         uint pid = func.startProcess("build");
-        Validate.MUST_nameAssigned(func);
-        Validate.MUST_selectorAssigned(func);
-        Validate.MUST_implementationAssigned(func);
-        func.status = TypeStatus.Built;
+        Validate.MUST_Building(func);
+        if (Validate.COMPLETION_NameAssigned(func) &&
+            Validate.COMPLETION_SelectorAssigned(func) &&
+            Validate.COMPLETION_ImplementationAssigned(func)
+        ) func.status = TypeStatus.Built;
         return func.finishProcess(pid);
     }
     function lock(Function storage func) internal returns(Function storage) {
-        Validate.MUST_Built(func.status);
+        uint pid = func.startProcess("lock");
+        Validate.MUST_Built(func);
         func.status = TypeStatus.Locked;
-        return func;
+        return func.finishProcess(pid);
     }
+    ///
     function isComplete(Function storage func) internal returns(bool) {
         return func.status.isComplete();
     }
@@ -78,7 +82,7 @@ library TypeGuard {
         🗂️ Bundle
     ==================*/
     function building(Bundle storage bundle) internal returns(Bundle storage) {
-        bundle.status.building();
+        bundle.status = TypeStatus.Building;
         return bundle;
     }
     function build(Bundle storage bundle) internal returns(Bundle storage) {
@@ -111,7 +115,7 @@ library TypeGuard {
         🏛 Standard Registry
     ============================*/
     function building(StdRegistry storage registry) internal returns(StdRegistry storage) {
-        registry.status.building();
+        registry.status = TypeStatus.Building;
         return registry;
     }
     function build(StdRegistry storage registry) internal returns(StdRegistry storage) {
@@ -125,13 +129,20 @@ library TypeGuard {
         registry.status = TypeStatus.Locked;
         return registry;
     }
+    function finalize(StdRegistry storage registry) internal returns(StdRegistry storage) {
+        uint pid = registry.startProcess("finalize");
+        registry.build();
+        registry.lock();
+        return registry.finishProcess(pid);
+    }
+
 
 
     /**==========================
         🏰 Standard Functions
     ============================*/
     function building(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        stdFunctions.status.building();
+        stdFunctions.status = TypeStatus.Building;
         return stdFunctions;
     }
     function build(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
@@ -146,13 +157,19 @@ library TypeGuard {
         stdFunctions.status = TypeStatus.Locked;
         return stdFunctions;
     }
+    function finalize(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
+        uint pid = stdFunctions.startProcess("finalize");
+        stdFunctions.build();
+        stdFunctions.lock();
+        return stdFunctions.finishProcess(pid);
+    }
 
 
     /**====================
         📚 Dictionary
     ======================*/
     function building(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        dictionary.status.building();
+        dictionary.status = TypeStatus.Building;
         return dictionary;
     }
     function build(Dictionary storage dictionary) internal returns(Dictionary storage) {
@@ -178,7 +195,7 @@ library TypeGuard {
         🏠 Proxy
     =================*/
     function building(Proxy storage proxy) internal returns(Proxy storage) {
-        proxy.status.building();
+        proxy.status = TypeStatus.Building;
         return proxy;
     }
     function build(Proxy storage proxy) internal returns(Proxy storage) {
@@ -196,7 +213,7 @@ library TypeGuard {
         return proxy.status.isComplete();
     }
     function isInitialized(Proxy storage proxy) internal returns(bool) {
-        return proxy.status.initialized();
+        return proxy.status.isInitialized();
     }
     function isUninitialized(Proxy storage proxy) internal returns(bool) {
         return proxy.status.isUninitialized();

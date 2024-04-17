@@ -30,7 +30,7 @@ library FunctionRegistryLib {
     function register(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = registry.startProcess("register");
         Validate.MUST_NotEmptyName(name);
-        registry.functions[name].assign(name, selector, implementation).build().lock();
+        registry.functions[name].assign(name, selector, implementation);
         registry.current.update(name);
         return registry.finishProcess(pid);
     }

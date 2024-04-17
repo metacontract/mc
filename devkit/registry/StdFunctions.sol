@@ -44,10 +44,8 @@ library StdFunctionsLib {
         uint pid = stdFunctions.startProcess("complete");
         stdFunctions.fetch();
         stdFunctions.deployIfNotExists();
-        stdFunctions.initSetAdmin.build().lock();
-        stdFunctions.getDeps.build().lock();
-        stdFunctions.clone.build().lock();
-        return stdFunctions.build().lock().finishProcess(pid);
+        stdFunctions.finalize();
+        return stdFunctions.finishProcess(pid);
     }
 
     /**-----------------------------------------
@@ -64,7 +62,7 @@ library StdFunctionsLib {
         /**===== Each Std Function =====*/
         function fetch_InitSetAdmin(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_InitSetAdmin");
-            Validate.MUST_FunctionNotLocked(stdFunctions.initSetAdmin);
+            Validate.MUST_NotLocked(stdFunctions.initSetAdmin);
             stdFunctions.initSetAdmin   .fetch("InitSetAdmin")
                                         .assignSelector(InitSetAdmin.initSetAdmin.selector)
                                         .dump();
@@ -73,7 +71,7 @@ library StdFunctionsLib {
 
         function fetch_GetDeps(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_GetDeps");
-            Validate.MUST_FunctionNotLocked(stdFunctions.getDeps);
+            Validate.MUST_NotLocked(stdFunctions.getDeps);
             stdFunctions.getDeps.fetch("GetDeps")
                                 .assignSelector(GetDeps.getDeps.selector)
                                 .dump();
@@ -82,7 +80,7 @@ library StdFunctionsLib {
 
         function fetch_Clone(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
             uint pid = stdFunctions.startProcess("fetch_Clone");
-            Validate.MUST_FunctionNotLocked(stdFunctions.clone);
+            Validate.MUST_NotLocked(stdFunctions.clone);
             stdFunctions.clone  .fetch("Clone")
                                 .assignSelector(Clone.clone.selector)
                                 .dump();

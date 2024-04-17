@@ -30,9 +30,10 @@ import {StdFunctions} from "devkit/registry/StdFunctions.sol";
     ✅ Validate
 ===================*/
 library Validate {
-    enum Type { MUST, SHOULD }
+    enum Type { MUST, SHOULD, COMPLETION }
     Type constant MUST = Type.MUST;
     Type constant SHOULD = Type.SHOULD;
+    Type constant COMPLETION = Type.COMPLETION;
 
     function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal {
         if (condition) return;
@@ -98,20 +99,29 @@ library Validate {
     /**==================
         🧩 Function
     ====================*/
-    function MUST_nameAssigned(Function storage func) internal {
-        validate(MUST, func.name.isAssigned(), "Name must be assigned", "");
+    function COMPLETION_NameAssigned(Function storage func) internal returns(bool condition) {
+        condition = func.name.isAssigned();
+        validate(COMPLETION, condition, "Name must be assigned", "");
     }
-    function MUST_selectorAssigned(Function storage func) internal {
-        validate(MUST, func.selector.isAssigned(), "Selector must be assigned", "");
+    function COMPLETION_SelectorAssigned(Function storage func) internal returns(bool condition) {
+        condition = func.selector.isAssigned();
+        validate(COMPLETION, condition, "Selector must be assigned", "");
     }
-    function MUST_implementationAssigned(Function storage func) internal {
-        validate(MUST, func.implementation.isContract(), "Contract must be assigned", "");
+    function COMPLETION_ImplementationAssigned(Function storage func) internal returns(bool condition) {
+        condition = func.implementation.isContract();
+        validate(COMPLETION, condition, "Contract must be assigned", "");
     }
     function MUST_completed(Function storage func) internal {
         validate(MUST, func.isComplete(), "Function Not Complete", "");
     }
-    function MUST_FunctionNotLocked(Function storage func) internal {
+    function MUST_NotLocked(Function storage func) internal {
         validate(MUST, func.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
+    }
+    function MUST_Building(Function storage func) internal {
+        validate(MUST, func.status.isBuilding(), "Function is not building", "");
+    }
+    function MUST_Built(Function storage func) internal {
+        validate(MUST, func.status.isBuilt(), "Function is not Built", "");
     }
     /**===========================
         📗 Functions Registry

@@ -21,7 +21,7 @@ import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
     🧩 Function
 ====================*/
 using FunctionLib for Function global;
-struct Function { /// @dev Function may be different depending on the op version.
+struct Function { /// @dev TODO Function may be different depending on the op version.
     string name;
     bytes4 selector;
     address implementation;
@@ -45,9 +45,10 @@ library FunctionLib {
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
         uint pid = func.startProcess("assignName");
-        Validate.MUST_FunctionNotLocked(func);
+        func.startBuilding();
         func.name = name;
-        return func.building().finishProcess(pid);
+        func.finishBuilding();
+        return func.finishProcess(pid);
     }
 
     /**------------------------
@@ -55,9 +56,10 @@ library FunctionLib {
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
         uint pid = func.startProcess("assignSelector");
-        Validate.MUST_FunctionNotLocked(func);
+        func.startBuilding();
         func.selector = selector;
-        return func.building().finishProcess(pid);
+        func.finishBuilding();
+        return func.finishProcess(pid);
     }
 
     /**------------------------------
@@ -65,9 +67,10 @@ library FunctionLib {
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
         uint pid = func.startProcess("assignImplementation");
-        Validate.MUST_FunctionNotLocked(func);
+        func.startBuilding();
         func.implementation = implementation;
-        return func.building().finishProcess(pid);
+        func.finishBuilding();
+        return func.finishProcess(pid);
     }
 
     /**-----------------------
@@ -75,11 +78,10 @@ library FunctionLib {
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch");
-        Validate.MUST_FunctionNotLocked(func);
         Validate.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
-        return func.building().finishProcess(pid);
+        return func.finishProcess(pid);
     }
 
 }
