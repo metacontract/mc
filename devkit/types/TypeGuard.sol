@@ -136,27 +136,23 @@ library TypeGuard {
     /**==========================
         🏰 Standard Functions
     ============================*/
-    function building(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        stdFunctions.status = TypeStatus.Building;
-        return stdFunctions;
+    function startBuilding(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("startBuilding");
+        Validate.MUST_NotLocked(std);
+        std.status = TypeStatus.Building;
+        return std.finishProcess(pid);
     }
-    function build(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.MUST_Completed(stdFunctions.initSetAdmin);
-        Validate.MUST_Completed(stdFunctions.getDeps);
-        Validate.MUST_Completed(stdFunctions.clone);
-        stdFunctions.status = TypeStatus.Built;
-        return stdFunctions;
+    function finishBuilding(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("finishBuilding");
+        Validate.MUST_Building(std);
+        if (Validate.Completion(std)) std.status = TypeStatus.Built;
+        return std.finishProcess(pid);
     }
-    function lock(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.MUST_Built(stdFunctions.status);
-        stdFunctions.status = TypeStatus.Locked;
-        return stdFunctions;
-    }
-    function finalize(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        uint pid = stdFunctions.startProcess("finalize");
-        stdFunctions.build();
-        stdFunctions.lock();
-        return stdFunctions.finishProcess(pid);
+    function lock(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("lock");
+        Validate.MUST_Built(std.status);
+        std.status = TypeStatus.Locked;
+        return std.finishProcess(pid);
     }
 
 }

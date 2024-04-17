@@ -247,8 +247,24 @@ library Validate {
     function MUST_StdNotLocked(StdRegistry storage registry) internal {
         validate(MUST, registry.status.isNotLocked(), "Std Registry is locked", "");
     }
-    function MUST_Completed(StdFunctions storage stdFunctions) internal {
-        validate(MUST, stdFunctions.status.isComplete(), "Registry Not Complete", "");
+    /**==========================
+        🏰 Standard Functions
+    ============================*/
+    function Completion(StdFunctions storage std) internal returns(bool) {
+        return (
+            Validate.Completion(std.initSetAdmin) &&
+            Validate.Completion(std.getDeps) &&
+            Validate.Completion(std.clone)
+        );
+    }
+    function MUST_Completed(StdFunctions storage std) internal {
+        validate(MUST, std.status.isComplete(), "Registry Not Complete", "");
+    }
+    function MUST_NotLocked(StdFunctions storage std) internal {
+        validate(MUST, std.status.isNotLocked(), "StdFunctions is Locked", "");
+    }
+    function MUST_Building(StdFunctions storage std) internal {
+        validate(MUST, std.status.isBuilding(), "StdFunctions is not building", "");
     }
 
     /**=======================

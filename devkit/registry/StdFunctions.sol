@@ -40,51 +40,50 @@ library StdFunctionsLib {
     /**------------------------------------
         🟢 Complete Standard Functions
     --------------------------------------*/
-    function complete(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        uint pid = stdFunctions.startProcess("complete");
-        stdFunctions.fetch();
-        stdFunctions.deployIfNotExists();
-        stdFunctions.finalize();
-        return stdFunctions.finishProcess(pid);
+    function complete(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("complete");
+        std.fetch();
+        std.deployIfNotExists();
+        std.lock();
+        return std.finishProcess(pid);
     }
 
     /**-----------------------------------------
         📨 Fetch Standard Functions from Env
     -------------------------------------------*/
-    function fetch(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        uint pid = stdFunctions.startProcess("fetch");
-        return stdFunctions .fetch_InitSetAdmin()
-                            .fetch_GetDeps()
-                            .fetch_Clone()
-                            .finishProcess(pid);
+    function fetch(StdFunctions storage std) internal returns(StdFunctions storage) {
+        uint pid = std.startProcess("fetch");
+        std.startBuilding();
+        std .fetch_InitSetAdmin()
+            .fetch_GetDeps()
+            .fetch_Clone();
+        std.finishBuilding();
+        return std.finishProcess(pid);
     }
 
         /**===== Each Std Function =====*/
-        function fetch_InitSetAdmin(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-            uint pid = stdFunctions.startProcess("fetch_InitSetAdmin");
-            Validate.MUST_NotLocked(stdFunctions.initSetAdmin);
-            stdFunctions.initSetAdmin   .fetch("InitSetAdmin")
-                                        .assignSelector(InitSetAdmin.initSetAdmin.selector)
-                                        .dump();
-            return stdFunctions.finishProcess(pid);
+        function fetch_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("fetch_InitSetAdmin");
+            std.initSetAdmin.fetch("InitSetAdmin")
+                            .assignSelector(InitSetAdmin.initSetAdmin.selector)
+                            .dump();
+            return std.finishProcess(pid);
         }
 
-        function fetch_GetDeps(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-            uint pid = stdFunctions.startProcess("fetch_GetDeps");
-            Validate.MUST_NotLocked(stdFunctions.getDeps);
-            stdFunctions.getDeps.fetch("GetDeps")
-                                .assignSelector(GetDeps.getDeps.selector)
-                                .dump();
-            return stdFunctions.finishProcess(pid);
+        function fetch_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("fetch_GetDeps");
+            std.getDeps .fetch("GetDeps")
+                        .assignSelector(GetDeps.getDeps.selector)
+                        .dump();
+            return std.finishProcess(pid);
         }
 
-        function fetch_Clone(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-            uint pid = stdFunctions.startProcess("fetch_Clone");
-            Validate.MUST_NotLocked(stdFunctions.clone);
-            stdFunctions.clone  .fetch("Clone")
-                                .assignSelector(Clone.clone.selector)
-                                .dump();
-            return stdFunctions.finishProcess(pid);
+        function fetch_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("fetch_Clone");
+            std.clone   .fetch("Clone")
+                        .assignSelector(Clone.clone.selector)
+                        .dump();
+            return std.finishProcess(pid);
         }
 
 
@@ -94,31 +93,36 @@ library StdFunctionsLib {
     -------------------------------------------------*/
     function deployIfNotExists(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = std.startProcess("deployIfNotExists");
-        return std  .deployIfNotExists_InitSetAdmin()
-                    .deployIfNotExists_GetDeps()
-                    .deployIfNotExists_Clone()
-                    .finishProcess(pid);
+        std.startBuilding();
+        std .deployIfNotExists_InitSetAdmin()
+            .deployIfNotExists_GetDeps()
+            .deployIfNotExists_Clone();
+        std.finishBuilding();
+        return std.finishProcess(pid);
     }
         /**===== Each Std Function =====*/
         function deployIfNotExists_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("deployIfNotExists_InitSetAdmin");
             if (std.initSetAdmin.hasNotContract()) {
                 std.initSetAdmin.assignImplementation(address(new InitSetAdmin()));
             }
-            return std;
+            return std.finishProcess(pid);
         }
 
         function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("deployIfNotExists_GetDeps");
             if (std.getDeps.hasNotContract()) {
                 std.getDeps.assignImplementation(address(new GetDeps()));
             }
-            return std;
+            return std.finishProcess(pid);
         }
 
         function deployIfNotExists_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("deployIfNotExists_Clone");
             if (std.clone.hasNotContract()) {
                 std.clone.assignImplementation(address(new Clone()));
             }
-            return std;
+            return std.finishProcess(pid);
         }
 
 }
