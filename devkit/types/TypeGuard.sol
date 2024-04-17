@@ -81,22 +81,20 @@ library TypeGuard {
     /**================
         🗂️ Bundle
     ==================*/
-    function building(Bundle storage bundle) internal returns(Bundle storage) {
+    function startBuilding(Bundle storage bundle) internal returns(Bundle storage) {
+        uint pid = bundle.startProcess("startBuilding");
+        Validate.MUST_NotLocked(bundle);
         bundle.status = TypeStatus.Building;
-        return bundle;
+        return bundle.finishProcess(pid);
     }
-    function build(Bundle storage bundle) internal returns(Bundle storage) {
-        Validate.MUST_NameAssigned(bundle);
-        Validate.MUST_HaveAtLeastOneFunction(bundle);
-        Validate.MUST_FacadeAssigned(bundle);
-        bundle.status = TypeStatus.Built;
-        return bundle;
-    }
-    function tryBuild(Bundle storage bundle) internal returns(Bundle storage) {
-        if (Validate.SHOULD_NameAssigned(bundle).isFalse()) return bundle;
-        if (Validate.SHOULD_HaveAtLeastOneFunction(bundle).isFalse()) return bundle;
-        if (Validate.SHOULD_FacadeAssigned(bundle).isFalse()) return bundle;
-        return bundle.build();
+    function finishBuilding(Bundle storage bundle) internal returns(Bundle storage) {
+        uint pid = bundle.startProcess("finishBuild");
+        // Validate.MUST_NameAssigned(bundle);
+        // Validate.MUST_HaveAtLeastOneFunction(bundle);
+        // Validate.MUST_FacadeAssigned(bundle);
+        // bundle.status = TypeStatus.Built;
+        if (Validate.Completion(bundle)) bundle.status = TypeStatus.Built;
+        return bundle.finishProcess(pid);
     }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
         Validate.MUST_Built(bundle.status);

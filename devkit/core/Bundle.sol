@@ -33,10 +33,11 @@ library BundleLib {
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignName");
-        Validate.MUST_BundleNotLocked(bundle);
         Validate.MUST_NotEmptyName(name);
+        bundle.startBuilding();
         bundle.name = name;
-        return bundle.building().finishProcess(pid);
+        bundle.finishBuilding();
+        return bundle.finishProcess(pid);
     }
 
     /**-------------------------
@@ -44,11 +45,12 @@ library BundleLib {
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
-        Validate.MUST_BundleNotLocked(bundle);
         Validate.MUST_Completed(func);
-        Validate.MUST_notHave(bundle, func);
+        Validate.MUST_NotHaveSameFunction(bundle, func);
+        bundle.startBuilding();
         bundle.functions.push(func);
-        return bundle.tryBuild().finishProcess(pid);
+        bundle.finishBuilding();
+        return bundle.finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunctions");
@@ -64,8 +66,10 @@ library BundleLib {
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignFacade");
         Validate.MUST_AddressIsContract(facade);
+        bundle.startBuilding();
         bundle.facade = facade;
-        return bundle.tryBuild().finishProcess(pid);
+        bundle.finishBuilding();
+        return bundle.finishProcess(pid);
     }
 
 }

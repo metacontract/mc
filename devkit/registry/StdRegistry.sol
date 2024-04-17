@@ -55,13 +55,12 @@ library StdRegistryLib {
         /**===== Each Std Bundle =====*/
         function configureStdBundle_All(StdRegistry storage registry) internal returns(StdRegistry storage) {
             uint pid = registry.startProcess("configureStdBundle_All");
-            Validate.MUST_BundleNotLocked(registry.all);
+            Validate.MUST_NotLocked(registry.all);
             registry.all.assignName("ALL_STD_FUNCTIONS")
                         .pushFunction(registry.functions.initSetAdmin)
                         .pushFunction(registry.functions.getDeps)
                         .pushFunction(registry.functions.clone)
-                        .assignFacade(address(new StdFacade()))
-                        .build();
+                        .assignFacade(address(new StdFacade()));
             return registry.finishProcess(pid);
         }
 

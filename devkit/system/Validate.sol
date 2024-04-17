@@ -133,26 +133,21 @@ library Validate {
     /**===============
         🗂️ Bundle
     =================*/
+    function Completion(Bundle storage bundle) internal returns(bool) {
+        return (
+            validate(COMPLETION, bundle.name.isNotEmpty(), "Bundle Name should not be empty", "") &&
+            validate(COMPLETION, bundle.functions.length.isNotZero(), "At least one function should not be empty", "") &&
+            validate(COMPLETION, bundle.facade.isContract(), "Bundle Facade should not be empty", "")
+        );
+    }
     function MUST_NameAssigned(Bundle storage bundle) internal {
         validate(MUST, bundle.name.isNotEmpty(), "Bundle Name is required", "");
-    }
-    function SHOULD_NameAssigned(Bundle storage bundle) internal returns(bool condition) {
-        condition = bundle.name.isNotEmpty();
-        validate(SHOULD, condition, "Bundle Name should not be empty", "");
     }
     function MUST_HaveAtLeastOneFunction(Bundle storage bundle) internal {
         validate(MUST, bundle.functions.length.isNotZero(), "At least one function is required", "");
     }
-    function SHOULD_HaveAtLeastOneFunction(Bundle storage bundle) internal returns(bool condition) {
-        condition = bundle.functions.length.isNotZero();
-        validate(SHOULD, condition, "At least one function should not be empty", "");
-    }
     function MUST_FacadeAssigned(Bundle storage bundle) internal {
         validate(MUST, bundle.facade.isContract(), "Bundle Facade is required", "");
-    }
-    function SHOULD_FacadeAssigned(Bundle storage bundle) internal returns(bool condition) {
-        condition = bundle.facade.isContract();
-        validate(SHOULD, condition, "Bundle Facade should not be empty", "");
     }
     function MUST_notInitialized(Bundle storage bundle) internal {
         validate(MUST, bundle.status.isUninitialized(), "Bundle already initialized", "");
@@ -163,10 +158,10 @@ library Validate {
     function SHOULD_Completed(Bundle storage bundle) internal {
         validate(SHOULD, bundle.isComplete(), "Bundle SHOULD be Completed", "");
     }
-    function MUST_notHave(Bundle storage bundle, Function storage func) internal {
+    function MUST_NotHaveSameFunction(Bundle storage bundle, Function storage func) internal {
         validate(MUST, bundle.hasNot(func), "Bundle has same Function", "");
     }
-    function MUST_BundleNotLocked(Bundle storage bundle) internal {
+    function MUST_NotLocked(Bundle storage bundle) internal {
         validate(MUST, bundle.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
     }
 

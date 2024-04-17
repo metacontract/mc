@@ -72,13 +72,4 @@ library MCBundleLib {
         return mc.finishProcess(pid);
     }
 
-    /**--------------------
-        🛠️ Build Bundle
-    ----------------------*/
-    function buildBundle(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("buildBundle");
-        mc.bundle.findCurrent().build();
-        return mc.finishProcess(pid);
-    }
-
 }
