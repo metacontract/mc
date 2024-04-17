@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Validate} from "devkit/system/Validate.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for bool;
+import {TypeStatus} from "devkit/types/TypeGuard.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // External Library
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
@@ -25,6 +25,7 @@ library Inspector {
     using Inspector for string;
     using Inspector for bytes4;
     using Inspector for address;
+    using Inspector for bool;
 
     /**==================
         🧩 Function
@@ -34,6 +35,12 @@ library Inspector {
     }
     function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+    }
+    function isComplete(Function memory func) internal returns(bool) {
+        return func.status.isComplete();
+    }
+    function isUninitialized(Function storage func) internal returns(bool) {
+        return func.status.isUninitialized();
     }
 
     /**===============
@@ -46,6 +53,12 @@ library Inspector {
     }
     function hasNot(Bundle storage bundle, Function storage func) internal view returns(bool) {
         return bundle.has(func).isFalse();
+    }
+    function isComplete(Bundle storage bundle) internal returns(bool) {
+        return bundle.status.isComplete();
+    }
+    function isUninitialized(Bundle storage bundle) internal returns(bool) {
+        return bundle.status.isUninitialized();
     }
     /**=======================
         📙 Bundle Registry
@@ -60,6 +73,15 @@ library Inspector {
     /**==============
         🏠 Proxy
     ================*/
+    function isComplete(Proxy memory proxy) internal returns(bool) {
+        return proxy.status.isComplete();
+    }
+    function isInitialized(Proxy storage proxy) internal returns(bool) {
+        return proxy.status.isInitialized();
+    }
+    function isUninitialized(Proxy storage proxy) internal returns(bool) {
+        return proxy.status.isUninitialized();
+    }
     /**~~~~~~~~~~~~~~~~~~~
         🏠 Proxy Kind
     ~~~~~~~~~~~~~~~~~~~~~*/
@@ -77,6 +99,12 @@ library Inspector {
     function isVerifiable(Dictionary memory dictionary) internal returns(bool) {
         (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IVerifiable.implementation.selector));
         return success;
+    }
+    function isComplete(Dictionary memory dictionary) internal returns(bool) {
+        return dictionary.status.isComplete();
+    }
+    function isUninitialized(Dictionary storage dictionary) internal returns(bool) {
+        return dictionary.status.isUninitialized();
     }
     /**------------------------
         📚 Dictionary Kind
@@ -152,4 +180,28 @@ library Inspector {
         return num != 0;
     }
 
+    /**===================
+        🔒 Type Guard
+    =====================*/
+    function isUninitialized(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Uninitialized;
+    }
+    function isInitialized(TypeStatus status) internal returns(bool) {
+        return status != TypeStatus.Uninitialized;
+    }
+    function isBuilding(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Building;
+    }
+    function isBuilt(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Built;
+    }
+    function isLocked(TypeStatus status) internal returns(bool) {
+        return status == TypeStatus.Locked;
+    }
+    function isNotLocked(TypeStatus status) internal returns(bool) {
+        return status.isLocked().isNot();
+    }
+    function isComplete(TypeStatus status) internal returns(bool) {
+        return status.isBuilt() || status.isLocked();
+    }
 }

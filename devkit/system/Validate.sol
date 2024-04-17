@@ -99,17 +99,12 @@ library Validate {
     /**==================
         🧩 Function
     ====================*/
-    function COMPLETION_NameAssigned(Function storage func) internal returns(bool condition) {
-        condition = func.name.isAssigned();
-        validate(COMPLETION, condition, "Name must be assigned", "");
-    }
-    function COMPLETION_SelectorAssigned(Function storage func) internal returns(bool condition) {
-        condition = func.selector.isAssigned();
-        validate(COMPLETION, condition, "Selector must be assigned", "");
-    }
-    function COMPLETION_ImplementationAssigned(Function storage func) internal returns(bool condition) {
-        condition = func.implementation.isContract();
-        validate(COMPLETION, condition, "Contract must be assigned", "");
+    function Completion(Function storage func) internal returns(bool) {
+        return (
+            validate(COMPLETION, func.name.isAssigned(), "Name must be assigned", "") &&
+            validate(COMPLETION, func.selector.isAssigned(), "Selector must be assigned", "") &&
+            validate(COMPLETION, func.implementation.isContract(), "Contract must be assigned", "")
+        );
     }
     function MUST_Completed(Function memory func) internal {
         validate(MUST, func.isComplete(), "Function Not Complete", "");
@@ -163,6 +158,9 @@ library Validate {
     }
     function MUST_NotLocked(Bundle storage bundle) internal {
         validate(MUST, bundle.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
+    }
+    function MUST_Building(Bundle storage bundle) internal {
+        validate(MUST, bundle.status.isBuilding(), "Bundle is not building", "");
     }
 
     /**=======================

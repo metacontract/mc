@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for bool;
 import {Validate} from "devkit/system/Validate.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -13,7 +12,7 @@ import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 
 
-using TypeGuard for TypeStatus global;
+using Inspector for TypeStatus global;
 enum TypeStatus { Uninitialized, Building, Built, Locked }
 
 /**===================
@@ -21,29 +20,7 @@ enum TypeStatus { Uninitialized, Building, Built, Locked }
     @dev See details in docs/object_lifecycle.md
 =====================*/
 library TypeGuard {
-    // Inspect status
-    function isUninitialized(TypeStatus status) internal returns(bool) {
-        return status == TypeStatus.Uninitialized;
-    }
-    function isInitialized(TypeStatus status) internal returns(bool) {
-        return status != TypeStatus.Uninitialized;
-    }
-    function isBuilding(TypeStatus status) internal returns(bool) {
-        return status == TypeStatus.Building;
-    }
-    function isBuilt(TypeStatus status) internal returns(bool) {
-        return status == TypeStatus.Built;
-    }
-    function isLocked(TypeStatus status) internal returns(bool) {
-        return status == TypeStatus.Locked;
-    }
-    function isNotLocked(TypeStatus status) internal returns(bool) {
-        return status.isLocked().isNot();
-    }
-    function isComplete(TypeStatus status) internal returns(bool) {
-        return status.isBuilt() || status.isLocked();
-    }
-
+    using Inspector for bool;
 
     /**==================
         🧩 Function
@@ -55,12 +32,9 @@ library TypeGuard {
         return func.finishProcess(pid);
     }
     function finishBuilding(Function storage func) internal returns(Function storage) {
-        uint pid = func.startProcess("build");
+        uint pid = func.startProcess("finishBuilding");
         Validate.MUST_Building(func);
-        if (Validate.COMPLETION_NameAssigned(func) &&
-            Validate.COMPLETION_SelectorAssigned(func) &&
-            Validate.COMPLETION_ImplementationAssigned(func)
-        ) func.status = TypeStatus.Built;
+        if (Validate.Completion(func)) func.status = TypeStatus.Built;
         return func.finishProcess(pid);
     }
     function lock(Function storage func) internal returns(Function storage) {
@@ -69,14 +43,6 @@ library TypeGuard {
         func.status = TypeStatus.Locked;
         return func.finishProcess(pid);
     }
-    ///
-    function isComplete(Function memory func) internal returns(bool) {
-        return func.status.isComplete();
-    }
-    function isUninitialized(Function storage func) internal returns(bool) {
-        return func.status.isUninitialized();
-    }
-
 
     /**================
         🗂️ Bundle
@@ -88,26 +54,59 @@ library TypeGuard {
         return bundle.finishProcess(pid);
     }
     function finishBuilding(Bundle storage bundle) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("finishBuild");
-        // Validate.MUST_NameAssigned(bundle);
-        // Validate.MUST_HaveAtLeastOneFunction(bundle);
-        // Validate.MUST_FacadeAssigned(bundle);
-        // bundle.status = TypeStatus.Built;
+        uint pid = bundle.startProcess("finishBuilding");
+        Validate.MUST_Building(bundle);
         if (Validate.Completion(bundle)) bundle.status = TypeStatus.Built;
         return bundle.finishProcess(pid);
     }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
+        uint pid = bundle.startProcess("lock");
         Validate.MUST_Built(bundle.status);
         bundle.status = TypeStatus.Locked;
-        return bundle;
-    }
-    function isComplete(Bundle storage bundle) internal returns(bool) {
-        return bundle.status.isComplete();
-    }
-    function isUninitialized(Bundle storage bundle) internal returns(bool) {
-        return bundle.status.isUninitialized();
+        return bundle.finishProcess(pid);
     }
 
+    /**===============
+        🏠 Proxy
+    =================*/
+    function startBuilding(Proxy memory proxy) internal returns(Proxy memory) {
+        uint pid = proxy.startProcess("startBuilding");
+        Validate.MUST_NotLocked(proxy);
+        proxy.status = TypeStatus.Building;
+        return proxy.finishProcess(pid);
+    }
+    function finishBuilding(Proxy memory proxy) internal returns(Proxy memory) {
+        uint pid = proxy.startProcess("finishBuilding");
+        if (Validate.Completion(proxy)) proxy.status = TypeStatus.Built;
+        return proxy.finishProcess(pid);
+    }
+    function lock(Proxy storage proxy) internal returns(Proxy storage) {
+        uint pid = proxy.startProcess("lock");
+        Validate.MUST_Built(proxy.status);
+        proxy.status = TypeStatus.Locked;
+        return proxy.finishProcessInStorage(pid);
+    }
+
+    /**====================
+        📚 Dictionary
+    ======================*/
+    function startBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
+        uint pid = dictionary.startProcess("startBuilding");
+        Validate.MUST_NotLocked(dictionary);
+        dictionary.status = TypeStatus.Building;
+        return dictionary.finishProcess(pid);
+    }
+    function finishBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
+        uint pid = dictionary.startProcess("finishBuilding");
+        if (Validate.Completion(dictionary)) dictionary.status = TypeStatus.Built;
+        return dictionary.finishProcess(pid);
+    }
+    function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
+        uint pid = dictionary.startProcess("lock");
+        Validate.MUST_Built(dictionary.status);
+        dictionary.status = TypeStatus.Locked;
+        return dictionary.finishProcessInStorage(pid);
+    }
 
     /**==========================
         🏛 Standard Registry
@@ -133,8 +132,6 @@ library TypeGuard {
         registry.lock();
         return registry.finishProcess(pid);
     }
-
-
 
     /**==========================
         🏰 Standard Functions
@@ -162,63 +159,4 @@ library TypeGuard {
         return stdFunctions.finishProcess(pid);
     }
 
-
-    /**====================
-        📚 Dictionary
-    ======================*/
-    function startBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        uint pid = dictionary.startProcess("startBuilding");
-        Validate.MUST_NotLocked(dictionary);
-        dictionary.status = TypeStatus.Building;
-        return dictionary.finishProcess(pid);
-    }
-    function finishBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
-        uint pid = dictionary.startProcess("finishBuilding");
-        if (Validate.Completion(dictionary)) dictionary.status = TypeStatus.Built;
-        return dictionary.finishProcess(pid);
-    }
-    function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        Validate.MUST_Built(dictionary.status);
-        dictionary.status = TypeStatus.Locked;
-        return dictionary;
-    }
-    function isComplete(Dictionary memory dictionary) internal returns(bool) {
-        return dictionary.status.isComplete();
-    }
-    function isUninitialized(Dictionary storage dictionary) internal returns(bool) {
-        return dictionary.status.isUninitialized();
-    }
-
-
-    /**===============
-        🏠 Proxy
-    =================*/
-    function startBuilding(Proxy memory proxy) internal returns(Proxy memory) {
-        uint pid = proxy.startProcess("startBuilding");
-        Validate.MUST_NotLocked(proxy);
-        proxy.status = TypeStatus.Building;
-        return proxy.finishProcess(pid);
-    }
-    function finishBuilding(Proxy memory proxy) internal returns(Proxy memory) {
-        uint pid = proxy.startProcess("finishBuilding");
-        // Validate.MUST_contractAssigned(proxy);
-        // Validate.MUST_kindAssigned(proxy);
-        // proxy.status = TypeStatus.Built;
-        if (Validate.Completion(proxy)) proxy.status = TypeStatus.Built;
-        return proxy.finishProcess(pid);
-    }
-    function lock(Proxy storage proxy) internal returns(Proxy storage) {
-        Validate.MUST_Built(proxy.status);
-        proxy.status = TypeStatus.Locked;
-        return proxy;
-    }
-    function isComplete(Proxy memory proxy) internal returns(bool) {
-        return proxy.status.isComplete();
-    }
-    function isInitialized(Proxy storage proxy) internal returns(bool) {
-        return proxy.status.isInitialized();
-    }
-    function isUninitialized(Proxy storage proxy) internal returns(bool) {
-        return proxy.status.isUninitialized();
-    }
 }
