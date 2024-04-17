@@ -4,11 +4,8 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for Bundle global;
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for Bundle global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-    using TypeGuard for Bundle global;
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
@@ -16,10 +13,13 @@ import {Validate} from "devkit/system/Validate.sol";
 import {Function} from "devkit/core/Function.sol";
 
 
-/**================
-    🗂️ Bundle
-==================*/
-using BundleLib for Bundle global;
+///////////////////////////////////////////
+//  🗂️ Bundle   ///////////////////////////
+    using BundleLib for Bundle global;
+    using ProcessLib for Bundle global;
+    using Inspector for Bundle global;
+    using TypeGuard for Bundle global;
+///////////////////////////////////////////
 struct Bundle {
     string name;
     Function[] functions;
@@ -27,7 +27,6 @@ struct Bundle {
     TypeStatus status;
 }
 library BundleLib {
-
     /**--------------------
         📛 Assign Name
     ----------------------*/

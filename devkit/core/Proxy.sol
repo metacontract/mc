@@ -4,14 +4,10 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for Proxy global;
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for Proxy global;
-    using Inspector for ProxyKind global;
+import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-    using TypeGuard for Proxy global;
 
 // External Lib Contract
 import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
@@ -23,17 +19,19 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 import {Function} from "devkit/core/Function.sol";
 
 
-/**===============
-    🏠 Proxy
-=================*/
-using ProxyLib for Proxy global;
+///////////////////////////////////////////
+//  🏠 Proxy   ////////////////////////////
+    using ProxyLib for Proxy global;
+    using ProcessLib for Proxy global;
+    using Inspector for Proxy global;
+    using TypeGuard for Proxy global;
+///////////////////////////////////////////
 struct Proxy {
     address addr;
     ProxyKind kind;
     TypeStatus status;
 }
 library ProxyLib {
-
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
@@ -76,3 +74,4 @@ enum ProxyKind {
     Verifiable,
     Mock
 }
+using Inspector for ProxyKind global;

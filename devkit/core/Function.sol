@@ -4,23 +4,23 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for Function global;
 import {Dumper} from "devkit/system/debug/Dumper.sol";
-    using Dumper for Function global;
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for Function global;
+import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-    using TypeGuard for Function global;
 // Loader
 import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 
 
-/**==================
-    🧩 Function
-====================*/
-using FunctionLib for Function global;
+//////////////////////////////////////////////
+//  🧩 Function   ////////////////////////////
+    using FunctionLib for Function global;
+    using ProcessLib for Function global;
+    using Dumper for Function global;
+    using Inspector for Function global;
+    using TypeGuard for Function global;
+//////////////////////////////////////////////
 struct Function { /// @dev TODO Function may be different depending on the op version.
     string name;
     bytes4 selector;
@@ -28,18 +28,6 @@ struct Function { /// @dev TODO Function may be different depending on the op ve
     TypeStatus status;
 }
 library FunctionLib {
-
-    /**---------------
-        🌈 Assign
-    -----------------*/
-    function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assign");
-        func.assignName(name);
-        func.assignSelector(selector);
-        func.assignImplementation(implementation);
-        return func.finishProcess(pid);
-    }
-
     /**--------------------
         📛 Assign Name
     ----------------------*/
@@ -70,6 +58,17 @@ library FunctionLib {
         func.startBuilding();
         func.implementation = implementation;
         func.finishBuilding();
+        return func.finishProcess(pid);
+    }
+
+    /**---------------
+        🌈 Assign
+    -----------------*/
+    function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
+        uint pid = func.startProcess("assign");
+        func.assignName(name);
+        func.assignSelector(selector);
+        func.assignImplementation(implementation);
         return func.finishProcess(pid);
     }
 

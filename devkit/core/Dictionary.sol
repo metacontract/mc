@@ -4,38 +4,39 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for Dictionary global;
 import {Params} from "devkit/system/debug/Params.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for Dictionary global;
-    using Inspector for bytes4;
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-    using TypeGuard for Dictionary global;
+// Util
+import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 
-// Mock
-import {DictionaryMock} from "devkit/mocks/DictionaryMock.sol";
 // External Libs
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
+// Mock
+import {DictionaryMock} from "devkit/mocks/DictionaryMock.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 
 
-/**====================
-    📚 Dictionary
-======================*/
-using DictionaryLib for Dictionary global;
+//////////////////////////////////////////////////
+//  📚 Dictionary   //////////////////////////////
+    using DictionaryLib for Dictionary global;
+    using ProcessLib for Dictionary global;
+    using Inspector for Dictionary global;
+    using TypeGuard for Dictionary global;
+//////////////////////////////////////////////////
 struct Dictionary {
     address addr;
     DictionaryKind kind;
     TypeStatus status;
 }
 library DictionaryLib {
+    using Inspector for bytes4;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Dictionary
         🔂 Duplicate Dictionary
@@ -133,11 +134,15 @@ library DictionaryLib {
     --------------------------------*/
     function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("createMock");
-        return Dictionary({
-            addr: address(new DictionaryMock(owner, functions)),
-            kind: DictionaryKind.Mock,
-            status: TypeStatus.Building
-        }).finishProcess(pid);
+        for (uint i; i < functions.length; ++i) {
+            Validate.MUST_Completed(functions[i]);
+        }
+        Dictionary memory dictionary;
+        dictionary.startBuilding();
+        dictionary.addr = address(new DictionaryMock(owner, functions));
+        dictionary.kind = DictionaryKind.Mock;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
     }
 
     /**
