@@ -55,7 +55,7 @@ library BundleRegistryLib {
         uint pid = registry.startProcess("find");
         Validate.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
-        Validate.SHOULD_completed(bundle);
+        Validate.SHOULD_Completed(bundle);
         return bundle.finishProcess(pid);
     }
     function findCurrentName(BundleRegistry storage registry) internal returns(string memory) {

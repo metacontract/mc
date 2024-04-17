@@ -168,22 +168,23 @@ library TypeGuard {
     /**====================
         📚 Dictionary
     ======================*/
-    function building(Dictionary storage dictionary) internal returns(Dictionary storage) {
+    function startBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
+        uint pid = dictionary.startProcess("startBuilding");
+        Validate.MUST_NotLocked(dictionary);
         dictionary.status = TypeStatus.Building;
-        return dictionary;
+        return dictionary.finishProcess(pid);
     }
-    function build(Dictionary storage dictionary) internal returns(Dictionary storage) {
-        Validate.MUST_contractAssigned(dictionary);
-        Validate.MUST_kindAssigned(dictionary);
-        dictionary.status = TypeStatus.Built;
-        return dictionary;
+    function finishBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
+        uint pid = dictionary.startProcess("finishBuilding");
+        if (Validate.Completion(dictionary)) dictionary.status = TypeStatus.Built;
+        return dictionary.finishProcess(pid);
     }
     function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
         Validate.MUST_Built(dictionary.status);
         dictionary.status = TypeStatus.Locked;
         return dictionary;
     }
-    function isComplete(Dictionary storage dictionary) internal returns(bool) {
+    function isComplete(Dictionary memory dictionary) internal returns(bool) {
         return dictionary.status.isComplete();
     }
     function isUninitialized(Dictionary storage dictionary) internal returns(bool) {

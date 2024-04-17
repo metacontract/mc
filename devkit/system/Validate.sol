@@ -35,8 +35,8 @@ library Validate {
     Type constant SHOULD = Type.SHOULD;
     Type constant COMPLETION = Type.COMPLETION;
 
-    function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal {
-        if (condition) return;
+    function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal returns(bool) {
+        if (condition) return true;
         Logger.logException(messageBody.append(messageDetail));
         if (T == MUST) revert(ERR.message(messageBody)); // TODO
     }
@@ -160,7 +160,7 @@ library Validate {
     function MUST_completed(Bundle storage bundle) internal {
         validate(MUST, bundle.isComplete(), "Bundle MUST be Completed", Formatter.toString(bundle));
     }
-    function SHOULD_completed(Bundle storage bundle) internal {
+    function SHOULD_Completed(Bundle storage bundle) internal {
         validate(SHOULD, bundle.isComplete(), "Bundle SHOULD be Completed", "");
     }
     function MUST_notHave(Bundle storage bundle, Function storage func) internal {
@@ -209,31 +209,36 @@ library Validate {
     /**====================
         📚 Dictionary
     ======================*/
-    function MUST_haveContract(Dictionary memory dictionary) internal {
-        validate(MUST, dictionary.addr.isContract(), "Contract is required", "");
+    // In Storage
+    function COMPLETION_contractAssigned(Dictionary storage dictionary) internal {
+        validate(COMPLETION, dictionary.addr.isContract(), "Contract is not assigned", "");
     }
-    function MUST_haveKind(Dictionary memory dictionary) internal {
-        validate(MUST, dictionary.kind.isNotUndefined(), "DictionaryKind is required", "");
+    function COMPLETION_kindAssigned(Dictionary storage dictionary) internal {
+        validate(COMPLETION, dictionary.kind.isNotUndefined(), "DictionaryKind is not assigned", "");
     }
-    function MUST_contractAssigned(Dictionary storage dictionary) internal {
-        validate(MUST, dictionary.addr.isContract(), "Contract is not assigned", "");
+    // In Memory
+    function Completion(Dictionary memory dictionary) internal returns(bool) {
+        return (
+            validate(COMPLETION, dictionary.addr.isContract(), "Contract is required", "") &&
+            validate(COMPLETION, dictionary.kind.isNotUndefined(), "DictionaryKind is required", "")
+        );
     }
-    function MUST_kindAssigned(Dictionary storage dictionary) internal {
-        validate(MUST, dictionary.kind.isNotUndefined(), "DictionaryKind is not assigned", "");
-    }
-    function MUST_completed(Dictionary storage dictionary) internal {
+    function MUST_Completed(Dictionary memory dictionary) internal {
         validate(MUST, dictionary.isComplete(), "Dictionary Not Complete", "");
     }
     function MUST_Verifiable(Dictionary memory dictionary) internal noBroadcast {
         validate(MUST, dictionary.isVerifiable(), "Dictionary Is Not Verifiable", "");
     }
+    function MUST_NotLocked(Dictionary memory dictionary) internal {
+        validate(MUST, dictionary.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
+    }
     /**============================
         📘 Dictionary Registry
     ==============================*/
-    function MUST_registered(DictionaryRegistry storage registry, string memory name) internal {
+    function MUST_Registered(DictionaryRegistry storage registry, string memory name) internal {
         validate(MUST, registry.dictionaries[name].isComplete(), "Dictionary Not Found", "");
     }
-    function MUST_notRegistered(DictionaryRegistry storage registry, string memory name) internal {
+    function MUST_NotRegistered(DictionaryRegistry storage registry, string memory name) internal {
         validate(MUST, registry.dictionaries[name].isUninitialized(), "Dictionary Already Exists", "");
     }
 

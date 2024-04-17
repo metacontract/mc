@@ -191,7 +191,18 @@ library ProcessLib {
     function startDictionaryLibProcess(string memory name) internal returns(uint) {
         return startDictionaryLibProcess(name, "");
     }
-
+    function startProcess(Dictionary memory, string memory name, string memory params) internal returns(uint) {
+        return startProcess("Dictionary", name, params);
+    }
+    function startProcess(Dictionary memory, string memory name) internal returns(uint) {
+        return startProcess("Dictionary", name, "");
+    }
+    function startProcessInStorage(Dictionary storage, string memory name, string memory params) internal returns(uint) {
+        return startProcess("Dictionary", name, params);
+    }
+    function startProcessInStorage(Dictionary storage, string memory name) internal returns(uint) {
+        return startProcess("Dictionary", name, "");
+    }
     function finishProcess(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
         finishProcess(pid);
         return dictionary;

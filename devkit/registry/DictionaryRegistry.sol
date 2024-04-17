@@ -35,7 +35,7 @@ library DictionaryRegistryLib {
     function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("deploy");
         Validate.MUST_NotEmptyName(name);
-        // Validate.MUST_completed(bundle);
+        Validate.SHOULD_Completed(bundle);
         Validate.MUST_AddressIsNotZero(owner);
         Dictionary memory dictionary = DictionaryLib.deploy(owner)
                                                     .set(bundle)
@@ -50,10 +50,9 @@ library DictionaryRegistryLib {
     function register(DictionaryRegistry storage registry, string memory name, Dictionary memory dictionary) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("register");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_haveContract(dictionary);
-        Validate.MUST_notRegistered(registry, name);
+        Validate.MUST_Completed(dictionary);
+        Validate.MUST_NotRegistered(registry, name);
         Dictionary storage dictionaryStorage = registry.dictionaries[name] = dictionary;
-        dictionaryStorage.build().lock();
         registry.current.update(name);
         return dictionaryStorage.finishProcessInStorage(pid);
     }
@@ -64,9 +63,9 @@ library DictionaryRegistryLib {
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage) {
         uint pid = registry.startProcess("find");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_registered(registry, name);
+        Validate.MUST_Registered(registry, name);
         Dictionary storage dictionary = registry.dictionaries[name];
-        Validate.MUST_completed(dictionary);
+        Validate.MUST_Completed(dictionary);
         return dictionary.finishProcessInStorage(pid);
     }
     function findCurrent(DictionaryRegistry storage registry) internal returns(Dictionary storage) {

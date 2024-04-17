@@ -39,7 +39,7 @@ library ProxyLib {
     -----------------------*/
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
-        Validate.MUST_haveContract(dictionary);
+        Validate.MUST_Completed(dictionary);
         return Proxy({
             addr: address(new UCSProxy(dictionary.addr, initData)),
             kind: ProxyKind.Verifiable,

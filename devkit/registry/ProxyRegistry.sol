@@ -35,7 +35,7 @@ library ProxyRegistryLib {
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
         uint pid = registry.startProcess("deploy");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_haveContract(dictionary);
+        Validate.MUST_Completed(dictionary);
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         registry.register(name, proxy);
         return registry.findCurrent().finishProcessInStorage(pid);

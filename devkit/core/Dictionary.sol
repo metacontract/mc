@@ -50,12 +50,12 @@ library DictionaryLib {
     function deploy(address owner) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("deploy");
         Validate.MUST_AddressIsNotZero(owner);
-        /// @dev Until Etherscan supports UCS, we are deploying contracts with additional features for Etherscan compatibility by default.
-        return Dictionary({
-            addr: address(new UCSDictionary(owner)),
-            kind: DictionaryKind.Verifiable,
-            status: TypeStatus.Building
-        }).finishProcess(pid);
+        Dictionary memory dictionary;
+        dictionary.startBuilding();
+        dictionary.addr = address(new UCSDictionary(owner));
+        dictionary.kind = DictionaryKind.Verifiable;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
     }
 
     /**----------------------------
@@ -63,8 +63,8 @@ library DictionaryLib {
     ------------------------------*/
     function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("duplicate");
-        Validate.MUST_haveContract(toDictionary);
-        Validate.MUST_haveContract(fromDictionary);
+        Validate.MUST_Completed(toDictionary);
+        Validate.MUST_Completed(fromDictionary);
 
         address toAddr = toDictionary.addr;
         address fromAddr = fromDictionary.addr;
@@ -87,7 +87,7 @@ library DictionaryLib {
     -------------------------------*/
     function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
         uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(selector, implementation));
-        Validate.MUST_haveContract(dictionary);
+        Validate.MUST_Completed(dictionary);
         Validate.MUST_Bytes4NotEmpty(selector);
         Validate.MUST_AddressIsContract(implementation);
         IDictionary(dictionary.addr).setImplementation({
@@ -138,6 +138,21 @@ library DictionaryLib {
             kind: DictionaryKind.Mock,
             status: TypeStatus.Building
         }).finishProcess(pid);
+    }
+
+    /**
+        Load
+     */
+    function load(address dictionary) internal returns(Dictionary memory) {
+        uint pid = ProcessLib.startDictionaryLibProcess("load");
+        Validate.MUST_AddressIsNotZero(dictionary);
+        // TODO Validate
+        Dictionary memory _dictionary;
+        _dictionary.startBuilding();
+        _dictionary.addr = dictionary;
+        _dictionary.kind = DictionaryKind.Verifiable;
+        _dictionary.finishBuilding();
+        return _dictionary.finishProcess(pid);
     }
 
 }
