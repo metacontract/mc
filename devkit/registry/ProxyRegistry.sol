@@ -47,11 +47,9 @@ library ProxyRegistryLib {
     function register(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
         uint pid = registry.startProcess("register");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_haveContract(proxy);
-        Validate.MUST_haveKind(proxy);
-        Validate.MUST_notRegistered(registry, name);
+        Validate.MUST_Completed(proxy);
+        Validate.MUST_NotRegistered(registry, name);
         Proxy storage proxyStorage = registry.proxies[name] = proxy;
-        proxyStorage.build().lock();
         registry.current.update(name);
         return proxyStorage.finishProcessInStorage(pid);
     }
@@ -62,9 +60,9 @@ library ProxyRegistryLib {
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
         uint pid = registry.startProcess("find");
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_registered(registry, name);
+        Validate.MUST_Registered(registry, name);
         Proxy storage proxy = registry.proxies[name];
-        Validate.MUST_completed(proxy);
+        Validate.MUST_Completed(proxy);
         return proxy.finishProcessInStorage(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage) {

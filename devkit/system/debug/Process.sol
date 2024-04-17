@@ -156,6 +156,12 @@ library ProcessLib {
     function startProxyLibProcess(string memory name) internal returns(uint) {
         return startProxyLibProcess(name, "");
     }
+    function startProcess(Proxy memory, string memory name, string memory params) internal returns(uint) {
+        return startProcess("Proxy", name, params);
+    }
+    function startProcess(Proxy memory, string memory name) internal returns(uint) {
+        return startProcess("Proxy", name, "");
+    }
 
     function finishProcess(Proxy memory proxy, uint pid) internal returns(Proxy memory) {
         finishProcess(pid);

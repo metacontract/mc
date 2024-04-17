@@ -45,7 +45,7 @@ library BundleLib {
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction");
         Validate.MUST_BundleNotLocked(bundle);
-        Validate.MUST_completed(func);
+        Validate.MUST_Completed(func);
         Validate.MUST_notHave(bundle, func);
         bundle.functions.push(func);
         return bundle.tryBuild().finishProcess(pid);

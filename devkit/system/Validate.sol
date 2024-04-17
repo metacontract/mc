@@ -111,7 +111,7 @@ library Validate {
         condition = func.implementation.isContract();
         validate(COMPLETION, condition, "Contract must be assigned", "");
     }
-    function MUST_completed(Function storage func) internal {
+    function MUST_Completed(Function memory func) internal {
         validate(MUST, func.isComplete(), "Function Not Complete", "");
     }
     function MUST_NotLocked(Function storage func) internal {
@@ -181,11 +181,11 @@ library Validate {
     /**==============
         🏠 Proxy
     ================*/
-    function MUST_haveContract(Proxy memory proxy) internal {
-        validate(MUST, proxy.addr.isContract(), "Contract is required", "");
-    }
-    function MUST_haveKind(Proxy memory proxy) internal {
-        validate(MUST, proxy.kind.isNotUndefined(), "ProxyKind is required", "");
+    function Completion(Proxy memory proxy) internal returns(bool) {
+        return (
+            validate(MUST, proxy.addr.isContract(), "Contract is required", "") &&
+            validate(MUST, proxy.kind.isNotUndefined(), "ProxyKind is required", "")
+        );
     }
     function MUST_contractAssigned(Proxy storage proxy) internal {
         validate(MUST, proxy.addr.isContract(), "Contract is not assigned", "");
@@ -193,16 +193,19 @@ library Validate {
     function MUST_kindAssigned(Proxy storage proxy) internal {
         validate(MUST, proxy.kind.isNotUndefined(), "ProxyKind is not assigned", "");
     }
-    function MUST_completed(Proxy storage proxy) internal {
+    function MUST_Completed(Proxy memory proxy) internal {
         validate(MUST, proxy.isComplete(), "Proxy Not Complete", "");
+    }
+    function MUST_NotLocked(Proxy memory proxy) internal {
+        validate(MUST, proxy.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
     }
     /**=======================
         📕 Proxy Registry
     =========================*/
-    function MUST_registered(ProxyRegistry storage registry, string memory name) internal {
+    function MUST_Registered(ProxyRegistry storage registry, string memory name) internal {
         validate(MUST, registry.proxies[name].isComplete(), "Proxy Not Found", "");
     }
-    function MUST_notRegistered(ProxyRegistry storage registry, string memory name) internal {
+    function MUST_NotRegistered(ProxyRegistry storage registry, string memory name) internal {
         validate(MUST, registry.proxies[name].isUninitialized(), "Proxy Already Exists", "");
     }
 

@@ -40,11 +40,12 @@ library ProxyLib {
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("deploy");
         Validate.MUST_Completed(dictionary);
-        return Proxy({
-            addr: address(new UCSProxy(dictionary.addr, initData)),
-            kind: ProxyKind.Verifiable,
-            status: TypeStatus.Building
-        }).finishProcess(pid);
+        Proxy memory proxy;
+        proxy.startBuilding();
+        proxy.addr = address(new UCSProxy(dictionary.addr, initData));
+        proxy.kind = ProxyKind.Verifiable;
+        proxy.finishBuilding();
+        return proxy.finishProcess(pid);
     }
 
     /**--------------------------
@@ -52,11 +53,15 @@ library ProxyLib {
     ----------------------------*/
     function createSimpleMock(Function[] memory functions) internal returns(Proxy memory) {
         uint pid = ProcessLib.startProxyLibProcess("createSimpleMock");
-        return Proxy({
-            addr: address(new ProxySimpleMock(functions)),
-            kind: ProxyKind.Mock,
-            status: TypeStatus.Building
-        }).finishProcess(pid);
+        for (uint i; i < functions.length; ++i) {
+            Validate.MUST_Completed(functions[i]);
+        }
+        Proxy memory proxy;
+        proxy.startBuilding();
+        proxy.addr = address(new ProxySimpleMock(functions));
+        proxy.kind = ProxyKind.Mock;
+        proxy.finishBuilding();
+        return proxy.finishProcess(pid);
     }
 
 }

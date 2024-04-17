@@ -70,7 +70,7 @@ library TypeGuard {
         return func.finishProcess(pid);
     }
     ///
-    function isComplete(Function storage func) internal returns(bool) {
+    function isComplete(Function memory func) internal returns(bool) {
         return func.status.isComplete();
     }
     function isUninitialized(Function storage func) internal returns(bool) {
@@ -146,9 +146,9 @@ library TypeGuard {
         return stdFunctions;
     }
     function build(StdFunctions storage stdFunctions) internal returns(StdFunctions storage) {
-        Validate.MUST_completed(stdFunctions.initSetAdmin);
-        Validate.MUST_completed(stdFunctions.getDeps);
-        Validate.MUST_completed(stdFunctions.clone);
+        Validate.MUST_Completed(stdFunctions.initSetAdmin);
+        Validate.MUST_Completed(stdFunctions.getDeps);
+        Validate.MUST_Completed(stdFunctions.clone);
         stdFunctions.status = TypeStatus.Built;
         return stdFunctions;
     }
@@ -195,22 +195,26 @@ library TypeGuard {
     /**===============
         🏠 Proxy
     =================*/
-    function building(Proxy storage proxy) internal returns(Proxy storage) {
+    function startBuilding(Proxy memory proxy) internal returns(Proxy memory) {
+        uint pid = proxy.startProcess("startBuilding");
+        Validate.MUST_NotLocked(proxy);
         proxy.status = TypeStatus.Building;
-        return proxy;
+        return proxy.finishProcess(pid);
     }
-    function build(Proxy storage proxy) internal returns(Proxy storage) {
-        Validate.MUST_contractAssigned(proxy);
-        Validate.MUST_kindAssigned(proxy);
-        proxy.status = TypeStatus.Built;
-        return proxy;
+    function finishBuilding(Proxy memory proxy) internal returns(Proxy memory) {
+        uint pid = proxy.startProcess("finishBuilding");
+        // Validate.MUST_contractAssigned(proxy);
+        // Validate.MUST_kindAssigned(proxy);
+        // proxy.status = TypeStatus.Built;
+        if (Validate.Completion(proxy)) proxy.status = TypeStatus.Built;
+        return proxy.finishProcess(pid);
     }
     function lock(Proxy storage proxy) internal returns(Proxy storage) {
         Validate.MUST_Built(proxy.status);
         proxy.status = TypeStatus.Locked;
         return proxy;
     }
-    function isComplete(Proxy storage proxy) internal returns(bool) {
+    function isComplete(Proxy memory proxy) internal returns(bool) {
         return proxy.status.isComplete();
     }
     function isInitialized(Proxy storage proxy) internal returns(bool) {

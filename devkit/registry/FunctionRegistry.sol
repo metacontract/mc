@@ -43,7 +43,7 @@ library FunctionRegistryLib {
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_registered(registry, name);
         Function storage func = registry.functions[name];
-        Validate.MUST_completed(func);
+        Validate.MUST_Completed(func);
         return func.finishProcess(pid);
     }
     function findCurrent(FunctionRegistry storage registry) internal returns(Function storage) {
