@@ -192,6 +192,9 @@ library Validate {
     function MUST_NotLocked(Proxy memory proxy) internal {
         validate(MUST, proxy.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
     }
+    function MUST_Building(Proxy memory proxy) internal {
+        validate(MUST, proxy.status.isBuilding(), "Proxy is not building", "");
+    }
     /**=======================
         📕 Proxy Registry
     =========================*/
@@ -227,6 +230,9 @@ library Validate {
     }
     function MUST_NotLocked(Dictionary memory dictionary) internal {
         validate(MUST, dictionary.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
+    }
+    function MUST_Building(Dictionary memory dictionary) internal {
+        validate(MUST, dictionary.status.isBuilding(), "Dictionary is not building", "");
     }
     /**============================
         📘 Dictionary Registry

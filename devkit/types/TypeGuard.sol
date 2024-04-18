@@ -77,6 +77,7 @@ library TypeGuard {
     }
     function finishBuilding(Proxy memory proxy) internal returns(Proxy memory) {
         uint pid = proxy.startProcess("finishBuilding");
+        Validate.MUST_Building(proxy);
         if (Validate.Completion(proxy)) proxy.status = TypeStatus.Built;
         return proxy.finishProcess(pid);
     }
@@ -98,6 +99,7 @@ library TypeGuard {
     }
     function finishBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("finishBuilding");
+        Validate.MUST_Building(dictionary);
         if (Validate.Completion(dictionary)) dictionary.status = TypeStatus.Built;
         return dictionary.finishProcess(pid);
     }
