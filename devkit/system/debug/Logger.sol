@@ -43,7 +43,7 @@ library Logger {
 
     function logException(string memory message) internal {
         if (mode() == Level.Critical) log(CRITICAL.HEADER, message);
-        if (mode() == Level.Error) {
+        if (mode() >= Level.Error) {
             log(ERR.HEADER, message);
             log(logLocations());
         }
