@@ -13,6 +13,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for uint256;
 // Utils
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
+import {System} from "devkit/system/System.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
@@ -35,10 +36,11 @@ library Validate {
     Type constant SHOULD = Type.SHOULD;
     Type constant COMPLETION = Type.COMPLETION;
 
-    function validate(Type T, bool condition, string memory messageBody, string memory messageDetail) internal returns(bool) {
+    function validate(Type T, bool condition, string memory title, string memory message) internal returns(bool) {
         if (condition) return true;
-        Logger.logException(messageBody.append(messageDetail));
-        if (T == MUST) revert(ERR.message(messageBody)); // TODO
+        if (T == COMPLETION) Logger.logInfo(Formatter.formatLog(title, message));
+        if (T == SHOULD) Logger.logWarn(Formatter.formatLog(title, message));
+        if (T == MUST) System.Exit(title, message);
     }
 
     // Validate without broadcast

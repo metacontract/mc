@@ -4,7 +4,7 @@ STD_FUNCS = true
 [debug]
 MODE = true
 RECORD_EXECUTION_PROCESS = true
-DEFAULT_LOG_LEVEL = "Warn"
+DEFAULT_LOG_LEVEL = "Debug"
 
 [naming]
 DEFAULT_DICTIONARY = 'Dictionary'

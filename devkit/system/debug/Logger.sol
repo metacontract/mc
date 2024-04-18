@@ -13,7 +13,6 @@ import {Process} from "devkit/system/debug/Process.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for string;
 
 
 /**===============
@@ -22,50 +21,44 @@ import {Inspector} from "devkit/types/Inspector.sol";
 library Logger {
     using StdStyle for string;
     using Formatter for string;
+    using Inspector for string;
 
-    enum LogLevel {
-        Disable,    // Display no message
-        Debug,      // Display all messages including debug details
-        Info,       // Display info, warning, and error messages
-        Warn,       // Display warning and error messages
+    enum Level {
+        Critical,   // Display critical error messages only
         Error,      // Display error messages only
-        Critical    // Display critical error messages only
+        Warn,       // Display warning and error messages
+        Info,       // Display info, warning, and error messages
+        Debug       // Display all messages including debug details
     }
 
     /**------------------
         💬 Logging
     --------------------*/
     function log(string memory message) internal {
-        if (System.Debug().isDebug()) logDebug(message);
-        if (System.Debug().isInfo()) logInfo(message);
-        if (System.Debug().isWarm()) logWarn(message);
-        if (System.Debug().isError()) logError(message);
-        if (System.Debug().isCritical()) logCritical(message);
-    }
-
-    function logDebug(string memory message) internal  {
         console2.log(message);
     }
-    function logInfo(string memory message) internal  {
-        console2.log(message);
-    }
-    function logWarn(string memory message) internal  {
-        console2.log(message);
-    }
-    function logError(string memory message) internal {
-        console2.log(message);
-    }
-    function logCritical(string memory message) internal  {
-        console2.log(CRITICAL.header(message));
+    function log(string memory header, string memory message) internal {
+        log(header.append(message));
     }
 
     function logException(string memory message) internal {
-        console2.log(
-            ERR.HEADER.red().br()
-                .indent().append(message)
-                .append(logLocations())
-        );
+        if (mode() == Level.Critical) log(CRITICAL.HEADER, message);
+        if (mode() == Level.Error) {
+            log(ERR.HEADER, message);
+            log(logLocations());
+        }
     }
+    function logWarn(string memory message) internal {
+        if (shouldLog(Level.Warn)) log(WARN.HEADER, message);
+    }
+    function logInfo(string memory message) internal {
+        if (shouldLog(Level.Info)) log(INFO.HEADER, message);
+    }
+    function logDebug(string memory message) internal {
+        if (shouldLog(Level.Debug)) log(DEBUG.HEADER, message);
+    }
+
+
 
 
     /**-----------------------
@@ -96,20 +89,21 @@ library Logger {
         log(message.bold());
     }
 
-    string constant START = "Starting... ";
-    function logExecStart(uint pid, string memory libName, string memory funcName) internal {
-        log(Formatter.formatProc(pid, START, libName, funcName));
-    }
-    string constant FINISH = "Finished ";
-    function logExecFinish(uint pid, string memory libName, string memory funcName) internal {
-        log(Formatter.formatProc(pid, FINISH, libName, funcName));
-    }
-
 
     /**-------------------
         💾 Export Log
     ---------------------*/
     function exportTo(string memory fileName) internal {}
+
+
+    function mode() internal view returns(Level) {
+        return System.Config().DEBUG.DEFAULT_LOG_LEVEL;
+    }
+
+    function shouldLog(Level level) internal view returns (bool) {
+        Level mode = mode();
+        return level >= mode;
+    }
 
 }
 

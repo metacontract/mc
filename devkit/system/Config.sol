@@ -14,7 +14,10 @@ import {Parser} from "devkit/types/Parser.sol";
     📝 Config
 ------------------------*/
 using ConfigLib for ConfigState global;
-/// @custom:storage-location erc7201:mc.devkit.config
+
+/**===============\
+|   📝 Config     |
+\================*/
 struct ConfigState {
     SetupConfig SETUP;
     DebugConfig DEBUG;
@@ -27,7 +30,7 @@ struct ConfigState {
     struct DebugConfig {
         bool MODE;
         bool RECORD_EXECUTION_PROCESS;
-        Logger.LogLevel DEFAULT_LOG_LEVEL;
+        Logger.Level DEFAULT_LOG_LEVEL;
     }
     struct NamingConfig {
         string DICTIONARY;
@@ -40,9 +43,6 @@ struct ConfigState {
     }
     struct ScanRange { uint256 END; }
 
-/**===============\
-|   📝 Config     |
-\================*/
 library ConfigLib {
     function load(ConfigState storage config) internal {
         string memory toml = vm.readFile(configFile());

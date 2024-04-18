@@ -7,6 +7,7 @@ import {ProcessLib} from "devkit/system/debug/Process.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
+import {Logger} from "devkit/system/debug/Logger.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -66,24 +67,24 @@ library StdFunctionsLib {
         function fetch_InitSetAdmin(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("fetch_InitSetAdmin");
             std.initSetAdmin.fetch("InitSetAdmin")
-                            .assignSelector(InitSetAdmin.initSetAdmin.selector)
-                            .dump();
+                            .assignSelector(InitSetAdmin.initSetAdmin.selector);
+            Logger.logDebug(std.initSetAdmin.toString());
             return std.finishProcess(pid);
         }
 
         function fetch_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("fetch_GetDeps");
             std.getDeps .fetch("GetDeps")
-                        .assignSelector(GetDeps.getDeps.selector)
-                        .dump();
+                        .assignSelector(GetDeps.getDeps.selector);
+            Logger.logDebug(std.getDeps.toString());
             return std.finishProcess(pid);
         }
 
         function fetch_Clone(StdFunctions storage std) internal returns(StdFunctions storage) {
             uint pid = std.startProcess("fetch_Clone");
             std.clone   .fetch("Clone")
-                        .assignSelector(Clone.clone.selector)
-                        .dump();
+                        .assignSelector(Clone.clone.selector);
+            Logger.logDebug(std.clone.toString());
             return std.finishProcess(pid);
         }
 

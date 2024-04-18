@@ -48,10 +48,13 @@ library Formatter {
     function formatPid(uint pid) internal returns(string memory message) {
         return message.brackL().append(PID).append(pid).brackR().sp().dim();
     }
-    function formatProc(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
+    function formatProcess(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
         return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
     }
 
+    function formatLog(string memory title, string memory message) internal returns(string memory) {
+        return title.sp().append(message);
+    }
 
     /**===================
         🧱 Primitives

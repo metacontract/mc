@@ -23,7 +23,7 @@ library MCDebugLib {
     -----------------*/
     function startDebug(MCDevKit storage mc) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("startDebug");
-        if (System.Config().DEBUG.MODE) System.Debug().startDebug();
+        // if (System.Config().DEBUG.MODE) System.Debug().startDebug();
         return mc.finishProcess(pid);
     }
 
@@ -31,7 +31,7 @@ library MCDebugLib {
         🛑 Stop
     ---------------*/
     function stopLog(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        System.Debug().stopLog();
+        // System.Debug().stopLog();
         return mc;
     }
 

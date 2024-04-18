@@ -17,7 +17,6 @@ import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
 import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
 
-
 /**===================
     🕵️‍♀️ Inspector
 =====================*/
