@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Utils
-import {StdStyle} from "devkit/utils/ForgeHelper.sol";
-    using StdStyle for string;
-import {Formatter} from "devkit/types/Formatter.sol";
-
 /// @title Error Message
 library ERR {
-    string constant HEADER = "\u2716 DevKit Error:\n\t";
+    string constant HEADER = "\u001b[91m[\u2716 ERROR]\u001b[0m\n\t";
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
     string constant EMPTY_STR = "Empty String";
     string constant EMPTY_B4 = "Empty Bytes4";
@@ -29,7 +24,4 @@ library ERR {
     string constant NOT_INIT = "Bundle has not initialized yet, please mc.init() first.";
     string constant EMPTY_CURRENT_BUNDLE = "Bundle has not initialized yet, please mc.init() first.";
 
-    function message(string memory errorBody) internal returns(string memory) {
-        return Formatter.append(HEADER, errorBody).bold();
-    }
 }

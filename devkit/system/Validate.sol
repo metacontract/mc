@@ -156,7 +156,7 @@ library Validate {
         validate(SHOULD, bundle.isComplete(), "Bundle SHOULD be Completed", "");
     }
     function MUST_NotHaveSameFunction(Bundle storage bundle, Function storage func) internal {
-        validate(MUST, bundle.hasNot(func), "Bundle has same Function", "");
+        validate(MUST, bundle.hasNot(func), "Bundle has same Function", "already exist");
     }
     function MUST_NotLocked(Bundle storage bundle) internal {
         validate(MUST, bundle.status.isNotLocked(), ERR.LOCKED_OBJECT, "");
