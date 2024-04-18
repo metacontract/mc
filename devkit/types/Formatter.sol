@@ -39,17 +39,24 @@ library Formatter {
         }
     }
 
-    string constant LOCATION_HEADER = "\n\t    at ";
-    function toString(Process memory proc) internal returns(string memory) {
-        return LOCATION_HEADER.append(proc.libName.dot().append(proc.funcName).parens().append(proc.params.italic())).dim();
+    function toLocation(Process memory process) internal returns(string memory) {
+        string memory at = "\t    at ";
+        return at.append(process.libName.dot().append(process.funcName.parens())).dim().br();
     }
 
     string constant PID = "pid:";
     function formatPid(uint pid) internal returns(string memory message) {
         return message.brackL().append(PID).append(pid).brackR().sp().dim();
     }
-    function formatProcess(uint pid, string memory status, string memory libName, string memory funcName) internal returns(string memory) {
-        return formatPid(pid).append(status).append(libName.dot().append(funcName)).parens();
+
+    function toStart(Process memory process, uint pid) internal returns(string memory) {
+        string memory start = "> ";
+        return formatPid(pid).append(start).append(process.libName.dot().append(process.funcName.parens())).append(process.params.italic());
+    }
+
+    function toFinish(Process memory process, uint pid) internal returns(string memory) {
+        string memory finish = "< ";
+        return formatPid(pid).append(finish.dim()).append(process.libName.dot().append(process.funcName.parens()).dim());
     }
 
     function formatLog(string memory title, string memory message) internal returns(string memory) {

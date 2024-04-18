@@ -35,14 +35,6 @@ library MCDebugLib {
         return mc;
     }
 
-    /**-------------------
-        📩 Insert Log
-    ---------------------*/
-    function insert(MCDevKit storage mc, string memory message) internal returns(MCDevKit storage) {
-        Logger.insert(message);
-        return mc;
-    }
-
     /**--------------------
         🔽 Record Start
     ----------------------*/

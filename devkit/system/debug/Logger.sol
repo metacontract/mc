@@ -59,34 +59,14 @@ library Logger {
     }
 
 
-
-
     /**-----------------------
         🎨 Log Formatting
     -------------------------*/
     function logLocations() internal returns(string memory locations) {
         Process[] memory processes = System.Debug().processes;
         for (uint i = processes.length; i > 0; --i) {
-            locations = locations.append(Formatter.toString(processes[i-1]));
+            locations = locations.append(processes[i-1].toLocation());
         }
-    }
-
-    function logProcess(string memory message) internal {
-        log(message.underline());
-    }
-    function logProcStart(string memory message) internal {
-        log((message.isNotEmpty() ? message : "Start Process").underline());
-    }
-    function logProcFin(string memory message) internal {
-        log((message.isNotEmpty() ? message : "(Process Finished)").dim());
-    }
-
-    function insert(string memory message) internal {
-        log(message.inverse());
-    }
-
-    function logBody(string memory message) internal {
-        log(message.bold());
     }
 
 
@@ -96,6 +76,7 @@ library Logger {
     function exportTo(string memory fileName) internal {}
 
 
+    // Check log mode
     function mode() internal view returns(Level) {
         return System.Config().DEBUG.DEFAULT_LOG_LEVEL;
     }

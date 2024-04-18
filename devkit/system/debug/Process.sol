@@ -7,6 +7,7 @@ import {Logger} from "devkit/system/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {Formatter} from "devkit/types/Formatter.sol";
+    using Formatter for Process global;
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
@@ -37,18 +38,20 @@ library ProcessLib {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return 0;
         Debugger storage debugger = System.Debug();
         pid = debugger.nextPid;
-        debugger.processes.push(Process(libName, funcName, params));
-        Logger.logInfo(Formatter.formatProcess(pid, "Starting... ", libName, funcName));
+        Process memory process = Process(libName, funcName, params);
+        debugger.processes.push(process);
+        Logger.logInfo(process.toStart(pid));
         debugger.nextPid++;
     }
 
     function finishProcess(uint pid) internal {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return;
-        Process memory current = System.Debug().processes[pid];
-        Logger.logInfo(Formatter.formatProcess(pid, "Finished", current.libName, current.funcName));
+        Process memory process = System.Debug().processes[pid];
+        Logger.logInfo(process.toFinish(pid));
     }
 
 
+    // String
     function finishProcess(string memory str, uint pid) internal returns(string memory) {
         finishProcess(pid);
         return str;
