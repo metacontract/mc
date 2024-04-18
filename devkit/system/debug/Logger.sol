@@ -102,7 +102,7 @@ library Logger {
 
     function shouldLog(Level level) internal view returns (bool) {
         Level mode = mode();
-        return level >= mode;
+        return level <= mode;
     }
 
 }
