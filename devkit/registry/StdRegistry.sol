@@ -4,9 +4,7 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for StdRegistry global;
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-    using TypeGuard for StdRegistry global;
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
@@ -23,10 +21,12 @@ import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.so
 import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 
 
-/**==========================
-    🏛 Standard Registry
-============================*/
-using StdRegistryLib for StdRegistry global;
+////////////////////////////////////////////////////
+//  🏛 Standard Registry    ////////////////////////
+    using StdRegistryLib for StdRegistry global;
+    using ProcessLib for StdRegistry global;
+    using TypeGuard for StdRegistry global;
+////////////////////////////////////////////////////
 struct StdRegistry {
     StdFunctions functions;
     Bundle all;

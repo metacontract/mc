@@ -15,10 +15,10 @@ import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 using Inspector for TypeStatus global;
 enum TypeStatus { Uninitialized, Building, Built, Locked }
 
-/**===================
+/**==================================================
     🔒 Type Guard
     @dev See details in docs/object_lifecycle.md
-=====================*/
+====================================================*/
 library TypeGuard {
     using Inspector for bool;
 

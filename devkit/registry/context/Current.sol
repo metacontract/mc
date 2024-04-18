@@ -5,15 +5,15 @@ pragma solidity ^0.8.24;
 -----------------------*/
 import {Params} from "devkit/system/debug/Params.sol";
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for Current global;
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
 
-/**========================
-    📸 Current Context
-==========================*/
-using CurrentLib for Current global;
+////////////////////////////////////////////
+//  📸 Current Context   ///////////////////
+    using CurrentLib for Current global;
+    using ProcessLib for Current global;
+////////////////////////////////////////////
 struct Current {
     string name;
 }

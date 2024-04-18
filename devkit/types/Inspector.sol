@@ -18,9 +18,9 @@ import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
 
 
-/**--------------------
-    🧐 Inspectors
-----------------------*/
+/**===================
+    🕵️‍♀️ Inspector
+=====================*/
 library Inspector {
     using Inspector for string;
     using Inspector for bytes4;
@@ -204,4 +204,5 @@ library Inspector {
     function isComplete(TypeStatus status) internal returns(bool) {
         return status.isBuilt() || status.isLocked();
     }
+
 }

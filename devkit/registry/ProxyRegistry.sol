@@ -4,30 +4,30 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for ProxyRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for ProxyRegistry global;
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
-    using NameGenerator for mapping(string => Proxy);
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
+// Context
+import {Current} from "devkit/registry/context/Current.sol";
 // Core Type
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
-// Context
-import {Current} from "devkit/registry/context/Current.sol";
 
 
-/**=======================
-    📕 Proxy Registry
-=========================*/
-using ProxyRegistryLib for ProxyRegistry global;
+////////////////////////////////////////////////////////
+//  📕 Proxy Registry    ///////////////////////////////
+    using ProxyRegistryLib for ProxyRegistry global;
+    using ProcessLib for ProxyRegistry global;
+    using Inspector for ProxyRegistry global;
+////////////////////////////////////////////////////////
 struct ProxyRegistry {
     mapping(string name => Proxy) proxies;
     Current current;
 }
 library ProxyRegistryLib {
+    using NameGenerator for mapping(string => Proxy);
 
     /**-------------------------------
         🚀 Deploy & Register Proxy

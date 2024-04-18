@@ -6,8 +6,6 @@ import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
 // Utils
 import {StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
-    using StdStyle for string;
-import {System} from "devkit/system/System.sol";
 import {Process} from "devkit/system/debug/Process.sol";
 
 
@@ -17,6 +15,7 @@ import {Process} from "devkit/system/debug/Process.sol";
 library Formatter {
     using Formatter for string;
     using Formatter for bytes4;
+    using StdStyle for string;
 
     /**==================
         🧩 Function

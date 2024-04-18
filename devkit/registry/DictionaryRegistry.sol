@@ -4,30 +4,30 @@ pragma solidity ^0.8.24;
     Support Methods
 -----------------------*/
 import {ProcessLib} from "devkit/system/debug/Process.sol";
-    using ProcessLib for DictionaryRegistry global;
 import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for DictionaryRegistry global;
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
-    using NameGenerator for mapping(string => Dictionary);
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
+// Context
+import {Current} from "devkit/registry/context/Current.sol";
 // Core Type
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
-// Context
-import {Current} from "devkit/registry/context/Current.sol";
 
 
-/**============================
-    📘 Dictionary Registry
-==============================*/
-using DictionaryRegistryLib for DictionaryRegistry global;
+//////////////////////////////////////////////////////////////////
+//  📘 Dictionary Registry    ////////////////////////////////////
+    using DictionaryRegistryLib for DictionaryRegistry global;
+    using ProcessLib for DictionaryRegistry global;
+    using Inspector for DictionaryRegistry global;
+//////////////////////////////////////////////////////////////////
 struct DictionaryRegistry {
     mapping(string name => Dictionary) dictionaries;
     Current current;
 }
 library DictionaryRegistryLib {
+    using NameGenerator for mapping(string => Dictionary);
 
     /**-------------------------------------
         🚀 Deploy & Register Dictionary
