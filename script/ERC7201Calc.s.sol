@@ -9,7 +9,7 @@ contract ERC7201Calc is Script {
         try vm.prompt("storage location") returns (string memory storage_location) {
             run(storage_location);
         } catch (bytes memory) {
-            console.log("error");
+            console.log("Error, you might need to run `foundryup`.");
         }
     }
 
