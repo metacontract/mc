@@ -8,6 +8,9 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for Process global;
+    using Formatter for bytes4;
+    using Formatter for address;
+    using Formatter for string;
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
@@ -30,6 +33,7 @@ struct Process {
     string funcName;
     string params;
     uint nest;
+    // bool isFinished; TODO
 }
 library ProcessLib {
     /**----------------------------
@@ -65,10 +69,10 @@ library ProcessLib {
         🧩 Function
     --------------------*/
     function startProcess(Function storage, string memory name, string memory params) internal returns(uint) {
-        return startProcess("FunctionLib", name, params);
+        return startProcess("Function", name, params);
     }
     function startProcess(Function storage func, string memory name) internal returns(uint) {
-        return func.startProcess(name, "");
+        return startProcess(func, name, "");
     }
 
     function finishProcess(Function storage func, uint pid) internal returns(Function storage) {
@@ -158,12 +162,6 @@ library ProcessLib {
     /**---------------
         🏠 Proxy
     -----------------*/
-    function startProxyLibProcess(string memory name, string memory params) internal returns(uint) {
-        return startProcess("ProxyLib", name, params);
-    }
-    function startProxyLibProcess(string memory name) internal returns(uint) {
-        return startProxyLibProcess(name, "");
-    }
     function startProcess(Proxy memory, string memory name, string memory params) internal returns(uint) {
         return startProcess("Proxy", name, params);
     }
@@ -199,22 +197,10 @@ library ProcessLib {
     /**-------------------
         📚 Dictionary
     ---------------------*/
-    function startDictionaryLibProcess(string memory name, string memory params) internal returns(uint) {
-        return startProcess("DictionaryLib", name, params);
-    }
-    function startDictionaryLibProcess(string memory name) internal returns(uint) {
-        return startDictionaryLibProcess(name, "");
-    }
     function startProcess(Dictionary memory, string memory name, string memory params) internal returns(uint) {
         return startProcess("Dictionary", name, params);
     }
     function startProcess(Dictionary memory, string memory name) internal returns(uint) {
-        return startProcess("Dictionary", name, "");
-    }
-    function startProcessInStorage(Dictionary storage, string memory name, string memory params) internal returns(uint) {
-        return startProcess("Dictionary", name, params);
-    }
-    function startProcessInStorage(Dictionary storage, string memory name) internal returns(uint) {
         return startProcess("Dictionary", name, "");
     }
     function finishProcess(Dictionary memory dictionary, uint pid) internal returns(Dictionary memory) {
@@ -252,4 +238,49 @@ library ProcessLib {
         return current.startProcess(name, "");
     }
 
+}
+
+/**
+    Params
+ */
+function params(string memory str) returns(string memory) {
+    return str;
+}
+function params(bytes4 b4) returns(string memory) {
+    return b4.toString();
+}
+function params(bytes4 b4, address addr) returns(string memory) {
+    return b4.toString().comma(addr);
+}
+function params(address addr) returns(string memory) {
+    return addr.toString();
+}
+function params(address addr, address addr2) returns(string memory) {
+    return addr.toString().comma(addr2);
+}
+function params(address addr, string memory str) returns(string memory) {
+    return addr.toString().comma(str);
+}
+function params(string memory str, bytes4 b4, address addr) returns(string memory) {
+    return str.comma(b4).comma(addr);
+}
+function params(Dictionary memory dict1, Dictionary memory dict2) returns(string memory) {
+    return params(dict1.addr, dict2.addr);
+}
+function params(Dictionary memory dict, address addr) returns(string memory) {
+    return params(dict.addr, addr);
+}
+function params(Dictionary memory dict, bytes memory b) returns(string memory) {
+    return params(dict.addr, string(b));
+}
+function params(Function memory func) returns(string memory) {
+    return func.name;
+}
+function params(Function[] memory functions) returns(string memory res) {
+    for (uint i; i < functions.length; ++i) {
+        res = res.comma(functions[i].name);
+    }
+}
+function params(Bundle memory bundle) returns(string memory) {
+    return bundle.name;
 }

@@ -15,6 +15,7 @@ import {Process} from "devkit/system/debug/Process.sol";
 library Formatter {
     using Formatter for string;
     using Formatter for bytes4;
+    using Formatter for address;
     using StdStyle for string;
 
     /**==================
@@ -102,6 +103,15 @@ library Formatter {
     }
     function comma(string memory str) internal returns(string memory) {
         return string.concat(str, ", ");
+    }
+    function comma(string memory str, string memory addition) internal returns(string memory) {
+        return string.concat(str, ", ", addition);
+    }
+    function comma(string memory str, bytes4 b4) internal returns(string memory) {
+        return string.concat(str, ", ", b4.toString());
+    }
+    function comma(string memory str, address addr) internal returns(string memory) {
+        return string.concat(str, ", ", addr.toString());
     }
     function dot(string memory str) internal returns(string memory) {
         return string.concat(str, ".");

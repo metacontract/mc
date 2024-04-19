@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
+import {ProcessLib, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
@@ -32,7 +32,7 @@ library FunctionLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
-        uint pid = func.startProcess("assignName");
+        uint pid = func.startProcess("assignName", params(name));
         func.startBuilding();
         func.name = name;
         func.finishBuilding();
@@ -43,7 +43,7 @@ library FunctionLib {
         🎯 Assign Selector
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
-        uint pid = func.startProcess("assignSelector");
+        uint pid = func.startProcess("assignSelector", params(selector));
         func.startBuilding();
         func.selector = selector;
         func.finishBuilding();
@@ -54,7 +54,7 @@ library FunctionLib {
         🎨 Assign Implementation
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assignImplementation");
+        uint pid = func.startProcess("assignImplementation", params(implementation));
         func.startBuilding();
         func.implementation = implementation;
         func.finishBuilding();
@@ -65,7 +65,7 @@ library FunctionLib {
         🌈 Assign
     -----------------*/
     function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assign");
+        uint pid = func.startProcess("assign", params(name, selector, implementation));
         func.assignName(name);
         func.assignSelector(selector);
         func.assignImplementation(implementation);
@@ -76,7 +76,7 @@ library FunctionLib {
         📨 Fetch Function
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
-        uint pid = func.startProcess("fetch");
+        uint pid = func.startProcess("fetch", params(envKey));
         Validate.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));

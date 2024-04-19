@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
+import {ProcessLib, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -35,10 +35,9 @@ library ProxyLib {
     /**---------------------
         🚀 Deploy Proxy
     -----------------------*/
-    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory) {
-        uint pid = ProcessLib.startProxyLibProcess("deploy");
+    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+        uint pid = proxy.startProcess("deploy", params(dictionary, initData));
         Validate.MUST_Completed(dictionary);
-        Proxy memory proxy;
         proxy.startBuilding();
         proxy.addr = address(new UCSProxy(dictionary.addr, initData));
         proxy.kind = ProxyKind.Verifiable;
@@ -49,12 +48,11 @@ library ProxyLib {
     /**--------------------------
         🤖 Create Proxy Mock
     ----------------------------*/
-    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory) {
-        uint pid = ProcessLib.startProxyLibProcess("createSimpleMock");
+    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory proxy) {
+        uint pid = proxy.startProcess("createSimpleMock", params(functions));
         for (uint i; i < functions.length; ++i) {
             Validate.MUST_Completed(functions[i]);
         }
-        Proxy memory proxy;
         proxy.startBuilding();
         proxy.addr = address(new ProxySimpleMock(functions));
         proxy.kind = ProxyKind.Mock;

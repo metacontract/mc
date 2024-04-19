@@ -6,7 +6,6 @@ import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for bytes4;
     using Formatter for string;
 
-
 library Params {
     string constant HEADER = "params: ";
 

@@ -3,8 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
-import {Params} from "devkit/system/debug/Params.sol";
+import {ProcessLib, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -48,10 +47,9 @@ library DictionaryLib {
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    function deploy(address owner) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("deploy");
+    function deploy(address owner) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("deploy", params(owner));
         Validate.MUST_AddressIsNotZero(owner);
-        Dictionary memory dictionary;
         dictionary.startBuilding();
         dictionary.addr = address(new UCSDictionary(owner));
         dictionary.kind = DictionaryKind.Verifiable;
@@ -63,7 +61,7 @@ library DictionaryLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("duplicate");
+        uint pid = toDictionary.startProcess("duplicate", params(toDictionary, fromDictionary));
         Validate.MUST_Completed(toDictionary);
         Validate.MUST_Completed(fromDictionary);
 
@@ -87,7 +85,7 @@ library DictionaryLib {
         🧩 Set Function or Bundle
     -------------------------------*/
     function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(selector, implementation));
+        uint pid = dictionary.startProcess("set", params(selector, implementation));
         Validate.MUST_Completed(dictionary);
         Validate.MUST_Bytes4NotEmpty(selector);
         Validate.MUST_AddressIsContract(implementation);
@@ -98,11 +96,11 @@ library DictionaryLib {
         return dictionary.finishProcess(pid);
     }
     function set(Dictionary memory dictionary, Function memory func) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(func.name));
+        uint pid = dictionary.startProcess("set", params(func));
         return set(dictionary, func.selector, func.implementation).finishProcess(pid);
     }
     function set(Dictionary memory dictionary, Bundle storage bundle) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("set", Params.append(bundle.name));
+        uint pid = dictionary.startProcess("set", params(bundle));
 
         Function[] memory functions = bundle.functions;
 
@@ -122,7 +120,7 @@ library DictionaryLib {
         🪟 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("upgradeFacade");
+        uint pid = dictionary.startProcess("upgradeFacade", params(dictionary, newFacade));
         Validate.MUST_AddressIsContract(newFacade);
         Validate.MUST_Verifiable(dictionary);
         IDictionary(dictionary.addr).upgradeFacade(newFacade);
@@ -132,12 +130,11 @@ library DictionaryLib {
     /**------------------------------
         🤖 Create Dictionary Mock
     --------------------------------*/
-    function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("createMock");
+    function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("createMock", params(functions));
         for (uint i; i < functions.length; ++i) {
             Validate.MUST_Completed(functions[i]);
         }
-        Dictionary memory dictionary;
         dictionary.startBuilding();
         dictionary.addr = address(new DictionaryMock(owner, functions));
         dictionary.kind = DictionaryKind.Mock;
@@ -148,11 +145,10 @@ library DictionaryLib {
     /**
         Load
      */
-    function load(address dictionary) internal returns(Dictionary memory) {
-        uint pid = ProcessLib.startDictionaryLibProcess("load");
+    function load(address dictionary) internal returns(Dictionary memory _dictionary) {
+        uint pid = _dictionary.startProcess("load", params(dictionary));
         Validate.MUST_AddressIsNotZero(dictionary);
         // TODO Validate
-        Dictionary memory _dictionary;
         _dictionary.startBuilding();
         _dictionary.addr = dictionary;
         _dictionary.kind = DictionaryKind.Verifiable;
