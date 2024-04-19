@@ -6,7 +6,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {Validate} from "devkit/system/Validate.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {Params} from "devkit/system/debug/Params.sol";
+import {param} from "devkit/system/debug/Process.sol";
 // Core
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -28,7 +28,7 @@ library MCBundleLib {
         🌱 Init Bundle
     ----------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("init", Params.append(name));
+        uint pid = mc.startProcess("init", param(name));
         mc.bundle.init(name);
         return mc.finishProcess(pid);
     }
@@ -40,7 +40,7 @@ library MCBundleLib {
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("use", Params.append(name, selector, implementation));
+        uint pid = mc.startProcess("use", param(name, selector, implementation));
         // Register new function
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_NotEmptySelector(selector);
@@ -66,7 +66,7 @@ library MCBundleLib {
     --------------------*/
     /// @notice Assign facade address to current bundle
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("set");
+        uint pid = mc.startProcess("useFacade", param(facade));
         mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);

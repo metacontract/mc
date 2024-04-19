@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -36,7 +36,7 @@ library ProxyLib {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
-        uint pid = proxy.startProcess("deploy", params(dictionary, initData));
+        uint pid = proxy.startProcess("deploy", param(dictionary, initData));
         Validate.MUST_Completed(dictionary);
         proxy.startBuilding();
         proxy.addr = address(new UCSProxy(dictionary.addr, initData));
@@ -49,7 +49,7 @@ library ProxyLib {
         🤖 Create Proxy Mock
     ----------------------------*/
     function createSimpleMock(Function[] memory functions) internal returns(Proxy memory proxy) {
-        uint pid = proxy.startProcess("createSimpleMock", params(functions));
+        uint pid = proxy.startProcess("createSimpleMock", param(functions));
         for (uint i; i < functions.length; ++i) {
             Validate.MUST_Completed(functions[i]);
         }

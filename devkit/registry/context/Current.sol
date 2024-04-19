@@ -3,8 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Params} from "devkit/system/debug/Params.sol";
-import {ProcessManager} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
@@ -23,7 +22,7 @@ library CurrentLib {
         🔄 Update Current Context
     ---------------------------------*/
     function update(Current storage current, string memory name) internal {
-        uint pid = current.startProcess("update", Params.append(name));
+        uint pid = current.startProcess("update", param(name));
         Validate.MUST_NotEmptyName(name);
         current.name = name;
         current.finishProcess(pid);

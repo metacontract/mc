@@ -6,7 +6,7 @@ import {System} from "devkit/system/System.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 // Utils
-import {Params} from "devkit/system/debug/Params.sol";
+import {param} from "devkit/system/debug/Process.sol";
 // Core
 //  dictionary
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
@@ -35,8 +35,7 @@ library MCDeployLib {
         🌞 Deploy Meta Contract
     -------------------------------*/
     function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy");
-        // uint pid = mc.startProcess("deploy", PARAMS.append(name).comma().append(bundle.name).comma().append(facade).comma().append(owner).comma().append(string(initData)));
+        uint pid = mc.startProcess("deploy", param(name, bundle, owner, initData));
         Dictionary memory dictionary = mc.dictionary.deploy(name, bundle, owner);
         mc.proxy.deploy(name, dictionary, initData);
         return mc.finishProcess(pid);
@@ -70,10 +69,10 @@ library MCDeployLib {
         🏠 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deployProxy", Params.append(dictionary.addr, initData));
+        uint pid = mc.startProcess("deployProxy", param(name, dictionary, initData));
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         mc.proxy.register(name, proxy);
-        return mc.finishProcess(pid);
+        return mc.finishProcess(pid); // TODO return mc
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
@@ -98,8 +97,8 @@ library MCDeployLib {
     /**-------------------------
         📚 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary memory) {
-        uint pid = mc.startProcess("deployDictionary", Params.append(name, bundle.name, owner));
+    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
+        uint pid = mc.startProcess("deployDictionary", param(name, bundle, owner));
         Dictionary memory dictionary = DictionaryLib.deploy(owner)
                                                     .set(bundle)
                                                     .upgradeFacade(bundle.facade);
@@ -134,7 +133,7 @@ library MCDeployLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("duplicateDictionary", Params.append(name, targetDictionary.addr));
+        uint pid = mc.startProcess("duplicateDictionary", param(name, targetDictionary));
         Dictionary memory newDictionary = targetDictionary.duplicate();
         mc.dictionary.register(name, newDictionary);
         return mc.finishProcess(pid);

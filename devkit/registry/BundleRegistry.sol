@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -34,7 +34,7 @@ library BundleRegistryLib {
         🌱 Init Bundle
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = registry.startProcess("init", params(name));
+        uint pid = registry.startProcess("init", param(name));
         Validate.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
         Validate.MUST_notInitialized(bundle);
@@ -52,7 +52,7 @@ library BundleRegistryLib {
         🔍 Find Bundle
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage bundle) {
-        uint pid = registry.startProcess("find", params(name));
+        uint pid = registry.startProcess("find", param(name));
         Validate.MUST_NotEmptyName(name);
         bundle = registry.bundles[name];
         Validate.SHOULD_Completed(bundle);

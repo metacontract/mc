@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -33,7 +33,7 @@ library ProxyRegistryLib {
         🚀 Deploy & Register Proxy
     ---------------------------------*/
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
-        uint pid = registry.startProcess("deploy", params(name, dictionary, initData));
+        uint pid = registry.startProcess("deploy", param(name, dictionary, initData));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Completed(dictionary);
         Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
@@ -45,7 +45,7 @@ library ProxyRegistryLib {
         🗳️ Register Proxy
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy memory _proxy) internal returns(Proxy storage proxy) {
-        uint pid = registry.startProcess("register", params(name, _proxy));
+        uint pid = registry.startProcess("register", param(name, _proxy));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Completed(_proxy);
         Validate.MUST_NotRegistered(registry, name);
@@ -58,7 +58,7 @@ library ProxyRegistryLib {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage proxy) {
-        uint pid = registry.startProcess("find", params(name));
+        uint pid = registry.startProcess("find", param(name));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Registered(registry, name);
         proxy = registry.proxies[name];

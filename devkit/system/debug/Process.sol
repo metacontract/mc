@@ -259,56 +259,74 @@ library ProcessManager {
 /**
     Params
  */
-function params(string memory str) returns(string memory) {
+ /* solhint-disable 2519 */
+function param(string memory str) returns(string memory) {
     return str;
 }
-function params(bytes4 b4) returns(string memory) {
-    return b4.toString();
+function param(string memory str, address addr, Function[] memory funcs) returns(string memory) {
+    return str.comma(addr).comma(param(funcs));
 }
-function params(bytes4 b4, address addr) returns(string memory) {
-    return b4.toString().comma(addr);
-}
-function params(address addr) returns(string memory) {
-    return addr.toString();
-}
-function params(address addr, address addr2) returns(string memory) {
-    return addr.toString().comma(addr2);
-}
-function params(address addr, string memory str) returns(string memory) {
-    return addr.toString().comma(str);
-}
-function params(string memory str, Proxy memory proxy) returns(string memory) {
-    return str.comma(proxy.addr);
-}
-function params(string memory str, Dictionary memory dictionary) returns(string memory) {
-    return str.comma(dictionary.addr);
-}
-function params(string memory str, Dictionary memory dictionary, bytes memory b) returns(string memory) {
-    return str.comma(dictionary.addr).comma(string(b));
-}
-function params(string memory str, bytes4 b4, address addr) returns(string memory) {
+function param(string memory str, bytes4 b4, address addr) returns(string memory) {
     return str.comma(b4).comma(addr);
 }
-function params(string memory str, Bundle memory bundle, address addr) returns(string memory) {
+function param(string memory str, Proxy memory proxy) returns(string memory) {
+    return str.comma(proxy.addr);
+}
+function param(string memory str, Dictionary memory dictionary) returns(string memory) {
+    return str.comma(dictionary.addr);
+}
+function param(string memory str, Dictionary memory dictionary, bytes memory b) returns(string memory) {
+    return str.comma(dictionary.addr).comma(string(b));
+}
+function param(string memory str, Function[] memory funcs) returns(string memory) {
+    return str.comma(param(funcs));
+}
+function param(string memory str, Bundle memory bundle, address addr) returns(string memory) {
     return str.comma(bundle.name).comma(addr);
 }
-function params(Dictionary memory dict1, Dictionary memory dict2) returns(string memory) {
-    return params(dict1.addr, dict2.addr);
+function param(string memory str, Bundle memory bundle, address addr, bytes memory b) returns(string memory) {
+    return str.comma(bundle.name).comma(addr).comma(string(b));
 }
-function params(Dictionary memory dict, address addr) returns(string memory) {
-    return params(dict.addr, addr);
+
+function param(bytes4 b4) returns(string memory) {
+    return b4.toString();
 }
-function params(Dictionary memory dict, bytes memory b) returns(string memory) {
-    return params(dict.addr, string(b));
+function param(bytes4 b4, address addr) returns(string memory) {
+    return b4.toString().comma(addr);
 }
-function params(Function memory func) returns(string memory) {
+
+function param(address addr) returns(string memory) {
+    return addr.toString();
+}
+function param(address addr, address addr2) returns(string memory) {
+    return addr.toString().comma(addr2);
+}
+function param(address addr, string memory str) returns(string memory) {
+    return addr.toString().comma(str);
+}
+
+function param(Dictionary memory dict, address addr) returns(string memory) {
+    return param(dict.addr, addr);
+}
+function param(Dictionary memory dict, bytes4 b4, address addr) returns(string memory) {
+    return param(dict.addr).comma(b4).comma(addr);
+}
+function param(Dictionary memory dict, bytes memory b) returns(string memory) {
+    return param(dict.addr, string(b));
+}
+function param(Dictionary memory dict1, Dictionary memory dict2) returns(string memory) {
+    return param(dict1.addr, dict2.addr);
+}
+
+function param(Function memory func) returns(string memory) {
     return func.name;
 }
-function params(Function[] memory functions) returns(string memory res) {
+function param(Function[] memory functions) returns(string memory res) {
     for (uint i; i < functions.length; ++i) {
         res = res.comma(functions[i].name);
     }
 }
-function params(Bundle memory bundle) returns(string memory) {
+
+function param(Bundle memory bundle) returns(string memory) {
     return bundle.name;
 }

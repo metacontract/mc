@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -31,7 +31,7 @@ library BundleLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignName", params(name));
+        uint pid = bundle.startProcess("assignName", param(name));
         Validate.MUST_NotEmptyName(name);
         bundle.startBuilding();
         bundle.name = name;
@@ -43,7 +43,7 @@ library BundleLib {
         🧩 Push Function(s)
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunction", params(func));
+        uint pid = bundle.startProcess("pushFunction", param(func));
         Validate.MUST_Completed(func);
         Validate.MUST_NotHaveSameFunction(bundle, func);
         bundle.startBuilding();
@@ -52,7 +52,7 @@ library BundleLib {
         return bundle.finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunctions", params(functions));
+        uint pid = bundle.startProcess("pushFunctions", param(functions));
         for (uint i; i < functions.length; ++i) {
             bundle.pushFunction(functions[i]);
         }
@@ -63,7 +63,7 @@ library BundleLib {
         🪟 Assign Facade
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignFacade", params(facade));
+        uint pid = bundle.startProcess("assignFacade", param(facade));
         Validate.MUST_AddressIsContract(facade);
         bundle.startBuilding();
         bundle.facade = facade;

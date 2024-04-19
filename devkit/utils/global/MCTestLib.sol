@@ -6,7 +6,7 @@ import {Validate} from "devkit/system/Validate.sol";
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Utils
-import {Params} from "devkit/system/debug/Params.sol";
+import {param} from "devkit/system/debug/Process.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -29,12 +29,12 @@ library MCTestLib {
         🌞 Mocking Meta Contract
     -------------------------------*/
     function createMock(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("createMock", Params.append(bundle.name));
+        uint pid = mc.startProcess("createMock", param(bundle));
         createProxySimpleMock(mc, bundle);
         return mc.finishProcess(pid);
     }
     function createMock(MCDevKit storage mc, Function storage func) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("createMock", Params.append(func.name));
+        uint pid = mc.startProcess("createMock", param(func));
         Function[] memory funcs = new Function[](1);
         funcs[0] = func;
         createProxySimpleMock(mc, funcs);
@@ -51,7 +51,7 @@ library MCTestLib {
         @param functions The function contract infos to be registered with the SimpleMockProxy. A bundle can also be specified. Note that the SimpleMockProxy cannot have its functions changed later. If no functions are provided, defaultBundle will be used.
     */
     function createProxySimpleMock(MCDevKit storage mc, string memory name, Function[] memory functions) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("createProxySimpleMock", Params.append(name)); // TODO append functions
+        uint pid = mc.startProcess("createProxySimpleMock", param(name, functions));
         Validate.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Proxy memory proxyMock = ProxyLib.createSimpleMock(functions);
@@ -85,7 +85,7 @@ library MCTestLib {
         @param functions The Functions to be registered with the `MockDictionary`. A bundle can also be specified. If no Ops are provided, defaultBundle will be used.
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("createMockDictionary", Params.append(name, owner));
+        uint pid = mc.startProcess("createMockDictionary", param(name, owner, functions));
         Validate.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
@@ -110,7 +110,7 @@ library MCTestLib {
         🤲 Set Storage Reader
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setStorageReader", Params.append(selector, implementation));
+        uint pid = mc.startProcess("setStorageReader", param(dictionary, selector, implementation));
         dictionary.set(selector, implementation);
         return mc.finishProcess(pid);
     }

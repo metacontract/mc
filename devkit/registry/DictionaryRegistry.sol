@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, param} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -33,7 +33,7 @@ library DictionaryRegistryLib {
         🚀 Deploy & Register Dictionary
     ---------------------------------------*/
     function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("deploy", params(name, bundle, owner));
+        uint pid = registry.startProcess("deploy", param(name, bundle, owner));
         Validate.MUST_NotEmptyName(name);
         Validate.SHOULD_Completed(bundle);
         Validate.MUST_AddressIsNotZero(owner);
@@ -49,7 +49,7 @@ library DictionaryRegistryLib {
         🗳️ Register Dictionary
     -----------------------------*/
     function register(DictionaryRegistry storage registry, string memory name, Dictionary memory _dictionary) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("register", params(name, _dictionary));
+        uint pid = registry.startProcess("register", param(name, _dictionary));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Completed(_dictionary);
         Validate.MUST_NotRegistered(registry, name);
@@ -62,7 +62,7 @@ library DictionaryRegistryLib {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("find", params(name));
+        uint pid = registry.startProcess("find", param(name));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Registered(registry, name);
         dictionary = registry.dictionaries[name];
