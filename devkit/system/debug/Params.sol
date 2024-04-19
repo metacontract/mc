@@ -8,7 +8,7 @@ import {Formatter} from "devkit/types/Formatter.sol";
 
 
 library Params {
-    string constant HEADER = " with params: ";
+    string constant HEADER = "params: ";
 
     // 1 param
     function append(string memory str) internal returns(string memory) {

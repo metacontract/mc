@@ -42,7 +42,7 @@ library Formatter {
     ===================*/
     function toLocation(Process memory process) internal returns(string memory) {
         string memory at = "\t    at ";
-        return at.append(process.libName.dot().append(process.funcName.parens())).dim().br();
+        return at.append(process.libName.dot().append(process.funcName.addParens())).dim().br();
     }
 
     function formatPid(uint pid) internal returns(string memory) {
@@ -58,7 +58,7 @@ library Formatter {
         for (uint i; i <= process.nest; ++i) {
             nest = string.concat(nest, "> ");
         }
-        return header.append(nest.dim()).append(process.libName.dot().append(process.funcName.parens())).append(process.params.italic());
+        return header.append(nest.dim()).append(process.libName.dot().append(process.funcName)).append(process.params.parens().dim().italic());
     }
 
     function toFinish(Process memory process, uint pid) internal returns(string memory) {
@@ -67,7 +67,7 @@ library Formatter {
         for (uint i; i <= process.nest; ++i) {
             nest = string.concat(nest, "< ");
         }
-        return header.append(nest).append(process.libName.dot().append(process.funcName.parens())).dim();
+        return header.append(nest).append(process.libName.dot().append(process.funcName.addParens())).dim();
     }
 
     function formatLog(string memory title, string memory message) internal returns(string memory) {
@@ -106,8 +106,11 @@ library Formatter {
     function dot(string memory str) internal returns(string memory) {
         return string.concat(str, ".");
     }
-    function parens(string memory str) internal returns(string memory) {
+    function addParens(string memory str) internal returns(string memory) {
         return string.concat(str, "()");
+    }
+    function parens(string memory str) internal returns(string memory) {
+        return string.concat("(", str, ")");
     }
     function brackL(string memory str) internal returns(string memory) {
         return string.concat("[", str);
