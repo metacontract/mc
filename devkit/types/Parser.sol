@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Logger} from "devkit/system/debug/Logger.sol";
+import {Logger} from "devkit/system/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 

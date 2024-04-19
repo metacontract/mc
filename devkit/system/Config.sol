@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
-import {Logger} from "devkit/system/debug/Logger.sol";
+import {Logger} from "devkit/system/Logger.sol";
 import {Validate} from "devkit/system/Validate.sol";
 
 import {stdToml} from "forge-std/StdToml.sol";

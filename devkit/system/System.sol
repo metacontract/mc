@@ -2,8 +2,8 @@
 pragma solidity ^0.8.24;
 
 import {ConfigState} from "devkit/system/Config.sol";
-import {Trace} from "devkit/system/debug/Tracer.sol";
-import {Logger} from "devkit/system/debug/Logger.sol";
+import {Trace} from "devkit/system/Tracer.sol";
+import {Logger} from "devkit/system/Logger.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 
 

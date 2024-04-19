@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer} from "devkit/system/debug/Tracer.sol";
+import {Tracer} from "devkit/system/Tracer.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 

@@ -17,7 +17,7 @@ import {MCContextLib} from "devkit/utils/global/MCContextLib.sol";
 import {MCTestLib} from "devkit/utils/global/MCTestLib.sol";
 
 // System
-import {Tracer} from "devkit/system/debug/Tracer.sol";
+import {Tracer} from "devkit/system/Tracer.sol";
 
 
 /********************************

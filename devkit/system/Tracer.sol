@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+// System
 import {System} from "devkit/system/System.sol";
-import {Logger} from "devkit/system/debug/Logger.sol";
+import {Logger} from "devkit/system/Logger.sol";
+// Types
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
 import {Formatter} from "devkit/types/Formatter.sol";
@@ -62,6 +64,13 @@ library Tracer {
         Process memory process = trace.processStack[pid];
         Logger.logInfo(process.toFinish(pid));
         trace.currentNest--;
+    }
+
+    function traceErrorLocations() internal returns(string memory locations) {
+        Process[] memory processStack = System.Tracer().processStack;
+        for (uint i = processStack.length; i > 0; --i) {
+            locations = locations.append(processStack[i-1].toLocation());
+        }
     }
 
 

@@ -3,21 +3,16 @@ pragma solidity ^0.8.24;
 
 import {ERR} from "devkit/system/message/ERR.sol";
 // Utils
-import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
-// Debug
-import {Process} from "devkit/system/debug/Tracer.sol";
-import {Formatter} from "devkit/types/Formatter.sol";
+import {console2} from "devkit/utils/ForgeHelper.sol";
+// System
 import {System} from "devkit/system/System.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
+import {Tracer} from "devkit/system/Tracer.sol";
 
 
 /**===============
     📊 Logger
 =================*/
 library Logger {
-    using StdStyle for string;
-    using Formatter for string;
-    using Inspector for string;
 
     enum Level {
         Critical,   // Display critical error messages only
@@ -28,11 +23,11 @@ library Logger {
     }
 
     // Message Header
-    string constant CRITICAL = "\u001b[91m[\xF0\x9F\x9A\xA8CRITICAL]\u001b[0m ";
+    string constant CRITICAL = "\u001b[91m[\xF0\x9F\x9A\xA8CRITICAL]\u001b[0m";
     string constant ERROR = "\u001b[91m[\u2716 ERROR]\u001b[0m\n\t";
-    string constant WARN = "\u001b[93m[WARNING]\u001b[0m ";
-    string constant INFO = "\u001b[2m[INFO]\u001b[0m ";
-    string constant DEBUG = "\u001b[2m[DEBUG]\u001b[0m ";
+    string constant WARN = "\u001b[93m[WARNING]\u001b[0m";
+    string constant INFO = "\u001b[2m[INFO]\u001b[0m";
+    string constant DEBUG = "\u001b[2m[DEBUG]\u001b[0m";
 
 
     /**------------------
@@ -42,14 +37,14 @@ library Logger {
         console2.log(message);
     }
     function log(string memory header, string memory message) internal {
-        log(header.append(message));
+        console2.log(header, message);
     }
 
     function logException(string memory message) internal {
         if (currentLevel() == Level.Critical) log(CRITICAL, message);
         if (currentLevel() >= Level.Error) {
             log(ERROR, message);
-            log(logLocations());
+            log(Tracer.traceErrorLocations());
         }
     }
     function logWarn(string memory message) internal {
@@ -60,17 +55,6 @@ library Logger {
     }
     function logDebug(string memory message) internal {
         if (shouldLog(Level.Debug)) log(DEBUG, message);
-    }
-
-
-    /**-----------------------
-        🎨 Log Formatting
-    -------------------------*/
-    function logLocations() internal returns(string memory locations) {
-        Process[] memory processStack = System.Tracer().processStack;
-        for (uint i = processStack.length; i > 0; --i) {
-            locations = locations.append(processStack[i-1].toLocation());
-        }
     }
 
 

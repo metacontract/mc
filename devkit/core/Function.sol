@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer, param} from "devkit/system/debug/Tracer.sol";
+import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {Formatter} from "devkit/types/Formatter.sol";

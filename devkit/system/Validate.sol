@@ -4,7 +4,7 @@ import {vm, VmSafe, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {ERR} from "devkit/system/message/ERR.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for string;
-import {Logger} from "devkit/system/debug/Logger.sol";
+import {Logger} from "devkit/system/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
     using Inspector for bytes4;
@@ -12,7 +12,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
     using Inspector for uint256;
 // Utils
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
+import {TypeStatus} from "devkit/types/TypeGuard.sol";
 import {System} from "devkit/system/System.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
