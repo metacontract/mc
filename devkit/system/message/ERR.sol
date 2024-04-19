@@ -3,7 +3,6 @@ pragma solidity ^0.8.24;
 
 /// @title Error Message
 library ERR {
-    string constant HEADER = "\u001b[91m[\u2716 ERROR]\u001b[0m\n\t";
     string constant FIND_NAME_OVER_RANGE = "Default names are automatically set up to 5. Please manually assign names beyond that.";
     string constant EMPTY_STR = "Empty String";
     string constant EMPTY_B4 = "Empty Bytes4";
