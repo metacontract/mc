@@ -14,7 +14,6 @@ import {MCTestBase} from "./MCBase.sol";
 abstract contract MCTest is MCTestBase {
     constructor() {
         System.Config().load();
-        if (System.Config().DEBUG.MODE) mc.startDebug();
         if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
     }
 }
@@ -48,6 +47,5 @@ abstract contract MCStateFuzzingTest is MCTestBase {
 abstract contract MCDevKitTest is MCTestBase {
     constructor() {
         System.Config().load();
-        mc.stopLog();
     }
 }

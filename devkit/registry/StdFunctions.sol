@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
+import {ProcessManager} from "devkit/system/debug/Process.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
@@ -23,7 +23,7 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 //////////////////////////////////////////////////////
 //  🏰 Standard Functions    /////////////////////////
     using StdFunctionsLib for StdFunctions global;
-    using ProcessLib for StdFunctions global;
+    using ProcessManager for StdFunctions global;
     using TypeGuard for StdFunctions global;
 //////////////////////////////////////////////////////
 struct StdFunctions {

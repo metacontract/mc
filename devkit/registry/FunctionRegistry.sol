@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
+import {ProcessManager} from "devkit/system/debug/Process.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
@@ -16,7 +16,7 @@ import {Function} from "devkit/core/Function.sol";
 //////////////////////////////////////////////////////////////
 //  📗 Functions Registry    /////////////////////////////////
     using FunctionRegistryLib for FunctionRegistry global;
-    using ProcessLib for FunctionRegistry global;
+    using ProcessManager for FunctionRegistry global;
 //////////////////////////////////////////////////////////////
 struct FunctionRegistry {
     mapping(string name => Function) functions;

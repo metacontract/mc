@@ -10,7 +10,7 @@ import {Clone} from "mc-std/functions/Clone.sol";
 contract StdTest is MCDevKitTest {
     using DeployLib for MCDevKit;
     function setUp() public  {
-mc.startDebug();
+// mc.startDebug();
     }
 
     function test_Success_DeployStdFunctions() public startPrankWith("TEST_DEPLOYER") {

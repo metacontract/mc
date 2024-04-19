@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib, params} from "devkit/system/debug/Process.sol";
+import {ProcessManager, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -22,7 +22,7 @@ import {Function} from "devkit/core/Function.sol";
 ///////////////////////////////////////////
 //  🏠 Proxy   ////////////////////////////
     using ProxyLib for Proxy global;
-    using ProcessLib for Proxy global;
+    using ProcessManager for Proxy global;
     using Inspector for Proxy global;
     using TypeGuard for Proxy global;
 ///////////////////////////////////////////

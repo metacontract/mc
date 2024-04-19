@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessLib} from "devkit/system/debug/Process.sol";
+import {ProcessManager, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -19,7 +19,7 @@ import {Function} from "devkit/core/Function.sol";
 //////////////////////////////////////////////////////////
 //  📙 Bundle Registry    ////////////////////////////////
     using BundleRegistryLib for BundleRegistry global;
-    using ProcessLib for BundleRegistry global;
+    using ProcessManager for BundleRegistry global;
     using Inspector for BundleRegistry global;
 //////////////////////////////////////////////////////////
 struct BundleRegistry {
@@ -27,7 +27,7 @@ struct BundleRegistry {
     Current current;
 }
 library BundleRegistryLib {
-    using ProcessLib for string;
+    using ProcessManager for string;
     using NameGenerator for mapping(string => Bundle);
 
     /**---------------------
