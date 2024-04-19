@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -19,7 +19,7 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 ////////////////////////////////////////////////////////
 //  📕 Proxy Registry    ///////////////////////////////
     using ProxyRegistryLib for ProxyRegistry global;
-    using ProcessManager for ProxyRegistry global;
+    using Tracer for ProxyRegistry global;
     using Inspector for ProxyRegistry global;
 ////////////////////////////////////////////////////////
 struct ProxyRegistry {

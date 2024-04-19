@@ -6,7 +6,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {Validate} from "devkit/system/Validate.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {param} from "devkit/system/debug/Process.sol";
+import {param} from "devkit/system/debug/Tracer.sol";
 // Core
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";

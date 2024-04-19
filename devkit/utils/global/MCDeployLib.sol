@@ -6,7 +6,7 @@ import {System} from "devkit/system/System.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 // Utils
-import {param} from "devkit/system/debug/Process.sol";
+import {param} from "devkit/system/debug/Tracer.sol";
 // Core
 //  dictionary
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";

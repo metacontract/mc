@@ -17,7 +17,7 @@ import {MCContextLib} from "devkit/utils/global/MCContextLib.sol";
 import {MCTestLib} from "devkit/utils/global/MCTestLib.sol";
 
 // System
-import {ProcessManager} from "devkit/system/debug/Process.sol";
+import {Tracer} from "devkit/system/debug/Tracer.sol";
 
 
 /********************************
@@ -36,4 +36,4 @@ using MCDeployLib for MCDevKit global;
 using MCFinderLib for MCDevKit global;
 using MCContextLib for MCDevKit global;
 using MCTestLib for MCDevKit global;
-using ProcessManager for MCDevKit global;
+using Tracer for MCDevKit global;

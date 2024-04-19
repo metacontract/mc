@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -25,7 +25,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
 //////////////////////////////////////////////////
 //  📚 Dictionary   //////////////////////////////
     using DictionaryLib for Dictionary global;
-    using ProcessManager for Dictionary global;
+    using Tracer for Dictionary global;
     using Inspector for Dictionary global;
     using TypeGuard for Dictionary global;
 //////////////////////////////////////////////////

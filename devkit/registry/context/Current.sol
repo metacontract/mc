@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
 
@@ -11,7 +11,7 @@ import {Validate} from "devkit/system/Validate.sol";
 ////////////////////////////////////////////
 //  📸 Current Context   ///////////////////
     using CurrentLib for Current global;
-    using ProcessManager for Current global;
+    using Tracer for Current global;
 ////////////////////////////////////////////
 struct Current {
     string name;

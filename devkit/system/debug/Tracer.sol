@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {System} from "devkit/system/System.sol";
-import {Debugger, DebuggerLib} from "devkit/system/debug/Debugger.sol";
 import {Logger} from "devkit/system/debug/Logger.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for bool;
@@ -29,6 +28,11 @@ import {Current} from "devkit/registry/context/Current.sol";
 /**=================
     ⛓️ Process
 ===================*/
+struct Trace {
+    Process[] processStack;
+    uint nextPid;
+    uint currentNest;
+}
 struct Process {
     string libName;
     string funcName;
@@ -36,27 +40,27 @@ struct Process {
     uint nest;
     // bool isFinished; TODO
 }
-library ProcessManager {
+library Tracer {
     /**----------------------------
         📈 Execution Tracking
     ------------------------------*/
     function start(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return 0;
-        Debugger storage debugger = System.Debug();
-        pid = debugger.nextPid;
-        Process memory process = Process(libName, funcName, params, debugger.currentNest);
-        debugger.processStack.push(process);
-        debugger.currentNest++;
+        Trace storage trace = System.Tracer();
+        pid = trace.nextPid;
+        Process memory process = Process(libName, funcName, params, trace.currentNest);
+        trace.processStack.push(process);
+        trace.currentNest++;
         Logger.logInfo(process.toStart(pid));
-        debugger.nextPid++;
+        trace.nextPid++;
     }
 
     function finish(uint pid) internal {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return;
-        Debugger storage debugger = System.Debug();
-        Process memory process = debugger.processStack[pid];
+        Trace storage trace = System.Tracer();
+        Process memory process = trace.processStack[pid];
         Logger.logInfo(process.toFinish(pid));
-        debugger.currentNest--;
+        trace.currentNest--;
     }
 
 

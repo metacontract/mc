@@ -5,7 +5,7 @@ import {ERR} from "devkit/system/message/ERR.sol";
 // Utils
 import {console2, StdStyle, vm} from "devkit/utils/ForgeHelper.sol";
 // Debug
-import {Process} from "devkit/system/debug/Process.sol";
+import {Process} from "devkit/system/debug/Tracer.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 import {System} from "devkit/system/System.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
@@ -67,7 +67,7 @@ library Logger {
         🎨 Log Formatting
     -------------------------*/
     function logLocations() internal returns(string memory locations) {
-        Process[] memory processStack = System.Debug().processStack;
+        Process[] memory processStack = System.Tracer().processStack;
         for (uint i = processStack.length; i > 0; --i) {
             locations = locations.append(processStack[i-1].toLocation());
         }

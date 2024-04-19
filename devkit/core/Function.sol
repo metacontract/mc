@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
@@ -16,7 +16,7 @@ import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 //////////////////////////////////////////////
 //  🧩 Function   ////////////////////////////
     using FunctionLib for Function global;
-    using ProcessManager for Function global;
+    using Tracer for Function global;
     using Inspector for Function global;
     using TypeGuard for Function global;
     using Formatter for Function global;

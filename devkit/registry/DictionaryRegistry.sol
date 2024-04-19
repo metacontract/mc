@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -19,7 +19,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
 //////////////////////////////////////////////////////////////////
 //  📘 Dictionary Registry    ////////////////////////////////////
     using DictionaryRegistryLib for DictionaryRegistry global;
-    using ProcessManager for DictionaryRegistry global;
+    using Tracer for DictionaryRegistry global;
     using Inspector for DictionaryRegistry global;
 //////////////////////////////////////////////////////////////////
 struct DictionaryRegistry {

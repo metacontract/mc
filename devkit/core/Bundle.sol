@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager, param} from "devkit/system/debug/Process.sol";
+import {Tracer, param} from "devkit/system/debug/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
@@ -16,7 +16,7 @@ import {Function} from "devkit/core/Function.sol";
 ///////////////////////////////////////////
 //  🗂️ Bundle   ///////////////////////////
     using BundleLib for Bundle global;
-    using ProcessManager for Bundle global;
+    using Tracer for Bundle global;
     using Inspector for Bundle global;
     using TypeGuard for Bundle global;
 ///////////////////////////////////////////

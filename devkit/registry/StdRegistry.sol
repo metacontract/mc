@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager} from "devkit/system/debug/Process.sol";
+import {Tracer} from "devkit/system/debug/Tracer.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
 import {Validate} from "devkit/system/Validate.sol";
@@ -24,7 +24,7 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 ////////////////////////////////////////////////////
 //  🏛 Standard Registry    ////////////////////////
     using StdRegistryLib for StdRegistry global;
-    using ProcessManager for StdRegistry global;
+    using Tracer for StdRegistry global;
     using TypeGuard for StdRegistry global;
 ////////////////////////////////////////////////////
 struct StdRegistry {
