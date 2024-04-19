@@ -28,6 +28,7 @@ import {Current} from "devkit/registry/context/Current.sol";
 /**=================
     ⛓️ Process
 ===================*/
+/// @custom:storage-location erc7201:mc.devkit.tracer
 struct Trace {
     Process[] processStack;
     uint nextPid;

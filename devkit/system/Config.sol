@@ -18,6 +18,7 @@ using ConfigLib for ConfigState global;
 /**===============\
 |   📝 Config     |
 \================*/
+/// @custom:storage-location erc7201:mc.devkit.config
 struct ConfigState {
     SetupConfig SETUP;
     DebugConfig DEBUG;
