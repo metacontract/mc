@@ -21,17 +21,15 @@ using ConfigLib for ConfigState global;
 /// @custom:storage-location erc7201:mc.devkit.config
 struct ConfigState {
     SetupConfig SETUP;
-    DebugConfig DEBUG;
+    SystemConfig SYSTEM;
     NamingConfig DEFAULT_NAME;
-    ScanRange SCAN_RANGE;
 }
     struct SetupConfig {
         bool STD_FUNCS;
     }
-    struct DebugConfig {
-        bool MODE;
-        bool RECORD_EXECUTION_PROCESS;
-        Logger.Level DEFAULT_LOG_LEVEL;
+    struct SystemConfig {
+        Logger.Level LOG_LEVEL;
+        uint SCAN_RANGE;
     }
     struct NamingConfig {
         string DICTIONARY;
@@ -42,18 +40,16 @@ struct ConfigState {
         string BUNDLE;
         string FUNCTION;
     }
-    struct ScanRange { uint256 END; }
 
 library ConfigLib {
     function load(ConfigState storage config) internal {
         string memory toml = vm.readFile(configFile());
-        // Setup Config
+        // Setup
         config.SETUP.STD_FUNCS = toml.readBool(".setup.STD_FUNCS");
-        // Debug Config
-        config.DEBUG.MODE = toml.readBool(".debug.MODE");
-        config.DEBUG.RECORD_EXECUTION_PROCESS = toml.readBool(".debug.RECORD_EXECUTION_PROCESS");
-        config.DEBUG.DEFAULT_LOG_LEVEL = toml.readString(".debug.DEFAULT_LOG_LEVEL").toLogLevel();
-        // Naming Config
+        // System
+        config.SYSTEM.LOG_LEVEL = toml.readString(".system.LOG_LEVEL").toLogLevel();
+        config.SYSTEM.SCAN_RANGE = toml.readUint(".system.SCAN_RANGE");
+        // Naming
         config.DEFAULT_NAME.DICTIONARY = toml.readString(".naming.DEFAULT_DICTIONARY");
         config.DEFAULT_NAME.DICTIONARY_DUPLICATED = toml.readString(".naming.DEFAULT_DICTIONARY_DUPLICATED");
         config.DEFAULT_NAME.DICTIONARY_MOCK = toml.readString(".naming.DEFAULT_DICTIONARY_MOCK");
@@ -61,8 +57,6 @@ library ConfigLib {
         config.DEFAULT_NAME.PROXY_MOCK = toml.readString(".naming.DEFAULT_PROXY_MOCK");
         config.DEFAULT_NAME.BUNDLE = toml.readString(".naming.DEFAULT_BUNDLE");
         config.DEFAULT_NAME.FUNCTION = toml.readString(".naming.DEFAULT_FUNCTION");
-        // Scan Range
-        config.SCAN_RANGE.END = toml.readUint(".scan_range.END");
     }
 
     function configFile() internal returns(string memory) {

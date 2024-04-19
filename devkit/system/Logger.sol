@@ -66,12 +66,16 @@ library Logger {
 
     // Check Current Log Level
     function currentLevel() internal view returns(Level) {
-        return System.Config().DEBUG.DEFAULT_LOG_LEVEL;
+        return System.Config().SYSTEM.LOG_LEVEL;
     }
 
-    function shouldLog(Level level) internal view returns (bool) {
+    function shouldLog(Level level) internal view returns(bool) {
         Level currentLevel = currentLevel();
         return level <= currentLevel;
+    }
+
+    function isDisable() internal returns(bool) {
+        return currentLevel() == Level.Critical;
     }
 
 }

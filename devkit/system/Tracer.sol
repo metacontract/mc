@@ -41,17 +41,17 @@ struct Process {
     string funcName;
     string params;
     uint nest;
-    // bool isFinished; TODO
+    bool isFinished;
 }
 library Tracer {
     /**----------------------------
         📈 Execution Tracking
     ------------------------------*/
     function start(string memory libName, string memory funcName, string memory params) internal returns(uint pid) {
-        if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return 0;
+        if (Logger.isDisable()) return 0;
         Trace storage trace = System.Tracer();
         pid = trace.nextPid;
-        Process memory process = Process(libName, funcName, params, trace.currentNest);
+        Process memory process = Process(libName, funcName, params, trace.currentNest, false);
         trace.processStack.push(process);
         trace.currentNest++;
         Logger.logInfo(process.toStart(pid));
@@ -59,9 +59,10 @@ library Tracer {
     }
 
     function finish(uint pid) internal {
-        if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return;
+        if (Logger.isDisable()) return;
         Trace storage trace = System.Tracer();
-        Process memory process = trace.processStack[pid];
+        Process storage process = trace.processStack[pid];
+        process.isFinished = true;
         Logger.logInfo(process.toFinish(pid));
         trace.currentNest--;
     }
@@ -69,7 +70,9 @@ library Tracer {
     function traceErrorLocations() internal returns(string memory locations) {
         Process[] memory processStack = System.Tracer().processStack;
         for (uint i = processStack.length; i > 0; --i) {
-            locations = locations.append(processStack[i-1].toLocation());
+            Process memory process = processStack[i-1];
+            if (process.isFinished) continue;
+            locations = locations.append(process.toLocation());
         }
     }
 
