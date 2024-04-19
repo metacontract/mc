@@ -46,8 +46,8 @@ library Logger {
     }
 
     function logException(string memory message) internal {
-        if (mode() == Level.Critical) log(CRITICAL, message);
-        if (mode() >= Level.Error) {
+        if (currentLevel() == Level.Critical) log(CRITICAL, message);
+        if (currentLevel() >= Level.Error) {
             log(ERROR, message);
             log(logLocations());
         }
@@ -80,14 +80,14 @@ library Logger {
     function exportTo(string memory fileName) internal {}
 
 
-    // Check log mode
-    function mode() internal view returns(Level) {
+    // Check Current Log Level
+    function currentLevel() internal view returns(Level) {
         return System.Config().DEBUG.DEFAULT_LOG_LEVEL;
     }
 
     function shouldLog(Level level) internal view returns (bool) {
-        Level mode = mode();
-        return level <= mode;
+        Level currentLevel = currentLevel();
+        return level <= currentLevel;
     }
 
 }
