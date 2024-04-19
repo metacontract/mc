@@ -63,9 +63,9 @@ library Logger {
         🎨 Log Formatting
     -------------------------*/
     function logLocations() internal returns(string memory locations) {
-        Process[] memory processes = System.Debug().processes;
-        for (uint i = processes.length; i > 0; --i) {
-            locations = locations.append(processes[i-1].toLocation());
+        Process[] memory processStack = System.Debug().processStack;
+        for (uint i = processStack.length; i > 0; --i) {
+            locations = locations.append(processStack[i-1].toLocation());
         }
     }
 

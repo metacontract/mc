@@ -16,9 +16,9 @@ import {Inspector} from "devkit/types/Inspector.sol";
 \==================*/
 using DebuggerLib for Debugger global;
 struct Debugger {
-    // Logger.LogLevel logLevel;
-    Process[] processes;
+    Process[] processStack;
     uint nextPid;
+    uint currentNest;
 }
 library DebuggerLib {
 

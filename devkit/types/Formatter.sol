@@ -49,17 +49,25 @@ library Formatter {
         string memory PID = "pid:";
         string memory strPid = vm.toString(pid);
         string memory paddedPid = pid < 10 ? string.concat("0", strPid) : strPid;
-        return PID.append(paddedPid).dim().sp();
+        return PID.append(paddedPid).sp();
     }
 
     function toStart(Process memory process, uint pid) internal returns(string memory) {
-        string memory start = "> ";
-        return formatPid(pid).append(start).append(process.libName.dot().append(process.funcName.parens())).append(process.params.italic());
+        string memory header = formatPid(pid);
+        string memory nest;
+        for (uint i; i <= process.nest; ++i) {
+            nest = string.concat(nest, "> ");
+        }
+        return header.append(nest.dim()).append(process.libName.dot().append(process.funcName.parens())).append(process.params.italic());
     }
 
     function toFinish(Process memory process, uint pid) internal returns(string memory) {
-        string memory finish = "< ";
-        return formatPid(pid).append(finish.dim()).append(process.libName.dot().append(process.funcName.parens()).dim());
+        string memory header = formatPid(pid);
+        string memory nest;
+        for (uint i; i <= process.nest; ++i) {
+            nest = string.concat(nest, "< ");
+        }
+        return header.append(nest).append(process.libName.dot().append(process.funcName.parens())).dim();
     }
 
     function formatLog(string memory title, string memory message) internal returns(string memory) {

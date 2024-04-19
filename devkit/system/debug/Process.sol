@@ -29,6 +29,7 @@ struct Process {
     string libName;
     string funcName;
     string params;
+    uint nest;
 }
 library ProcessLib {
     /**----------------------------
@@ -38,16 +39,19 @@ library ProcessLib {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return 0;
         Debugger storage debugger = System.Debug();
         pid = debugger.nextPid;
-        Process memory process = Process(libName, funcName, params);
-        debugger.processes.push(process);
+        Process memory process = Process(libName, funcName, params, debugger.currentNest);
+        debugger.processStack.push(process);
+        debugger.currentNest++;
         Logger.logInfo(process.toStart(pid));
         debugger.nextPid++;
     }
 
     function finishProcess(uint pid) internal {
         if (System.Config().DEBUG.RECORD_EXECUTION_PROCESS.isFalse()) return;
-        Process memory process = System.Debug().processes[pid];
+        Debugger storage debugger = System.Debug();
+        Process memory process = debugger.processStack[pid];
         Logger.logInfo(process.toFinish(pid));
+        debugger.currentNest--;
     }
 
 

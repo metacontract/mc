@@ -39,7 +39,7 @@ library MCDebugLib {
         🔽 Record Start
     ----------------------*/
     function startProcess(MCDevKit storage mc, string memory funcName, string memory params) internal returns(uint) {
-        return ProcessLib.startProcess("MC", funcName, params);
+        return ProcessLib.startProcess("mc", funcName, params);
     }
     function startProcess(MCDevKit storage mc, string memory funcName) internal returns(uint) {
         return startProcess(mc, funcName, "");
