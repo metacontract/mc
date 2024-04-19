@@ -26,27 +26,30 @@ library Formatter {
                         .append("Name: ").append(func.name);
     }
 
-
     /**===============
         🗂️ Bundle
     =================*/
     function toString(Bundle storage bundle) internal returns(string memory message) {
         message = message.append("Facade: ").append(bundle.facade);
-
         Function[] memory _funcs = bundle.functions;
         for (uint i; i < _funcs.length; ++i) {
             message = message.br().append(toString(_funcs[i]));
         }
     }
 
+    /**=================
+        ⛓️ Process
+    ===================*/
     function toLocation(Process memory process) internal returns(string memory) {
         string memory at = "\t    at ";
         return at.append(process.libName.dot().append(process.funcName.parens())).dim().br();
     }
 
-    string constant PID = "pid:";
-    function formatPid(uint pid) internal returns(string memory message) {
-        return message.brackL().append(PID).append(pid).brackR().sp().dim();
+    function formatPid(uint pid) internal returns(string memory) {
+        string memory PID = "pid:";
+        string memory strPid = vm.toString(pid);
+        string memory paddedPid = pid < 10 ? string.concat("0", strPid) : strPid;
+        return PID.append(paddedPid).dim().sp();
     }
 
     function toStart(Process memory process, uint pid) internal returns(string memory) {
