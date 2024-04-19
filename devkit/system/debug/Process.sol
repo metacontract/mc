@@ -277,8 +277,20 @@ function params(address addr, address addr2) returns(string memory) {
 function params(address addr, string memory str) returns(string memory) {
     return addr.toString().comma(str);
 }
+function params(string memory str, Proxy memory proxy) returns(string memory) {
+    return str.comma(proxy.addr);
+}
+function params(string memory str, Dictionary memory dictionary) returns(string memory) {
+    return str.comma(dictionary.addr);
+}
+function params(string memory str, Dictionary memory dictionary, bytes memory b) returns(string memory) {
+    return str.comma(dictionary.addr).comma(string(b));
+}
 function params(string memory str, bytes4 b4, address addr) returns(string memory) {
     return str.comma(b4).comma(addr);
+}
+function params(string memory str, Bundle memory bundle, address addr) returns(string memory) {
+    return str.comma(bundle.name).comma(addr);
 }
 function params(Dictionary memory dict1, Dictionary memory dict2) returns(string memory) {
     return params(dict1.addr, dict2.addr);

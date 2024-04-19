@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager} from "devkit/system/debug/Process.sol";
+import {ProcessManager, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -32,57 +32,63 @@ library DictionaryRegistryLib {
     /**-------------------------------------
         🚀 Deploy & Register Dictionary
     ---------------------------------------*/
-    function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage) {
-        uint pid = registry.startProcess("deploy");
+    function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("deploy", params(name, bundle, owner));
         Validate.MUST_NotEmptyName(name);
         Validate.SHOULD_Completed(bundle);
         Validate.MUST_AddressIsNotZero(owner);
-        Dictionary memory dictionary = DictionaryLib.deploy(owner)
-                                                    .set(bundle)
-                                                    .upgradeFacade(bundle.facade);
-        registry.register(name, dictionary);
-        return registry.findCurrent().finishProcessInStorage(pid);
+        Dictionary memory _dictionary = DictionaryLib
+                                            .deploy(owner)
+                                            .set(bundle)
+                                            .upgradeFacade(bundle.facade);
+        dictionary = registry.register(name, _dictionary);
+        registry.finishProcess(pid);
     }
 
     /**---------------------------
         🗳️ Register Dictionary
     -----------------------------*/
-    function register(DictionaryRegistry storage registry, string memory name, Dictionary memory dictionary) internal returns(Dictionary storage) {
-        uint pid = registry.startProcess("register");
+    function register(DictionaryRegistry storage registry, string memory name, Dictionary memory _dictionary) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("register", params(name, _dictionary));
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Completed(dictionary);
+        Validate.MUST_Completed(_dictionary);
         Validate.MUST_NotRegistered(registry, name);
-        Dictionary storage dictionaryStorage = registry.dictionaries[name] = dictionary;
+        dictionary = registry.dictionaries[name] = _dictionary;
         registry.current.update(name);
-        return dictionaryStorage.finishProcessInStorage(pid);
+        registry.finishProcess(pid);
     }
 
     /**------------------------
         🔍 Find Dictionary
     --------------------------*/
-    function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage) {
-        uint pid = registry.startProcess("find");
+    function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("find", params(name));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Registered(registry, name);
-        Dictionary storage dictionary = registry.dictionaries[name];
+        dictionary = registry.dictionaries[name];
         Validate.MUST_Completed(dictionary);
-        return dictionary.finishProcessInStorage(pid);
+        registry.finishProcess(pid);
     }
-    function findCurrent(DictionaryRegistry storage registry) internal returns(Dictionary storage) {
+    function findCurrent(DictionaryRegistry storage registry) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
         Validate.MUST_NotEmptyName(name);
-        return registry.find(name).finishProcessInStorage(pid);
+        dictionary = registry.find(name);
+        registry.finishProcess(pid);
     }
 
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(DictionaryRegistry storage registry) internal returns(string memory name) {
-        return registry.dictionaries.genUniqueName();
+        uint pid = registry.startProcess("genUniqueName");
+        name = registry.dictionaries.genUniqueName();
+        registry.finishProcess(pid);
     }
     function genUniqueMockName(DictionaryRegistry storage registry) internal returns(string memory name) {
-        return registry.dictionaries.genUniqueMockName();
+        uint pid = registry.startProcess("genUniqueMockName");
+        name = registry.dictionaries.genUniqueMockName();
+        registry.finishProcess(pid);
     }
 
 }

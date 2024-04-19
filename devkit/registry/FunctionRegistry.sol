@@ -38,19 +38,20 @@ library FunctionRegistryLib {
     /**----------------------
         🔍 Find Function
     ------------------------*/
-    function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage) {
+    function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage func) {
         uint pid = registry.startProcess("find");
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_registered(registry, name);
-        Function storage func = registry.functions[name];
+        func = registry.functions[name];
         Validate.MUST_Completed(func);
-        return func.finishProcess(pid);
+        registry.finishProcess(pid);
     }
-    function findCurrent(FunctionRegistry storage registry) internal returns(Function storage) {
+    function findCurrent(FunctionRegistry storage registry) internal returns(Function storage func) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
         Validate.MUST_NotEmptyName(name);
-        return registry.find(name).finishProcess(pid);
+        func = registry.find(name);
+        registry.finishProcess(pid);
     }
 
 }

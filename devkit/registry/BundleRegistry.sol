@@ -34,7 +34,7 @@ library BundleRegistryLib {
         🌱 Init Bundle
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = registry.startProcess("init");
+        uint pid = registry.startProcess("init", params(name));
         Validate.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
         Validate.MUST_notInitialized(bundle);
@@ -51,30 +51,33 @@ library BundleRegistryLib {
     /**--------------------
         🔍 Find Bundle
     ----------------------*/
-    function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage) {
-        uint pid = registry.startProcess("find");
+    function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage bundle) {
+        uint pid = registry.startProcess("find", params(name));
         Validate.MUST_NotEmptyName(name);
-        Bundle storage bundle = registry.bundles[name];
+        bundle = registry.bundles[name];
         Validate.SHOULD_Completed(bundle);
-        return bundle.finishProcess(pid);
+        registry.finishProcess(pid);
     }
-    function findCurrentName(BundleRegistry storage registry) internal returns(string memory) {
-        uint pid = registry.startProcess("findCurrentName");
-        string memory name = registry.current.name;
-        Validate.MUST_NotEmptyName(name);
-        return name.finishProcess(pid);
-    }
-    function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage) {
+    function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage bundle) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.findCurrentName();
-        return registry.find(name).finishProcess(pid);
+        bundle = registry.find(name);
+        registry.finishProcess(pid);
+    }
+    function findCurrentName(BundleRegistry storage registry) internal returns(string memory name) {
+        uint pid = registry.startProcess("findCurrentName");
+        name = registry.current.name;
+        Validate.MUST_NotEmptyName(name);
+        registry.finishProcess(pid);
     }
 
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(BundleRegistry storage registry) internal returns(string memory name) {
-        return registry.bundles.genUniqueName();
+        uint pid = registry.startProcess("genUniqueName");
+        name = registry.bundles.genUniqueName();
+        registry.finishProcess(pid);
     }
 
 }

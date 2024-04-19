@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 /**---------------------
     Support Methods
 -----------------------*/
-import {ProcessManager} from "devkit/system/debug/Process.sol";
+import {ProcessManager, params} from "devkit/system/debug/Process.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
@@ -32,54 +32,59 @@ library ProxyRegistryLib {
     /**-------------------------------
         🚀 Deploy & Register Proxy
     ---------------------------------*/
-    function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage) {
-        uint pid = registry.startProcess("deploy");
+    function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
+        uint pid = registry.startProcess("deploy", params(name, dictionary, initData));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Completed(dictionary);
-        Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
-        registry.register(name, proxy);
-        return registry.findCurrent().finishProcessInStorage(pid);
+        Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
+        proxy = registry.register(name, _proxy);
+        registry.finishProcess(pid);
     }
 
     /**-----------------------
         🗳️ Register Proxy
     -------------------------*/
-    function register(ProxyRegistry storage registry, string memory name, Proxy memory proxy) internal returns(Proxy storage) {
-        uint pid = registry.startProcess("register");
+    function register(ProxyRegistry storage registry, string memory name, Proxy memory _proxy) internal returns(Proxy storage proxy) {
+        uint pid = registry.startProcess("register", params(name, _proxy));
         Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Completed(proxy);
+        Validate.MUST_Completed(_proxy);
         Validate.MUST_NotRegistered(registry, name);
-        Proxy storage proxyStorage = registry.proxies[name] = proxy;
+        proxy = registry.proxies[name] = _proxy;
         registry.current.update(name);
-        return proxyStorage.finishProcessInStorage(pid);
+        registry.finishProcess(pid);
     }
 
     /**-------------------
         🔍 Find Proxy
     ---------------------*/
-    function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage) {
-        uint pid = registry.startProcess("find");
+    function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage proxy) {
+        uint pid = registry.startProcess("find", params(name));
         Validate.MUST_NotEmptyName(name);
         Validate.MUST_Registered(registry, name);
-        Proxy storage proxy = registry.proxies[name];
+        proxy = registry.proxies[name];
         Validate.MUST_Completed(proxy);
-        return proxy.finishProcessInStorage(pid);
+        registry.finishProcess(pid);
     }
-    function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage) {
+    function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
         Validate.MUST_NotEmptyName(name);
-        return registry.find(name).finishProcessInStorage(pid);
+        proxy = registry.find(name);
+        registry.finishProcess(pid);
     }
 
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(ProxyRegistry storage registry) internal returns(string memory name) {
-        return registry.proxies.genUniqueName();
+        uint pid = registry.startProcess("genUniqueName");
+        name = registry.proxies.genUniqueName();
+        registry.finishProcess(pid);
     }
     function genUniqueMockName(ProxyRegistry storage registry) internal returns(string memory name) {
-        return registry.proxies.genUniqueMockName();
+        uint pid = registry.startProcess("genUniqueMockName");
+        name = registry.proxies.genUniqueMockName();
+        registry.finishProcess(pid);
     }
 
 }
