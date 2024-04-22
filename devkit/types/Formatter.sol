@@ -71,8 +71,8 @@ library Formatter {
         return header.append(nest).append(process.libName.dot().append(process.funcName.addParens())).dim();
     }
 
-    function formatLog(string memory title, string memory message) internal returns(string memory) {
-        return title.sp().append(message);
+    function toMessage(string memory head, string memory body) internal returns(string memory) {
+        return head.sp().append(body);
     }
 
     /**===================

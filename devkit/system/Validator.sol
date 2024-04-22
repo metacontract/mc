@@ -37,11 +37,11 @@ library Validator {
     Type constant SHOULD = Type.SHOULD;
     Type constant COMPLETION = Type.COMPLETION;
 
-    function validate(Type T, bool condition, string memory title, string memory message) internal returns(bool) {
+    function validate(Type T, bool condition, string memory messageHead, string memory messageBody) internal returns(bool) {
         if (condition) return true;
-        if (T == COMPLETION) Logger.logDebug(Formatter.formatLog(title, message));
-        if (T == SHOULD) Logger.logWarn(Formatter.formatLog(title, message));
-        if (T == MUST) System.Exit(title, message);
+        if (T == COMPLETION) Logger.logDebug(Formatter.toMessage(messageHead, messageBody));
+        if (T == SHOULD) Logger.logWarn(Formatter.toMessage(messageHead, messageBody));
+        if (T == MUST) System.Exit(messageHead, messageBody);
     }
 
     // Validate without broadcast

@@ -6,6 +6,7 @@ import {console2} from "devkit/utils/ForgeHelper.sol";
 // System
 import {System} from "devkit/system/System.sol";
 import {Tracer} from "devkit/system/Tracer.sol";
+import {Formatter} from "devkit/types/Formatter.sol";
 
 
 /**===============
@@ -39,12 +40,16 @@ library Logger {
         console2.log(header, message);
     }
 
-    function logException(string memory message) internal {
-        if (currentLevel() == Level.Critical) log(CRITICAL, message);
-        if (currentLevel() >= Level.Error) {
-            log(ERROR, message);
-            log(Tracer.traceErrorLocations());
-        }
+    function logException(string memory messageHead, string memory messageBody) internal {
+        if (currentLevel() == Level.Critical) logCritical(messageHead);
+        if (currentLevel() >= Level.Error) logError(Formatter.toMessage(messageHead, messageBody));
+    }
+    function logCritical(string memory messageHead) internal {
+        log(CRITICAL, messageHead);
+    }
+    function logError(string memory message) internal {
+        log(ERROR, message);
+        log(Tracer.traceErrorLocations());
     }
     function logWarn(string memory message) internal {
         if (shouldLog(Level.Warn)) log(WARN, message);

@@ -18,9 +18,9 @@ library System {
         assembly { ref.slot := 0xa49160886909e5e0f01c27589d50ba63eab65b778730b187d2804aa2e50cc900 }
     }
 
-    function Exit(string memory errorTitle, string memory errorMessage) internal {
-        Logger.logException(Formatter.formatLog(errorTitle, errorMessage));
-        revert(errorTitle);
+    function Exit(string memory errorHead, string memory errorDetail) internal {
+        Logger.logException(errorHead, errorDetail);
+        revert(errorHead);
     }
 
 }
