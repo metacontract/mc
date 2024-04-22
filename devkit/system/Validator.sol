@@ -37,7 +37,7 @@ library Validator {
     Type constant SHOULD = Type.SHOULD;
     Type constant COMPLETION = Type.COMPLETION;
 
-    function validate(Type T, bool condition, string memory messageHead, string memory messageBody) internal returns(bool) {
+    function validate(Type T, bool condition, string memory messageHead, string memory messageBody) internal returns(bool res) {
         if (condition) return true;
         if (T == COMPLETION) Logger.logDebug(Formatter.toMessage(messageHead, messageBody));
         if (T == SHOULD) Logger.logWarn(Formatter.toMessage(messageHead, messageBody));
