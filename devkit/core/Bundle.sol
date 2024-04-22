@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // Core Type
 import {Function} from "devkit/core/Function.sol";
@@ -32,7 +32,7 @@ library BundleLib {
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignName", param(name));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         bundle.startBuilding();
         bundle.name = name;
         bundle.finishBuilding();
@@ -44,8 +44,8 @@ library BundleLib {
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("pushFunction", param(func));
-        Validate.MUST_Completed(func);
-        Validate.MUST_NotHaveSameFunction(bundle, func);
+        Validator.MUST_Completed(func);
+        Validator.MUST_HaveUniqueSelector(bundle, func);
         bundle.startBuilding();
         bundle.functions.push(func);
         bundle.finishBuilding();
@@ -64,7 +64,7 @@ library BundleLib {
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("assignFacade", param(facade));
-        Validate.MUST_AddressIsContract(facade);
+        Validator.MUST_AddressIsContract(facade);
         bundle.startBuilding();
         bundle.facade = facade;
         bundle.finishBuilding();

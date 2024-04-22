@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 import {System} from "devkit/system/System.sol";
 // Core Types
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -26,7 +26,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (bundle[name].isUninitialized()) return name; // TODO
         }
-        Validate.MUST_FoundInRange();
+        Validator.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Bundle) storage bundle) internal returns(string memory name) {
         return genUniqueName(bundle, System.Config().DEFAULT_NAME.BUNDLE);
@@ -40,7 +40,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (func[name].isUninitialized()) return name;
         }
-        Validate.MUST_FoundInRange();
+        Validator.MUST_FoundInRange();
     }
     function genUniqueName(mapping(string => Function) storage func) internal returns(string memory name) {
         return genUniqueName(func, System.Config().DEFAULT_NAME.FUNCTION);
@@ -54,7 +54,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (dictionary[name].isUninitialized()) return name;
         }
-        Validate.MUST_FoundInRange();
+        Validator.MUST_FoundInRange();
     }
     /*----- Dictionary -----*/
     function genUniqueName(mapping(string => Dictionary) storage dictionary) internal returns(string memory name) {
@@ -78,7 +78,7 @@ library NameGenerator {
             name = baseName.toSequential(i);
             if (proxy[name].isUninitialized()) return name;
         }
-        Validate.MUST_FoundInRange();
+        Validator.MUST_FoundInRange();
     }
     /*----- Proxy -----*/
     function genUniqueName(mapping(string => Proxy) storage proxy) internal returns(string memory name) {

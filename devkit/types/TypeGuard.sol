@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Inspector} from "devkit/types/Inspector.sol";
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -27,19 +27,19 @@ library TypeGuard {
     ====================*/
     function startBuilding(Function storage func) internal returns(Function storage) {
         uint pid = func.startProcess("startBuilding");
-        Validate.MUST_NotLocked(func);
+        Validator.MUST_NotLocked(func);
         func.status = TypeStatus.Building;
         return func.finishProcess(pid);
     }
     function finishBuilding(Function storage func) internal returns(Function storage) {
         uint pid = func.startProcess("finishBuilding");
-        Validate.MUST_Building(func);
-        if (Validate.Completion(func)) func.status = TypeStatus.Built;
+        Validator.MUST_Building(func);
+        if (Validator.ValidateBuilder(func)) func.status = TypeStatus.Built;
         return func.finishProcess(pid);
     }
     function lock(Function storage func) internal returns(Function storage) {
         uint pid = func.startProcess("lock");
-        Validate.MUST_Built(func);
+        Validator.MUST_Built(func);
         func.status = TypeStatus.Locked;
         return func.finishProcess(pid);
     }
@@ -49,19 +49,19 @@ library TypeGuard {
     ==================*/
     function startBuilding(Bundle storage bundle) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("startBuilding");
-        Validate.MUST_NotLocked(bundle);
+        Validator.MUST_NotLocked(bundle);
         bundle.status = TypeStatus.Building;
         return bundle.finishProcess(pid);
     }
     function finishBuilding(Bundle storage bundle) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("finishBuilding");
-        Validate.MUST_Building(bundle);
-        if (Validate.Completion(bundle)) bundle.status = TypeStatus.Built;
+        Validator.MUST_Building(bundle);
+        if (Validator.ValidateBuilder(bundle)) bundle.status = TypeStatus.Built;
         return bundle.finishProcess(pid);
     }
     function lock(Bundle storage bundle) internal returns(Bundle storage) {
         uint pid = bundle.startProcess("lock");
-        Validate.MUST_Built(bundle.status);
+        Validator.MUST_Built(bundle);
         bundle.status = TypeStatus.Locked;
         return bundle.finishProcess(pid);
     }
@@ -71,19 +71,19 @@ library TypeGuard {
     =================*/
     function startBuilding(Proxy memory proxy) internal returns(Proxy memory) {
         uint pid = proxy.startProcess("startBuilding");
-        Validate.MUST_NotLocked(proxy);
+        Validator.MUST_NotLocked(proxy);
         proxy.status = TypeStatus.Building;
         return proxy.finishProcess(pid);
     }
     function finishBuilding(Proxy memory proxy) internal returns(Proxy memory) {
         uint pid = proxy.startProcess("finishBuilding");
-        Validate.MUST_Building(proxy);
-        if (Validate.Completion(proxy)) proxy.status = TypeStatus.Built;
+        Validator.MUST_Building(proxy);
+        if (Validator.ValidateBuilder(proxy)) proxy.status = TypeStatus.Built;
         return proxy.finishProcess(pid);
     }
     function lock(Proxy storage proxy) internal returns(Proxy storage) {
         uint pid = proxy.startProcess("lock");
-        Validate.MUST_Built(proxy.status);
+        Validator.MUST_Built(proxy);
         proxy.status = TypeStatus.Locked;
         return proxy.finishProcessInStorage(pid);
     }
@@ -93,19 +93,19 @@ library TypeGuard {
     ======================*/
     function startBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("startBuilding");
-        Validate.MUST_NotLocked(dictionary);
+        Validator.MUST_NotLocked(dictionary);
         dictionary.status = TypeStatus.Building;
         return dictionary.finishProcess(pid);
     }
     function finishBuilding(Dictionary memory dictionary) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("finishBuilding");
-        Validate.MUST_Building(dictionary);
-        if (Validate.Completion(dictionary)) dictionary.status = TypeStatus.Built;
+        Validator.MUST_Building(dictionary);
+        if (Validator.ValidateBuilder(dictionary)) dictionary.status = TypeStatus.Built;
         return dictionary.finishProcess(pid);
     }
     function lock(Dictionary storage dictionary) internal returns(Dictionary storage) {
         uint pid = dictionary.startProcess("lock");
-        Validate.MUST_Built(dictionary.status);
+        Validator.MUST_Built(dictionary);
         dictionary.status = TypeStatus.Locked;
         return dictionary.finishProcessInStorage(pid);
     }
@@ -115,19 +115,19 @@ library TypeGuard {
     ============================*/
     function startBuilding(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("startBuilding");
-        Validate.MUST_NotLocked(registry);
+        Validator.MUST_NotLocked(registry);
         registry.status = TypeStatus.Building;
         return registry.finishProcess(pid);
     }
     function finishBuilding(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("finishBuilding");
-        Validate.MUST_Building(registry);
-        if (Validate.Completion(registry)) registry.status = TypeStatus.Built;
+        Validator.MUST_Building(registry);
+        if (Validator.ValidateBuilder(registry)) registry.status = TypeStatus.Built;
         return registry.finishProcess(pid);
     }
     function lock(StdRegistry storage registry) internal returns(StdRegistry storage) {
         uint pid = registry.startProcess("lock");
-        Validate.MUST_Built(registry.status);
+        Validator.MUST_Built(registry);
         registry.status = TypeStatus.Locked;
         return registry.finishProcess(pid);
     }
@@ -137,19 +137,19 @@ library TypeGuard {
     ============================*/
     function startBuilding(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = std.startProcess("startBuilding");
-        Validate.MUST_NotLocked(std);
+        Validator.MUST_NotLocked(std);
         std.status = TypeStatus.Building;
         return std.finishProcess(pid);
     }
     function finishBuilding(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = std.startProcess("finishBuilding");
-        Validate.MUST_Building(std);
-        if (Validate.Completion(std)) std.status = TypeStatus.Built;
+        Validator.MUST_Building(std);
+        if (Validator.ValidateBuilder(std)) std.status = TypeStatus.Built;
         return std.finishProcess(pid);
     }
     function lock(StdFunctions storage std) internal returns(StdFunctions storage) {
         uint pid = std.startProcess("lock");
-        Validate.MUST_Built(std.status);
+        Validator.MUST_Built(std);
         std.status = TypeStatus.Locked;
         return std.finishProcess(pid);
     }

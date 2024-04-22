@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";
@@ -35,16 +35,16 @@ library BundleRegistryLib {
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
         uint pid = registry.startProcess("init", param(name));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
-        Validate.MUST_notInitialized(bundle);
+        Validator.MUST_NotInitialized(bundle);
         bundle.assignName(name);
         registry.current.update(name);
         return registry.finishProcess(pid);
     }
     function ensureInit(BundleRegistry storage registry) internal returns(BundleRegistry storage) {
         uint pid = registry.startProcess("ensureInit");
-        Validate.SHOULD_ExistCurrentBundle(registry) ? registry : registry.init(registry.genUniqueName());
+        Validator.SHOULD_ExistCurrentBundle(registry) ? registry : registry.init(registry.genUniqueName());
         return registry.finishProcess(pid);
     }
 
@@ -53,9 +53,9 @@ library BundleRegistryLib {
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage bundle) {
         uint pid = registry.startProcess("find", param(name));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         bundle = registry.bundles[name];
-        Validate.SHOULD_Completed(bundle);
+        Validator.SHOULD_Completed(bundle);
         registry.finishProcess(pid);
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage bundle) {
@@ -67,7 +67,7 @@ library BundleRegistryLib {
     function findCurrentName(BundleRegistry storage registry) internal returns(string memory name) {
         uint pid = registry.startProcess("findCurrentName");
         name = registry.current.name;
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         registry.finishProcess(pid);
     }
 

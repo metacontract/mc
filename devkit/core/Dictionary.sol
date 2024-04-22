@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 // Util
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 
@@ -49,7 +49,7 @@ library DictionaryLib {
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory dictionary) {
         uint pid = dictionary.startProcess("deploy", param(owner));
-        Validate.MUST_AddressIsNotZero(owner);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
         dictionary.addr = address(new UCSDictionary(owner));
         dictionary.kind = DictionaryKind.Verifiable;
@@ -62,8 +62,8 @@ library DictionaryLib {
     ------------------------------*/
     function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
         uint pid = toDictionary.startProcess("duplicate", param(toDictionary, fromDictionary));
-        Validate.MUST_Completed(toDictionary);
-        Validate.MUST_Completed(fromDictionary);
+        Validator.MUST_Completed(toDictionary);
+        Validator.MUST_Completed(fromDictionary);
 
         address toAddr = toDictionary.addr;
         address fromAddr = fromDictionary.addr;
@@ -86,9 +86,9 @@ library DictionaryLib {
     -------------------------------*/
     function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("set", param(selector, implementation));
-        Validate.MUST_Completed(dictionary);
-        Validate.MUST_Bytes4NotEmpty(selector);
-        Validate.MUST_AddressIsContract(implementation);
+        Validator.MUST_Completed(dictionary);
+        Validator.MUST_NotEmptySelector(selector);
+        Validator.MUST_AddressIsContract(implementation);
         IDictionary(dictionary.addr).setImplementation({
             functionSelector: selector,
             implementation: implementation
@@ -121,8 +121,8 @@ library DictionaryLib {
     ------------------------*/
     function upgradeFacade(Dictionary memory dictionary, address newFacade) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("upgradeFacade", param(dictionary, newFacade));
-        Validate.MUST_AddressIsContract(newFacade);
-        Validate.MUST_Verifiable(dictionary);
+        Validator.MUST_AddressIsContract(newFacade);
+        Validator.MUST_Verifiable(dictionary);
         IDictionary(dictionary.addr).upgradeFacade(newFacade);
         return dictionary.finishProcess(pid);
     }
@@ -133,7 +133,7 @@ library DictionaryLib {
     function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory dictionary) {
         uint pid = dictionary.startProcess("createMock", param(functions));
         for (uint i; i < functions.length; ++i) {
-            Validate.MUST_Completed(functions[i]);
+            Validator.MUST_Completed(functions[i]);
         }
         dictionary.startBuilding();
         dictionary.addr = address(new DictionaryMock(owner, functions));
@@ -147,7 +147,7 @@ library DictionaryLib {
      */
     function load(address dictionary) internal returns(Dictionary memory _dictionary) {
         uint pid = _dictionary.startProcess("load", param(dictionary));
-        Validate.MUST_AddressIsNotZero(dictionary);
+        Validator.MUST_AddressIsContract(dictionary);
         // TODO Validate
         _dictionary.startBuilding();
         _dictionary.addr = dictionary;

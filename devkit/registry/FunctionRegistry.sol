@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 -----------------------*/
 import {Tracer} from "devkit/system/Tracer.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";
@@ -29,7 +29,7 @@ library FunctionRegistryLib {
     ----------------------------*/
     function register(FunctionRegistry storage registry, string memory name, bytes4 selector, address implementation) internal returns(FunctionRegistry storage) {
         uint pid = registry.startProcess("register");
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         registry.functions[name].assign(name, selector, implementation);
         registry.current.update(name);
         return registry.finishProcess(pid);
@@ -40,16 +40,16 @@ library FunctionRegistryLib {
     ------------------------*/
     function find(FunctionRegistry storage registry, string memory name) internal returns(Function storage func) {
         uint pid = registry.startProcess("find");
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_registered(registry, name);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Registered(registry, name);
         func = registry.functions[name];
-        Validate.MUST_Completed(func);
+        Validator.MUST_Completed(func);
         registry.finishProcess(pid);
     }
     function findCurrent(FunctionRegistry storage registry) internal returns(Function storage func) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         func = registry.find(name);
         registry.finishProcess(pid);
     }

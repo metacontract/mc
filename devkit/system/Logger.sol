@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ERR} from "devkit/system/message/ERR.sol";
 // Utils
 import {console2} from "devkit/utils/ForgeHelper.sol";
 // System

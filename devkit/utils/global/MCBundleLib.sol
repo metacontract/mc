@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 // Utils
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {param} from "devkit/system/Tracer.sol";
@@ -42,9 +42,9 @@ library MCBundleLib {
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("use", param(name, selector, implementation));
         // Register new function
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_NotEmptySelector(selector);
-        Validate.MUST_AddressIsContract(implementation);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptySelector(selector);
+        Validator.MUST_AddressIsContract(implementation);
         mc.functions.register(name, selector, implementation);
         // Push to current bundle
         mc.bundle.ensureInit();

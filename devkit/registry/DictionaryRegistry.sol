@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";
@@ -34,9 +34,9 @@ library DictionaryRegistryLib {
     ---------------------------------------*/
     function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("deploy", param(name, bundle, owner));
-        Validate.MUST_NotEmptyName(name);
-        Validate.SHOULD_Completed(bundle);
-        Validate.MUST_AddressIsNotZero(owner);
+        Validator.MUST_NotEmptyName(name);
+        Validator.SHOULD_Completed(bundle);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary memory _dictionary = DictionaryLib
                                             .deploy(owner)
                                             .set(bundle)
@@ -50,9 +50,9 @@ library DictionaryRegistryLib {
     -----------------------------*/
     function register(DictionaryRegistry storage registry, string memory name, Dictionary memory _dictionary) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("register", param(name, _dictionary));
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Completed(_dictionary);
-        Validate.MUST_NotRegistered(registry, name);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Completed(_dictionary);
+        Validator.MUST_NotRegistered(registry, name);
         dictionary = registry.dictionaries[name] = _dictionary;
         registry.current.update(name);
         registry.finishProcess(pid);
@@ -63,16 +63,16 @@ library DictionaryRegistryLib {
     --------------------------*/
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("find", param(name));
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Registered(registry, name);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Registered(registry, name);
         dictionary = registry.dictionaries[name];
-        Validate.MUST_Completed(dictionary);
+        Validator.MUST_Completed(dictionary);
         registry.finishProcess(pid);
     }
     function findCurrent(DictionaryRegistry storage registry) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         dictionary = registry.find(name);
         registry.finishProcess(pid);
     }

@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 -----------------------*/
 import {Tracer, param} from "devkit/system/Tracer.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 
 ////////////////////////////////////////////
@@ -23,7 +23,7 @@ library CurrentLib {
     ---------------------------------*/
     function update(Current storage current, string memory name) internal {
         uint pid = current.startProcess("update", param(name));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         current.name = name;
         current.finishProcess(pid);
     }

@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
 import {Logger} from "devkit/system/Logger.sol";
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 import {stdToml} from "forge-std/StdToml.sol";
     using stdToml for string;
@@ -62,9 +62,9 @@ library ConfigLib {
     function configFile() internal returns(string memory) {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/mc.toml");
-        if (Validate.SHOULD_FileExists(path)) return path;
+        if (Validator.SHOULD_FileExists(path)) return path;
         path = string.concat(root, "/lib/mc/mc.toml");
-        Validate.MUST_FileExists(path);
+        Validator.MUST_FileExists(path);
         return path;
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeStatus} from "devkit/types/TypeGuard.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
@@ -45,13 +45,13 @@ library Inspector {
     /**===============
         🗂️ Bundle
     =================*/
-    function has(Bundle storage bundle, Function storage func) internal view returns(bool flag) {
+    function hasSameSelector(Bundle storage bundle, Function storage func) internal view returns(bool flag) {
         for (uint i; i < bundle.functions.length; ++i) {
-            if (func.isEqual(bundle.functions[i])) return true;
+            if (func.selector == bundle.functions[i].selector) return true;
         }
     }
-    function hasNot(Bundle storage bundle, Function storage func) internal view returns(bool) {
-        return bundle.has(func).isFalse();
+    function hasNotSameSelector(Bundle storage bundle, Function storage func) internal view returns(bool) {
+        return hasSameSelector(bundle, func).isFalse();
     }
     function isComplete(Bundle storage bundle) internal returns(bool) {
         return bundle.status.isComplete();

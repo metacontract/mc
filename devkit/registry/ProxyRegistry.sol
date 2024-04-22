@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // Context
 import {Current} from "devkit/registry/context/Current.sol";
@@ -34,8 +34,8 @@ library ProxyRegistryLib {
     ---------------------------------*/
     function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("deploy", param(name, dictionary, initData));
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Completed(dictionary);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Completed(dictionary);
         Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
         proxy = registry.register(name, _proxy);
         registry.finishProcess(pid);
@@ -46,9 +46,9 @@ library ProxyRegistryLib {
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy memory _proxy) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("register", param(name, _proxy));
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Completed(_proxy);
-        Validate.MUST_NotRegistered(registry, name);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Completed(_proxy);
+        Validator.MUST_NotRegistered(registry, name);
         proxy = registry.proxies[name] = _proxy;
         registry.current.update(name);
         registry.finishProcess(pid);
@@ -59,16 +59,16 @@ library ProxyRegistryLib {
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("find", param(name));
-        Validate.MUST_NotEmptyName(name);
-        Validate.MUST_Registered(registry, name);
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_Registered(registry, name);
         proxy = registry.proxies[name];
-        Validate.MUST_Completed(proxy);
+        Validator.MUST_Completed(proxy);
         registry.finishProcess(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("findCurrent");
         string memory name = registry.current.name;
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         proxy = registry.find(name);
         registry.finishProcess(pid);
     }

@@ -8,7 +8,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 
 import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for string;
-import {ERR} from "devkit/system/message/ERR.sol";
+import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
@@ -62,7 +62,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
         mc.use(functionName, selector, impl);
 
-        vm.expectRevert("Bundle has same Function"); // TODO
+        vm.expectRevert(HEAD.BUNDLE_CONTAINS_SAME_SELECTOR.toBytes());
         mc.use(functionName, selector, impl);
     }
 

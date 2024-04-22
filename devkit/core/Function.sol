@@ -8,7 +8,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 // Loader
 import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
 
@@ -77,7 +77,7 @@ library FunctionLib {
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
         uint pid = func.startProcess("fetch", param(envKey));
-        Validate.MUST_NotEmptyEnvKey(envKey);
+        Validator.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
         return func.finishProcess(pid);

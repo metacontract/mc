@@ -7,7 +7,7 @@ import {Tracer, param} from "devkit/system/Tracer.sol";
 import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 // External Lib Contract
 import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
@@ -37,7 +37,7 @@ library ProxyLib {
     -----------------------*/
     function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = proxy.startProcess("deploy", param(dictionary, initData));
-        Validate.MUST_Completed(dictionary);
+        Validator.MUST_Completed(dictionary);
         proxy.startBuilding();
         proxy.addr = address(new UCSProxy(dictionary.addr, initData));
         proxy.kind = ProxyKind.Verifiable;
@@ -51,7 +51,7 @@ library ProxyLib {
     function createSimpleMock(Function[] memory functions) internal returns(Proxy memory proxy) {
         uint pid = proxy.startProcess("createSimpleMock", param(functions));
         for (uint i; i < functions.length; ++i) {
-            Validate.MUST_Completed(functions[i]);
+            Validator.MUST_Completed(functions[i]);
         }
         proxy.startBuilding();
         proxy.addr = address(new ProxySimpleMock(functions));

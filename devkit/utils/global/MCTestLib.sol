@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
@@ -52,7 +52,7 @@ library MCTestLib {
     */
     function createProxySimpleMock(MCDevKit storage mc, string memory name, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("createProxySimpleMock", param(name, functions));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Proxy memory proxyMock = ProxyLib.createSimpleMock(functions);
         mc.proxy.register(name, proxyMock);
@@ -86,7 +86,7 @@ library MCTestLib {
     */
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("createMockDictionary", param(name, owner, functions));
-        Validate.MUST_NotEmptyName(name);
+        Validator.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
         mc.dictionary.register(name, dictionaryMock);

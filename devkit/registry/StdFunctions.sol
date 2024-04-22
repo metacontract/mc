@@ -6,7 +6,7 @@ pragma solidity ^0.8.24;
 import {Tracer} from "devkit/system/Tracer.sol";
 import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
 // Validation
-import {Validate} from "devkit/system/Validate.sol";
+import {Validator} from "devkit/system/Validator.sol";
 import {Logger} from "devkit/system/Logger.sol";
 
 // Core Types
