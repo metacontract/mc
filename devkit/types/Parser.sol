@@ -12,7 +12,7 @@ library Parser {
     /**===============
         📊 Logger
     =================*/
-    function toLogLevel(string memory str) internal returns(Logger.Level) {
+    function toLogLevel(string memory str) internal pure returns(Logger.Level) {
         if (str.isEqual("Debug")) return Logger.Level.Debug;
         if (str.isEqual("Info")) return Logger.Level.Info;
         if (str.isEqual("Warn")) return Logger.Level.Warn;

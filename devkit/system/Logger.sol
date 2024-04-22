@@ -33,31 +33,31 @@ library Logger {
     /**------------------
         💬 Logging
     --------------------*/
-    function log(string memory message) internal {
+    function log(string memory message) internal pure {
         console2.log(message);
     }
-    function log(string memory header, string memory message) internal {
+    function log(string memory header, string memory message) internal pure {
         console2.log(header, message);
     }
 
-    function logException(string memory messageHead, string memory messageBody) internal {
+    function logException(string memory messageHead, string memory messageBody) internal view {
         if (currentLevel() == Level.Critical) logCritical(messageHead);
         if (currentLevel() >= Level.Error) logError(Formatter.toMessage(messageHead, messageBody));
     }
-    function logCritical(string memory messageHead) internal {
+    function logCritical(string memory messageHead) internal pure {
         log(CRITICAL, messageHead);
     }
-    function logError(string memory message) internal {
+    function logError(string memory message) internal view {
         log(ERROR, message);
         log(Tracer.traceErrorLocations());
     }
-    function logWarn(string memory message) internal {
+    function logWarn(string memory message) internal view {
         if (shouldLog(Level.Warn)) log(WARN, message);
     }
-    function logInfo(string memory message) internal {
+    function logInfo(string memory message) internal view {
         if (shouldLog(Level.Info)) log(INFO, message);
     }
-    function logDebug(string memory message) internal {
+    function logDebug(string memory message) internal view {
         if (shouldLog(Level.Debug)) log(DEBUG, message);
     }
 
@@ -78,7 +78,7 @@ library Logger {
         return level <= _currentLevel;
     }
 
-    function isDisable() internal returns(bool) {
+    function isDisable() internal view returns(bool) {
         return currentLevel() == Level.Critical;
     }
 

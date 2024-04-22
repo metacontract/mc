@@ -73,7 +73,7 @@ library StdRegistryLib {
     🧩 Std Ops Primitive Utils for Arguments
 *****************************************************/
 library StdFunctionsArgs {
-    function initSetAdminBytes(address admin) internal view returns(bytes memory) {
+    function initSetAdminBytes(address admin) internal pure returns(bytes memory) {
         return abi.encodeCall(InitSetAdmin.initSetAdmin, admin);
     }
 

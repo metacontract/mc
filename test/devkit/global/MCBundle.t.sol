@@ -55,7 +55,6 @@ contract DevKitTest_MCBundle is MCDevKitTest {
     }
 
     function test_use_Revert_WithSameName() public {
-        string memory bundleName = mc.bundle.genUniqueName();
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());

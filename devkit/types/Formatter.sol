@@ -21,7 +21,7 @@ library Formatter {
     /**==================
         🧩 Function
     ====================*/
-    function toString(Function memory func) internal returns(string memory message) {
+    function toString(Function memory func) internal pure returns(string memory message) {
         return message  .append("Impl: ").append(func.implementation).comma()
                         .append("Selector: ").append(func.selector).comma()
                         .append("Name: ").append(func.name);
@@ -30,7 +30,7 @@ library Formatter {
     /**===============
         🗂️ Bundle
     =================*/
-    function toString(Bundle storage bundle) internal returns(string memory message) {
+    function toString(Bundle storage bundle) internal view returns(string memory message) {
         message = message.append("Facade: ").append(bundle.facade);
         Function[] memory _funcs = bundle.functions;
         for (uint i; i < _funcs.length; ++i) {
@@ -41,19 +41,19 @@ library Formatter {
     /**=================
         ⛓️ Process
     ===================*/
-    function toLocation(Process memory process) internal returns(string memory) {
+    function toLocation(Process memory process) internal pure returns(string memory) {
         string memory at = "\t    at ";
         return at.append(process.libName.dot().append(process.funcName.addParens())).dim().br();
     }
 
-    function formatPid(uint pid) internal returns(string memory) {
+    function formatPid(uint pid) internal pure returns(string memory) {
         string memory PID = "pid:";
         string memory strPid = vm.toString(pid);
         string memory paddedPid = pid < 10 ? string.concat("0", strPid) : strPid;
         return PID.append(paddedPid).sp();
     }
 
-    function toStart(Process memory process, uint pid) internal returns(string memory) {
+    function toStart(Process memory process, uint pid) internal pure returns(string memory) {
         string memory header = formatPid(pid);
         string memory nest;
         for (uint i; i <= process.nest; ++i) {
@@ -62,7 +62,7 @@ library Formatter {
         return header.append(nest.dim()).append(process.libName.dot().append(process.funcName)).append(process.params.parens().dim().italic());
     }
 
-    function toFinish(Process memory process, uint pid) internal returns(string memory) {
+    function toFinish(Process memory process, uint pid) internal pure returns(string memory) {
         string memory header = formatPid(pid);
         string memory nest;
         for (uint i; i <= process.nest; ++i) {
@@ -71,7 +71,7 @@ library Formatter {
         return header.append(nest).append(process.libName.dot().append(process.funcName.addParens())).dim();
     }
 
-    function toMessage(string memory head, string memory body) internal returns(string memory) {
+    function toMessage(string memory head, string memory body) internal pure returns(string memory) {
         return head.sp().append(body);
     }
 
@@ -79,57 +79,57 @@ library Formatter {
         🧱 Primitives
     =====================*/
     /// 📝 String
-    function append(string memory str, string memory addition) internal returns(string memory) {
+    function append(string memory str, string memory addition) internal pure returns(string memory) {
         return string.concat(str, addition);
     }
-    function append(string memory str, address addr) internal returns(string memory) {
+    function append(string memory str, address addr) internal pure returns(string memory) {
         return str.append(vm.toString(addr));
     }
-    function append(string memory str, bytes4 selector) internal returns(string memory) {
+    function append(string memory str, bytes4 selector) internal pure returns(string memory) {
         return str.append(selector.toString());
     }
-    function append(string memory str, uint num) internal returns(string memory) {
+    function append(string memory str, uint num) internal pure returns(string memory) {
         return str.append(vm.toString(num));
     }
 
-    function br(string memory str) internal returns(string memory) {
+    function br(string memory str) internal pure returns(string memory) {
         return string.concat(str, "\n");
     }
-    function sp(string memory str) internal returns(string memory) {
+    function sp(string memory str) internal pure returns(string memory) {
         return string.concat(str, " ");
     }
-    function indent(string memory str) internal returns(string memory) {
+    function indent(string memory str) internal pure returns(string memory) {
         return string.concat(str, "\t");
     }
-    function comma(string memory str) internal returns(string memory) {
+    function comma(string memory str) internal pure returns(string memory) {
         return string.concat(str, ", ");
     }
-    function comma(string memory str, string memory addition) internal returns(string memory) {
+    function comma(string memory str, string memory addition) internal pure returns(string memory) {
         return string.concat(str, ", ", addition);
     }
-    function comma(string memory str, bytes4 b4) internal returns(string memory) {
+    function comma(string memory str, bytes4 b4) internal pure returns(string memory) {
         return string.concat(str, ", ", b4.toString());
     }
-    function comma(string memory str, address addr) internal returns(string memory) {
+    function comma(string memory str, address addr) internal pure returns(string memory) {
         return string.concat(str, ", ", addr.toString());
     }
-    function dot(string memory str) internal returns(string memory) {
+    function dot(string memory str) internal pure returns(string memory) {
         return string.concat(str, ".");
     }
-    function addParens(string memory str) internal returns(string memory) {
+    function addParens(string memory str) internal pure returns(string memory) {
         return string.concat(str, "()");
     }
-    function parens(string memory str) internal returns(string memory) {
+    function parens(string memory str) internal pure returns(string memory) {
         return string.concat("(", str, ")");
     }
-    function brackL(string memory str) internal returns(string memory) {
+    function brackL(string memory str) internal pure returns(string memory) {
         return string.concat("[", str);
     }
-    function brackR(string memory str) internal returns(string memory) {
+    function brackR(string memory str) internal pure returns(string memory) {
         return string.concat(str, "]");
     }
 
-    function toSequential(string memory str, uint i) internal returns(string memory) {
+    function toSequential(string memory str, uint i) internal pure returns(string memory) {
         return i == 1 ? str : str.append(i);
     }
 
@@ -141,7 +141,7 @@ library Formatter {
         return vm.toString(selector).substring(10);
     }
 
-    function toBytes(string memory str) internal returns (bytes memory) {
+    function toBytes(string memory str) internal pure returns (bytes memory) {
         return bytes(str);
     }
 

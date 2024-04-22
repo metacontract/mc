@@ -41,9 +41,10 @@ library MCFinderLib {
     /**----------------------
         🧩 Find Function
     ------------------------*/
-    function findFunction(MCDevKit storage mc, string memory name) internal returns(Function storage) {
+    function findFunction(MCDevKit storage mc, string memory name) internal returns(Function storage func) {
         uint pid = mc.startProcess("findFunction");
-        return mc.functions.find(name);
+        func = mc.functions.find(name);
+        mc.finishProcess(pid);
     }
     // function findCurrentFunction(MCDevKit storage mc) internal returns(Function storage) {
     //     uint pid = mc.startProcess("findCurrentFunction", "");

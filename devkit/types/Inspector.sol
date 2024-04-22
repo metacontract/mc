@@ -35,10 +35,10 @@ library Inspector {
     function isEqual(Function memory a, Function memory b) internal pure returns(bool) {
         return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
     }
-    function isComplete(Function memory func) internal returns(bool) {
+    function isComplete(Function memory func) internal pure returns(bool) {
         return func.status.isComplete();
     }
-    function isUninitialized(Function storage func) internal returns(bool) {
+    function isUninitialized(Function storage func) internal view returns(bool) {
         return func.status.isUninitialized();
     }
 
@@ -53,10 +53,10 @@ library Inspector {
     function hasNotSameSelector(Bundle storage bundle, Function storage func) internal view returns(bool) {
         return hasSameSelector(bundle, func).isFalse();
     }
-    function isComplete(Bundle storage bundle) internal returns(bool) {
+    function isComplete(Bundle storage bundle) internal view returns(bool) {
         return bundle.status.isComplete();
     }
-    function isUninitialized(Bundle storage bundle) internal returns(bool) {
+    function isUninitialized(Bundle storage bundle) internal view returns(bool) {
         return bundle.status.isUninitialized();
     }
     /**=======================
@@ -72,13 +72,13 @@ library Inspector {
     /**==============
         🏠 Proxy
     ================*/
-    function isComplete(Proxy memory proxy) internal returns(bool) {
+    function isComplete(Proxy memory proxy) internal pure returns(bool) {
         return proxy.status.isComplete();
     }
-    function isInitialized(Proxy storage proxy) internal returns(bool) {
+    function isInitialized(Proxy storage proxy) internal view returns(bool) {
         return proxy.status.isInitialized();
     }
-    function isUninitialized(Proxy storage proxy) internal returns(bool) {
+    function isUninitialized(Proxy storage proxy) internal view returns(bool) {
         return proxy.status.isUninitialized();
     }
     /**~~~~~~~~~~~~~~~~~~~
@@ -99,10 +99,10 @@ library Inspector {
         (bool success,) = dictionary.addr.call(abi.encodeWithSelector(IVerifiable.implementation.selector));
         return success;
     }
-    function isComplete(Dictionary memory dictionary) internal returns(bool) {
+    function isComplete(Dictionary memory dictionary) internal pure returns(bool) {
         return dictionary.status.isComplete();
     }
-    function isUninitialized(Dictionary storage dictionary) internal returns(bool) {
+    function isUninitialized(Dictionary storage dictionary) internal view returns(bool) {
         return dictionary.status.isUninitialized();
     }
     /**------------------------
@@ -182,25 +182,25 @@ library Inspector {
     /**===================
         🔒 Type Guard
     =====================*/
-    function isUninitialized(TypeStatus status) internal returns(bool) {
+    function isUninitialized(TypeStatus status) internal pure returns(bool) {
         return status == TypeStatus.Uninitialized;
     }
-    function isInitialized(TypeStatus status) internal returns(bool) {
+    function isInitialized(TypeStatus status) internal pure returns(bool) {
         return status != TypeStatus.Uninitialized;
     }
-    function isBuilding(TypeStatus status) internal returns(bool) {
+    function isBuilding(TypeStatus status) internal pure returns(bool) {
         return status == TypeStatus.Building;
     }
-    function isBuilt(TypeStatus status) internal returns(bool) {
+    function isBuilt(TypeStatus status) internal pure returns(bool) {
         return status == TypeStatus.Built;
     }
-    function isLocked(TypeStatus status) internal returns(bool) {
+    function isLocked(TypeStatus status) internal pure returns(bool) {
         return status == TypeStatus.Locked;
     }
-    function isNotLocked(TypeStatus status) internal returns(bool) {
+    function isNotLocked(TypeStatus status) internal pure returns(bool) {
         return status.isLocked().isNot();
     }
-    function isComplete(TypeStatus status) internal returns(bool) {
+    function isComplete(TypeStatus status) internal pure returns(bool) {
         return status.isBuilt() || status.isLocked();
     }
 

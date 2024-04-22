@@ -15,7 +15,7 @@ import {StdStyle} from "forge-std/StdStyle.sol";
 /// @dev address(uint160(uint256(keccak256("hevm cheat code"))));
 Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
-function loadAddressFrom(string memory envKey) returns(address) {
+function loadAddressFrom(string memory envKey) view returns(address) {
     return ForgeHelper.loadAddressFromEnv(envKey);
 }
 
@@ -30,12 +30,12 @@ library ForgeHelper {
         return uint256(vm.envBytes32(envKey));
     }
 
-    function loadAddressFromEnv(string memory envKey) internal returns(address) {
+    function loadAddressFromEnv(string memory envKey) internal view returns(address) {
         return vm.envOr(envKey, address(0));
     }
 
     // TODO: check version
-    function canGetDeployedContract(string memory envKey) internal returns(bool) {
+    function canGetDeployedContract(string memory envKey) internal view returns(bool) {
         if (vm.envOr(envKey, address(0)).code.length != 0) return true;
         return false;
     }
@@ -85,7 +85,7 @@ library ForgeHelper {
         return addr;
     }
 
-    function getLabel(address addr) internal returns(string memory) {
+    function getLabel(address addr) internal view returns(string memory) {
         return vm.getLabel(addr);
     }
 
