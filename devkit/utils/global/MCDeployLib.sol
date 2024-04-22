@@ -72,7 +72,7 @@ library MCDeployLib {
         uint pid = mc.startProcess("deployProxy", param(name, dictionary, initData));
         Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
         mc.proxy.register(name, proxy);
-        return mc.finishProcess(pid); // TODO return mc
+        return mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
         return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
@@ -99,11 +99,11 @@ library MCDeployLib {
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
         uint pid = mc.startProcess("deployDictionary", param(name, bundle, owner));
-        Dictionary memory dictionary = DictionaryLib.deploy(owner)
-                                                    .set(bundle)
-                                                    .upgradeFacade(bundle.facade);
+        dictionary = DictionaryLib  .deploy(owner)
+                                    .set(bundle)
+                                    .upgradeFacade(bundle.facade);
         mc.dictionary.register(name, dictionary);
-        return dictionary.finishProcess(pid);
+        mc.finishProcess(pid);
     }
 
     function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
