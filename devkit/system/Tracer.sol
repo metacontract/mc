@@ -268,8 +268,9 @@ library Tracer {
     function startProcess(Current storage current, string memory name) internal returns(uint) {
         return current.startProcess(name, "");
     }
-    function finishProcess(Current storage current, uint pid) internal {
+    function finishProcess(Current storage current, uint pid) internal returns(Current storage) {
         finish(pid);
+        return current;
     }
 }
 
