@@ -11,7 +11,7 @@ library MessageHead {
     string constant ENV_KEY_REQUIRED = "EnvKey Required";
     string constant SELECTOR_REQUIRED = "Selector Required";
     string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
-    string constant OWNER_ZERO_ADDRESS = "Owner Zero Address";
+    string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
     // Function
     string constant FUNC_NAME_UNASSIGNED = "Function Name Unassigned";
     string constant FUNC_SELECTOR_UNASSIGNED = "Function Selector Unassigned";
@@ -49,7 +49,7 @@ library MessageHead {
     string constant DICTIONARY_LOCKED = "Dictionary Locked";
     string constant DICTIONARY_NOT_BUILDING = "Dictionary Not Building";
     string constant DICTIONARY_NOT_BUILT = "Dictionary Not Built";
-    string constant DICTIONARY_ALREADY_REGISTERED = "Dictionary Registered";
+    string constant DICTIONARY_ALREADY_REGISTERED = "Dictionary Already Registered";
     string constant DICTIONARY_NOT_REGISTERED = "Dictionary Not Registered";
     // Std Registry
     string constant STD_REGISTRY_NOT_COMPLETE = "Std Registry Not Complete";

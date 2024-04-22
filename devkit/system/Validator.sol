@@ -81,7 +81,7 @@ library Validator {
         validate(MUST, addr.isContract(), HEAD.ADDRESS_NOT_CONTRACT, BODY.ADDRESS_NOT_CONTRACT);
     }
     function SHOULD_OwnerIsNotZeroAddress(address owner) internal {
-        validate(MUST, owner.isNotZero(), HEAD.OWNER_ZERO_ADDRESS, BODY.OWNER_ZERO_ADDRESS);
+        validate(MUST, owner.isNotZero(), HEAD.OWNER_ZERO_ADDRESS_RECOMMENDED, BODY.OWNER_ZERO_ADDRESS_RECOMMENDED);
     }
 
     /**==================

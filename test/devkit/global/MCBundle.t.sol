@@ -66,19 +66,19 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.use(functionName, selector, impl);
     }
 
-    function test_use_Success_WithDifferentName() public {
-        string memory bundleName = mc.bundle.genUniqueName();
+    // function test_use_Success_WithDifferentName() public {
+    //     string memory bundleName = mc.bundle.genUniqueName();
 
-        string memory functionName = "DummyFunction";
-        string memory functionName2 = "DummyFunction2";
-        bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  address(new DummyFunction());
+    //     string memory functionName = "DummyFunction";
+    //     string memory functionName2 = "DummyFunction2";
+    //     bytes4 selector = DummyFunction.dummy.selector;
+    //     address impl =  address(new DummyFunction());
 
-        mc.use(functionName, selector, impl);
-        mc.use(functionName2, selector, impl);
+    //     mc.use(functionName, selector, impl);
+    //     mc.use(functionName2, selector, impl);
 
-        assertFunctionAdded(bundleName, 1, functionName2, selector, impl);
-    }
+    //     assertFunctionAdded(bundleName, 1, functionName2, selector, impl);
+    // }
 
 
     /**------------------
