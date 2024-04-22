@@ -12,7 +12,7 @@ import {MCScriptBase} from "./MCBase.sol";
 // ⭐️ MC SCRIPT
 abstract contract MCScript is MCScriptBase {
     constructor() {
-        mc.loadConfig();
+        System.Config().load();
         if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
     }
 }
@@ -20,6 +20,6 @@ abstract contract MCScript is MCScriptBase {
 // ⭐️ MC SCRIPT without Setup
 abstract contract MCScriptWithoutSetup is MCScriptBase {
     constructor() {
-        mc.loadConfig();
+        System.Config().load();
     }
 }
