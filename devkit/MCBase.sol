@@ -28,7 +28,7 @@ abstract contract MCScriptBase is MCBase, ForgeScript {
     }
 
     function _startBroadcastWith(string memory envKey) internal {
-        deployerKey = ForgeHelper.getPrivateKey("DEPLOYER_PRIV_KEY");
+        deployerKey = ForgeHelper.getPrivateKey(envKey);
         deployer = vm.addr(deployerKey);
         vm.startBroadcast(deployerKey);
     }
