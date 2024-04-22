@@ -2,7 +2,7 @@
 STD_FUNCS = true
 
 [system]
-LOG_LEVEL = "Debug"
+LOG_LEVEL = "Warn"
 SCAN_RANGE = 5
 
 [naming]

@@ -43,7 +43,21 @@ struct ConfigState {
 
 library ConfigLib {
     function load(ConfigState storage config) internal {
-        string memory toml = vm.readFile(configFile());
+        loadFromLibMC(config);
+        loadFromProjectRoot(config);
+    }
+
+    function loadFromLibMC(ConfigState storage config) internal {
+        string memory path = string.concat(vm.projectRoot(), "/lib/mc/mc.toml");
+        if (Validator.SHOULD_FileExists(path)) config.loadFrom(path);
+    }
+    function loadFromProjectRoot(ConfigState storage config) internal {
+        string memory path = string.concat(vm.projectRoot(), "/mc.toml");
+        if (Validator.SHOULD_FileExists(path)) config.loadFrom(path);
+    }
+
+    function loadFrom(ConfigState storage config, string memory path) internal {
+        string memory toml = vm.readFile(path);
         // Setup
         config.SETUP.STD_FUNCS = toml.readBool(".setup.STD_FUNCS");
         // System
@@ -57,15 +71,6 @@ library ConfigLib {
         config.DEFAULT_NAME.PROXY_MOCK = toml.readString(".naming.DEFAULT_PROXY_MOCK");
         config.DEFAULT_NAME.BUNDLE = toml.readString(".naming.DEFAULT_BUNDLE");
         config.DEFAULT_NAME.FUNCTION = toml.readString(".naming.DEFAULT_FUNCTION");
-    }
-
-    function configFile() internal returns(string memory) {
-        string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/mc.toml");
-        if (Validator.SHOULD_FileExists(path)) return path;
-        path = string.concat(root, "/lib/mc/mc.toml");
-        Validator.MUST_FileExists(path);
-        return path;
     }
 
     function defaultOwner(ConfigState storage) internal returns(address) {
