@@ -26,8 +26,8 @@ library Logger {
     string constant CRITICAL = "\u001b[91m[\xF0\x9F\x9A\xA8CRITICAL]\u001b[0m";
     string constant ERROR = "\u001b[91m[\u2716 ERROR]\u001b[0m\n\t";
     string constant WARN = "\u001b[93m[WARNING]\u001b[0m";
-    string constant INFO = "\u001b[2m[INFO]\u001b[0m";
-    string constant DEBUG = "\u001b[2m[DEBUG]\u001b[0m";
+    string constant INFO = "\u001b[92m[INFO]\u001b[0m";
+    string constant DEBUG = "\u001b[94m[DEBUG]\u001b[0m";
 
 
     /**------------------
