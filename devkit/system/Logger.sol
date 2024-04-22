@@ -74,8 +74,8 @@ library Logger {
     }
 
     function shouldLog(Level level) internal view returns(bool) {
-        Level currentLevel = currentLevel();
-        return level <= currentLevel;
+        Level _currentLevel = currentLevel();
+        return level <= _currentLevel;
     }
 
     function isDisable() internal returns(bool) {
