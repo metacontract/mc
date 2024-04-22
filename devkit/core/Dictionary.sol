@@ -65,7 +65,6 @@ library DictionaryLib {
         Validator.MUST_Completed(toDictionary);
         Validator.MUST_Completed(fromDictionary);
 
-        address toAddr = toDictionary.addr;
         address fromAddr = fromDictionary.addr;
 
         bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
