@@ -40,29 +40,27 @@ library MCDeployLib {
         Dictionary memory dictionary = mc.dictionary.deploy(name, bundle, owner);
         mc.proxy.deploy(name, dictionary, initData);
         return mc.finishProcess(pid);
-        // TODO gen and set facade
     }
-
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return deploy(mc, mc.bundle.findCurrent().name, mc.bundle.findCurrent(), ForgeHelper.msgSender(), "");
+        return deploy(mc, mc.bundle.findCurrentName(), mc.bundle.findCurrent(), ForgeHelper.msgSender(), "");
     }
-    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address facade, address owner) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundle, facade, owner, System.Config().defaultInitData());
-    // }
-    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, bundle, System.Config().defaultInitData(), );
-    // }
-    // function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
-    //     return mc.deploy(System.Config().defaultName(), bundle, System.Config().defaultInitData());
-    // }
-    // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, mc.functions.findBundle(name), initData);
-    // }
-    // function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-    //     return mc.deploy(name, mc.functions.findBundle(name), System.Config().defaultInitData());
-    // }
+    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(MCDevKit storage) {
+        return deploy(mc, name, bundle, owner, "");
+    }
+    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
+        return deploy(mc, name, bundle, ForgeHelper.msgSender(), "");
+    }
+    function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
+        return deploy(mc, bundle.name, bundle, ForgeHelper.msgSender(), "");
+    }
+    function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
+        return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), initData);
+    }
+    function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+        return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), "");
+    }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deploy(mc.bundle.findCurrent().name, mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
+        return deploy(mc, mc.bundle.findCurrentName(), mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
     }
 
 
@@ -82,16 +80,16 @@ library MCDeployLib {
         return mc.deployProxy(name, dictionary, ForgeHelper.msgSender().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.findCurrentDictionary(), ForgeHelper.msgSender().initSetAdminBytes());
+        return mc.deployProxy(name, mc.dictionary.findCurrent(), ForgeHelper.msgSender().initSetAdminBytes());
     }
     function deployProxy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.findCurrentDictionary(), initData);
+        return mc.deployProxy(name, mc.dictionary.findCurrent(), initData);
     }
     function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), initData);
+        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.dictionary.findCurrent(), initData);
     }
     function deployProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.findCurrentDictionary(), ForgeHelper.msgSender().initSetAdminBytes());
+        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.dictionary.findCurrent(), ForgeHelper.msgSender().initSetAdminBytes());
     }
 
 
@@ -102,7 +100,7 @@ library MCDeployLib {
         uint pid = mc.startProcess("deployDictionary", param(name, bundle, owner));
         dictionary = DictionaryLib  .deploy(owner)
                                     .set(bundle)
-                                    .upgradeFacade(bundle.facade);
+                                    .upgradeFacade(bundle.facade); // TODO gen and set facade
         mc.dictionary.register(name, dictionary);
         mc.finishProcess(pid);
     }
@@ -140,13 +138,13 @@ library MCDeployLib {
         return mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(name, mc.findCurrentDictionary());
+        return mc.duplicateDictionary(name, mc.dictionary.findCurrent());
     }
     function duplicateDictionary(MCDevKit storage mc, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
         return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), targetDictionary);
     }
     function duplicateDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), mc.findCurrentDictionary());
+        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), mc.dictionary.findCurrent());
     }
 
 }
