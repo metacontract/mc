@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+// Forge-std
 import {Vm, VmSafe} from "forge-std/Vm.sol";
-
-/**
-    Simply bypassing forge-std
-    solhint-disable no-unused-import
- */
-import {console2} from "forge-std/console2.sol";
-import {StdStyle} from "forge-std/StdStyle.sol";
-/* solhint-enable no-unused-import */
+import {stdToml} from "forge-std/StdToml.sol";
+// MC Devkit
+import {Logger} from "devkit/system/Logger.sol";
+import {Parser} from "devkit/types/Parser.sol";
 
 // Constants
 /// @dev address(uint160(uint256(keccak256("hevm cheat code"))));
@@ -23,6 +20,9 @@ function loadAddressFrom(string memory envKey) view returns(address) {
     🛠 Helper Methods for Forge Std
 **************************************/
 library ForgeHelper {
+    using stdToml for string;
+    using Parser for string;
+
     /**-------------------
         🔧 Env File
     ---------------------*/
@@ -87,6 +87,34 @@ library ForgeHelper {
 
     function getLabel(address addr) internal view returns(string memory) {
         return vm.getLabel(addr);
+    }
+
+    /**--------------
+        📂 TOML
+    ----------------*/
+    function readBoolOr(string memory toml, string memory key, bool or) internal returns(bool) {
+        return vm.keyExistsToml(toml, key) ? toml.readBool(key) : or ;
+    }
+    function readStringOr(string memory toml, string memory key, string memory or) internal returns(string memory) {
+        return vm.keyExistsToml(toml, key) ? toml.readString(key) : or ;
+    }
+    function readUintOr(string memory toml, string memory key, uint or) internal returns(uint) {
+        return vm.keyExistsToml(toml, key) ? toml.readUint(key) : or ;
+    }
+    function readLogLevelOr(string memory toml, string memory key, Logger.Level or) internal returns(Logger.Level) {
+        return vm.keyExistsToml(toml, key) ? toml.readString(key).toLogLevel() : or ;
+    }
+
+    /**------------------
+        📡 Broadcast
+    --------------------*/
+    function pauseBroadcast() internal {
+        (VmSafe.CallerMode mode,,) = vm.readCallers();
+        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
+    }
+    function resumeBroadcast() internal {
+        (VmSafe.CallerMode mode,,) = vm.readCallers();
+        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.startBroadcast(getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
     }
 
 }
