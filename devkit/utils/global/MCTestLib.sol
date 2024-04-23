@@ -7,6 +7,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Utils
 import {param} from "devkit/system/Tracer.sol";
+import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -99,10 +100,10 @@ library MCTestLib {
         return mc.createMockDictionary(name, owner, mc.std.all);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, System.Config().defaultOwner(), mc.std.all);
+        return mc.createMockDictionary(name, ForgeHelper.msgSender(), mc.std.all);
     }
     function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), System.Config().defaultOwner(), mc.std.all);
+        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), ForgeHelper.msgSender(), mc.std.all);
     }
 
 

@@ -72,39 +72,4 @@ library ConfigLib {
         config.DEFAULT_NAME.FUNCTION = toml.readStringOr(".naming.DEFAULT_FUNCTION", "config.DEFAULT_NAME.FUNCTION");
     }
 
-    function defaultOwner(ConfigState storage) internal returns(address) {
-        return ForgeHelper.msgSender();
-    }
-
-    function defaultName(ConfigState storage) internal pure returns(string memory) {
-        return "ProjectName"; // TODO
-    }
-
-    // function defaultProxyName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.proxy.genUniqueName();
-    // }
-    // function defaultMockProxyName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.proxy.genUniqueMockName();
-    // }
-
-    // function defaultDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.dictionary.genUniqueName();
-    // }
-    // function defaultDuplicatedDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.dictionary.genUniqueDuplicatedName();
-    // }
-    // function defaultMockDictionaryName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.dictionary.genUniqueMockName();
-    // }
-
-    // function defaultFunctionInfos(MCDevKit storage mc) internal returns(Function[] storage) {
-    //     return mc.functions.std.allFunctions.functions;
-    // }
-    // function defaultBundleName(MCDevKit storage mc) internal returns(string memory) {
-    //     return mc.functions.genUniqueBundleName();
-    // }
-
-    function defaultInitData(ConfigState storage) internal pure returns(bytes memory) {
-        return "";
-    }
 }

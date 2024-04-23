@@ -71,7 +71,6 @@ library ForgeHelper {
     ------------------*/
     function msgSender() internal returns(address) {
         (VmSafe.CallerMode callerMode_, address msgSender_,) = vm.readCallers();
-
         if (callerMode_ == VmSafe.CallerMode.None) return address(this);
         return msgSender_;
     }
