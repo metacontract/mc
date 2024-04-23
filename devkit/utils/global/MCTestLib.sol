@@ -116,10 +116,10 @@ library MCTestLib {
         return mc.finishProcess(pid);
     }
     function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.setStorageReader(mc.findDictionary(bundleName), selector, implementation);
+        return mc.setStorageReader(mc.dictionary.find(bundleName), selector, implementation);
     }
     function setStorageReader(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.setStorageReader(mc.findCurrentDictionary(), selector, implementation);
+        return mc.setStorageReader(mc.dictionary.findCurrent(), selector, implementation);
     }
 
 }

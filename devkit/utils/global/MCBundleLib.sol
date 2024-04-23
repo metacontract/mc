@@ -58,7 +58,7 @@ library MCBundleLib {
         return use(mc, functionInfo.name, functionInfo.selector, functionInfo.implementation);
     }
     function use(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
-        return use(mc, mc.findFunction(functionName));
+        return use(mc, mc.functions.find(functionName));
     }
 
     /**------------------
