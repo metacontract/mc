@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Utils
-import {console2} from "devkit/utils/ForgeHelper.sol";
+// Forge-std
+import {console2} from "forge-std/console2.sol";
 // System
 import {System} from "devkit/system/System.sol";
 import {Tracer} from "devkit/system/Tracer.sol";

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
-import {vm, VmSafe, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {vm, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 import {MessageBody as BODY} from "devkit/system/message/MessageBody.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
@@ -46,11 +46,9 @@ library Validator {
 
     // Validate without broadcast
     modifier noBroadcast() {
-        (VmSafe.CallerMode mode,,) = vm.readCallers();
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
+        ForgeHelper.pauseBroadcast();
         _;
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.startBroadcast(ForgeHelper.getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
-
+        ForgeHelper.resumeBroadcast();
     }
 
 
