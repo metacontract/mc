@@ -14,8 +14,6 @@ import {Dictionary} from "devkit/core/Dictionary.sol";
 
 /**********************************
     🔍 Finder
-        🗂️ Find Bundle
-        🧩 Find Function
         🏠 Find Proxy
         📚 Find Dictionary
 ***********************************/

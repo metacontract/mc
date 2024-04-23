@@ -91,16 +91,16 @@ library ForgeHelper {
     /**--------------
         📂 TOML
     ----------------*/
-    function readBoolOr(string memory toml, string memory key, bool or) internal returns(bool) {
+    function readBoolOr(string memory toml, string memory key, bool or) internal view returns(bool) {
         return vm.keyExistsToml(toml, key) ? toml.readBool(key) : or ;
     }
-    function readStringOr(string memory toml, string memory key, string memory or) internal returns(string memory) {
+    function readStringOr(string memory toml, string memory key, string memory or) internal view returns(string memory) {
         return vm.keyExistsToml(toml, key) ? toml.readString(key) : or ;
     }
-    function readUintOr(string memory toml, string memory key, uint or) internal returns(uint) {
+    function readUintOr(string memory toml, string memory key, uint or) internal view returns(uint) {
         return vm.keyExistsToml(toml, key) ? toml.readUint(key) : or ;
     }
-    function readLogLevelOr(string memory toml, string memory key, Logger.Level or) internal returns(Logger.Level) {
+    function readLogLevelOr(string memory toml, string memory key, Logger.Level or) internal view returns(Logger.Level) {
         return vm.keyExistsToml(toml, key) ? toml.readString(key).toLogLevel() : or ;
     }
 
