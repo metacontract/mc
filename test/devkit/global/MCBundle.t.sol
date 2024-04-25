@@ -45,6 +45,7 @@ contract DevKitTest_MCBundle is MCDevKitTest {
 
     function test_use_Success() public {
         string memory bundleName = mc.bundle.genUniqueName();
+
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -54,7 +55,21 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         assertFunctionAdded(bundleName, 0, functionName, selector, impl);
     }
 
-    function test_use_Revert_WithSameName() public {
+    function test_use_Success_WithDifferentSelector() public {
+        string memory bundleName = mc.bundle.genUniqueName();
+
+        string memory functionName = "DummyFunction";
+        bytes4 selector = DummyFunction.dummy.selector;
+        bytes4 selector2 = DummyFunction.dummy2.selector;
+        address impl =  address(new DummyFunction());
+
+        mc.use(functionName, selector, impl);
+        mc.use(functionName, selector2, impl);
+
+        assertFunctionAdded(bundleName, 1, functionName, selector2, impl);
+    }
+
+    function test_use_Revert_WithSameSelector() public {
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
@@ -65,19 +80,32 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.use(functionName, selector, impl);
     }
 
-    // function test_use_Success_WithDifferentName() public {
-    //     string memory bundleName = mc.bundle.genUniqueName();
+    function test_use_Revert_EmptyName() public {
+        string memory functionName = "";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl =  address(new DummyFunction());
 
-    //     string memory functionName = "DummyFunction";
-    //     string memory functionName2 = "DummyFunction2";
-    //     bytes4 selector = DummyFunction.dummy.selector;
-    //     address impl =  address(new DummyFunction());
+        vm.expectRevert(HEAD.NAME_REQUIRED.toBytes());
+        mc.use(functionName, selector, impl);
+    }
 
-    //     mc.use(functionName, selector, impl);
-    //     mc.use(functionName2, selector, impl);
+    function test_use_Revert_EmptySelector() public {
+        string memory functionName = "DummyFunction";
+        bytes4 selector = bytes4(0);
+        address impl =  address(new DummyFunction());
 
-    //     assertFunctionAdded(bundleName, 1, functionName2, selector, impl);
-    // }
+        vm.expectRevert(HEAD.SELECTOR_REQUIRED.toBytes());
+        mc.use(functionName, selector, impl);
+    }
+
+    function test_use_Revert_NotContract() public {
+        string memory functionName = "DummyFunction";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl =  makeAddr("EOA");
+
+        vm.expectRevert(HEAD.ADDRESS_NOT_CONTRACT.toBytes());
+        mc.use(functionName, selector, impl);
+    }
 
 
     /**------------------
@@ -89,9 +117,4 @@ contract DevKitTest_MCBundle is MCDevKitTest {
         mc.useFacade(facade);
     }
 
-    // function test_Revert_useFacade_withoutInit() public {
-    //     address facade = address(new DummyFacade());
-    //     vm.expectRevert(ERR.message(ERR.EMPTY_CURRENT_BUNDLE).toBytes());
-    //     mc.useFacade(facade);
-    // }
 }

@@ -20,7 +20,6 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
         🌱 Init Bundle
         🔗 Use Function
         🪟 Use Facade
-        🛠️ Build Bundle
 **********************************/
 library MCBundleLib {
 
