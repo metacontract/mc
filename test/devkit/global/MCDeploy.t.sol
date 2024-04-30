@@ -54,25 +54,26 @@ contract DevKitTest_MCDeploy is MCDevKitTest {
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
-    // function test_duplicateDictionary_Success() public {
-    //     string memory name = "TestBundleName";
-    //     bytes4 selector = DummyFunction.dummy.selector;
-    //     address impl = address(new DummyFunction());
-    //     mc.init(name);
-    //     mc.use(selector, impl);
-    //     mc.useFacade(address(new DummyFacade()));
-    //     mc.deployDictionary().addr;
+    function test_duplicateDictionary_Success() public {
+        string memory name = "TestBundleName";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl = address(new DummyFunction());
+        mc.init(name);
+        mc.use(selector, impl);
+        mc.useFacade(address(new DummyFacade()));
+        mc.deployDictionary().addr;
+        string memory duplicatedDictionaryName = mc.dictionary.genUniqueName(name);
 
-    //     address dictionary = mc.duplicateDictionary().addr;
+        address dictionary = mc.duplicateDictionary().addr;
 
-    //     assertTrue(mc.dictionary.find(name).isVerifiable());
-    //     assertTrue(mc.dictionary.find(name).isComplete());
-    //     assertEq(mc.dictionary.findCurrent().addr, dictionary);
+        assertTrue(mc.dictionary.find(duplicatedDictionaryName).isVerifiable());
+        assertTrue(mc.dictionary.find(duplicatedDictionaryName).isComplete());
+        assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
-    //     (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
-    //     assertTrue(success);
-    //     assertEq(address(uint160(uint256(bytes32(ret)))), impl);
-    // }
+        (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
+        assertTrue(success);
+        assertEq(address(uint160(uint256(bytes32(ret)))), impl);
+    }
 
     function test_deployProxy_Success() public {
         string memory name = "TestBundleName";

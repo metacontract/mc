@@ -37,10 +37,11 @@ library DictionaryRegistryLib {
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary memory _dictionary = DictionaryLib
-                                            .deploy(bundle.name, owner)
+                                            .deploy(owner)
+                                            .assignName(bundle.name)
                                             .set(bundle)
                                             .upgradeFacade(bundle.facade);
-        dictionary = registry.register(bundle.name, _dictionary);
+        dictionary = registry.register(_dictionary);
         registry.finishProcess(pid);
     }
 
@@ -49,20 +50,29 @@ library DictionaryRegistryLib {
     -----------------------------------*/
     function load(DictionaryRegistry storage registry, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("load", param(name, dictionaryAddr));
-        Validator.MUST_NotEmptyName(name);
         Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
-        dictionary = registry.register(name, _dictionary);
+        dictionary = registry.register(_dictionary);
+        registry.finishProcess(pid);
+    }
+
+    /**--------------------------------------
+        🔂 Duplicate & Register Dictionary
+    ----------------------------------------*/
+    function duplicate(DictionaryRegistry storage registry, Dictionary storage dictionary, address owner) internal returns(Dictionary storage duplicatedDictionary) {
+        uint pid = registry.startProcess("duplicate", param(dictionary, owner));
+        Dictionary memory _duplicatedDictionary = dictionary.duplicate(owner);
+        duplicatedDictionary = registry.register(_duplicatedDictionary);
         registry.finishProcess(pid);
     }
 
     /**---------------------------
         🗳️ Register Dictionary
     -----------------------------*/
-    function register(DictionaryRegistry storage registry, string memory name, Dictionary memory _dictionary) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("register", param(name, _dictionary));
-        Validator.MUST_NotEmptyName(name);
+    function register(DictionaryRegistry storage registry, Dictionary memory _dictionary) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("register", param(_dictionary));
         Validator.MUST_Completed(_dictionary);
-        string memory uniqueName = registry.genUniqueName(name);
+        string memory uniqueName = registry.genUniqueName(_dictionary.name);
+        _dictionary.assignName(uniqueName);
         dictionary = registry.dictionaries[uniqueName] = _dictionary;
         registry.current.update(uniqueName);
         registry.finishProcess(pid);

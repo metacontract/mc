@@ -38,6 +38,7 @@ struct Dictionary {
 library DictionaryLib {
     using Inspector for bytes4;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        📛 Assign Name
         🚀 Deploy Dictionary
         📩 Load Dictionary
         🔂 Duplicate Dictionary
@@ -46,15 +47,24 @@ library DictionaryLib {
         🤖 Create Dictionary Mock
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+    /**--------------------
+        📛 Assign Name
+    ----------------------*/
+    function assignName(Dictionary memory dictionary, string memory name) internal returns(Dictionary memory) {
+        uint pid = dictionary.startProcess("assignName", param(name));
+        dictionary.startBuilding();
+        dictionary.name = name;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
+    }
+
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    function deploy(string memory name, address owner) internal returns(Dictionary memory dictionary) {
+    function deploy(address owner) internal returns(Dictionary memory dictionary) {
         uint pid = dictionary.startProcess("deploy", param(owner));
-        Validator.MUST_NotEmptyName(name);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
-        dictionary.name = name;
         dictionary.addr = address(new UCSDictionary(owner));
         dictionary.kind = DictionaryKind.Verifiable;
         dictionary.finishBuilding();
@@ -80,24 +90,23 @@ library DictionaryLib {
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    function duplicate(Dictionary memory toDictionary, Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-        uint pid = toDictionary.startProcess("duplicate", param(toDictionary, fromDictionary));
-        Validator.MUST_Completed(toDictionary);
-        Validator.MUST_Completed(fromDictionary);
+    function duplicate(Dictionary storage dictionary, address owner) internal returns(Dictionary memory duplicatedDictionary) {
+        uint pid = dictionary.startProcess("duplicate", param(dictionary));
+        Validator.MUST_Completed(dictionary);
 
-        address fromAddr = fromDictionary.addr;
+        duplicatedDictionary = deploy(owner).assignName(dictionary.name);
+
+        address toAddr = duplicatedDictionary.addr;
+        address fromAddr = dictionary.addr;
 
         bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
         for (uint i; i < _selectors.length; ++i) {
             bytes4 _selector = _selectors[i];
             if (_selector.isEmpty()) continue;
-            toDictionary.set(_selector, IDictionary(fromAddr).getImplementation(_selector));
+            duplicatedDictionary.set(_selector, IDictionary(fromAddr).getImplementation(_selector));
         }
 
-        return toDictionary.finishProcess(pid);
-    }
-    function duplicate(Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-        return duplicate(deploy(ForgeHelper.getLabel(fromDictionary.addr), ForgeHelper.msgSender()), fromDictionary); // TODO
+        dictionary.finishProcess(pid);
     }
 
     /**-----------------------------

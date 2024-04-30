@@ -90,7 +90,7 @@ library MCTestLib {
         Validator.MUST_NotEmptyName(name);
         // TODO Check Functions?
         Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
-        mc.dictionary.register(name, dictionaryMock);
+        // mc.dictionary.register(name, dictionaryMock);
         return mc.finishProcess(pid);
     }
     function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Bundle storage bundleInfo) internal returns(MCDevKit storage) {

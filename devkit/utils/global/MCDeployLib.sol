@@ -134,20 +134,26 @@ library MCDeployLib {
     /**----------------------------
         🔂 Duplicate Dictionary
     ------------------------------*/
-    function duplicateDictionary(MCDevKit storage mc, string memory name, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("duplicateDictionary", param(name, targetDictionary));
-        Dictionary memory newDictionary = targetDictionary.duplicate();
-        mc.dictionary.register(name, newDictionary);
-        return mc.finishProcess(pid);
+    function duplicateDictionary(MCDevKit storage mc, Dictionary storage dictionary, address owner) internal returns(Dictionary storage duplicatedDictionary) {
+        uint pid = mc.startProcess("duplicateDictionary", param(dictionary, owner));
+        duplicatedDictionary = mc.dictionary.duplicate(dictionary, owner);
+        mc.finishProcess(pid);
     }
-    function duplicateDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(name, mc.dictionary.findCurrent());
+    // With Default Value
+    function duplicateDictionary(MCDevKit storage mc) internal returns(Dictionary storage duplicatedDictionary) {
+        uint pid = mc.startProcess("duplicateDictionary");
+        duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), ForgeHelper.msgSender());
+        mc.finishProcess(pid);
     }
-    function duplicateDictionary(MCDevKit storage mc, Dictionary storage targetDictionary) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), targetDictionary);
+    function duplicateDictionary(MCDevKit storage mc, Dictionary storage dictionary) internal returns(Dictionary storage duplicatedDictionary) {
+        uint pid = mc.startProcess("duplicateDictionary", param(dictionary));
+        duplicatedDictionary = mc.duplicateDictionary(dictionary, ForgeHelper.msgSender());
+        mc.finishProcess(pid);
     }
-    function duplicateDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.duplicateDictionary(mc.dictionary.dictionaries.genUniqueDuplicatedName(), mc.dictionary.findCurrent());
+    function duplicateDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary storage duplicatedDictionary) {
+        uint pid = mc.startProcess("duplicateDictionary", param(owner));
+        duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), owner);
+        mc.finishProcess(pid);
     }
 
 }
