@@ -69,9 +69,9 @@ library ProxyRegistryLib {
         name = registry.proxies.genUniqueName();
         registry.finishProcess(pid);
     }
-    function genUniqueMockName(ProxyRegistry storage registry) internal returns(string memory name) {
+    function genUniqueMockName(ProxyRegistry storage registry, string memory baseName) internal returns(string memory name) {
         uint pid = registry.startProcess("genUniqueMockName");
-        name = registry.proxies.genUniqueMockName();
+        name = registry.proxies.genUniqueMockName(baseName);
         registry.finishProcess(pid);
     }
 

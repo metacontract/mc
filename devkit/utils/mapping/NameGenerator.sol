@@ -87,8 +87,9 @@ library NameGenerator {
         return genUniqueName(proxy, System.Config().DEFAULT_NAME.PROXY);
     }
     /*----- Mock Proxy -----*/
-    function genUniqueMockName(mapping(string => Proxy) storage proxy) internal view returns(string memory name) {
-        return genUniqueName(proxy, System.Config().DEFAULT_NAME.PROXY_MOCK);
+    function genUniqueMockName(mapping(string => Proxy) storage proxy, string memory baseName) internal view returns(string memory name) {
+        return genUniqueName(proxy, MOCK.append(baseName));
+        // return genUniqueName(proxy, System.Config().DEFAULT_NAME.PROXY_MOCK);
     }
 
 }

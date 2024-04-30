@@ -48,16 +48,16 @@ library ProxyLib {
     /**--------------------------
         🤖 Create Proxy Mock
     ----------------------------*/
-    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory proxy) {
-        uint pid = proxy.startProcess("createSimpleMock", param(functions));
+    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory mockProxy) {
+        uint pid = mockProxy.startProcess("createSimpleMock", param(functions));
         for (uint i; i < functions.length; ++i) {
             Validator.MUST_Completed(functions[i]);
         }
-        proxy.startBuilding();
-        proxy.addr = address(new ProxySimpleMock(functions));
-        proxy.kind = ProxyKind.Mock;
-        proxy.finishBuilding();
-        return proxy.finishProcess(pid);
+        mockProxy.startBuilding();
+        mockProxy.addr = address(new ProxySimpleMock(functions));
+        mockProxy.kind = ProxyKind.Mock;
+        mockProxy.finishBuilding();
+        return mockProxy.finishProcess(pid);
     }
 
 }
