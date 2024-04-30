@@ -110,7 +110,14 @@ library MCDeployLib {
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("deployDictionary", param(bundle, owner));
-        dictionary = mc.dictionary.deploy(bundle, owner); // TODO gen and set facade
+        Validator.MUST_Completed(bundle);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
+        Dictionary memory _dictionary = DictionaryLib
+                                            .deploy(owner)
+                                            .assignName(bundle.name)
+                                            .set(bundle)
+                                            .upgradeFacade(bundle.facade); // TODO gen and set facade
+        dictionary = mc.dictionary.register(_dictionary);
         mc.finishProcess(pid);
     }
     // With Default Value
@@ -136,7 +143,8 @@ library MCDeployLib {
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, Dictionary storage dictionary, address owner) internal returns(Dictionary storage duplicatedDictionary) {
         uint pid = mc.startProcess("duplicateDictionary", param(dictionary, owner));
-        duplicatedDictionary = mc.dictionary.duplicate(dictionary, owner);
+        Dictionary memory _duplicatedDictionary = DictionaryLib.duplicate(dictionary, owner);
+        duplicatedDictionary = mc.dictionary.register(_duplicatedDictionary);
         mc.finishProcess(pid);
     }
     // With Default Value

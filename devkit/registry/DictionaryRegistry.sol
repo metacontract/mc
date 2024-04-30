@@ -29,41 +29,15 @@ struct DictionaryRegistry {
 library DictionaryRegistryLib {
     using NameGenerator for mapping(string => Dictionary);
 
-    /**-------------------------------------
-        🚀 Deploy & Register Dictionary
-    ---------------------------------------*/
-    function deploy(DictionaryRegistry storage registry, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("deploy", param(bundle, owner));
-        Validator.MUST_Completed(bundle);
-        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
-        Dictionary memory _dictionary = DictionaryLib
-                                            .deploy(owner)
-                                            .assignName(bundle.name)
-                                            .set(bundle)
-                                            .upgradeFacade(bundle.facade);
-        dictionary = registry.register(_dictionary);
-        registry.finishProcess(pid);
-    }
-
-    /**---------------------------------
-        📩 Load & Register Dictionary
-    -----------------------------------*/
-    function load(DictionaryRegistry storage registry, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("load", param(name, dictionaryAddr));
-        Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
-        dictionary = registry.register(_dictionary);
-        registry.finishProcess(pid);
-    }
-
-    /**--------------------------------------
-        🔂 Duplicate & Register Dictionary
-    ----------------------------------------*/
-    function duplicate(DictionaryRegistry storage registry, Dictionary storage dictionary, address owner) internal returns(Dictionary storage duplicatedDictionary) {
-        uint pid = registry.startProcess("duplicate", param(dictionary, owner));
-        Dictionary memory _duplicatedDictionary = dictionary.duplicate(owner);
-        duplicatedDictionary = registry.register(_duplicatedDictionary);
-        registry.finishProcess(pid);
-    }
+    // /**---------------------------------
+    //     📩 Load & Register Dictionary
+    // -----------------------------------*/
+    // function load(DictionaryRegistry storage registry, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
+    //     uint pid = registry.startProcess("load", param(name, dictionaryAddr));
+    //     Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
+    //     dictionary = registry.register(_dictionary);
+    //     registry.finishProcess(pid);
+    // }
 
     /**---------------------------
         🗳️ Register Dictionary
