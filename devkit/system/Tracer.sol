@@ -345,6 +345,15 @@ function param(Bundle memory bundle) pure returns(string memory) {
 function param(Bundle memory bundle, address addr) pure returns(string memory) {
     return bundle.name.comma(addr);
 }
+function param(Bundle memory bundle, bytes memory b) pure returns(string memory) {
+    return bundle.name.comma(string(b));
+}
 function param(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
     return bundle.name.comma(addr).comma(string(b));
+}
+function param(address addr, bytes memory b) pure returns(string memory) {
+    return param(addr).comma(string(b));
+}
+function param(bytes memory b) pure returns(string memory) {
+    return string(b);
 }
