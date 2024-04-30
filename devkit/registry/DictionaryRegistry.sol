@@ -78,9 +78,9 @@ library DictionaryRegistryLib {
         name = registry.dictionaries.genUniqueName(baseName);
         registry.finishProcess(pid);
     }
-    function genUniqueMockName(DictionaryRegistry storage registry) internal returns(string memory name) {
+    function genUniqueMockName(DictionaryRegistry storage registry, string memory baseName) internal returns(string memory name) {
         uint pid = registry.startProcess("genUniqueMockName");
-        name = registry.dictionaries.genUniqueMockName();
+        name = registry.dictionaries.genUniqueMockName(baseName);
         registry.finishProcess(pid);
     }
 

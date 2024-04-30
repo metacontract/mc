@@ -79,31 +79,31 @@ library MCTestLib {
     /**-------------------------
         📚 Mocking Dictionary
     ---------------------------*/
-    /**
-        @notice Creates a DictionaryEtherscan as a MockDictionary.
-        @param name The name of the `MockDictionary`, used as a key in the `mc.test.mockDictionaries` mapping and as a label name in the Forge test runner. If not provided, sequential default names from `MockDictionary0` to `MockDictionary4` will be used.
-        @param owner The address to be set as the owner of the DictionaryEtherscan contract. If not provided, the DefaultOwner from the UCS environment settings is used.
-        @param functions The Functions to be registered with the `MockDictionary`. A bundle can also be specified. If no Ops are provided, defaultBundle will be used.
-    */
-    function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Function[] memory functions) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("createMockDictionary", param(name, owner, functions));
-        Validator.MUST_NotEmptyName(name);
-        // TODO Check Functions?
-        Dictionary memory dictionaryMock = DictionaryLib.createMock(owner, functions);
-        // mc.dictionary.register(name, dictionaryMock);
-        return mc.finishProcess(pid);
+    function createMockDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary storage mockDictionary) {
+        uint pid = mc.startProcess("createMockDictionary", param(bundle, owner));
+        Validator.MUST_Completed(bundle);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
+        Dictionary memory _mockDictionary = DictionaryLib
+                                                .createMock(bundle, owner)
+                                                .assignName(mc.dictionary.genUniqueMockName(bundle.name));
+        mockDictionary = mc.dictionary.register(_mockDictionary);
+        mc.finishProcess(pid);
     }
-    function createMockDictionary(MCDevKit storage mc, string memory name, address owner, Bundle storage bundleInfo) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, owner, bundleInfo.functions);
+    // With Default Value
+    function createMockDictionary(MCDevKit storage mc) internal returns(Dictionary storage mockDictionary) {
+        uint pid = mc.startProcess("createMockDictionary");
+        mockDictionary = mc.createMockDictionary(mc.bundle.findCurrent(), ForgeHelper.msgSender());
+        mc.finishProcess(pid);
     }
-    function createMockDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, owner, mc.std.all);
+    function createMockDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary storage mockDictionary) {
+        uint pid = mc.startProcess("createMockDictionary", param(bundle));
+        mockDictionary = mc.createMockDictionary(bundle, ForgeHelper.msgSender());
+        mc.finishProcess(pid);
     }
-    function createMockDictionary(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(name, ForgeHelper.msgSender(), mc.std.all);
-    }
-    function createMockDictionary(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.createMockDictionary(mc.dictionary.genUniqueMockName(), ForgeHelper.msgSender(), mc.std.all);
+    function createMockDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary storage mockDictionary) {
+        uint pid = mc.startProcess("createMockDictionary", param(owner));
+        mockDictionary = mc.createMockDictionary(mc.bundle.findCurrent(), owner);
+        mc.finishProcess(pid);
     }
 
 

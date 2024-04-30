@@ -17,6 +17,7 @@ import {Formatter} from "devkit/types/Formatter.sol";
     🏷️ Name Generator
 =========================*/
 library NameGenerator {
+    string constant MOCK = "Mock";
 
     /**------------------------
         🗂️ Bundle Mapping
@@ -65,8 +66,9 @@ library NameGenerator {
         return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY_DUPLICATED);
     }
     /*----- Mock Dictionary -----*/
-    function genUniqueMockName(mapping(string => Dictionary) storage dictionary) internal view returns(string memory name) {
-        return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY_MOCK);
+    function genUniqueMockName(mapping(string => Dictionary) storage dictionary, string memory baseName) internal view returns(string memory name) {
+        return genUniqueName(dictionary, MOCK.append(baseName));
+        // return genUniqueName(dictionary, System.Config().DEFAULT_NAME.DICTIONARY_MOCK);
     }
 
     /**-----------------------

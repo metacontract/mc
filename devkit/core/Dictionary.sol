@@ -15,7 +15,7 @@ import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 // Mock
-import {DictionaryMock} from "devkit/mocks/DictionaryMock.sol";
+import {MockDictionary} from "devkit/mocks/MockDictionary.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";
@@ -158,13 +158,12 @@ library DictionaryLib {
     /**------------------------------
         🤖 Create Dictionary Mock
     --------------------------------*/
-    function createMock(address owner, Function[] memory functions) internal returns(Dictionary memory dictionary) {
-        uint pid = dictionary.startProcess("createMock", param(functions));
-        for (uint i; i < functions.length; ++i) {
-            Validator.MUST_Completed(functions[i]);
-        }
+    function createMock(Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("createMock", param(bundle, owner));
+        Validator.MUST_Completed(bundle);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
-        dictionary.addr = address(new DictionaryMock(owner, functions));
+        dictionary.addr = address(new MockDictionary(owner, bundle.functions));
         dictionary.kind = DictionaryKind.Mock;
         dictionary.finishBuilding();
         return dictionary.finishProcess(pid);

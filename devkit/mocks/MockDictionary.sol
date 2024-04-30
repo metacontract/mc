@@ -9,7 +9,7 @@ import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 /**
     @title Mock Dictionary Contract
  */
-contract DictionaryMock is Dictionary {
+contract MockDictionary is Dictionary {
     constructor (address owner, Function[] memory functions) Dictionary(owner) {
         for (uint i; i < functions.length; ++i) {
             setImplementation(functions[i].selector, functions[i].implementation);
