@@ -29,18 +29,6 @@ struct ProxyRegistry {
 library ProxyRegistryLib {
     using NameGenerator for mapping(string => Proxy);
 
-    /**-------------------------------
-        🚀 Deploy & Register Proxy
-    ---------------------------------*/
-    function deploy(ProxyRegistry storage registry, Dictionary storage dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
-        uint pid = registry.startProcess("deploy", param(dictionary, initData));
-        Validator.MUST_Completed(dictionary);
-        /// @dev Accepts any initData as input
-        Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
-        proxy = registry.register(dictionary.name, _proxy);
-        registry.finishProcess(pid);
-    }
-
     /**-----------------------
         🗳️ Register Proxy
     -------------------------*/

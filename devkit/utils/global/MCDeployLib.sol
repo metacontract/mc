@@ -84,7 +84,10 @@ library MCDeployLib {
     -----------------------*/
     function deployProxy(MCDevKit storage mc, Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
         uint pid = mc.startProcess("deployProxy", param(dictionary, initData));
-        proxy = mc.proxy.deploy(dictionary, initData);
+        Validator.MUST_Completed(dictionary);
+        /// @dev Accepts any initData as input
+        Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
+        proxy = mc.proxy.register(dictionary.name, _proxy);
         mc.finishProcess(pid);
     }
     // With Default Value
