@@ -299,12 +299,6 @@ function param(string memory str, Dictionary memory dictionary, bytes memory b) 
 function param(string memory str, Function[] memory funcs) pure returns(string memory) {
     return str.comma(param(funcs));
 }
-function param(string memory str, Bundle memory bundle, address addr) pure returns(string memory) {
-    return str.comma(bundle.name).comma(addr);
-}
-function param(string memory str, Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
-    return str.comma(bundle.name).comma(addr).comma(string(b));
-}
 
 function param(bytes4 b4) pure returns(string memory) {
     return b4.toString();
@@ -347,4 +341,10 @@ function param(Function[] memory functions) pure returns(string memory res) {
 
 function param(Bundle memory bundle) pure returns(string memory) {
     return bundle.name;
+}
+function param(Bundle memory bundle, address addr) pure returns(string memory) {
+    return bundle.name.comma(addr);
+}
+function param(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
+    return bundle.name.comma(addr).comma(string(b));
 }

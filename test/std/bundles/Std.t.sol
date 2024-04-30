@@ -17,6 +17,7 @@ contract StdTest is MCDevKitTest {
         mc.deployStdFunctions();
         mc.std.complete();
         // mc.init("STD").use(mc.std.functions.initSetAdmin).deploy();
-        mc.deploy("STD", mc.std.all, deployer, "");
+        mc.deploy(mc.std.all, deployer, "");
+        // mc.deploy("STD", mc.std.all, deployer, "");
     }
 }

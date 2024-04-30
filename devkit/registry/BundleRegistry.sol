@@ -60,14 +60,9 @@ library BundleRegistryLib {
     }
     function findCurrent(BundleRegistry storage registry) internal returns(Bundle storage bundle) {
         uint pid = registry.startProcess("findCurrent");
-        string memory name = registry.findCurrentName();
+        Validator.MUST_ExistCurrentName(registry);
+        string memory name = registry.current.find();
         bundle = registry.find(name);
-        registry.finishProcess(pid);
-    }
-    function findCurrentName(BundleRegistry storage registry) internal returns(string memory name) {
-        uint pid = registry.startProcess("findCurrentName");
-        name = registry.current.name;
-        Validator.MUST_NotEmptyName(name);
         registry.finishProcess(pid);
     }
 

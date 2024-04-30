@@ -12,6 +12,8 @@ library MessageHead {
     string constant SELECTOR_REQUIRED = "Selector Required";
     string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
+    // Current Context
+    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
     // Function
     string constant FUNC_NAME_UNASSIGNED = "Function Name Unassigned";
     string constant FUNC_SELECTOR_UNASSIGNED = "Function Selector Unassigned";

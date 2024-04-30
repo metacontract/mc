@@ -4,6 +4,8 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {System} from "devkit/system/System.sol";
+import {Inspector} from "devkit/types/Inspector.sol";
+    using Inspector for string;
 // Validation
 import {Validator} from "devkit/system/Validator.sol";
 // Utils
@@ -35,33 +37,33 @@ library MCDeployLib {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/
-    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param(name, bundle, owner, initData));
-        Dictionary memory dictionary = mc.dictionary.deploy(name, bundle, owner);
-        mc.proxy.deploy(name, dictionary, initData);
+    function deploy(MCDevKit storage mc, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
+        uint pid = mc.startProcess("deploy", param(bundle, owner, initData));
+        Dictionary memory _dictionary = mc.deployDictionary(bundle, owner);
+        mc.deployProxy(bundle.name, _dictionary, initData);
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return deploy(mc, mc.bundle.findCurrentName(), mc.bundle.findCurrent(), ForgeHelper.msgSender(), "");
+        return deploy(mc, mc.bundle.findCurrent(), ForgeHelper.msgSender(), "");
     }
-    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(MCDevKit storage) {
-        return deploy(mc, name, bundle, owner, "");
-    }
-    function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
-        return deploy(mc, name, bundle, ForgeHelper.msgSender(), "");
-    }
-    function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
-        return deploy(mc, bundle.name, bundle, ForgeHelper.msgSender(), "");
-    }
-    function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
-        return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), initData);
-    }
-    function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), "");
-    }
-    function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return deploy(mc, mc.bundle.findCurrentName(), mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
-    }
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(MCDevKit storage) {
+    //     return deploy(mc, name, bundle, owner, "");
+    // }
+    // function deploy(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(MCDevKit storage) {
+    //     return deploy(mc, name, bundle, ForgeHelper.msgSender(), "");
+    // }
+    // function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
+    //     return deploy(mc, bundle.name, bundle, ForgeHelper.msgSender(), "");
+    // }
+    // function deploy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
+    //     return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), initData);
+    // }
+    // function deploy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
+    //     return deploy(mc, name, mc.bundle.find(name), ForgeHelper.msgSender(), "");
+    // }
+    // function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
+    //     return deploy(mc, mc.bundle.findCurrent().name, mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
+    // }
 
 
     /**---------------------
@@ -96,35 +98,19 @@ library MCDeployLib {
     /**-------------------------
         📚 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param(name, bundle, owner));
-        dictionary = DictionaryLib  .deploy(owner)
-                                    .set(bundle)
-                                    .upgradeFacade(bundle.facade); // TODO gen and set facade
-        mc.dictionary.register(name, dictionary);
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
+        uint pid = mc.startProcess("deployDictionary", param(bundle, owner));
+        dictionary = mc.dictionary.deploy(bundle, owner); // TODO gen and set facade
         mc.finishProcess(pid);
     }
-
-    function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), mc.bundle.findCurrent(), ForgeHelper.msgSender());
-    }
-    function deployDictionary(MCDevKit storage mc, string memory name) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, mc.bundle.findCurrent(), ForgeHelper.msgSender());
-    }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), bundle, ForgeHelper.msgSender());
+        return deployDictionary(mc, bundle, ForgeHelper.msgSender());
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), mc.bundle.findCurrent(), owner);
+        return deployDictionary(mc, mc.bundle.findCurrent(), owner);
     }
-    function deployDictionary(MCDevKit storage mc, string memory name, Bundle storage bundle) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, bundle, ForgeHelper.msgSender());
-    }
-    function deployDictionary(MCDevKit storage mc, string memory name, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(name, mc.bundle.findCurrent(), owner);
-    }
-    function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary memory) {
-        return mc.deployDictionary(mc.bundle.findCurrentName(), bundle, owner);
+    function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory) {
+        return deployDictionary(mc, mc.bundle.findCurrent(), ForgeHelper.msgSender());
     }
 
 

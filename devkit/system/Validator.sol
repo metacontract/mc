@@ -26,6 +26,7 @@ import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
 import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
 import {StdRegistry} from "devkit/registry/StdRegistry.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
+import {Current} from "devkit/registry/context/Current.sol";
 
 
 /**==================
@@ -82,6 +83,13 @@ library Validator {
         validate(MUST, owner.isNotZero(), HEAD.OWNER_ZERO_ADDRESS_RECOMMENDED, BODY.OWNER_ZERO_ADDRESS_RECOMMENDED);
     }
 
+    /**======================
+        📸 Current Context
+    ========================*/
+    function MUST_NameFound(Current storage current) internal view {
+        validate(MUST, current.name.isAssigned(), HEAD.CURRENT_NAME_NOT_FOUND, BODY.CURRENT_NAME_NOT_FOUND);
+    }
+
     /**==================
         🧩 Function
     ====================*/
@@ -125,6 +133,14 @@ library Validator {
     function SHOULD_Completed(Bundle storage bundle) internal view {
         validate(SHOULD, bundle.isComplete(), HEAD.BUNDLE_NOT_COMPLETE, BODY.BUNDLE_NOT_COMPLETE);
     }
+    function MUST_Completed(Bundle storage bundle) internal view {
+        validate(MUST, bundle.name.isNotEmpty(), HEAD.BUNDLE_NAME_UNASSIGNED, BODY.BUNDLE_NAME_UNASSIGNED);
+        validate(MUST, bundle.functions.length.isNotZero(), HEAD.NO_FUNCTIONS_IN_BUNDLE, BODY.NO_FUNCTIONS_IN_BUNDLE);
+        validate(MUST, bundle.facade.isContract(), HEAD.BUNDLE_FACADE_UNASSIGNED, BODY.BUNDLE_FACADE_UNASSIGNED);
+    }
+    function MUST_HaveFunction(Bundle storage bundle) internal view {
+        validate(MUST, bundle.functions.length.isNotZero(), HEAD.NO_FUNCTIONS_IN_BUNDLE, BODY.NO_FUNCTIONS_IN_BUNDLE_REQUIRED);
+    }
     function MUST_HaveUniqueSelector(Bundle storage bundle, Function storage func) internal view {
         validate(MUST, bundle.hasNotSameSelector(func), HEAD.BUNDLE_CONTAINS_SAME_SELECTOR, BODY.BUNDLE_CONTAINS_SAME_SELECTOR);
     }
@@ -141,6 +157,9 @@ library Validator {
     function SHOULD_ExistCurrentBundle(BundleRegistry storage registry) internal view returns(bool condition) {
         condition = registry.current.name.isNotEmpty();
         validate(SHOULD, condition, HEAD.CURRENT_BUNDLE_NOT_EXIST, BODY.CURRENT_BUNDLE_NOT_EXIST);
+    }
+    function MUST_ExistCurrentName(BundleRegistry storage registry) internal view {
+        validate(MUST, registry.current.name.isAssigned(), HEAD.CURRENT_BUNDLE_NOT_EXIST, BODY.CURRENT_BUNDLE_NOT_EXIST_REQUIRED);
     }
 
     /**==============

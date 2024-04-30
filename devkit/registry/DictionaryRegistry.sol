@@ -32,16 +32,15 @@ library DictionaryRegistryLib {
     /**-------------------------------------
         🚀 Deploy & Register Dictionary
     ---------------------------------------*/
-    function deploy(DictionaryRegistry storage registry, string memory name, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
-        uint pid = registry.startProcess("deploy", param(name, bundle, owner));
-        Validator.MUST_NotEmptyName(name);
-        Validator.SHOULD_Completed(bundle);
+    function deploy(DictionaryRegistry storage registry, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("deploy", param(bundle, owner));
+        Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary memory _dictionary = DictionaryLib
                                             .deploy(owner)
                                             .set(bundle)
                                             .upgradeFacade(bundle.facade);
-        dictionary = registry.register(name, _dictionary);
+        dictionary = registry.register(bundle.name, _dictionary);
         registry.finishProcess(pid);
     }
 
@@ -52,9 +51,9 @@ library DictionaryRegistryLib {
         uint pid = registry.startProcess("register", param(name, _dictionary));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_Completed(_dictionary);
-        Validator.MUST_NotRegistered(registry, name);
-        dictionary = registry.dictionaries[name] = _dictionary;
-        registry.current.update(name);
+        string memory uniqueName = registry.genUniqueName(name);
+        dictionary = registry.dictionaries[uniqueName] = _dictionary;
+        registry.current.update(uniqueName);
         registry.finishProcess(pid);
     }
 
@@ -80,9 +79,9 @@ library DictionaryRegistryLib {
     /**-----------------------------
         🏷 Generate Unique Name
     -------------------------------*/
-    function genUniqueName(DictionaryRegistry storage registry) internal returns(string memory name) {
-        uint pid = registry.startProcess("genUniqueName");
-        name = registry.dictionaries.genUniqueName();
+    function genUniqueName(DictionaryRegistry storage registry, string memory baseName) internal returns(string memory name) {
+        uint pid = registry.startProcess("genUniqueName", param(baseName));
+        name = registry.dictionaries.genUniqueName(baseName);
         registry.finishProcess(pid);
     }
     function genUniqueMockName(DictionaryRegistry storage registry) internal returns(string memory name) {

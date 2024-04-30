@@ -12,6 +12,8 @@ library MessageBody {
     string constant SELECTOR_REQUIRED = "The provided function selector cannot be empty (0x00000000). Please provide a non-empty 4-byte selector value and try again.";
     string constant ADDRESS_NOT_CONTRACT = "The provided address is not a contract address. Please provide the address of a deployed contract and try again.";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "The provided owner address is the zero address (0x0). It is recommended to use a non-zero address for the owner to ensure proper access control and security.";
+    // Current Context
+    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
     // Function
     string constant FUNC_NAME_UNASSIGNED = "The function name is currently unassigned. It is recommended to provide a non-empty value for the name.";
     string constant FUNC_SELECTOR_UNASSIGNED = "The 4-byte function selector is currently unassigned. It is recommended to provide a non-zero value for the selector.";
@@ -24,14 +26,17 @@ library MessageBody {
     // Bundle
     string constant BUNDLE_NAME_UNASSIGNED = "The name of the bundle is currently unassigned. It is recommended to provide a non-empty value for the bundle name.";
     string constant NO_FUNCTIONS_IN_BUNDLE = "The bundle should contain at least one function. Please add functions before attempting to build the bundle.";
+    string constant NO_FUNCTIONS_IN_BUNDLE_REQUIRED = "The bundle must contain at least one function. Please add functions before attempting to build the bundle.";
     string constant BUNDLE_FACADE_UNASSIGNED = "The facade contract for the bundle is currently unassigned. It is recommended to set the address of a deployed contract as the facade.";
     string constant BUNDLE_NOT_INITIALIZED = "The bundle has not been initialized. Please ensure the bundle is properly initialized before proceeding.";
     string constant BUNDLE_NOT_COMPLETE = "The bundle is not marked as complete. It is recommended to ensure all requirements are met before proceeding.";
+    string constant BUNDLE_NOT_COMPLETE_REQUIRED = "The bundle is not marked as complete. It is required to ensure all requirements are met before proceeding.";
     string constant BUNDLE_CONTAINS_SAME_SELECTOR = "The bundle cannot contain multiple functions with the same 4-byte selector. The function selector is already present in the bundle.";
     string constant BUNDLE_LOCKED = "The bundle object is currently locked and cannot be modified.";
     string constant BUNDLE_NOT_BUILDING = "The bundle is not currently in the building state. Please initiate the building process before proceeding.";
     string constant BUNDLE_NOT_BUILT = "The bundle has not been successfully built yet. Please complete the building process before attempting to use the bundle.";
     string constant CURRENT_BUNDLE_NOT_EXIST = "There is no current bundle set in the registry. It is recommended to set a bundle as the current one before proceeding.";
+    string constant CURRENT_BUNDLE_NOT_EXIST_REQUIRED = "There is no current bundle set in the registry. It is required to set a bundle as the current one before proceeding. Please make sure to call the mc.init() method to initialize the current bundle.";
     // Proxy
     string constant PROXY_ADDR_UNASSIGNED = "The address of the proxy contract is currently unassigned. Please set the address of a deployed contract.";
     string constant PROXY_KIND_UNDEFINED = "The kind of proxy is not defined. Please specify the proxy kind before proceeding.";

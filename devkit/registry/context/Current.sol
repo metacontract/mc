@@ -37,4 +37,14 @@ library CurrentLib {
         current.finishProcess(pid);
     }
 
+    /**------------------
+        🔍 Find Name
+    --------------------*/
+    function find(Current storage current) internal returns(string memory name) {
+        uint pid = current.startProcess("find");
+        Validator.MUST_NameFound(current);
+        name = current.name;
+        current.finishProcess(pid);
+    }
+
 }

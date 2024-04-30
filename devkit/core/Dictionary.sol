@@ -96,13 +96,13 @@ library DictionaryLib {
     }
     function set(Dictionary memory dictionary, Function memory func) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("set", param(func));
-        return set(dictionary, func.selector, func.implementation).finishProcess(pid);
+        set(dictionary, func.selector, func.implementation);
+        return dictionary.finishProcess(pid);
     }
     function set(Dictionary memory dictionary, Bundle storage bundle) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("set", param(bundle));
-
+        Validator.MUST_HaveFunction(bundle);
         Function[] memory functions = bundle.functions;
-
         for (uint i; i < functions.length; ++i) {
             set(dictionary, functions[i]);
         }
