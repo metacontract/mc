@@ -30,6 +30,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
     using TypeGuard for Dictionary global;
 //////////////////////////////////////////////////
 struct Dictionary {
+    string name;
     address addr;
     DictionaryKind kind;
     TypeStatus status;
@@ -38,6 +39,7 @@ library DictionaryLib {
     using Inspector for bytes4;
     /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         🚀 Deploy Dictionary
+        📩 Load Dictionary
         🔂 Duplicate Dictionary
         🧩 Set Function or Bundle
         🪟 Upgrade Facade
@@ -47,12 +49,30 @@ library DictionaryLib {
     /**-------------------------
         🚀 Deploy Dictionary
     ---------------------------*/
-    function deploy(address owner) internal returns(Dictionary memory dictionary) {
+    function deploy(string memory name, address owner) internal returns(Dictionary memory dictionary) {
         uint pid = dictionary.startProcess("deploy", param(owner));
+        Validator.MUST_NotEmptyName(name);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
+        dictionary.name = name;
         dictionary.addr = address(new UCSDictionary(owner));
         dictionary.kind = DictionaryKind.Verifiable;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
+    }
+
+    /**-----------------------
+        📩 Load Dictionary
+    -------------------------*/
+    function load(string memory name, address dictionaryAddr) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("load", param(dictionaryAddr));
+        Validator.MUST_NotEmptyName(name);
+        Validator.MUST_AddressIsContract(dictionaryAddr);
+        // TODO Validate
+        dictionary.startBuilding();
+        dictionary.name = name;
+        dictionary.addr = dictionaryAddr;
+        dictionary.kind = DictionaryKind.Verifiable; // TODO
         dictionary.finishBuilding();
         return dictionary.finishProcess(pid);
     }
@@ -77,7 +97,7 @@ library DictionaryLib {
         return toDictionary.finishProcess(pid);
     }
     function duplicate(Dictionary memory fromDictionary) internal returns(Dictionary memory) {
-        return duplicate(deploy(ForgeHelper.msgSender()), fromDictionary);
+        return duplicate(deploy(ForgeHelper.getLabel(fromDictionary.addr), ForgeHelper.msgSender()), fromDictionary); // TODO
     }
 
     /**-----------------------------
@@ -139,20 +159,6 @@ library DictionaryLib {
         dictionary.kind = DictionaryKind.Mock;
         dictionary.finishBuilding();
         return dictionary.finishProcess(pid);
-    }
-
-    /**
-        Load
-     */
-    function load(address dictionary) internal returns(Dictionary memory _dictionary) {
-        uint pid = _dictionary.startProcess("load", param(dictionary));
-        Validator.MUST_AddressIsContract(dictionary);
-        // TODO Validate
-        _dictionary.startBuilding();
-        _dictionary.addr = dictionary;
-        _dictionary.kind = DictionaryKind.Verifiable;
-        _dictionary.finishBuilding();
-        return _dictionary.finishProcess(pid);
     }
 
 }

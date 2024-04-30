@@ -44,6 +44,7 @@ library MessageHead {
     string constant PROXY_ALREADY_REGISTERED = "Proxy Already Registered";
     string constant PROXY_NOT_REGISTERED = "Proxy Not Registered";
     // Dictionary
+    string constant DICTIONARY_NAME_UNASSIGNED = "Dictionary Name Unassigned";
     string constant DICTIONARY_ADDR_UNASSIGNED = "Dictionary Address Unassigned";
     string constant DICTIONARY_KIND_UNDEFINED = "Dictionary Kind Undefined";
     string constant DICTIONARY_NOT_COMPLETE = "Dictionary Not Complete";
@@ -53,6 +54,7 @@ library MessageHead {
     string constant DICTIONARY_NOT_BUILT = "Dictionary Not Built";
     string constant DICTIONARY_ALREADY_REGISTERED = "Dictionary Already Registered";
     string constant DICTIONARY_NOT_REGISTERED = "Dictionary Not Registered";
+    string constant CURRENT_DICTIONARY_NOT_EXIST = "Current Dictionary Not Exist";
     // Std Registry
     string constant STD_REGISTRY_NOT_COMPLETE = "Std Registry Not Complete";
     string constant STD_REGISTRY_LOCKED = "Std Registry Locked";

@@ -37,10 +37,21 @@ library DictionaryRegistryLib {
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary memory _dictionary = DictionaryLib
-                                            .deploy(owner)
+                                            .deploy(bundle.name, owner)
                                             .set(bundle)
                                             .upgradeFacade(bundle.facade);
         dictionary = registry.register(bundle.name, _dictionary);
+        registry.finishProcess(pid);
+    }
+
+    /**---------------------------------
+        📩 Load & Register Dictionary
+    -----------------------------------*/
+    function load(DictionaryRegistry storage registry, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
+        uint pid = registry.startProcess("load", param(name, dictionaryAddr));
+        Validator.MUST_NotEmptyName(name);
+        Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
+        dictionary = registry.register(name, _dictionary);
         registry.finishProcess(pid);
     }
 
@@ -70,9 +81,8 @@ library DictionaryRegistryLib {
     }
     function findCurrent(DictionaryRegistry storage registry) internal returns(Dictionary storage dictionary) {
         uint pid = registry.startProcess("findCurrent");
-        string memory name = registry.current.name;
-        Validator.MUST_NotEmptyName(name);
-        dictionary = registry.find(name);
+        Validator.MUST_ExistCurrentName(registry);
+        dictionary = registry.find(registry.current.name);
         registry.finishProcess(pid);
     }
 

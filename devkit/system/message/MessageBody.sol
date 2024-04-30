@@ -47,6 +47,7 @@ library MessageBody {
     string constant PROXY_ALREADY_REGISTERED = "The proxy name is already registered in the registry. Please use a different name.";
     string constant PROXY_NOT_REGISTERED = "The proxy name is not registered in the registry. Please register the proxy name before proceeding.";
     // Dictionary
+    string constant DICTIONARY_NAME_UNASSIGNED = "The name of the dictionary contract is currently unassigned. Please set the name of a deployed contract.";
     string constant DICTIONARY_ADDR_UNASSIGNED = "The address of the dictionary contract is currently unassigned. Please set the address of a deployed contract.";
     string constant DICTIONARY_KIND_UNDEFINED = "The kind of dictionary is not defined. Please specify the dictionary kind before proceeding.";
     string constant DICTIONARY_NOT_COMPLETE = "The dictionary object is not marked as complete. Please ensure all requirements are met before proceeding.";
@@ -56,6 +57,7 @@ library MessageBody {
     string constant DICTIONARY_NOT_BUILT = "The dictionary has not been successfully built yet. Please complete the building process before attempting to use the dictionary.";
     string constant DICTIONARY_ALREADY_REGISTERED = "The dictionary name is already registered in the registry. Please use a different name.";
     string constant DICTIONARY_NOT_REGISTERED = "The dictionary name is not registered in the registry. Please register the dictionary name before proceeding.";
+    string constant CURRENT_DICTIONARY_NOT_EXIST = "There is no current dictionary set in the registry. It is required to set a dictionary as the current one before proceeding. Please make sure to deploy/load/duplicate the current dictionary.";
     // Std Registry
     string constant STD_REGISTRY_NOT_COMPLETE = "The standard registry is not marked as complete. Please ensure all requirements are met before proceeding.";
     string constant STD_REGISTRY_LOCKED = "The standard registry is currently locked and cannot be modified.";

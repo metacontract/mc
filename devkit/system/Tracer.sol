@@ -281,6 +281,9 @@ library Tracer {
 function param(string memory str) pure returns(string memory) {
     return str;
 }
+function param(string memory str, address addr) pure returns(string memory) {
+    return str.comma(addr);
+}
 function param(string memory str, address addr, Function[] memory funcs) pure returns(string memory) {
     return str.comma(addr).comma(param(funcs));
 }
@@ -298,6 +301,9 @@ function param(string memory str, Dictionary memory dictionary, bytes memory b) 
 }
 function param(string memory str, Function[] memory funcs) pure returns(string memory) {
     return str.comma(param(funcs));
+}
+function param(string memory str, bytes memory b) pure returns(string memory) {
+    return str.comma(string(b));
 }
 
 function param(bytes4 b4) pure returns(string memory) {
@@ -317,6 +323,9 @@ function param(address addr, string memory str) pure returns(string memory) {
     return addr.toString().comma(str);
 }
 
+function param(Dictionary memory dict) pure returns(string memory) {
+    return param(dict.name);
+}
 function param(Dictionary memory dict, address addr) pure returns(string memory) {
     return param(dict.addr, addr);
 }

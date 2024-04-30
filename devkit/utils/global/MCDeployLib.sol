@@ -15,8 +15,6 @@ import {param} from "devkit/system/Tracer.sol";
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
-import {StdFunctionsArgs} from "devkit/registry/StdRegistry.sol";
-    using StdFunctionsArgs for address;
 //  proxy
 import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 
@@ -39,8 +37,8 @@ library MCDeployLib {
     -------------------------------*/
     function deploy(MCDevKit storage mc, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
         uint pid = mc.startProcess("deploy", param(bundle, owner, initData));
-        Dictionary memory _dictionary = mc.deployDictionary(bundle, owner);
-        mc.deployProxy(bundle.name, _dictionary, initData);
+        Dictionary storage dictionary = mc.deployDictionary(bundle, owner);
+        mc.deployProxy(dictionary, initData);
         return mc.finishProcess(pid);
     }
     // With Default Value
@@ -84,53 +82,49 @@ library MCDeployLib {
     /**---------------------
         🏠 Deploy Proxy
     -----------------------*/
-    function deployProxy(MCDevKit storage mc, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deployProxy", param(name, dictionary, initData));
-        Proxy memory proxy = ProxyLib.deploy(dictionary, initData);
-        mc.proxy.register(name, proxy);
-        return mc.finishProcess(pid);
+    function deployProxy(MCDevKit storage mc, Dictionary storage dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
+        uint pid = mc.startProcess("deployProxy", param(dictionary, initData));
+        proxy = mc.proxy.deploy(dictionary, initData);
+        mc.finishProcess(pid);
     }
     // With Default Value
-    function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary, address owner) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, dictionary, owner.initSetAdminBytes());
+    function deployProxy(MCDevKit storage mc) internal returns(Proxy memory proxy) {
+        uint pid = mc.startProcess("deployProxy");
+        proxy = mc.deployProxy(mc.dictionary.findCurrent(), "");
+        mc.finishProcess(pid);
     }
-    function deployProxy(MCDevKit storage mc, string memory name, Dictionary storage dictionary) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, dictionary, ForgeHelper.msgSender().initSetAdminBytes());
+    function deployProxy(MCDevKit storage mc, Dictionary storage dictionary) internal returns(Proxy memory proxy) {
+        uint pid = mc.startProcess("deployProxy", param(dictionary));
+        proxy = mc.deployProxy(dictionary, "");
+        mc.finishProcess(pid);
     }
-    function deployProxy(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.dictionary.findCurrent(), ForgeHelper.msgSender().initSetAdminBytes());
-    }
-    function deployProxy(MCDevKit storage mc, string memory name, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deployProxy(name, mc.dictionary.findCurrent(), initData);
-    }
-    function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.dictionary.findCurrent(), initData);
-    }
-    function deployProxy(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        return mc.deployProxy(mc.proxy.proxies.genUniqueName(), mc.dictionary.findCurrent(), ForgeHelper.msgSender().initSetAdminBytes());
+    function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(Proxy memory proxy) {
+        uint pid = mc.startProcess("deployProxy", param(initData));
+        proxy = mc.deployProxy(mc.dictionary.findCurrent(), initData);
+        mc.finishProcess(pid);
     }
 
 
     /**-------------------------
         📚 Deploy Dictionary
     ---------------------------*/
-    function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary memory dictionary) {
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("deployDictionary", param(bundle, owner));
         dictionary = mc.dictionary.deploy(bundle, owner); // TODO gen and set facade
         mc.finishProcess(pid);
     }
     // With Default Value
-    function deployDictionary(MCDevKit storage mc) internal returns(Dictionary memory dictionary) {
+    function deployDictionary(MCDevKit storage mc) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("deployDictionary");
         dictionary = mc.deployDictionary(mc.bundle.findCurrent(), ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
-    function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary memory dictionary) {
+    function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("deployDictionary", param(bundle));
         dictionary = mc.deployDictionary(bundle, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
-    function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary memory dictionary) {
+    function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("deployDictionary", param(owner));
         dictionary = mc.deployDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);

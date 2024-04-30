@@ -32,12 +32,12 @@ library ProxyRegistryLib {
     /**-------------------------------
         🚀 Deploy & Register Proxy
     ---------------------------------*/
-    function deploy(ProxyRegistry storage registry, string memory name, Dictionary memory dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
-        uint pid = registry.startProcess("deploy", param(name, dictionary, initData));
-        Validator.MUST_NotEmptyName(name);
+    function deploy(ProxyRegistry storage registry, Dictionary storage dictionary, bytes memory initData) internal returns(Proxy storage proxy) {
+        uint pid = registry.startProcess("deploy", param(dictionary, initData));
         Validator.MUST_Completed(dictionary);
+        /// @dev Accepts any initData as input
         Proxy memory _proxy = ProxyLib.deploy(dictionary, initData);
-        proxy = registry.register(name, _proxy);
+        proxy = registry.register(dictionary.name, _proxy);
         registry.finishProcess(pid);
     }
 

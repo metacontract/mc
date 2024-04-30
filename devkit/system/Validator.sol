@@ -196,6 +196,7 @@ library Validator {
     ======================*/
     function ValidateBuilder(Dictionary memory dictionary) internal view returns(bool) {
         return (
+            validate(COMPLETION, dictionary.name.isNotEmpty(), HEAD.DICTIONARY_NAME_UNASSIGNED, BODY.DICTIONARY_NAME_UNASSIGNED) &&
             validate(COMPLETION, dictionary.addr.isContract(), HEAD.DICTIONARY_ADDR_UNASSIGNED, BODY.DICTIONARY_ADDR_UNASSIGNED) &&
             validate(COMPLETION, dictionary.kind.isNotUndefined(), HEAD.DICTIONARY_KIND_UNDEFINED, BODY.DICTIONARY_KIND_UNDEFINED)
         );
@@ -221,6 +222,9 @@ library Validator {
     }
     function MUST_NotRegistered(DictionaryRegistry storage registry, string memory name) internal view {
         validate(MUST, registry.dictionaries[name].isUninitialized(), HEAD.DICTIONARY_ALREADY_REGISTERED, BODY.DICTIONARY_ALREADY_REGISTERED);
+    }
+    function MUST_ExistCurrentName(DictionaryRegistry storage registry) internal view {
+        validate(MUST, registry.current.name.isAssigned(), HEAD.CURRENT_DICTIONARY_NOT_EXIST, BODY.CURRENT_DICTIONARY_NOT_EXIST);
     }
 
     /**==========================

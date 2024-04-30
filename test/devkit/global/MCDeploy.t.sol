@@ -51,4 +51,21 @@ contract DevKitTest_MCDeploy is MCDevKitTest {
         // assertTrue(success);
     }
 
+    function test_deployProxy_Success() public {
+        string memory name = "TestBundleName";
+        mc.init(name);
+        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
+        mc.useFacade(address(new DummyFacade()));
+
+        mc.deployDictionary();
+        mc.deployProxy();
+
+        // assertTrue(mc.dictionary.find(name).isVerifiable());
+        // assertTrue(mc.dictionary.find(name).isComplete());
+        // assertTrue(mc.proxy.find(name).isComplete());
+
+        // (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
+        // assertTrue(success);
+    }
+
 }
