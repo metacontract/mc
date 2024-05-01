@@ -9,7 +9,6 @@ import {Clone} from "mc-std/functions/Clone.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Dummy} from "test/utils/Dummy.sol";
-import {StateFuzzing} from "devkit/utils/test/StateFuzzing.sol";
 
 contract CloneTest is MCStateFuzzingTest {
     function setUp() public {

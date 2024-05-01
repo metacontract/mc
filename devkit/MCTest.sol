@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {Proxy as OZProxy} from "@oz.ucs/proxy/Proxy.sol";
+
 import {System} from "devkit/system/System.sol";
-import {DecodeErrorString} from "devkit/system/message/DecodeErrorString.sol";
 import {Receive} from "mc-std/functions/Receive.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
@@ -23,7 +24,7 @@ abstract contract MCTest is MCTestBase {
 }
 
 // 🌟 MC State Fuzzing Test
-abstract contract MCStateFuzzingTest is MCTestBase { // solhint-disable-line payable-fallback
+abstract contract MCStateFuzzingTest is MCTestBase, OZProxy { // solhint-disable-line payable-fallback
     struct Function {
         bytes4 selector;
         address implementation;
@@ -49,17 +50,10 @@ abstract contract MCStateFuzzingTest is MCTestBase { // solhint-disable-line pay
         vm.store(address(this), ProxyUtils.DICTIONARY_SLOT, Formatter.toBytes32(dictionary_));
     }
 
-    fallback(bytes calldata) external payable returns(bytes memory) {
-        address funcImpl = implementations[msg.sig];
-        require(funcImpl != address(0), "Called implementation is not registered.");
-        (bool success, bytes memory data) = funcImpl.delegatecall(msg.data);
-        if (success) {
-            return data;
-        } else {
-            // vm.expectRevert needs this.
-            revert(DecodeErrorString.decodeRevertReasonAndPanicCode(data));
-        }
+    function _implementation() internal view override returns (address) {
+        return implementations[msg.sig];
     }
+
 }
 
 // 🌟 MC TEST for DevKit
