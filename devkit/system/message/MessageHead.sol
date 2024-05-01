@@ -43,6 +43,7 @@ library MessageHead {
     string constant PROXY_NOT_BUILT = "Proxy Not Built";
     string constant PROXY_ALREADY_REGISTERED = "Proxy Already Registered";
     string constant PROXY_NOT_REGISTERED = "Proxy Not Registered";
+    string constant CURRENT_PROXY_NOT_EXIST = "Current Proxy Not Exist";
     // Dictionary
     string constant DICTIONARY_NAME_UNASSIGNED = "Dictionary Name Unassigned";
     string constant DICTIONARY_ADDR_UNASSIGNED = "Dictionary Address Unassigned";

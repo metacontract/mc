@@ -48,16 +48,14 @@ library ProxyRegistryLib {
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("find", param(name));
         Validator.MUST_NotEmptyName(name);
-        Validator.MUST_Registered(registry, name);
         proxy = registry.proxies[name];
         Validator.MUST_Completed(proxy);
         registry.finishProcess(pid);
     }
     function findCurrent(ProxyRegistry storage registry) internal returns(Proxy storage proxy) {
         uint pid = registry.startProcess("findCurrent");
-        string memory name = registry.current.name;
-        Validator.MUST_NotEmptyName(name);
-        proxy = registry.find(name);
+        Validator.MUST_ExistCurrentName(registry);
+        proxy = registry.find(registry.current.name);
         registry.finishProcess(pid);
     }
 

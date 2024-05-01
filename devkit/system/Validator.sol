@@ -190,6 +190,9 @@ library Validator {
     function MUST_NotRegistered(ProxyRegistry storage registry, string memory name) internal view {
         validate(MUST, registry.proxies[name].isUninitialized(), HEAD.PROXY_ALREADY_REGISTERED, BODY.PROXY_ALREADY_REGISTERED);
     }
+    function MUST_ExistCurrentName(ProxyRegistry storage registry) internal view {
+        validate(MUST, registry.current.name.isAssigned(), HEAD.CURRENT_PROXY_NOT_EXIST, BODY.CURRENT_PROXY_NOT_EXIST);
+    }
 
     /**====================
         📚 Dictionary

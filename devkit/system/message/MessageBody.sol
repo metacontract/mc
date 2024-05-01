@@ -46,6 +46,7 @@ library MessageBody {
     string constant PROXY_NOT_BUILT = "The proxy has not been successfully built yet. Please complete the building process before attempting to use the proxy.";
     string constant PROXY_ALREADY_REGISTERED = "The proxy name is already registered in the registry. Please use a different name.";
     string constant PROXY_NOT_REGISTERED = "The proxy name is not registered in the registry. Please register the proxy name before proceeding.";
+    string constant CURRENT_PROXY_NOT_EXIST = "There is no current proxy set in the registry. It is required to set a proxy as the current one before proceeding. Please make sure to deploy the current proxy.";
     // Dictionary
     string constant DICTIONARY_NAME_UNASSIGNED = "The name of the dictionary contract is currently unassigned. Please set the name of a deployed contract.";
     string constant DICTIONARY_ADDR_UNASSIGNED = "The address of the dictionary contract is currently unassigned. Please set the address of a deployed contract.";
