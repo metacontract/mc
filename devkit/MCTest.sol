@@ -24,6 +24,7 @@ abstract contract MCStateFuzzingTest is MCTestBase { // solhint-disable-line pay
     mapping(bytes4 selector => address) implementations;
 
     constructor() {
+        System.Config().load();
         implementations[bytes4(0)] = address(new Receive());
     }
 
