@@ -9,15 +9,12 @@ import {Create} from "mc-std/functions/Create.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Dummy} from "test/utils/Dummy.sol";
+import {StateFuzzing} from "devkit/utils/test/StateFuzzing.sol";
 
 contract CreateTest is MCStateFuzzingTest {
-    address createFunc = address(new Create());
-    address dictionary;
-
     function setUp() public {
-        dictionary = Dummy.dictionary(mc);
-        setDictionary(dictionary);
-        implementations[Create.create.selector] = createFunc;
+        _use(Create.create.selector, address(new Create()));
+        _setDictionary(Dummy.dictionary(mc));
     }
 
     function test_Create_Success_WithoutInitData() public {

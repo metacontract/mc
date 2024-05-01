@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
+import {MCStateFuzzingTest} from "devkit/MCTest.sol";
 
 library Dummy {
     function setBundle(MCDevKit storage mc) internal {
@@ -14,6 +15,15 @@ library Dummy {
 
     function dictionary(MCDevKit storage mc) internal returns(address) {
         setBundle(mc);
+        return mc.createMockDictionary().addr;
+    }
+
+    function dictionary(MCDevKit storage mc, MCStateFuzzingTest.Function[] memory functions) internal returns(address) {
+        mc.init("DummyBundle");
+        for (uint i; i < functions.length; ++i) {
+            mc.use(functions[i].selector, functions[i].implementation);
+        }
+        mc.useFacade(address(new DummyFacade()));
         return mc.createMockDictionary().addr;
     }
 

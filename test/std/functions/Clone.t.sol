@@ -9,15 +9,12 @@ import {Clone} from "mc-std/functions/Clone.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Dummy} from "test/utils/Dummy.sol";
+import {StateFuzzing} from "devkit/utils/test/StateFuzzing.sol";
 
 contract CloneTest is MCStateFuzzingTest {
-    address cloneFunc = address(new Clone());
-    address dictionary;
-
     function setUp() public {
-        dictionary = Dummy.dictionary(mc);
-        setDictionary(dictionary);
-        implementations[Clone.clone.selector] = cloneFunc;
+        _use(Clone.clone.selector, address(new Clone()));
+        _setDictionary(Dummy.dictionary(mc));
     }
 
     function test_Clone_Success_WithoutInitData() public {
