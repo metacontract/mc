@@ -23,6 +23,7 @@ abstract contract MCTest is MCTestBase {
 // 🌟 MC State Fuzzing Test
 abstract contract MCStateFuzzingTest is MCTestBase { // solhint-disable-line payable-fallback
     mapping(bytes4 selector => address) implementations;
+    address target = address(this);
 
     constructor() {
         System.Config().load();
