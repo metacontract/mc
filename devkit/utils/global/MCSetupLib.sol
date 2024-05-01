@@ -9,11 +9,6 @@ import {System} from "devkit/system/System.sol";
         🧩 Setup Standard Funcs
 ***********************************/
 library MCSetupLib {
-    // function loadConfig(MCDevKit storage mc) internal returns(MCDevKit storage) {
-    //     uint pid = mc.startProcess("loadConfig");
-    //     System.Config().load();
-    //     return mc.finishProcess(pid);
-    // }
 
     /**----------------------------
         🧩 Setup Standard Funcs

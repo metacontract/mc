@@ -29,6 +29,7 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
         🏠 Deploy Proxy
         📚 Deploy Dictionary
         🔂 Duplicate Dictionary
+        💽 Load Dictionary
 ****************************************/
 library MCDeployLib {
 
@@ -164,6 +165,16 @@ library MCDeployLib {
     function duplicateDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary storage duplicatedDictionary) {
         uint pid = mc.startProcess("duplicateDictionary", param(owner));
         duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), owner);
+        mc.finishProcess(pid);
+    }
+
+    /**------------------------
+        💽 Load Dictionary
+    --------------------------*/
+    function load(MCDevKit storage mc, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
+        uint pid = mc.startProcess("load", param(name, dictionaryAddr));
+        Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
+        dictionary = mc.dictionary.register(_dictionary);
         mc.finishProcess(pid);
     }
 

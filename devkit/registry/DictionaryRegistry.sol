@@ -29,16 +29,6 @@ struct DictionaryRegistry {
 library DictionaryRegistryLib {
     using NameGenerator for mapping(string => Dictionary);
 
-    // /**---------------------------------
-    //     📩 Load & Register Dictionary
-    // -----------------------------------*/
-    // function load(DictionaryRegistry storage registry, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
-    //     uint pid = registry.startProcess("load", param(name, dictionaryAddr));
-    //     Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
-    //     dictionary = registry.register(_dictionary);
-    //     registry.finishProcess(pid);
-    // }
-
     /**---------------------------
         🗳️ Register Dictionary
     -----------------------------*/
