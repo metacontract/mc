@@ -6,11 +6,10 @@ import {Dep} from "../storage/Schema.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 
-/**
-    < MC Standard Function >
-    @title GetDeps
-    @custom:version 0.1.0
-    @custom:schema v0.1.0
+/** < MC Standard Function >
+ *  @title GetDeps
+ *  @custom:version v0.1.0
+ *  @custom:schema none
  */
 contract GetDeps {
     /// DO NOT USE STORAGE DIRECTLY !!!
