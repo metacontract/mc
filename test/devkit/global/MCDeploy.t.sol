@@ -35,6 +35,27 @@ contract DevKitTest_MCDeploy is MCDevKitTest {
         assertTrue(success);
     }
 
+    /**---------------------
+        🏠 Deploy Proxy
+    -----------------------*/
+    function test_deployProxy_Success() public {
+        string memory name = "TestBundleName";
+        mc.init(name);
+        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
+        mc.useFacade(address(new DummyFacade()));
+        mc.deployDictionary();
+
+        address proxy = mc.deployProxy().addr;
+
+        assertTrue(mc.proxy.find(name).isComplete());
+
+        (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
+        assertTrue(success);
+    }
+
+    /**-------------------------
+        📚 Deploy Dictionary
+    ---------------------------*/
     function test_deployDictionary_Success() public {
         string memory name = "TestBundleName";
         bytes4 selector = DummyFunction.dummy.selector;
@@ -54,6 +75,9 @@ contract DevKitTest_MCDeploy is MCDevKitTest {
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
+    /**----------------------------
+        🔂 Duplicate Dictionary
+    ------------------------------*/
     function test_duplicateDictionary_Success() public {
         string memory name = "TestBundleName";
         bytes4 selector = DummyFunction.dummy.selector;
@@ -75,19 +99,27 @@ contract DevKitTest_MCDeploy is MCDevKitTest {
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
-    function test_deployProxy_Success() public {
+    /**------------------------
+        💽 Load Dictionary
+    --------------------------*/
+    function test_loadDictionary_Success() public {
         string memory name = "TestBundleName";
+        bytes4 selector = DummyFunction.dummy.selector;
+        address impl = address(new DummyFunction());
         mc.init(name);
-        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
+        mc.use(selector, impl);
         mc.useFacade(address(new DummyFacade()));
-        mc.deployDictionary();
+        address mockDictionary = mc.createMockDictionary().addr;
 
-        address proxy = mc.deployProxy().addr;
+        address dictionary = mc.loadDictionary("LoadedDictionary", mockDictionary).addr;
 
-        assertTrue(mc.proxy.find(name).isComplete());
+        assertTrue(mc.dictionary.find("LoadedDictionary").isVerifiable());
+        assertTrue(mc.dictionary.find("LoadedDictionary").isComplete());
+        assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
-        (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
+        (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         assertTrue(success);
+        assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
 }

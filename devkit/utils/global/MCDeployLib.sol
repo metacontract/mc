@@ -171,7 +171,7 @@ library MCDeployLib {
     /**------------------------
         💽 Load Dictionary
     --------------------------*/
-    function load(MCDevKit storage mc, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
+    function loadDictionary(MCDevKit storage mc, string memory name, address dictionaryAddr) internal returns(Dictionary storage dictionary) {
         uint pid = mc.startProcess("load", param(name, dictionaryAddr));
         Dictionary memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
         dictionary = mc.dictionary.register(_dictionary);
