@@ -8,8 +8,7 @@ import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {Clone} from "mc-std/functions/Clone.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {DummyFunction} from "test/utils/DummyFunction.sol";
-import {DummyFacade} from "test/utils/DummyFacade.sol";
+import {Dummy} from "test/utils/Dummy.sol";
 
 contract CloneTest is MCStateFuzzingTest {
     Clone clone = Clone(address(this));
@@ -17,11 +16,9 @@ contract CloneTest is MCStateFuzzingTest {
     address dictionary;
 
     function setUp() public {
-        mc.init("DummyBundle");
-        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
-        mc.useFacade(address(new DummyFacade()));
+        Dummy.setBundle(mc);
         dictionary = mc.createMockDictionary().addr;
-        ProxyUtils.upgradeDictionaryToAndCall(dictionary, "");
+        setDictionary(dictionary);
         implementations[Clone.clone.selector] = cloneFunc;
     }
 
@@ -29,7 +26,10 @@ contract CloneTest is MCStateFuzzingTest {
         vm.expectEmit(true, false, false, false, address(clone));
         emit ProxyCreator.ProxyCreated(dictionary, address(0));
         address cloned = clone.clone("");
-        assertEq(ForgeHelper.getDictionaryAddress(address(this)), ForgeHelper.getDictionaryAddress(cloned));
+        assertEq(
+            ForgeHelper.getDictionaryAddress(address(this)),
+            ForgeHelper.getDictionaryAddress(cloned)
+        );
     }
 
 }

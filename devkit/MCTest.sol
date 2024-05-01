@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {System} from "devkit/system/System.sol";
 import {DecodeErrorString} from "devkit/system/message/DecodeErrorString.sol";
 import {Receive} from "mc-std/functions/Receive.sol";
+import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
@@ -26,6 +27,10 @@ abstract contract MCStateFuzzingTest is MCTestBase { // solhint-disable-line pay
     constructor() {
         System.Config().load();
         implementations[bytes4(0)] = address(new Receive());
+    }
+
+    function setDictionary(address dictionary) internal {
+        vm.store(address(this), ProxyUtils.DICTIONARY_SLOT, bytes32(uint256(uint160(dictionary))));
     }
 
     fallback(bytes calldata) external payable returns (bytes memory){
