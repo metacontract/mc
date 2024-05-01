@@ -9,10 +9,10 @@ import {Proxy as OZProxy} from "@oz.mc/proxy/Proxy.sol";
 /**
     @title Mock Proxy Contract
  */
-contract ProxySimpleMock is OZProxy {
+contract SimpleMockProxy is OZProxy {
     constructor (Function[] memory functions) {
         for (uint i; i < functions.length; ++i) {
-            ProxySimpleMockLib.set({
+            SimpleMockProxyLib.set({
                 selector: functions[i].selector,
                 implementation: functions[i].implementation
             });
@@ -20,17 +20,17 @@ contract ProxySimpleMock is OZProxy {
     }
 
     function _implementation() internal view override returns(address) {
-        return ProxySimpleMockLib.getImplementation(msg.sig);
+        return SimpleMockProxyLib.getImplementation(msg.sig);
     }
 }
 
-library ProxySimpleMockLib {
+library SimpleMockProxyLib {
     bytes32 internal constant STORAGE_LOCATION = 0x64a9f0903a8f864d59bc40808555c0090d6ada027fd81884feeb2af9acdbc200;
     /// @custom:storage-location erc7021:mc.mock.proxy
-    struct ProxySimpleMockStorage {
+    struct SimpleMockProxyStorage {
         mapping(bytes4 selector => address) implementations;
     }
-    function Storage() internal pure returns(ProxySimpleMockStorage storage ref) { assembly { ref.slot := STORAGE_LOCATION } }
+    function Storage() internal pure returns(SimpleMockProxyStorage storage ref) { assembly { ref.slot := STORAGE_LOCATION } }
 
     function set(bytes4 selector, address implementation) internal {
         Storage().implementations[selector] = implementation;

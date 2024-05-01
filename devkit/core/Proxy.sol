@@ -12,7 +12,7 @@ import {Validator} from "devkit/system/Validator.sol";
 // External Lib Contract
 import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
 // Mock Contract
-import {ProxySimpleMock} from "devkit/mocks/ProxySimpleMock.sol";
+import {SimpleMockProxy} from "devkit/mocks/SimpleMockProxy.sol";
 
 // Core Types
 import {Dictionary} from "devkit/core/Dictionary.sol";
@@ -54,7 +54,7 @@ library ProxyLib {
             Validator.MUST_Completed(functions[i]);
         }
         mockProxy.startBuilding();
-        mockProxy.addr = address(new ProxySimpleMock(functions));
+        mockProxy.addr = address(new SimpleMockProxy(functions));
         mockProxy.kind = ProxyKind.Mock;
         mockProxy.finishBuilding();
         return mockProxy.finishProcess(pid);

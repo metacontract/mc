@@ -50,10 +50,10 @@ contract DevKitTest_MCTest is MCDevKitTest {
         // assertTrue(success);
     }
 
-    function test_createMock_Success() public {
+    function test_createMockProxy_Success() public {
         string memory name = mc.proxy.genUniqueMockName(mc.std.all.name);
 
-        address proxy = mc.createMock(mc.std.all).addr;
+        address proxy = mc.createMockProxy(mc.std.all).addr;
 
         assertTrue(mc.proxy.find(name).isComplete());
         assertEq(mc.proxy.findCurrent().addr, proxy);
