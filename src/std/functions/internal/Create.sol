@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {ERC7546ProxyEtherscan} from "@ucs.mc/proxy/ERC7546ProxyEtherscan.sol";
+import {Proxy} from "@ucs.mc/proxy/Proxy.sol";
 
 /**
     < MC Standard Function >
@@ -14,7 +14,7 @@ library Create {
     event ProxyCreated(address dictionary, address proxy);
 
     function _create(address dictionary, bytes calldata initData) internal returns (address proxy) {
-        proxy = address(new ERC7546ProxyEtherscan(dictionary, initData));
+        proxy = address(new Proxy(dictionary, initData));
         emit ProxyCreated(dictionary, proxy);
     }
 
