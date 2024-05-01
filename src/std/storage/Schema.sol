@@ -58,8 +58,3 @@ interface Schema {
     }
 
 }
-
-struct Dep {
-    bytes4 selector;
-    address implementation;
-}

@@ -257,7 +257,7 @@ library Validator {
     function ValidateBuilder(StdFunctions storage std) internal view returns(bool) {
         return (
             Validator.ValidateBuilder(std.initSetAdmin) &&
-            Validator.ValidateBuilder(std.getDeps) &&
+            Validator.ValidateBuilder(std.getFunctions) &&
             Validator.ValidateBuilder(std.clone)
         );
     }

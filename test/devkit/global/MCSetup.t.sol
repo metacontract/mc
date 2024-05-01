@@ -16,12 +16,12 @@ contract DevKitTest_MCSetup is MCDevKitTest {
         mc.setupStdFunctions();
 
         assertTrue(mc.std.functions.initSetAdmin.isInitSetAdmin());
-        assertTrue(mc.std.functions.getDeps.isGetDeps());
+        assertTrue(mc.std.functions.getFunctions.isGetFunctions());
         assertTrue(mc.std.functions.clone.isClone());
 
         assertTrue(mc.std.all.functions.length == 3);
         assertTrue(mc.std.all.functions[0].isInitSetAdmin());
-        assertTrue(mc.std.all.functions[1].isGetDeps());
+        assertTrue(mc.std.all.functions[1].isGetFunctions());
         assertTrue(mc.std.all.functions[2].isClone());
     }
 

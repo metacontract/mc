@@ -13,7 +13,7 @@ import {Logger} from "devkit/system/Logger.sol";
 import {Function} from "devkit/core/Function.sol";
 // MC Std
 import {Clone} from "mc-std/functions/Clone.sol";
-import {GetDeps} from "mc-std/functions/GetDeps.sol";
+import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
 import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
@@ -28,7 +28,7 @@ import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
 //////////////////////////////////////////////////////
 struct StdFunctions {
     Function initSetAdmin;
-    Function getDeps;
+    Function getFunctions;
     Function clone;
     TypeStatus status;
 }
@@ -57,7 +57,7 @@ library StdFunctionsLib {
         uint pid = std.startProcess("fetch");
         std.startBuilding();
         std .fetch_InitSetAdmin()
-            .fetch_GetDeps()
+            .fetch_GetFunctions()
             .fetch_Clone();
         std.finishBuilding();
         return std.finishProcess(pid);
@@ -72,11 +72,11 @@ library StdFunctionsLib {
             return std.finishProcess(pid);
         }
 
-        function fetch_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("fetch_GetDeps");
-            std.getDeps .fetch("GetDeps")
-                        .assignSelector(GetDeps.getDeps.selector);
-            Logger.logDebug(std.getDeps.toString());
+        function fetch_GetFunctions(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("fetch_GetFunctions");
+            std.getFunctions .fetch("GetFunctions")
+                        .assignSelector(GetFunctions.getFunctions.selector);
+            Logger.logDebug(std.getFunctions.toString());
             return std.finishProcess(pid);
         }
 
@@ -97,7 +97,7 @@ library StdFunctionsLib {
         uint pid = std.startProcess("deployIfNotExists");
         std.startBuilding();
         std .deployIfNotExists_InitSetAdmin()
-            .deployIfNotExists_GetDeps()
+            .deployIfNotExists_GetFunctions()
             .deployIfNotExists_Clone();
         std.finishBuilding();
         return std.finishProcess(pid);
@@ -111,10 +111,10 @@ library StdFunctionsLib {
             return std.finishProcess(pid);
         }
 
-        function deployIfNotExists_GetDeps(StdFunctions storage std) internal returns(StdFunctions storage) {
-            uint pid = std.startProcess("deployIfNotExists_GetDeps");
-            if (std.getDeps.hasNotContract()) {
-                std.getDeps.assignImplementation(address(new GetDeps()));
+        function deployIfNotExists_GetFunctions(StdFunctions storage std) internal returns(StdFunctions storage) {
+            uint pid = std.startProcess("deployIfNotExists_GetFunctions");
+            if (std.getFunctions.hasNotContract()) {
+                std.getFunctions.assignImplementation(address(new GetFunctions()));
             }
             return std.finishProcess(pid);
         }

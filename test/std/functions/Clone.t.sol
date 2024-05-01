@@ -15,8 +15,7 @@ contract CloneTest is MCStateFuzzingTest {
     address dictionary;
 
     function setUp() public {
-        Dummy.setBundle(mc);
-        dictionary = mc.createMockDictionary().addr;
+        dictionary = Dummy.dictionary(mc);
         setDictionary(dictionary);
         implementations[Clone.clone.selector] = cloneFunc;
     }

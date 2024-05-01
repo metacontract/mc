@@ -11,4 +11,10 @@ library Dummy {
         mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
         mc.useFacade(address(new DummyFacade()));
     }
+
+    function dictionary(MCDevKit storage mc) internal returns(address) {
+        setBundle(mc);
+        return mc.createMockDictionary().addr;
+    }
+
 }
