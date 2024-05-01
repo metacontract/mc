@@ -5,24 +5,24 @@ import {console2} from "forge-std/console2.sol";
 import {MCStateFuzzingTest} from "devkit/MCTest.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 
-import {Clone} from "mc-std/functions/Clone.sol";
+import {Create} from "mc-std/functions/Create.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {Dummy} from "test/utils/Dummy.sol";
 
-contract CloneTest is MCStateFuzzingTest {
+contract CreateTest is MCStateFuzzingTest {
     function setUp() public {
-        _use(Clone.clone.selector, address(new Clone()));
+        _use(Create.create.selector, address(new Create()));
         _setDictionary(Dummy.dictionary(mc));
     }
 
-    function test_Clone_Success_WithoutInitData() public {
-        vm.expectEmit(true, false, false, false, target);
+    function test_Create_Success_WithoutInitData() public {
+        vm.expectEmit(true, false, false, false, address(target));
         emit ProxyCreator.ProxyCreated(dictionary, address(0));
-        address cloned = Clone(target).clone("");
+        address cloned = Create(target).create(dictionary, "");
         assertEq(
-            ForgeHelper.getDictionaryAddress(address(this)),
-            ForgeHelper.getDictionaryAddress(cloned)
+            ForgeHelper.getDictionaryAddress(cloned),
+            dictionary
         );
     }
 

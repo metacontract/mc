@@ -140,6 +140,10 @@ library Formatter {
         return vm.toString(addr);
     }
 
+    function toBytes32(address addr) internal pure returns(bytes32) {
+        return bytes32(uint256(uint160(addr)));
+    }
+
     function toString(bytes4 selector) internal pure returns (string memory) {
         return vm.toString(selector).substring(10);
     }

@@ -20,12 +20,12 @@
 //         mc.setupStdFunctions();
 
 //         assertTrue(mc.std.initSetAdmin.isInitSetAdmin());
-//         assertTrue(mc.std.getDeps.isGetDeps());
+//         assertTrue(mc.std.getFunctions.isGetFunctions());
 //         assertTrue(mc.std.clone.isClone());
 
 //         assertTrue(mc.std.all.functions.length == 3);
 //         assertTrue(mc.std.all.functions[0].isInitSetAdmin());
-//         assertTrue(mc.std.all.functions[1].isGetDeps());
+//         assertTrue(mc.std.all.functions[1].isGetFunctions());
 //         assertTrue(mc.std.all.functions[2].isClone());
 //     }
 

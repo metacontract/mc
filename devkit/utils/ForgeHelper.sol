@@ -7,6 +7,7 @@ import {stdToml} from "forge-std/StdToml.sol";
 // MC Devkit
 import {Logger} from "devkit/system/Logger.sol";
 import {Parser} from "devkit/types/Parser.sol";
+import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 
 // Constants
 /// @dev address(uint160(uint256(keccak256("hevm cheat code"))));
@@ -46,6 +47,10 @@ library ForgeHelper {
     --------------------*/
     function loadAddress(address target, bytes32 slot) internal view returns(address) {
         return address(uint160(uint256(vm.load(target, slot))));
+    }
+
+    function getDictionaryAddress(address proxy) internal view returns(address) {
+        return loadAddress(proxy, ProxyUtils.DICTIONARY_SLOT);
     }
 
     function assumeAddressIsNotReserved(address addr) internal pure {

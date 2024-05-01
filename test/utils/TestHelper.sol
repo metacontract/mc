@@ -11,7 +11,7 @@ import {Function} from "devkit/core/Function.sol";
 // import {Bundle} from "./Bundle.sol";
 
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
-import {GetDeps} from "mc-std/functions/GetDeps.sol";
+import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {Clone} from "mc-std/functions/Clone.sol";
 
 library TestHelper {
@@ -22,10 +22,10 @@ library TestHelper {
             functionInfo.implementation.isContract();
     }
 
-    function isGetDeps(Function memory functionInfo) internal view returns(bool) {
+    function isGetFunctions(Function memory functionInfo) internal view returns(bool) {
         return
-            functionInfo.name.isEqual("GetDeps") &&
-            functionInfo.selector == GetDeps.getDeps.selector &&
+            functionInfo.name.isEqual("GetFunctions") &&
+            functionInfo.selector == GetFunctions.getFunctions.selector &&
             functionInfo.implementation.isContract();
     }
 

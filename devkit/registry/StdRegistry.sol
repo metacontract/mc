@@ -14,7 +14,7 @@ import {Bundle} from "devkit/core/Bundle.sol";
 import {StdFunctions} from "devkit/registry/StdFunctions.sol";
 // MC Std
 import {Clone} from "mc-std/functions/Clone.sol";
-import {GetDeps} from "mc-std/functions/GetDeps.sol";
+import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
 import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
 import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
@@ -60,7 +60,7 @@ library StdRegistryLib {
             uint pid = registry.startProcess("configureStdBundle_All");
             registry.all.assignName("ALL_STD_FUNCTIONS")
                         .pushFunction(registry.functions.initSetAdmin)
-                        .pushFunction(registry.functions.getDeps)
+                        .pushFunction(registry.functions.getFunctions)
                         .pushFunction(registry.functions.clone)
                         .assignFacade(address(new StdFacade()));
             return registry.finishProcess(pid);
