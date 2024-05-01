@@ -96,7 +96,6 @@ library DictionaryLib {
 
         duplicatedDictionary = deploy(owner).assignName(dictionary.name);
 
-        address toAddr = duplicatedDictionary.addr;
         address fromAddr = dictionary.addr;
 
         bytes4[] memory _selectors = IDictionary(fromAddr).supportsInterfaces();
