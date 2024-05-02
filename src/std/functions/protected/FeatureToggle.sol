@@ -4,7 +4,7 @@ pragma solidity ^0.8.22;
 // storage
 import {Storage} from "../../storage/Storage.sol";
 
-import {ProtectionBase} from "./utils/ProtectionBase.sol";
+import {ProtectionBase} from "./protection/ProtectionBase.sol";
 
 /**
     < MC Standard Function >
