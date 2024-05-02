@@ -15,13 +15,14 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Bundle);
 
 
-/*********************************
-    🗂️ Bundle Configuration
-        🌱 Init Bundle
-        🔗 Use Function
-        🪟 Use Facade
-**********************************/
-library MCBundleLib {
+/**************************************
+ *  🎁 MC Initial Configuration
+ *      🌱 Init Bundle
+ *      🔗 Use Function
+ *      🪟 Use Facade
+ *      🏰 Setup Standard Functions
+***************************************/
+library MCInitLib {
 
     /**--------------------
         🌱 Init Bundle
@@ -68,6 +69,15 @@ library MCBundleLib {
         uint pid = mc.startProcess("useFacade", param(facade));
         mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
+        return mc.finishProcess(pid);
+    }
+
+    /**--------------------------------
+        🏰 Setup Standard Functions
+    ----------------------------------*/
+    function setupStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
+        uint pid = mc.startProcess("setupStdFunctions");
+        mc.std.complete();
         return mc.finishProcess(pid);
     }
 

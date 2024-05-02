@@ -12,23 +12,23 @@ import {Proxy} from "devkit/core/Proxy.sol";
 import {Dictionary} from "devkit/core/Dictionary.sol";
 
 
-/**********************************
-    🔍 Finder
-        🏠 Find Proxy
-        📚 Find Dictionary
-***********************************/
+/********************************************
+ *  🔍 Finder
+ *      🏠 Find Current Proxy Address
+ *      📚 Find Current Dictionary Address
+*********************************************/
 library MCFinderLib {
 
-    /**-------------------
-        🏠 Find Proxy
-    ---------------------*/
+    /**----------------------------------
+        🏠 Find Current Proxy Address
+    ------------------------------------*/
     function toProxyAddress(MCDevKit storage mc) internal returns(address) {
         return mc.proxy.findCurrent().addr;
     }
 
-    /**------------------------
-        📚 Find Dictionary
-    --------------------------*/
+    /**----------------------------------------
+        📚 Find Current Dictionary Address
+    ------------------------------------------*/
     function toDictionaryAddress(MCDevKit storage mc) internal returns(address) {
         return mc.dictionary.findCurrent().addr;
     }
