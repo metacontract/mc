@@ -10,7 +10,7 @@ import {Proxy} from "@ucs.mc/proxy/Proxy.sol";
  */
 library ProxyCreator {
     event ProxyCreated(address dictionary, address proxy);
-    function create(address dictionary, bytes calldata initData) internal returns(address proxy) {
+    function create(address dictionary, bytes memory initData) internal returns(address proxy) {
         proxy = address(new Proxy(dictionary, initData));
         emit ProxyCreated(dictionary, proxy);
     }
