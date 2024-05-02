@@ -10,7 +10,7 @@
 // import {StringUtils} from "devkit/utils/primitive/StringUtils.sol";
 //     using StringUtils for string;
 
-// contract MCDevKitTest is Test {
+// contract MCTestBase is Test {
 //     MCDevKit internal mc;
 //     function setUp() public {
 //         mc.stopLog();

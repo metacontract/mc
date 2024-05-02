@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKitTest} from "devkit/MCTest.sol";
+import {MCTestBase} from "devkit/MCBase.sol";
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
@@ -15,7 +15,7 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 
-contract DevKitTest_MCDeploy is MCDevKitTest {
+contract DevKitTest_MCDeploy is MCTestBase {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/

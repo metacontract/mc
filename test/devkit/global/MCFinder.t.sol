@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKitTest} from "devkit/MCTest.sol";
+import {MCTestBase} from "devkit/MCBase.sol";
 import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for string;
 import {DummyFunction} from "../../utils/DummyFunction.sol";
 import {DummyFacade} from "../../utils/DummyFacade.sol";
 
-contract DevKitTest_MCFinder is MCDevKitTest {
+contract DevKitTest_MCFinder is MCTestBase {
 
     /**-------------------
         🏠 Find Proxy

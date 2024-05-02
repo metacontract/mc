@@ -12,14 +12,6 @@ import {MCScriptBase} from "./MCBase.sol";
 // ⭐️ MC SCRIPT
 abstract contract MCScript is MCScriptBase {
     constructor() {
-        System.Config().load();
         if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
-    }
-}
-
-// ⭐️ MC SCRIPT without Setup
-abstract contract MCScriptWithoutSetup is MCScriptBase {
-    constructor() {
-        System.Config().load();
     }
 }
