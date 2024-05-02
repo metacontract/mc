@@ -56,10 +56,15 @@ jobs:
         run: |
           git config --global user.email "github-actions@example.com"
           git config --global user.name "GitHub Actions"
-      - name: Run forge install
+      - name: Run forge init with metacontract/template
         run: |
           mkdir /tmp/install-with-template-test
           cd /tmp/install-with-template-test
+          forge init mc-example-project -t metacontract/template
+          forge test
+      - name: Run forge test
+        run: |
+          cd ./mc-example-project
           forge init mc-example-project -t metacontract/template
           forge test
 
