@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
 
-import {MsgSender} from "mc-std/functions/protected/utils/MsgSender.sol";
+import {MsgSender} from "mc-std/functions/protected/protection/MsgSender.sol";
 
 contract MsgSenderSpecTest is Test {
     function setUp() public {}

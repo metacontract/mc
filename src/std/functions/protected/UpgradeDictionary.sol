@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
-import {ProtectionBase} from "./utils/ProtectionBase.sol";
+import {ProtectionBase} from "./protection/ProtectionBase.sol";
 
 /**
     < MC Standard Function >
