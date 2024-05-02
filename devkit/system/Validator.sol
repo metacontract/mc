@@ -47,9 +47,9 @@ library Validator {
 
     // Validate without broadcast
     modifier noBroadcast() {
-        ForgeHelper.pauseBroadcast();
+        (bool isBroadcasting, address currentSender) = ForgeHelper.pauseBroadcast();
         _;
-        ForgeHelper.resumeBroadcast();
+        ForgeHelper.resumeBroadcast(isBroadcasting, currentSender);
     }
 
 

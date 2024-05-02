@@ -118,13 +118,14 @@ library ForgeHelper {
     /**------------------
         📡 Broadcast
     --------------------*/
-    function pauseBroadcast() internal {
-        (VmSafe.CallerMode mode,,) = vm.readCallers();
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
+    function pauseBroadcast() internal returns(bool isBroadcasting, address) {
+        (,address currentSender,) = vm.readCallers();
+        isBroadcasting = vm.isContext(VmSafe.ForgeContext.ScriptBroadcast);
+        if (isBroadcasting) vm.stopBroadcast();
+        return (isBroadcasting, currentSender);
     }
-    function resumeBroadcast() internal {
-        (VmSafe.CallerMode mode,,) = vm.readCallers();
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.startBroadcast(loadPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
+    function resumeBroadcast(bool isBroadcasting, address currentSender) internal {
+        if (isBroadcasting) vm.startBroadcast(currentSender);
     }
 
 }

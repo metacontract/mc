@@ -128,7 +128,7 @@ library MCHelpers {
     function pauseBroadcast(MCDevKit storage) internal {
         ForgeHelper.pauseBroadcast();
     }
-    function resumeBroadcast(MCDevKit storage) internal {
-        ForgeHelper.resumeBroadcast();
+    function resumeBroadcast(MCDevKit storage, bool isBroadcasting, address currentSender) internal {
+        ForgeHelper.resumeBroadcast(isBroadcasting, currentSender);
     }
 }
