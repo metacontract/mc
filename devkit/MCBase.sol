@@ -7,49 +7,32 @@ import {Script as ForgeScript} from "forge-std/Script.sol";
 import {Test as ForgeTest} from "forge-std/Test.sol";
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {System} from "devkit/system/System.sol";
 
 
 abstract contract MCBase is CommonBase {
     MCDevKit internal mc;
     uint256 internal deployerKey;
     address internal deployer;
+
+    constructor() {
+        System.Config().load();
+    }
 }
 
 abstract contract MCScriptBase is MCBase, ForgeScript {
     modifier startBroadcastWith(string memory envKey) {
-        _startBroadcastWith(envKey);
-        _;
-    }
-
-    modifier startBroadcastWithDeployerPrivKey() {
-        _startBroadcastWith("DEPLOYER_PRIV_KEY");
-        _;
-    }
-
-    function _startBroadcastWith(string memory envKey) internal {
-        deployerKey = ForgeHelper.getPrivateKey(envKey);
+        deployerKey = mc.loadPrivateKey(envKey);
         deployer = vm.addr(deployerKey);
         vm.startBroadcast(deployerKey);
+        _;
     }
 }
 
 abstract contract MCTestBase is MCBase, ForgeTest {
     modifier startPrankWith(string memory envKey) {
-        _startPrankWith(envKey);
-        _;
-    }
-    modifier startPrankWithDeployer() {
-        _startPrankWith("DEPLOYER");
-        _;
-    }
-    function _startPrankWith(string memory envKey) internal {
         deployer = vm.envOr(envKey, makeAddr(envKey));
         vm.startPrank(deployer);
-    }
-
-    modifier assumeAddressIsNotReserved(address addr) {
-        ForgeHelper.assumeAddressIsNotReserved(addr);
         _;
     }
 }

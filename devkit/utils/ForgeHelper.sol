@@ -27,7 +27,7 @@ library ForgeHelper {
     /**-------------------
         🔧 Env File
     ---------------------*/
-    function getPrivateKey(string memory envKey) internal view returns(uint256) {
+    function loadPrivateKey(string memory envKey) internal view returns(uint256) {
         return uint256(vm.envBytes32(envKey));
     }
 
@@ -35,22 +35,28 @@ library ForgeHelper {
         return vm.envOr(envKey, address(0));
     }
 
-    // TODO: check version
-    function canGetDeployedContract(string memory envKey) internal view returns(bool) {
-        if (vm.envOr(envKey, address(0)).code.length != 0) return true;
-        return false;
-    }
-
 
     /**------------------
         📍 Address
     --------------------*/
-    function loadAddress(address target, bytes32 slot) internal view returns(address) {
+    function getAddress(address target, bytes32 slot) internal view returns(address) {
         return address(uint160(uint256(vm.load(target, slot))));
     }
 
     function getDictionaryAddress(address proxy) internal view returns(address) {
-        return loadAddress(proxy, ProxyUtils.DICTIONARY_SLOT);
+        return getAddress(proxy, ProxyUtils.DICTIONARY_SLOT);
+    }
+
+    function injectCode(address target, bytes memory runtimeBytecode) internal {
+        vm.etch(target, runtimeBytecode);
+    }
+
+    function injectAddressToStorage(address target, bytes32 slot, address addr) internal {
+        vm.store(target, slot, bytes32(uint256(uint160(addr))));
+    }
+
+    function injectDictionary(address proxy, address dictionary) internal {
+        injectAddressToStorage(proxy, ProxyUtils.DICTIONARY_SLOT, dictionary);
     }
 
     function assumeAddressIsNotReserved(address addr) internal pure {
@@ -112,13 +118,14 @@ library ForgeHelper {
     /**------------------
         📡 Broadcast
     --------------------*/
-    function pauseBroadcast() internal {
-        (VmSafe.CallerMode mode,,) = vm.readCallers();
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.stopBroadcast();
+    function pauseBroadcast() internal returns(bool isBroadcasting, address) {
+        (,address currentSender,) = vm.readCallers();
+        isBroadcasting = vm.isContext(VmSafe.ForgeContext.ScriptBroadcast);
+        if (isBroadcasting) vm.stopBroadcast();
+        return (isBroadcasting, currentSender);
     }
-    function resumeBroadcast() internal {
-        (VmSafe.CallerMode mode,,) = vm.readCallers();
-        if (mode == VmSafe.CallerMode.RecurrentBroadcast) vm.startBroadcast(getPrivateKey("DEPLOYER_PRIV_KEY")); // Without CALL TODO
+    function resumeBroadcast(bool isBroadcasting, address currentSender) internal {
+        if (isBroadcasting) vm.startBroadcast(currentSender);
     }
 
 }

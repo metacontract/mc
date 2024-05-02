@@ -23,14 +23,14 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Proxy);
 
 
-/***************************************
-    🚀 Deployment
-        🌞 Deploy Meta Contract
-        🏠 Deploy Proxy
-        📚 Deploy Dictionary
-        🔂 Duplicate Dictionary
-        💽 Load Dictionary
-****************************************/
+/************************************
+ *  🚀 Deployment
+ *      🌞 Deploy Meta Contract
+ *      🏠 Deploy Proxy
+ *      📚 Deploy Dictionary
+ *      🔂 Duplicate Dictionary
+ *      💽 Load Dictionary
+*************************************/
 library MCDeployLib {
 
     /**-----------------------------

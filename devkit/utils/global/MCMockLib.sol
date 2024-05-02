@@ -18,14 +18,19 @@ import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
 import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
 
 
-/******************************************
-    🧪 Test
+/*************************************
+ *  🎭 Mock
+ *      🌞 Mocking Meta Contract
+ *      🏠 Mocking Proxy
+ *      📚 Mocking Dictionary
+**************************************/
+library MCMockLib {
+
+    /**-----------------------------
         🌞 Mocking Meta Contract
-        🏠 Mocking Proxy
-        📚 Mocking Dictionary
-        🤲 Set Storage Reader
-*******************************************/
-library MCTestLib {
+    -------------------------------*/
+
+
     /**---------------------
         🏠 Mocking Proxy
     -----------------------*/
@@ -81,22 +86,6 @@ library MCTestLib {
         uint pid = mc.startProcess("createMockDictionary", param(owner));
         mockDictionary = mc.createMockDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);
-    }
-
-
-    /**--------------------------
-        🤲 Set Storage Reader
-    ----------------------------*/
-    function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setStorageReader", param(dictionary, selector, implementation));
-        dictionary.set(selector, implementation);
-        return mc.finishProcess(pid);
-    }
-    function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.setStorageReader(mc.dictionary.find(bundleName), selector, implementation);
-    }
-    function setStorageReader(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        return mc.setStorageReader(mc.dictionary.findCurrent(), selector, implementation);
     }
 
 }

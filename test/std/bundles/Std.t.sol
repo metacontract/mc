@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCDevKitTest} from "devkit/MCTest.sol";
+import {MCTestBase} from "devkit/MCBase.sol";
 import {DeployLib} from "script/DeployLib.sol";
 import {MCDevKit} from "devkit/MCDevKit.sol";
 
 import {Clone} from "mc-std/functions/Clone.sol";
 
-contract StdTest is MCDevKitTest {
+contract StdTest is MCTestBase {
     using DeployLib for MCDevKit;
     function setUp() public  {
 // mc.startDebug();

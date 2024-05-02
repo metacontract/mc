@@ -18,7 +18,6 @@ import {MCTestBase} from "./MCBase.sol";
 // ⭐️ MC TEST
 abstract contract MCTest is MCTestBase {
     constructor() {
-        System.Config().load();
         if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
     }
 }
@@ -36,7 +35,7 @@ abstract contract MCStateFuzzingTest is MCTestBase, OZProxy { // solhint-disable
     address dictionary;
 
     constructor() {
-        System.Config().load();
+        // System.Config().load();
         implementations[bytes4(0)] = address(new Receive());
     }
 
@@ -54,11 +53,4 @@ abstract contract MCStateFuzzingTest is MCTestBase, OZProxy { // solhint-disable
         return implementations[msg.sig];
     }
 
-}
-
-// 🌟 MC TEST for DevKit
-abstract contract MCDevKitTest is MCTestBase {
-    constructor() {
-        System.Config().load();
-    }
 }
