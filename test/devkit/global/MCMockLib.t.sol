@@ -15,22 +15,25 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 
-contract DevKitTest_MCTest is MCTestBase {
+contract MCMockLibTest is MCTestBase {
     function setUp() public {
         mc.setupStdFunctions();
     }
 
-    /**-------------------------
-        📚 Mocking Dictionary
-    ---------------------------*/
-    function test_createMockDictionary_Success() public {
-        string memory name = mc.dictionary.genUniqueMockName(mc.std.all.name);
+    /**-----------------------------
+        🌞 Mocking Meta Contract
+    -------------------------------*/
 
-        address dictionary = mc.createMockDictionary(mc.std.all).addr;
+    /**---------------------
+        🏠 Mocking Proxy
+    -----------------------*/
+    function test_createMockProxy_Success() public {
+        string memory name = mc.proxy.genUniqueMockName(mc.std.all.name);
 
-        assertTrue(mc.dictionary.find(name).isVerifiable());
-        assertTrue(mc.dictionary.find(name).isComplete());
-        assertEq(mc.dictionary.findCurrent().addr, dictionary);
+        address proxy = mc.createMockProxy(mc.std.all).addr;
+
+        assertTrue(mc.proxy.find(name).isComplete());
+        assertEq(mc.proxy.findCurrent().addr, proxy);
 
         // (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         // assertTrue(success);
@@ -50,13 +53,17 @@ contract DevKitTest_MCTest is MCTestBase {
         // assertTrue(success);
     }
 
-    function test_createMockProxy_Success() public {
-        string memory name = mc.proxy.genUniqueMockName(mc.std.all.name);
+    /**-------------------------
+        📚 Mocking Dictionary
+    ---------------------------*/
+    function test_createMockDictionary_Success() public {
+        string memory name = mc.dictionary.genUniqueMockName(mc.std.all.name);
 
-        address proxy = mc.createMockProxy(mc.std.all).addr;
+        address dictionary = mc.createMockDictionary(mc.std.all).addr;
 
-        assertTrue(mc.proxy.find(name).isComplete());
-        assertEq(mc.proxy.findCurrent().addr, proxy);
+        assertTrue(mc.dictionary.find(name).isVerifiable());
+        assertTrue(mc.dictionary.find(name).isComplete());
+        assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
         // (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         // assertTrue(success);

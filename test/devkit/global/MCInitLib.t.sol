@@ -15,10 +15,11 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 
-contract DevKitTest_MCBundle is MCTestBase {
-    /**---------------------------
-        🌱 Init Custom Bundle
-    -----------------------------*/
+contract MCInitLibTest is MCTestBase {
+
+    /**--------------------
+        🌱 Init Bundle
+    ----------------------*/
     function test_init_Success_withName() public {
         string memory name = "TestBundleName";
         mc.init(name);
@@ -116,5 +117,11 @@ contract DevKitTest_MCBundle is MCTestBase {
         mc.init();
         mc.useFacade(facade);
     }
+
+
+    /**--------------------------------
+        🏰 Setup Standard Functions
+    ----------------------------------*/
+
 
 }

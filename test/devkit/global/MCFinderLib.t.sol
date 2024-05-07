@@ -8,11 +8,11 @@ import {Formatter} from "devkit/types/Formatter.sol";
 import {DummyFunction} from "../../utils/DummyFunction.sol";
 import {DummyFacade} from "../../utils/DummyFacade.sol";
 
-contract DevKitTest_MCFinder is MCTestBase {
+contract MCFinderLibTest is MCTestBase {
 
-    /**-------------------
-        🏠 Find Proxy
-    ---------------------*/
+    /**----------------------------------
+        🏠 Find Current Proxy Address
+    ------------------------------------*/
     function test_toProxyAddress_Success() public {
         mc.init();
         mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
@@ -29,9 +29,9 @@ contract DevKitTest_MCFinder is MCTestBase {
         mc.toProxyAddress();
     }
 
-    /**------------------------
-        📚 Find Dictionary
-    --------------------------*/
+    /**----------------------------------------
+        📚 Find Current Dictionary Address
+    ------------------------------------------*/
     function test_toDictionaryAddress_Success() public {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl = address(new DummyFunction());

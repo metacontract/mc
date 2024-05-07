@@ -15,7 +15,7 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "test/utils/DummyFunction.sol";
 import {DummyFacade} from "test/utils/DummyFacade.sol";
 
-contract DevKitTest_MCDeploy is MCTestBase {
+contract MCDeployLibTest is MCTestBase {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/

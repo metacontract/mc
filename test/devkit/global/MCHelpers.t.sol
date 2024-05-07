@@ -8,7 +8,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 
 import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
-contract DevKitTest_MCContext is MCTestBase {
+contract MCHelpersTest is MCTestBase {
     /**-----------------------------
         ♻️ Reset Current Context
     -------------------------------*/
