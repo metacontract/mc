@@ -8,6 +8,22 @@ import {DummyContract} from "test/utils/DummyContract.sol";
 import {Function} from "devkit/MCTest.sol";
 
 library Dummy {
+    function bundleName() internal returns(string memory) {
+        return "DummyBundleName";
+    }
+
+    function functionSelector() internal returns(bytes4) {
+        return DummyFunction.dummy.selector;
+    }
+
+    function functionAddress() internal returns(address) {
+        return address(new DummyFunction());
+    }
+
+    function facadeAddress() internal returns(address) {
+        return address(new DummyFacade());
+    }
+
     function setBundle(MCDevKit storage mc) internal {
         mc.init("DummyBundle");
         mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
