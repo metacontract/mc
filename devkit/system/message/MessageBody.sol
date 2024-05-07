@@ -9,14 +9,13 @@ library MessageBody {
     // Primitives
     string constant NAME_REQUIRED = "The provided name cannot be an empty string. Please enter a non-empty value for the name and try again.";
     string constant ENV_KEY_REQUIRED = "The provided environment key cannot be an empty string. Please enter a non-empty value for the key and try again.";
-    string constant SELECTOR_REQUIRED = "The provided function selector cannot be empty (0x00000000). Please provide a non-empty 4-byte selector value and try again.";
+    string constant SELECTOR_RECOMMENDED = "The provided function selector is empty (0x00000000). It is recommended to use a non-empty selector.";
     string constant ADDRESS_NOT_CONTRACT = "The provided address is not a contract address. Please provide the address of a deployed contract and try again.";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "The provided owner address is the zero address (0x0). It is recommended to use a non-zero address for the owner to ensure proper access control and security.";
     // Current Context
     string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
     // Function
     string constant FUNC_NAME_UNASSIGNED = "The function name is currently unassigned. It is recommended to provide a non-empty value for the name.";
-    string constant FUNC_SELECTOR_UNASSIGNED = "The 4-byte function selector is currently unassigned. It is recommended to provide a non-zero value for the selector.";
     string constant FUNC_CONTRACT_UNASSIGNED = "The implementation contract address is currently unassigned. It is recommended to set the address of a deployed contract.";
     string constant FUNC_NOT_COMPLETE = "The function is not marked as complete. Please ensure all requirements are met before proceeding.";
     string constant FUNC_LOCKED = "The function object is currently locked and cannot be modified.";

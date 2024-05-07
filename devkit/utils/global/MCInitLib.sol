@@ -43,7 +43,7 @@ library MCInitLib {
         uint pid = mc.startProcess("use", param(name, selector, implementation));
         // Register new function
         Validator.MUST_NotEmptyName(name);
-        Validator.MUST_NotEmptySelector(selector);
+        Validator.SHOULD_NotEmptySelector(selector);
         Validator.MUST_AddressIsContract(implementation);
         mc.functions.register(name, selector, implementation);
         // Push to current bundle

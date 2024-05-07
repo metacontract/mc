@@ -114,7 +114,7 @@ library DictionaryLib {
     function set(Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary memory) {
         uint pid = dictionary.startProcess("set", param(selector, implementation));
         Validator.MUST_Completed(dictionary);
-        Validator.MUST_NotEmptySelector(selector);
+        Validator.SHOULD_NotEmptySelector(selector);
         Validator.MUST_AddressIsContract(implementation);
         IDictionary(dictionary.addr).setImplementation({
             functionSelector: selector,

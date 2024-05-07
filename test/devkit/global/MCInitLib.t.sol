@@ -90,15 +90,6 @@ contract MCInitLibTest is MCTestBase {
         mc.use(functionName, selector, impl);
     }
 
-    function test_use_Revert_EmptySelector() public {
-        string memory functionName = "DummyFunction";
-        bytes4 selector = bytes4(0);
-        address impl =  address(new DummyFunction());
-
-        vm.expectRevert(HEAD.SELECTOR_REQUIRED.toBytes());
-        mc.use(functionName, selector, impl);
-    }
-
     function test_use_Revert_NotContract() public {
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;

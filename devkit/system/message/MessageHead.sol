@@ -9,14 +9,13 @@ library MessageHead {
     // Primitives
     string constant NAME_REQUIRED = "Name Required";
     string constant ENV_KEY_REQUIRED = "EnvKey Required";
-    string constant SELECTOR_REQUIRED = "Selector Required";
+    string constant SELECTOR_RECOMMENDED = "Empty Selector";
     string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
     // Current Context
     string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
     // Function
     string constant FUNC_NAME_UNASSIGNED = "Function Name Unassigned";
-    string constant FUNC_SELECTOR_UNASSIGNED = "Function Selector Unassigned";
     string constant FUNC_CONTRACT_UNASSIGNED = "Implementation Contract Unassigned";
     string constant FUNC_NOT_COMPLETE = "Function Not Complete";
     string constant FUNC_LOCKED = "Function Locked";
