@@ -5,7 +5,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
 import {DummyContract} from "test/utils/DummyContract.sol";
-import {MCStateFuzzingTest} from "devkit/MCTest.sol";
+import {Function} from "devkit/MCTest.sol";
 
 library Dummy {
     function setBundle(MCDevKit storage mc) internal {
@@ -19,7 +19,7 @@ library Dummy {
         return mc.createMockDictionary().addr;
     }
 
-    function dictionary(MCDevKit storage mc, MCStateFuzzingTest.Function[] memory functions) internal returns(address) {
+    function dictionary(MCDevKit storage mc, Function[] memory functions) internal returns(address) {
         mc.init("DummyBundle");
         for (uint i; i < functions.length; ++i) {
             mc.use(functions[i].selector, functions[i].implementation);

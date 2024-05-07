@@ -15,28 +15,20 @@ import {Dummy} from "test/utils/Dummy.sol";
 // 📦 BOILERPLATE
 import {MCTestBase} from "./MCBase.sol";
 
-// ⭐️ MC TEST
-abstract contract MCTest is MCTestBase {
-    constructor() {
-        if (System.Config().SETUP.STD_FUNCS) mc.setupStdFunctions();
-    }
+struct Function {
+    bytes4 selector;
+    address implementation;
 }
 
 // 🌟 MC State Fuzzing Test
-abstract contract MCStateFuzzingTest is MCTestBase, OZProxy { // solhint-disable-line payable-fallback
-    struct Function {
-        bytes4 selector;
-        address implementation;
-    }
-
+abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payable-fallback
     mapping(bytes4 selector => address) implementations;
     address target = address(this);
     Function[] internal functions;
     address dictionary;
 
     constructor() {
-        // System.Config().load();
-        implementations[bytes4(0)] = address(new Receive());
+        _use(bytes4(0), address(new Receive()));
     }
 
     function _use(bytes4 selector_, address impl_) internal {
