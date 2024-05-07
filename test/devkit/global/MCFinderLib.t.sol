@@ -5,8 +5,8 @@ import {MCTestBase} from "devkit/MCBase.sol";
 import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
     using Formatter for string;
-import {DummyFunction} from "../../utils/DummyFunction.sol";
-import {DummyFacade} from "../../utils/DummyFacade.sol";
+import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
+import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
 contract MCFinderLibTest is MCTestBase {
 

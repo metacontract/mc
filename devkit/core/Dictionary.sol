@@ -15,7 +15,7 @@ import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
 import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 // Mock
-import {MockDictionary} from "devkit/mocks/MockDictionary.sol";
+import {MockDictionary} from "devkit/test/mocks/MockDictionary.sol";
 
 // Core Types
 import {Function} from "devkit/core/Function.sol";

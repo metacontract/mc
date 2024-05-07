@@ -8,7 +8,7 @@ import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {Clone} from "mc-std/functions/Clone.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {Dummy} from "test/utils/Dummy.sol";
+import {Dummy} from "devkit/test/dummy/Dummy.sol";
 
 contract CloneTest is MCTest {
     function setUp() public {

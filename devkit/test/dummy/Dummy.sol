@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
-import {DummyContract} from "test/utils/DummyContract.sol";
+import {DummyContract} from "devkit/test/dummy/DummyContract.sol";
 import {Function} from "devkit/MCTest.sol";
 
 library Dummy {

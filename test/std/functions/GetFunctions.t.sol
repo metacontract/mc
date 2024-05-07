@@ -9,9 +9,9 @@ import {Function as MCFunc} from "devkit/core/Function.sol";
 import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {Dummy} from "test/utils/Dummy.sol";
-import {DummyFunction} from "test/utils/DummyFunction.sol";
-import {DummyFacade} from "test/utils/DummyFacade.sol";
+import {Dummy} from "devkit/test/dummy/Dummy.sol";
+import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
+import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
 contract GetFunctionsTest is MCTest {
     function setUp() public {

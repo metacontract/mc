@@ -7,7 +7,7 @@ import {System} from "devkit/system/System.sol";
 import {Receive} from "mc-std/functions/Receive.sol";
 import {Formatter} from "devkit/types/Formatter.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
-import {Dummy} from "test/utils/Dummy.sol";
+import {Dummy} from "devkit/test/dummy/Dummy.sol";
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test

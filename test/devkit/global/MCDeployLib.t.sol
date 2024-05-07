@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
 
-import {Dummy} from "test/utils/Dummy.sol";
+import {Dummy} from "devkit/test/dummy/Dummy.sol";
 
 contract MCDeployLibTest is MCTestBase {
     /**-----------------------------

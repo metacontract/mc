@@ -12,8 +12,8 @@ import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
-import {DummyFunction} from "test/utils/DummyFunction.sol";
-import {DummyFacade} from "test/utils/DummyFacade.sol";
+import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
+import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
 contract MCMockLibTest is MCTestBase {
     function setUp() public {
