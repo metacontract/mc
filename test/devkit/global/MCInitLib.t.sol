@@ -2,13 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
+import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
-
-import {Formatter} from "devkit/types/Formatter.sol";
-    using Formatter for string;
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
@@ -77,7 +74,7 @@ contract MCInitLibTest is MCTestBase {
 
         mc.use(functionName, selector, impl);
 
-        vm.expectRevert(HEAD.BUNDLE_CONTAINS_SAME_SELECTOR.toBytes());
+        mc.expectRevert(HEAD.BUNDLE_CONTAINS_SAME_SELECTOR);
         mc.use(functionName, selector, impl);
     }
 
@@ -86,7 +83,7 @@ contract MCInitLibTest is MCTestBase {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
-        vm.expectRevert(HEAD.NAME_REQUIRED.toBytes());
+        mc.expectRevert(HEAD.NAME_REQUIRED);
         mc.use(functionName, selector, impl);
     }
 
@@ -95,7 +92,7 @@ contract MCInitLibTest is MCTestBase {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  makeAddr("EOA");
 
-        vm.expectRevert(HEAD.ADDRESS_NOT_CONTRACT.toBytes());
+        mc.expectRevert(HEAD.ADDRESS_NOT_CONTRACT);
         mc.use(functionName, selector, impl);
     }
 

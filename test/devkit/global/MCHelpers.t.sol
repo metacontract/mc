@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
+import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 contract MCHelpersTest is MCTestBase {
     /**-----------------------------

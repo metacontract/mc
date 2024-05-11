@@ -2,13 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
+import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
-
-import {Formatter} from "devkit/types/Formatter.sol";
-    using Formatter for string;
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
