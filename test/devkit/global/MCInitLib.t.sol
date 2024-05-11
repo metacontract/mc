@@ -12,6 +12,9 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
 import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
+import {TestHelper} from "../../utils/TestHelper.sol";
+    using TestHelper for Function;
+
 contract MCInitLibTest is MCTestBase {
 
     /**--------------------
@@ -100,7 +103,7 @@ contract MCInitLibTest is MCTestBase {
     /**------------------
         🪟 Use Facade
     --------------------*/
-    function test_Success_useFacade() public {
+    function test_useFacade_Success() public {
         address facade = address(new DummyFacade());
         mc.init();
         mc.useFacade(facade);
@@ -110,6 +113,17 @@ contract MCInitLibTest is MCTestBase {
     /**--------------------------------
         🏰 Setup Standard Functions
     ----------------------------------*/
+    function test_setupStdFuncs_Success() public {
+        mc.setupStdFunctions();
 
+        assertTrue(mc.std.functions.initSetAdmin.isInitSetAdmin());
+        assertTrue(mc.std.functions.getFunctions.isGetFunctions());
+        assertTrue(mc.std.functions.clone.isClone());
+
+        assertTrue(mc.std.all.functions.length == 3);
+        assertTrue(mc.std.all.functions[0].isInitSetAdmin());
+        assertTrue(mc.std.all.functions[1].isGetFunctions());
+        assertTrue(mc.std.all.functions[2].isClone());
+    }
 
 }
