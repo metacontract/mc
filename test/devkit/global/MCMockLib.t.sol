@@ -31,23 +31,6 @@ contract MCMockLibTest is MCTestBase {
 
         assertTrue(mc.proxy.find(name).isComplete());
         assertEq(mc.proxy.findCurrent().addr, proxy);
-
-        // (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
-        // assertTrue(success);
-        // assertEq(address(uint160(uint256(bytes32(ret)))), impl);
-        // string memory name = "TestBundleName";
-        // mc.init(name);
-        // mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
-        // mc.useFacade(address(new DummyFacade()));
-
-        // address proxy = mc.deploy().toProxyAddress();
-
-        // assertTrue(mc.dictionary.find(name).isVerifiable());
-        // assertTrue(mc.dictionary.find(name).isComplete());
-        // assertTrue(mc.proxy.find(name).isComplete());
-
-        // (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
-        // assertTrue(success);
     }
 
     /**-------------------------
@@ -61,23 +44,6 @@ contract MCMockLibTest is MCTestBase {
         assertTrue(mc.dictionary.find(name).isVerifiable());
         assertTrue(mc.dictionary.find(name).isComplete());
         assertEq(mc.dictionary.findCurrent().addr, dictionary);
-
-        // (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
-        // assertTrue(success);
-        // assertEq(address(uint160(uint256(bytes32(ret)))), impl);
-        // string memory name = "TestBundleName";
-        // mc.init(name);
-        // mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
-        // mc.useFacade(address(new DummyFacade()));
-
-        // address proxy = mc.deploy().toProxyAddress();
-
-        // assertTrue(mc.dictionary.find(name).isVerifiable());
-        // assertTrue(mc.dictionary.find(name).isComplete());
-        // assertTrue(mc.proxy.find(name).isComplete());
-
-        // (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
-        // assertTrue(success);
     }
 
 }
