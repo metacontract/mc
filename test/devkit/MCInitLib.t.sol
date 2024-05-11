@@ -12,7 +12,7 @@ import {Function} from "devkit/core/Function.sol";
 import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
 import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
-import {TestHelper} from "../../utils/TestHelper.sol";
+import {TestHelper} from "../utils/TestHelper.sol";
     using TestHelper for Function;
 
 contract MCInitLibTest is MCTestBase {

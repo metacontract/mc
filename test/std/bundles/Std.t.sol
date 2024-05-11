@@ -1,23 +1,39 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {MCTestBase} from "devkit/MCBase.sol";
+import {MCTest} from "devkit/MCTest.sol";
 import {DeployLib} from "script/DeployLib.sol";
 import {MCDevKit} from "devkit/MCDevKit.sol";
 
 import {Clone} from "mc-std/functions/Clone.sol";
+import {IStd} from "mc-std/interfaces/IStd.sol";
+import {Initialization} from "mc-std/functions/protected/protection/Initialization.sol";
 
-contract StdTest is MCTestBase {
+contract StdTest is MCTest {
     using DeployLib for MCDevKit;
+    IStd std;
+
     function setUp() public  {
-// mc.startDebug();
+        mc.setupStdFunctions();
+        std = IStd(mc.deployStd(address(this)));
     }
 
-    function test_Success_DeployStdFunctions() public startPrankWith("TEST_DEPLOYER") {
-        mc.deployStdFunctions();
-        mc.std.complete();
-        // mc.init("STD").use(mc.std.functions.initSetAdmin).deploy();
-        mc.deploy(mc.std.all, deployer, "");
-        // mc.deploy("STD", mc.std.all, deployer, "");
+    function test_clone_Success() public {
+        std.clone("");
     }
+
+    function test_getFunctions_Success() public {
+        std.getFunctions();
+    }
+
+    function test_initSetAdmin_Success() public {
+        IStd uninitializedStd = IStd(std.clone(""));
+        uninitializedStd.initSetAdmin(makeAddr("ADMIN"));
+    }
+
+    function test_initSetAdmin_RevertIf_AlreadyInitialized() public {
+        vm.expectRevert(Initialization.InvalidInitialization.selector);
+        std.initSetAdmin(makeAddr("ADMIN"));
+    }
+
 }
