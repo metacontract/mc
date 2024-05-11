@@ -12,7 +12,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Utils
 import {param} from "devkit/system/Tracer.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -124,5 +124,13 @@ library MCHelpers {
     }
     function resumeBroadcast(MCDevKit storage, bool isBroadcasting, address currentSender) internal {
         ForgeHelper.resumeBroadcast(isBroadcasting, currentSender);
+    }
+
+
+    /**----------------------
+        🛠️ Forge Extender
+    ------------------------*/
+    function expectRevert(MCDevKit storage, string memory message) internal {
+        vm.expectRevert(bytes(message));
     }
 }
