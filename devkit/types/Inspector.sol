@@ -6,7 +6,7 @@ import {Inspector} from "devkit/types/Inspector.sol";
 import {TypeStatus} from "devkit/types/TypeGuard.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 // External Library
-import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
+import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
 import {IBeacon as IVerifiable} from "@oz.mc/proxy/beacon/IBeacon.sol";
 // Core Types
 import {Function} from "devkit/core/Function.sol";
