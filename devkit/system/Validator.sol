@@ -79,6 +79,9 @@ library Validator {
     function MUST_AddressIsContract(address addr) internal view {
         validate(MUST, addr.isContract(), HEAD.ADDRESS_NOT_CONTRACT, BODY.ADDRESS_NOT_CONTRACT);
     }
+    function SHOULD_FacadeIsContract(address facade) internal view {
+        validate(SHOULD, facade.isContract(), HEAD.FACADE_NOT_CONTRACT, BODY.FACADE_NOT_CONTRACT);
+    }
     function SHOULD_OwnerIsNotZeroAddress(address owner) internal view {
         validate(MUST, owner.isNotZero(), HEAD.OWNER_ZERO_ADDRESS_RECOMMENDED, BODY.OWNER_ZERO_ADDRESS_RECOMMENDED);
     }

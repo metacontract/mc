@@ -12,8 +12,10 @@ import {Validator} from "devkit/system/Validator.sol";
 import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 
 // External Libs
-import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
+import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
 import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
+import {ImmutableDictionary, Function as Func} from "@ucs.mc/dictionary/ImmutableDictionary.sol";
+import {BeaconDictionary} from "@ucs.mc/dictionary/BeaconDictionary.sol";
 // Mock
 import {MockDictionary} from "devkit/test/mocks/MockDictionary.sol";
 
@@ -60,6 +62,9 @@ library DictionaryLib {
 
     /**-------------------------
         🚀 Deploy Dictionary
+            - Verifiable
+            - Immutable
+            - Beacon
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary memory dictionary) {
         uint pid = dictionary.startProcess("deploy", param(owner));
@@ -70,6 +75,31 @@ library DictionaryLib {
         dictionary.finishBuilding();
         return dictionary.finishProcess(pid);
     }
+
+    function deployImmutable(Function[] storage functions, address facade) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("deployImmutable", param(functions, facade));
+        Validator.SHOULD_FacadeIsContract(facade);
+        dictionary.startBuilding();
+        Func[] memory funcs;
+        for (uint i; i < functions.length; ++i) {
+            funcs[i] = Func(functions[i].selector, functions[i].implementation);
+        }
+        dictionary.addr = address(new ImmutableDictionary(funcs, facade));
+        dictionary.kind = DictionaryKind.Immutable;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
+    }
+
+    function deployBeacon(address implementation, address owner) internal returns(Dictionary memory dictionary) {
+        uint pid = dictionary.startProcess("deployBeacon", param(implementation, owner));
+        Validator.MUST_AddressIsContract(implementation);
+        Validator.SHOULD_OwnerIsNotZeroAddress(owner);
+        dictionary.startBuilding();
+        dictionary.addr = address(new BeaconDictionary(implementation, owner));
+        dictionary.kind = DictionaryKind.Beacon;
+        dictionary.finishBuilding();
+        return dictionary.finishProcess(pid);
+}
 
     /**-----------------------
         📩 Load Dictionary
@@ -177,6 +207,8 @@ library DictionaryLib {
 enum DictionaryKind {
     undefined,
     Verifiable,
+    Immutable,
+    Beacon,
     Mock
 }
 using Inspector for DictionaryKind global;

@@ -11,6 +11,7 @@ library MessageBody {
     string constant ENV_KEY_REQUIRED = "The provided environment key cannot be an empty string. Please enter a non-empty value for the key and try again.";
     string constant SELECTOR_RECOMMENDED = "The provided function selector is empty (0x00000000). It is recommended to use a non-empty selector.";
     string constant ADDRESS_NOT_CONTRACT = "The provided address is not a contract address. Please provide the address of a deployed contract and try again.";
+    string constant FACADE_NOT_CONTRACT = "The provided facade address is not a contract address. It is recommended to use the address of a deployed facade contract and try again.";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "The provided owner address is the zero address (0x0). It is recommended to use a non-zero address for the owner to ensure proper access control and security.";
     // Current Context
     string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";

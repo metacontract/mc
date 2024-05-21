@@ -11,6 +11,7 @@ library MessageHead {
     string constant ENV_KEY_REQUIRED = "EnvKey Required";
     string constant SELECTOR_RECOMMENDED = "Empty Selector";
     string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
+    string constant FACADE_NOT_CONTRACT = "Facade Not Contract";
     string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
     // Current Context
     string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";

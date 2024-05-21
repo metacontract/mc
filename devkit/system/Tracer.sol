@@ -347,6 +347,9 @@ function param(Function[] memory functions) pure returns(string memory res) {
         res = res.comma(functions[i].name);
     }
 }
+function param(Function[] memory functions, address facade) pure returns(string memory res) {
+    return param(functions).comma(facade);
+}
 
 function param(Bundle memory bundle) pure returns(string memory) {
     return bundle.name;
