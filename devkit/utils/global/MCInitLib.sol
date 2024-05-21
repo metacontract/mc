@@ -43,7 +43,7 @@ library MCInitLib {
         uint pid = mc.startProcess("use", param(name, selector, implementation));
         // Register new function
         Validator.MUST_NotEmptyName(name);
-        Validator.MUST_NotEmptySelector(selector);
+        Validator.SHOULD_NotEmptySelector(selector);
         Validator.MUST_AddressIsContract(implementation);
         mc.functions.register(name, selector, implementation);
         // Push to current bundle
@@ -54,8 +54,8 @@ library MCInitLib {
     function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
         return use(mc, ForgeHelper.getLabel(implementation), selector, implementation);
     }
-    function use(MCDevKit storage mc, Function storage functionInfo) internal returns(MCDevKit storage) {
-        return use(mc, functionInfo.name, functionInfo.selector, functionInfo.implementation);
+    function use(MCDevKit storage mc, Function storage func) internal returns(MCDevKit storage) {
+        return use(mc, func.name, func.selector, func.implementation);
     }
     function use(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
         return use(mc, mc.functions.find(functionName));

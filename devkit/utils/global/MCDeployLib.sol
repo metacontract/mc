@@ -26,6 +26,10 @@ import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
 /************************************
  *  🚀 Deployment
  *      🌞 Deploy Meta Contract
+ *          - Deploy
+ *          - DeployImmutable
+ *          - DeployRestrictedUpgradeable
+ *          - DeployContractUpgradeable
  *      🏠 Deploy Proxy
  *      📚 Deploy Dictionary
  *      🔂 Duplicate Dictionary
@@ -167,6 +171,7 @@ library MCDeployLib {
         duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), owner);
         mc.finishProcess(pid);
     }
+
 
     /**------------------------
         💽 Load Dictionary

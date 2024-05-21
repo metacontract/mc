@@ -2,28 +2,18 @@
 pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
+import {Dummy} from "devkit/test/dummy/Dummy.sol";
 
-import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for string;
-
-import {Formatter} from "devkit/types/Formatter.sol";
-    using Formatter for string;
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
-
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
-import {DummyFunction} from "test/utils/DummyFunction.sol";
-import {DummyFacade} from "test/utils/DummyFacade.sol";
-
-contract DevKitTest_MCDeploy is MCTestBase {
+contract MCDeployLibTest is MCTestBase {
     /**-----------------------------
         🌞 Deploy Meta Contract
     -------------------------------*/
     function test_deploy_Success() public {
-        string memory name = "TestBundleName";
+        string memory name = Dummy.bundleName();
+        bytes4 selector = Dummy.functionSelector();
         mc.init(name);
-        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
-        mc.useFacade(address(new DummyFacade()));
+        mc.use(selector, Dummy.functionAddress());
+        mc.useFacade(Dummy.facadeAddress());
 
         address proxy = mc.deploy().toProxyAddress();
 
@@ -31,7 +21,7 @@ contract DevKitTest_MCDeploy is MCTestBase {
         assertTrue(mc.dictionary.find(name).isComplete());
         assertTrue(mc.proxy.find(name).isComplete());
 
-        (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
+        (bool success,) = proxy.call(abi.encodeWithSelector(selector));
         assertTrue(success);
     }
 
@@ -39,17 +29,18 @@ contract DevKitTest_MCDeploy is MCTestBase {
         🏠 Deploy Proxy
     -----------------------*/
     function test_deployProxy_Success() public {
-        string memory name = "TestBundleName";
+        string memory name = Dummy.bundleName();
+        bytes4 selector = Dummy.functionSelector();
         mc.init(name);
-        mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
-        mc.useFacade(address(new DummyFacade()));
+        mc.use(selector, Dummy.functionAddress());
+        mc.useFacade(Dummy.facadeAddress());
         mc.deployDictionary();
 
         address proxy = mc.deployProxy().addr;
 
         assertTrue(mc.proxy.find(name).isComplete());
 
-        (bool success,) = proxy.call(abi.encodeWithSelector(DummyFunction.dummy.selector));
+        (bool success,) = proxy.call(abi.encodeWithSelector(selector));
         assertTrue(success);
     }
 
@@ -57,12 +48,12 @@ contract DevKitTest_MCDeploy is MCTestBase {
         📚 Deploy Dictionary
     ---------------------------*/
     function test_deployDictionary_Success() public {
-        string memory name = "TestBundleName";
-        bytes4 selector = DummyFunction.dummy.selector;
-        address impl = address(new DummyFunction());
+        string memory name = Dummy.bundleName();
+        bytes4 selector = Dummy.functionSelector();
+        address impl = Dummy.functionAddress();
         mc.init(name);
         mc.use(selector, impl);
-        mc.useFacade(address(new DummyFacade()));
+        mc.useFacade(Dummy.facadeAddress());
 
         address dictionary = mc.deployDictionary().addr;
 
@@ -79,12 +70,12 @@ contract DevKitTest_MCDeploy is MCTestBase {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function test_duplicateDictionary_Success() public {
-        string memory name = "TestBundleName";
-        bytes4 selector = DummyFunction.dummy.selector;
-        address impl = address(new DummyFunction());
+        string memory name = Dummy.bundleName();
+        bytes4 selector = Dummy.functionSelector();
+        address impl = Dummy.functionAddress();
         mc.init(name);
         mc.use(selector, impl);
-        mc.useFacade(address(new DummyFacade()));
+        mc.useFacade(Dummy.facadeAddress());
         mc.deployDictionary().addr;
         string memory duplicatedDictionaryName = mc.dictionary.genUniqueName(name);
 
@@ -103,12 +94,12 @@ contract DevKitTest_MCDeploy is MCTestBase {
         💽 Load Dictionary
     --------------------------*/
     function test_loadDictionary_Success() public {
-        string memory name = "TestBundleName";
-        bytes4 selector = DummyFunction.dummy.selector;
-        address impl = address(new DummyFunction());
+        string memory name = Dummy.bundleName();
+        bytes4 selector = Dummy.functionSelector();
+        address impl = Dummy.functionAddress();
         mc.init(name);
         mc.use(selector, impl);
-        mc.useFacade(address(new DummyFacade()));
+        mc.useFacade(Dummy.facadeAddress());
         address mockDictionary = mc.createMockDictionary().addr;
 
         address dictionary = mc.loadDictionary("LoadedDictionary", mockDictionary).addr;

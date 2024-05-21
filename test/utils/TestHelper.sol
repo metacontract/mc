@@ -15,24 +15,24 @@ import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {Clone} from "mc-std/functions/Clone.sol";
 
 library TestHelper {
-    function isInitSetAdmin(Function memory functionInfo) internal view returns(bool) {
+    function isInitSetAdmin(Function memory func) internal view returns(bool) {
         return
-            functionInfo.name.isEqual("InitSetAdmin") &&
-            functionInfo.selector == InitSetAdmin.initSetAdmin.selector &&
-            functionInfo.implementation.isContract();
+            func.name.isEqual("InitSetAdmin") &&
+            func.selector == InitSetAdmin.initSetAdmin.selector &&
+            func.implementation.isContract();
     }
 
-    function isGetFunctions(Function memory functionInfo) internal view returns(bool) {
+    function isGetFunctions(Function memory func) internal view returns(bool) {
         return
-            functionInfo.name.isEqual("GetFunctions") &&
-            functionInfo.selector == GetFunctions.getFunctions.selector &&
-            functionInfo.implementation.isContract();
+            func.name.isEqual("GetFunctions") &&
+            func.selector == GetFunctions.getFunctions.selector &&
+            func.implementation.isContract();
     }
 
-    function isClone(Function memory functionInfo) internal view returns(bool) {
+    function isClone(Function memory func) internal view returns(bool) {
         return
-            functionInfo.name.isEqual("Clone") &&
-            functionInfo.selector == Clone.clone.selector &&
-            functionInfo.implementation.isContract();
+            func.name.isEqual("Clone") &&
+            func.selector == Clone.clone.selector &&
+            func.implementation.isContract();
     }
 }

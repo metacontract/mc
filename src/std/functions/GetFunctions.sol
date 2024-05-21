@@ -2,7 +2,7 @@
 pragma solidity ^0.8.22;
 
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
-import {IDictionary} from "@ucs.mc/dictionary/IDictionary.sol";
+import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
 
 /** < MC Standard Function >
  *  @title GetFunctions

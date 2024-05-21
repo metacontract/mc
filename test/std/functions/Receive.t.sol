@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {MCStateFuzzingTest} from "devkit/MCTest.sol";
+import {MCTest} from "devkit/MCTest.sol";
 import {Receive} from "mc-std/functions/Receive.sol";
 
-contract ReceiveTest is MCStateFuzzingTest {
+contract ReceiveTest is MCTest {
     function setUp() public {
         _use(bytes4(0), address(new Receive()));
     }

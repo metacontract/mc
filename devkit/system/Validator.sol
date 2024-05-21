@@ -73,11 +73,14 @@ library Validator {
     function MUST_NotEmptyEnvKey(string memory envKey) internal view {
         validate(MUST, envKey.isNotEmpty(), HEAD.ENV_KEY_REQUIRED, BODY.ENV_KEY_REQUIRED);
     }
-    function MUST_NotEmptySelector(bytes4 selector) internal view {
-        validate(MUST, selector.isNotEmpty(), HEAD.SELECTOR_REQUIRED, BODY.SELECTOR_REQUIRED);
+    function SHOULD_NotEmptySelector(bytes4 selector) internal view {
+        validate(SHOULD, selector.isNotEmpty(), HEAD.SELECTOR_RECOMMENDED, BODY.SELECTOR_RECOMMENDED);
     }
     function MUST_AddressIsContract(address addr) internal view {
         validate(MUST, addr.isContract(), HEAD.ADDRESS_NOT_CONTRACT, BODY.ADDRESS_NOT_CONTRACT);
+    }
+    function SHOULD_FacadeIsContract(address facade) internal view {
+        validate(SHOULD, facade.isContract(), HEAD.FACADE_NOT_CONTRACT, BODY.FACADE_NOT_CONTRACT);
     }
     function SHOULD_OwnerIsNotZeroAddress(address owner) internal view {
         validate(MUST, owner.isNotZero(), HEAD.OWNER_ZERO_ADDRESS_RECOMMENDED, BODY.OWNER_ZERO_ADDRESS_RECOMMENDED);
@@ -96,7 +99,6 @@ library Validator {
     function ValidateBuilder(Function storage func) internal view returns(bool) {
         return (
             validate(COMPLETION, func.name.isAssigned(), HEAD.FUNC_NAME_UNASSIGNED, BODY.FUNC_NAME_UNASSIGNED) &&
-            validate(COMPLETION, func.selector.isAssigned(), HEAD.FUNC_SELECTOR_UNASSIGNED, BODY.FUNC_SELECTOR_UNASSIGNED) &&
             validate(COMPLETION, func.implementation.isContract(), HEAD.FUNC_CONTRACT_UNASSIGNED, BODY.FUNC_CONTRACT_UNASSIGNED)
         );
     }

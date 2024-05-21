@@ -2,23 +2,24 @@
 pragma solidity ^0.8.24;
 
 import {MCTestBase} from "devkit/MCBase.sol";
+import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 
 import {Inspector} from "devkit/types/Inspector.sol";
     using Inspector for string;
 
-import {Formatter} from "devkit/types/Formatter.sol";
-    using Formatter for string;
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
-
 import {Bundle} from "devkit/core/Bundle.sol";
 import {Function} from "devkit/core/Function.sol";
-import {DummyFunction} from "test/utils/DummyFunction.sol";
-import {DummyFacade} from "test/utils/DummyFacade.sol";
+import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
+import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
-contract DevKitTest_MCBundle is MCTestBase {
-    /**---------------------------
-        🌱 Init Custom Bundle
-    -----------------------------*/
+import {TestHelper} from "../utils/TestHelper.sol";
+    using TestHelper for Function;
+
+contract MCInitLibTest is MCTestBase {
+
+    /**--------------------
+        🌱 Init Bundle
+    ----------------------*/
     function test_init_Success_withName() public {
         string memory name = "TestBundleName";
         mc.init(name);
@@ -76,7 +77,7 @@ contract DevKitTest_MCBundle is MCTestBase {
 
         mc.use(functionName, selector, impl);
 
-        vm.expectRevert(HEAD.BUNDLE_CONTAINS_SAME_SELECTOR.toBytes());
+        mc.expectRevert(HEAD.BUNDLE_CONTAINS_SAME_SELECTOR);
         mc.use(functionName, selector, impl);
     }
 
@@ -85,16 +86,7 @@ contract DevKitTest_MCBundle is MCTestBase {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  address(new DummyFunction());
 
-        vm.expectRevert(HEAD.NAME_REQUIRED.toBytes());
-        mc.use(functionName, selector, impl);
-    }
-
-    function test_use_Revert_EmptySelector() public {
-        string memory functionName = "DummyFunction";
-        bytes4 selector = bytes4(0);
-        address impl =  address(new DummyFunction());
-
-        vm.expectRevert(HEAD.SELECTOR_REQUIRED.toBytes());
+        mc.expectRevert(HEAD.NAME_REQUIRED);
         mc.use(functionName, selector, impl);
     }
 
@@ -103,7 +95,7 @@ contract DevKitTest_MCBundle is MCTestBase {
         bytes4 selector = DummyFunction.dummy.selector;
         address impl =  makeAddr("EOA");
 
-        vm.expectRevert(HEAD.ADDRESS_NOT_CONTRACT.toBytes());
+        mc.expectRevert(HEAD.ADDRESS_NOT_CONTRACT);
         mc.use(functionName, selector, impl);
     }
 
@@ -111,10 +103,27 @@ contract DevKitTest_MCBundle is MCTestBase {
     /**------------------
         🪟 Use Facade
     --------------------*/
-    function test_Success_useFacade() public {
+    function test_useFacade_Success() public {
         address facade = address(new DummyFacade());
         mc.init();
         mc.useFacade(facade);
+    }
+
+
+    /**--------------------------------
+        🏰 Setup Standard Functions
+    ----------------------------------*/
+    function test_setupStdFuncs_Success() public {
+        mc.setupStdFunctions();
+
+        assertTrue(mc.std.functions.initSetAdmin.isInitSetAdmin());
+        assertTrue(mc.std.functions.getFunctions.isGetFunctions());
+        assertTrue(mc.std.functions.clone.isClone());
+
+        assertTrue(mc.std.all.functions.length == 3);
+        assertTrue(mc.std.all.functions[0].isInitSetAdmin());
+        assertTrue(mc.std.all.functions[1].isGetFunctions());
+        assertTrue(mc.std.all.functions[2].isClone());
     }
 
 }

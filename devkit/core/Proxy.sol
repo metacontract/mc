@@ -12,7 +12,7 @@ import {Validator} from "devkit/system/Validator.sol";
 // External Lib Contract
 import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
 // Mock Contract
-import {SimpleMockProxy} from "devkit/mocks/SimpleMockProxy.sol";
+import {SimpleMockProxy} from "devkit/test/mocks/SimpleMockProxy.sol";
 
 // Core Types
 import {Dictionary} from "devkit/core/Dictionary.sol";

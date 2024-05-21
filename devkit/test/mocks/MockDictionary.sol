@@ -12,7 +12,7 @@ import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 contract MockDictionary is Dictionary {
     constructor (address owner, Function[] memory functions) Dictionary(owner) {
         for (uint i; i < functions.length; ++i) {
-            setImplementation(functions[i].selector, functions[i].implementation);
+            _setImplementation(functions[i].selector, functions[i].implementation);
         }
     }
 }

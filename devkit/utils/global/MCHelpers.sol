@@ -1,12 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Forge-std
-import {Vm, VmSafe} from "forge-std/Vm.sol";
-// Constants
-/// @dev address(uint160(uint256(keccak256("hevm cheat code"))));
-Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
-
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 
 import {Logger} from "devkit/system/Logger.sol";
@@ -18,7 +12,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {System} from "devkit/system/System.sol";
 // Utils
 import {param} from "devkit/system/Tracer.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
 // Core
 //  functions
 import {Bundle} from "devkit/core/Bundle.sol";
@@ -130,5 +124,13 @@ library MCHelpers {
     }
     function resumeBroadcast(MCDevKit storage, bool isBroadcasting, address currentSender) internal {
         ForgeHelper.resumeBroadcast(isBroadcasting, currentSender);
+    }
+
+
+    /**----------------------
+        🛠️ Forge Extender
+    ------------------------*/
+    function expectRevert(MCDevKit storage, string memory message) internal {
+        vm.expectRevert(bytes(message));
     }
 }

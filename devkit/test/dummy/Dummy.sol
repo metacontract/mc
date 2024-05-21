@@ -4,10 +4,26 @@ pragma solidity ^0.8.24;
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
-import {DummyContract} from "test/utils/DummyContract.sol";
-import {MCStateFuzzingTest} from "devkit/MCTest.sol";
+import {DummyContract} from "devkit/test/dummy/DummyContract.sol";
+import {Function} from "devkit/MCTest.sol";
 
 library Dummy {
+    function bundleName() internal returns(string memory) {
+        return "DummyBundleName";
+    }
+
+    function functionSelector() internal returns(bytes4) {
+        return DummyFunction.dummy.selector;
+    }
+
+    function functionAddress() internal returns(address) {
+        return address(new DummyFunction());
+    }
+
+    function facadeAddress() internal returns(address) {
+        return address(new DummyFacade());
+    }
+
     function setBundle(MCDevKit storage mc) internal {
         mc.init("DummyBundle");
         mc.use(DummyFunction.dummy.selector, address(new DummyFunction()));
@@ -19,7 +35,7 @@ library Dummy {
         return mc.createMockDictionary().addr;
     }
 
-    function dictionary(MCDevKit storage mc, MCStateFuzzingTest.Function[] memory functions) internal returns(address) {
+    function dictionary(MCDevKit storage mc, Function[] memory functions) internal returns(address) {
         mc.init("DummyBundle");
         for (uint i; i < functions.length; ++i) {
             mc.use(functions[i].selector, functions[i].implementation);
