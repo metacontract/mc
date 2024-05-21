@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {ProtectionBase} from "./protection/ProtectionBase.sol";

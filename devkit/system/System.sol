@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 
 import {ConfigState} from "devkit/system/Config.sol";
 import {Trace} from "devkit/system/Tracer.sol";

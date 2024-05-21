@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 
 import {Inspector} from "devkit/types/Inspector.sol";
 import {Validator} from "devkit/system/Validator.sol";
