@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 
 import {MCDevKit} from "devkit/MCDevKit.sol";
 import {StdFacade} from "mc-std/interfaces/StdFacade.sol";

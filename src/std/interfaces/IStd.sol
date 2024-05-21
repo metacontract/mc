@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 
 import {IProxy} from "@ucs.mc/proxy/IProxy.sol";
 import {GetFunctions} from "mc-std/functions/GetFunctions.sol";

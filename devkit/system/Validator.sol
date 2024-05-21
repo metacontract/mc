@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.23;
 import {vm, ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
 import {MessageBody as BODY} from "devkit/system/message/MessageBody.sol";
