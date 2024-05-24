@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {MCTest} from "devkit/MCTest.sol";
+import {MCTest, ForgeHelper, Dummy} from "devkit/Flattened.sol";
 
-import {Dummy} from "devkit/test/dummy/Dummy.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
 
 contract ProxyCreatorTest is MCTest {
 

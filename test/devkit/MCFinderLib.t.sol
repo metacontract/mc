@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTestBase} from "devkit/MCBase.sol";
-import {MessageHead as REASON} from "devkit/system/message/MessageHead.sol";
-import {Dummy} from "devkit/test/dummy/Dummy.sol";
+import {
+    MCTestBase,
+    MessageHead as REASON,
+    Dummy
+} from "devkit/Flattened.sol";
 
 contract MCFinderLibTest is MCTestBase {
 

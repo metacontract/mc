@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {MCTest} from "devkit/MCTest.sol";
+import {MCTest} from "devkit/Flattened.sol";
 import {Receive} from "mc-std/functions/Receive.sol";
 
 contract ReceiveTest is MCTest {

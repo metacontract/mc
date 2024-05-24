@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTestBase} from "devkit/MCBase.sol";
-import {Dummy} from "devkit/test/dummy/Dummy.sol";
+import {MCTestBase, Dummy} from "devkit/Flattened.sol";
 
 contract MCDeployLibTest is MCTestBase {
     /**-----------------------------

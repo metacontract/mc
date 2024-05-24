@@ -15,13 +15,13 @@ import {Dummy} from "devkit/test/dummy/Dummy.sol";
 // 📦 BOILERPLATE
 import {MCTestBase} from "./MCBase.sol";
 
-struct Function {
-    bytes4 selector;
-    address implementation;
-}
-
 // 🌟 MC State Fuzzing Test
 abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payable-fallback
+    struct Function {
+        bytes4 selector;
+        address implementation;
+    }
+
     mapping(bytes4 selector => address) implementations;
     address target = address(this);
     Function[] internal functions;

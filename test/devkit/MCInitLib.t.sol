@@ -1,21 +1,45 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTestBase} from "devkit/MCBase.sol";
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
+import {
+    MCTestBase,
+    MessageHead as HEAD,
+    Function,
+    Inspector,
+    Bundle,
+    DummyFunction,
+    DummyFacade
+} from "devkit/Flattened.sol";
 
-import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for string;
-
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
-import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
-import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
-
-import {TestHelper} from "../utils/TestHelper.sol";
-    using TestHelper for Function;
+import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
+import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
+import {Clone} from "mc-std/functions/Clone.sol";
 
 contract MCInitLibTest is MCTestBase {
+    using Inspector for string;
+    using Inspector for address;
+
+    function _isInitSetAdmin(Function memory func) internal returns(bool) {
+        return
+            func.name.isEqual("InitSetAdmin") &&
+            func.selector == InitSetAdmin.initSetAdmin.selector &&
+            func.implementation.isContract();
+    }
+
+    function _isGetFunctions(Function memory func) internal returns(bool) {
+        return
+            func.name.isEqual("GetFunctions") &&
+            func.selector == GetFunctions.getFunctions.selector &&
+            func.implementation.isContract();
+    }
+
+    function _isClone(Function memory func) internal returns(bool) {
+        return
+            func.name.isEqual("Clone") &&
+            func.selector == Clone.clone.selector &&
+            func.implementation.isContract();
+    }
+
 
     /**--------------------
         🌱 Init Bundle
@@ -116,14 +140,14 @@ contract MCInitLibTest is MCTestBase {
     function test_setupStdFuncs_Success() public {
         mc.setupStdFunctions();
 
-        assertTrue(mc.std.functions.initSetAdmin.isInitSetAdmin());
-        assertTrue(mc.std.functions.getFunctions.isGetFunctions());
-        assertTrue(mc.std.functions.clone.isClone());
+        assertTrue(_isInitSetAdmin(mc.std.functions.initSetAdmin));
+        assertTrue(_isGetFunctions(mc.std.functions.getFunctions));
+        assertTrue(_isClone(mc.std.functions.clone));
 
         assertTrue(mc.std.all.functions.length == 3);
-        assertTrue(mc.std.all.functions[0].isInitSetAdmin());
-        assertTrue(mc.std.all.functions[1].isGetFunctions());
-        assertTrue(mc.std.all.functions[2].isClone());
+        assertTrue(_isInitSetAdmin(mc.std.all.functions[0]));
+        assertTrue(_isGetFunctions(mc.std.all.functions[1]));
+        assertTrue(_isClone(mc.std.all.functions[2]));
     }
 
 }

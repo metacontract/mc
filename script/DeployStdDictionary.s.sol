@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCScriptBase} from "devkit/MCBase.sol";
+import {MCScriptBase, MCDevKit} from "devkit/Flattened.sol";
 import {DeployLib} from "./DeployLib.sol";
-import {MCDevKit} from "devkit/MCDevKit.sol";
 
 contract DeployStdDictionary is MCScriptBase {
     using DeployLib for MCDevKit;

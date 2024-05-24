@@ -5,7 +5,7 @@ import {MCDevKit} from "devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
 import {DummyContract} from "devkit/test/dummy/DummyContract.sol";
-import {Function} from "devkit/MCTest.sol";
+import {MCTest} from "devkit/MCTest.sol";
 
 library Dummy {
     function bundleName() internal returns(string memory) {
@@ -35,7 +35,7 @@ library Dummy {
         return mc.createMockDictionary().addr;
     }
 
-    function dictionary(MCDevKit storage mc, Function[] memory functions) internal returns(address) {
+    function dictionary(MCDevKit storage mc, MCTest.Function[] memory functions) internal returns(address) {
         mc.init("DummyBundle");
         for (uint i; i < functions.length; ++i) {
             mc.use(functions[i].selector, functions[i].implementation);

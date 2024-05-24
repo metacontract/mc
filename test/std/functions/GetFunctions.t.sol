@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {console2} from "forge-std/console2.sol";
-import {MCTest} from "devkit/MCTest.sol";
-import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
-import {Function as MCFunc} from "devkit/core/Function.sol";
+import {
+    MCTest,
+    console2,
+    ForgeHelper,
+    Dummy,
+    DummyFunction,
+    DummyFacade
+} from "devkit/Flattened.sol";
 
 import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
 import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {Dummy} from "devkit/test/dummy/Dummy.sol";
-import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
-import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
 
 contract GetFunctionsTest is MCTest {
     function setUp() public {
