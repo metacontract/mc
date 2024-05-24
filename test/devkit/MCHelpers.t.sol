@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTestBase} from "devkit/MCBase.sol";
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
-
-import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for string;
-
+import {
+    MCTestBase,
+    MessageHead as HEAD,
+    Inspector
+} from "devkit/Flattened.sol";
 
 contract MCHelpersTest is MCTestBase {
+    using Inspector for string;
+
     /**-----------------------------
         ♻️ Reset Current Context
     -------------------------------*/

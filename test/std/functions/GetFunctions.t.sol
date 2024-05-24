@@ -2,12 +2,12 @@
 pragma solidity ^0.8.22;
 
 import {
-    MCTest
+    MCTest,
     console2,
     ForgeHelper,
     Dummy,
     DummyFunction,
-    DummyFacade,
+    DummyFacade
 } from "devkit/Flattened.sol";
 
 import {GetFunctions} from "mc-std/functions/GetFunctions.sol";

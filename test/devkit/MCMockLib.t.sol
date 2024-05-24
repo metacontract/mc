@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTestBase} from "devkit/MCBase.sol";
-import {MessageHead as HEAD} from "devkit/system/message/MessageHead.sol";
-
-import {Inspector} from "devkit/types/Inspector.sol";
-    using Inspector for string;
-
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
-import {DummyFunction} from "devkit/test/dummy/DummyFunction.sol";
-import {DummyFacade} from "devkit/test/dummy/DummyFacade.sol";
+import {
+    MCTestBase,
+    MessageHead as HEAD,
+    Inspector,
+    Bundle,
+    Function,
+    DummyFunction,
+    DummyFacade
+} from "devkit/Flattened.sol";
 
 contract MCMockLibTest is MCTestBase {
+    using Inspector for string;
+
     function setUp() public {
         mc.setupStdFunctions();
     }
