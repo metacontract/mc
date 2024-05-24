@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "Running forge flatten..."
+
+forge flatten devkit/Files.sol -o Flattened.sol
+
+if [ $? -ne 0 ]; then
+    echo "forge flatten failed. Please check your contracts and try again."
+    exit 1
+fi
+
+echo "forge flatten completed successfully."
