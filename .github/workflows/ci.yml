@@ -63,7 +63,7 @@ jobs:
           forge init mc-example-project -t metacontract/template
       - name: Run forge test
         run: |
-          cd ./mc-example-project
+          cd /tmp/install-with-template-test/mc-example-project
           forge test
 
   # slither:
