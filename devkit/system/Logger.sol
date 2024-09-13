@@ -2,7 +2,7 @@
 pragma solidity ^0.8.23;
 
 // Forge-std
-import {console2} from "forge-std/console2.sol";
+import {console} from "forge-std/console.sol";
 // System
 import {System} from "devkit/system/System.sol";
 import {Tracer} from "devkit/system/Tracer.sol";
@@ -34,10 +34,10 @@ library Logger {
         💬 Logging
     --------------------*/
     function log(string memory message) internal pure {
-        console2.log(message);
+        console.log(message);
     }
     function log(string memory header, string memory message) internal pure {
-        console2.log(header, message);
+        console.log(header, message);
     }
 
     function logException(string memory messageHead, string memory messageBody) internal view {

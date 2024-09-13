@@ -3,7 +3,7 @@ pragma solidity ^0.8.22;
 
 import {
     MCTest,
-    console2,
+    console,
     ForgeHelper,
     Dummy
 } from "devkit/Flattened.sol";

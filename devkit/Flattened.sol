@@ -208,6 +208,7 @@ abstract contract StdInvariant {
 
     FuzzArtifactSelector[] private _targetedArtifactSelectors;
 
+    FuzzSelector[] private _excludedSelectors;
     FuzzSelector[] private _targetedSelectors;
 
     FuzzInterface[] private _targetedInterfaces;
@@ -217,6 +218,10 @@ abstract contract StdInvariant {
 
     function excludeContract(address newExcludedContract_) internal {
         _excludedContracts.push(newExcludedContract_);
+    }
+
+    function excludeSelector(FuzzSelector memory newExcludedSelector_) internal {
+        _excludedSelectors.push(newExcludedSelector_);
     }
 
     function excludeSender(address newExcludedSender_) internal {
@@ -260,6 +265,10 @@ abstract contract StdInvariant {
 
     function excludeContracts() public view returns (address[] memory excludedContracts_) {
         excludedContracts_ = _excludedContracts;
+    }
+
+    function excludeSelectors() public view returns (FuzzSelector[] memory excludedSelectors_) {
+        excludedSelectors_ = _excludedSelectors;
     }
 
     function excludeSenders() public view returns (address[] memory excludedSenders_) {
@@ -568,13 +577,104 @@ interface VmSafe {
         uint64 gasLimit;
         // The total gas used.
         uint64 gasTotalUsed;
-        // The amount of gas used for memory expansion.
+        // DEPRECATED: The amount of gas used for memory expansion. Ref: <https://github.com/foundry-rs/foundry/pull/7934#pullrequestreview-2069236939>
         uint64 gasMemoryUsed;
         // The amount of gas refunded.
         int64 gasRefunded;
         // The amount of gas remaining.
         uint64 gasRemaining;
     }
+
+    // ======== Crypto ========
+
+    /// Derives a private key from the name, labels the account with that name, and returns the wallet.
+    function createWallet(string calldata walletLabel) external returns (Wallet memory wallet);
+
+    /// Generates a wallet from the private key and returns the wallet.
+    function createWallet(uint256 privateKey) external returns (Wallet memory wallet);
+
+    /// Generates a wallet from the private key, labels the account with that name, and returns the wallet.
+    function createWallet(uint256 privateKey, string calldata walletLabel) external returns (Wallet memory wallet);
+
+    /// Derive a private key from a provided mnenomic string (or mnenomic file path)
+    /// at the derivation path `m/44'/60'/0'/0/{index}`.
+    function deriveKey(string calldata mnemonic, uint32 index) external pure returns (uint256 privateKey);
+
+    /// Derive a private key from a provided mnenomic string (or mnenomic file path)
+    /// at `{derivationPath}{index}`.
+    function deriveKey(string calldata mnemonic, string calldata derivationPath, uint32 index)
+        external
+        pure
+        returns (uint256 privateKey);
+
+    /// Derive a private key from a provided mnenomic string (or mnenomic file path) in the specified language
+    /// at the derivation path `m/44'/60'/0'/0/{index}`.
+    function deriveKey(string calldata mnemonic, uint32 index, string calldata language)
+        external
+        pure
+        returns (uint256 privateKey);
+
+    /// Derive a private key from a provided mnenomic string (or mnenomic file path) in the specified language
+    /// at `{derivationPath}{index}`.
+    function deriveKey(string calldata mnemonic, string calldata derivationPath, uint32 index, string calldata language)
+        external
+        pure
+        returns (uint256 privateKey);
+
+    /// Derives secp256r1 public key from the provided `privateKey`.
+    function publicKeyP256(uint256 privateKey) external pure returns (uint256 publicKeyX, uint256 publicKeyY);
+
+    /// Adds a private key to the local forge wallet and returns the address.
+    function rememberKey(uint256 privateKey) external returns (address keyAddr);
+
+    /// Signs data with a `Wallet`.
+    /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
+    /// signature's `s` value, and the recovery id `v` in a single bytes32.
+    /// This format reduces the signature size from 65 to 64 bytes.
+    function signCompact(Wallet calldata wallet, bytes32 digest) external returns (bytes32 r, bytes32 vs);
+
+    /// Signs `digest` with `privateKey` using the secp256k1 curve.
+    /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
+    /// signature's `s` value, and the recovery id `v` in a single bytes32.
+    /// This format reduces the signature size from 65 to 64 bytes.
+    function signCompact(uint256 privateKey, bytes32 digest) external pure returns (bytes32 r, bytes32 vs);
+
+    /// Signs `digest` with signer provided to script using the secp256k1 curve.
+    /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
+    /// signature's `s` value, and the recovery id `v` in a single bytes32.
+    /// This format reduces the signature size from 65 to 64 bytes.
+    /// If `--sender` is provided, the signer with provided address is used, otherwise,
+    /// if exactly one signer is provided to the script, that signer is used.
+    /// Raises error if signer passed through `--sender` does not match any unlocked signers or
+    /// if `--sender` is not provided and not exactly one signer is passed to the script.
+    function signCompact(bytes32 digest) external pure returns (bytes32 r, bytes32 vs);
+
+    /// Signs `digest` with signer provided to script using the secp256k1 curve.
+    /// Returns a compact signature (`r`, `vs`) as per EIP-2098, where `vs` encodes both the
+    /// signature's `s` value, and the recovery id `v` in a single bytes32.
+    /// This format reduces the signature size from 65 to 64 bytes.
+    /// Raises error if none of the signers passed into the script have provided address.
+    function signCompact(address signer, bytes32 digest) external pure returns (bytes32 r, bytes32 vs);
+
+    /// Signs `digest` with `privateKey` using the secp256r1 curve.
+    function signP256(uint256 privateKey, bytes32 digest) external pure returns (bytes32 r, bytes32 s);
+
+    /// Signs data with a `Wallet`.
+    function sign(Wallet calldata wallet, bytes32 digest) external returns (uint8 v, bytes32 r, bytes32 s);
+
+    /// Signs `digest` with `privateKey` using the secp256k1 curve.
+    function sign(uint256 privateKey, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
+    /// Signs `digest` with signer provided to script using the secp256k1 curve.
+    /// If `--sender` is provided, the signer with provided address is used, otherwise,
+    /// if exactly one signer is provided to the script, that signer is used.
+    /// Raises error if signer passed through `--sender` does not match any unlocked signers or
+    /// if `--sender` is not provided and not exactly one signer is passed to the script.
+    function sign(bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
+
+    /// Signs `digest` with signer provided to script using the secp256k1 curve.
+    /// Raises error if none of the signers passed into the script have provided address.
+    function sign(address signer, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
 
     // ======== Environment ========
 
@@ -780,6 +880,9 @@ interface VmSafe {
     /// Gets the nonce of an account.
     function getNonce(address account) external view returns (uint64 nonce);
 
+    /// Get the nonce of a `Wallet`.
+    function getNonce(Wallet calldata wallet) external returns (uint64 nonce);
+
     /// Gets all the recorded logs.
     function getRecordedLogs() external returns (Log[] memory logs);
 
@@ -798,28 +901,19 @@ interface VmSafe {
     /// Record all the transaction logs.
     function recordLogs() external;
 
+    /// Reset gas metering (i.e. gas usage is set to gas limit).
+    function resetGasMetering() external;
+
     /// Resumes gas metering (i.e. gas usage is counted again). Noop if already on.
     function resumeGasMetering() external;
 
     /// Performs an Ethereum JSON-RPC request to the current fork URL.
     function rpc(string calldata method, string calldata params) external returns (bytes memory data);
 
-    /// Signs `digest` with `privateKey` using the secp256r1 curve.
-    function signP256(uint256 privateKey, bytes32 digest) external pure returns (bytes32 r, bytes32 s);
-
-    /// Signs `digest` with `privateKey` using the secp256k1 curve.
-    function sign(uint256 privateKey, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
-
-    /// Signs `digest` with signer provided to script using the secp256k1 curve.
-    /// If `--sender` is provided, the signer with provided address is used, otherwise,
-    /// if exactly one signer is provided to the script, that signer is used.
-    /// Raises error if signer passed through `--sender` does not match any unlocked signers or
-    /// if `--sender` is not provided and not exactly one signer is passed to the script.
-    function sign(bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
-
-    /// Signs `digest` with signer provided to script using the secp256k1 curve.
-    /// Raises error if none of the signers passed into the script have provided address.
-    function sign(address signer, bytes32 digest) external pure returns (uint8 v, bytes32 r, bytes32 s);
+    /// Performs an Ethereum JSON-RPC request to the given endpoint.
+    function rpc(string calldata urlOrAlias, string calldata method, string calldata params)
+        external
+        returns (bytes memory data);
 
     /// Starts recording all map SSTOREs for later retrieval.
     function startMappingRecording() external;
@@ -852,6 +946,17 @@ interface VmSafe {
     /// - `path` already exists and `recursive` is false.
     /// `path` is relative to the project root.
     function createDir(string calldata path, bool recursive) external;
+
+    /// Deploys a contract from an artifact file. Takes in the relative path to the json file or the path to the
+    /// artifact in the form of <path>:<contract>:<version> where <contract> and <version> parts are optional.
+    function deployCode(string calldata artifactPath) external returns (address deployedAddress);
+
+    /// Deploys a contract from an artifact file. Takes in the relative path to the json file or the path to the
+    /// artifact in the form of <path>:<contract>:<version> where <contract> and <version> parts are optional.
+    /// Additionaly accepts abi-encoded constructor arguments.
+    function deployCode(string calldata artifactPath, bytes calldata constructorArgs)
+        external
+        returns (address deployedAddress);
 
     /// Returns true if the given path points to an existing entity, else returns false.
     function exists(string calldata path) external returns (bool result);
@@ -887,6 +992,9 @@ interface VmSafe {
 
     /// Prompts the user for a hidden string value in the terminal.
     function promptSecret(string calldata promptText) external returns (string memory input);
+
+    /// Prompts the user for hidden uint256 in the terminal (usually pk).
+    function promptSecretUint(string calldata promptText) external returns (uint256);
 
     /// Prompts the user for uint256 in the terminal.
     function promptUint(string calldata promptText) external returns (uint256);
@@ -1009,6 +1117,24 @@ interface VmSafe {
     /// Parses a string of JSON data at `key` and coerces it to `string[]`.
     function parseJsonStringArray(string calldata json, string calldata key) external pure returns (string[] memory);
 
+    /// Parses a string of JSON data at `key` and coerces it to type array corresponding to `typeDescription`.
+    function parseJsonTypeArray(string calldata json, string calldata key, string calldata typeDescription)
+        external
+        pure
+        returns (bytes memory);
+
+    /// Parses a string of JSON data and coerces it to type corresponding to `typeDescription`.
+    function parseJsonType(string calldata json, string calldata typeDescription)
+        external
+        pure
+        returns (bytes memory);
+
+    /// Parses a string of JSON data at `key` and coerces it to type corresponding to `typeDescription`.
+    function parseJsonType(string calldata json, string calldata key, string calldata typeDescription)
+        external
+        pure
+        returns (bytes memory);
+
     /// Parses a string of JSON data at `key` and coerces it to `uint256`.
     function parseJsonUint(string calldata json, string calldata key) external pure returns (uint256);
 
@@ -1076,6 +1202,20 @@ interface VmSafe {
     function serializeJson(string calldata objectKey, string calldata value) external returns (string memory json);
 
     /// See `serializeJson`.
+    function serializeJsonType(string calldata typeDescription, bytes calldata value)
+        external
+        pure
+        returns (string memory json);
+
+    /// See `serializeJson`.
+    function serializeJsonType(
+        string calldata objectKey,
+        string calldata valueKey,
+        string calldata typeDescription,
+        bytes calldata value
+    ) external returns (string memory json);
+
+    /// See `serializeJson`.
     function serializeString(string calldata objectKey, string calldata valueKey, string calldata value)
         external
         returns (string memory json);
@@ -1108,6 +1248,9 @@ interface VmSafe {
     function writeJson(string calldata json, string calldata path, string calldata valueKey) external;
 
     // ======== Scripting ========
+
+    /// Takes a signed transaction and broadcasts it to the network.
+    function broadcastRawTransaction(bytes calldata data) external;
 
     /// Has the next call (at this call depth only) create transactions that can later be signed and sent onchain.
     /// Broadcasting address is determined by checking the following in order:
@@ -1636,11 +1779,22 @@ interface VmSafe {
     /// If the condition is false, discard this run's fuzz inputs and generate new ones.
     function assume(bool condition) external pure;
 
+    /// Discard this run's fuzz inputs and generate new ones if next call reverted.
+    function assumeNoRevert() external pure;
+
     /// Writes a breakpoint to jump to in the debugger.
     function breakpoint(string calldata char) external;
 
     /// Writes a conditional breakpoint to jump to in the debugger.
     function breakpoint(string calldata char, bool value) external;
+
+    /// Returns the Foundry version.
+    /// Format: <cargo_version>+<git_sha>+<build_timestamp>
+    /// Sample output: 0.2.0+faa94c384+202407110019
+    /// Note: Build timestamps may vary slightly across platforms due to separate CI jobs.
+    /// For reliable version comparisons, use YYYYMMDD0000 format (e.g., >= 202407110000)
+    /// to compare timestamps while ignoring minor time differences.
+    function getFoundryVersion() external view returns (string memory version);
 
     /// Returns the RPC url for the given alias.
     function rpcUrl(string calldata rpcAlias) external view returns (string memory json);
@@ -1737,39 +1891,8 @@ interface VmSafe {
     /// Compute the address a contract will be deployed at for a given deployer address and nonce.
     function computeCreateAddress(address deployer, uint256 nonce) external pure returns (address);
 
-    /// Derives a private key from the name, labels the account with that name, and returns the wallet.
-    function createWallet(string calldata walletLabel) external returns (Wallet memory wallet);
-
-    /// Generates a wallet from the private key and returns the wallet.
-    function createWallet(uint256 privateKey) external returns (Wallet memory wallet);
-
-    /// Generates a wallet from the private key, labels the account with that name, and returns the wallet.
-    function createWallet(uint256 privateKey, string calldata walletLabel) external returns (Wallet memory wallet);
-
-    /// Derive a private key from a provided mnenomic string (or mnenomic file path)
-    /// at the derivation path `m/44'/60'/0'/0/{index}`.
-    function deriveKey(string calldata mnemonic, uint32 index) external pure returns (uint256 privateKey);
-
-    /// Derive a private key from a provided mnenomic string (or mnenomic file path)
-    /// at `{derivationPath}{index}`.
-    function deriveKey(string calldata mnemonic, string calldata derivationPath, uint32 index)
-        external
-        pure
-        returns (uint256 privateKey);
-
-    /// Derive a private key from a provided mnenomic string (or mnenomic file path) in the specified language
-    /// at the derivation path `m/44'/60'/0'/0/{index}`.
-    function deriveKey(string calldata mnemonic, uint32 index, string calldata language)
-        external
-        pure
-        returns (uint256 privateKey);
-
-    /// Derive a private key from a provided mnenomic string (or mnenomic file path) in the specified language
-    /// at `{derivationPath}{index}`.
-    function deriveKey(string calldata mnemonic, string calldata derivationPath, uint32 index, string calldata language)
-        external
-        pure
-        returns (uint256 privateKey);
+    /// Utility cheatcode to copy storage of `from` contract to another `to` contract.
+    function copyStorage(address from, address to) external;
 
     /// Returns ENS namehash for provided string.
     function ensNamehash(string calldata name) external pure returns (bytes32);
@@ -1777,17 +1900,27 @@ interface VmSafe {
     /// Gets the label for the specified address.
     function getLabel(address account) external view returns (string memory currentLabel);
 
-    /// Get a `Wallet`'s nonce.
-    function getNonce(Wallet calldata wallet) external returns (uint64 nonce);
-
     /// Labels an address in call traces.
     function label(address account, string calldata newLabel) external;
 
-    /// Adds a private key to the local forge wallet and returns the address.
-    function rememberKey(uint256 privateKey) external returns (address keyAddr);
+    /// Pauses collection of call traces. Useful in cases when you want to skip tracing of
+    /// complex calls which are not useful for debugging.
+    function pauseTracing() external view;
 
-    /// Signs data with a `Wallet`.
-    function sign(Wallet calldata wallet, bytes32 digest) external returns (uint8 v, bytes32 r, bytes32 s);
+    /// Returns a random `address`.
+    function randomAddress() external returns (address);
+
+    /// Returns a random uint256 value.
+    function randomUint() external returns (uint256);
+
+    /// Returns random uin256 value between the provided range (=min..=max).
+    function randomUint(uint256 min, uint256 max) external returns (uint256);
+
+    /// Unpauses collection of call traces.
+    function resumeTracing() external view;
+
+    /// Utility cheatcode to set arbitrary storage for given target address.
+    function setArbitraryStorage(address target) external;
 
     /// Encodes a `bytes` value to a base64url string.
     function toBase64URL(bytes calldata data) external pure returns (string memory);
@@ -1917,6 +2050,14 @@ interface Vm is VmSafe {
     /// Calldata match takes precedence over `msg.value` in case of ambiguity.
     function mockCall(address callee, uint256 msgValue, bytes calldata data, bytes calldata returnData) external;
 
+    /// Whenever a call is made to `callee` with calldata `data`, this cheatcode instead calls
+    /// `target` with the same calldata. This functionality is similar to a delegate call made to
+    /// `target` contract from `callee`.
+    /// Can be used to substitute a call to a function with another implementation that captures
+    /// the primary logic of the original function but is easier to reason about.
+    /// If calldata is not a strict match then partial match by selector is attempted.
+    function mockFunction(address callee, address target, bytes calldata data) external;
+
     /// Sets the *next* call's `msg.sender` to be the input address.
     function prank(address msgSender) external;
 
@@ -1977,6 +2118,10 @@ interface Vm is VmSafe {
 
     /// Takes a fork identifier created by `createFork` and sets the corresponding forked state as active.
     function selectFork(uint256 forkId) external;
+
+    /// Set blockhash for the current block.
+    /// It only sets the blockhash for blocks where `block.number - 256 <= number < block.number`.
+    function setBlockhash(uint256 blockNumber, bytes32 blockHash) external;
 
     /// Sets the nonce of an account. Must be higher than the current nonce of the account.
     function setNonce(address account, uint64 newNonce) external;
@@ -2041,6 +2186,30 @@ interface Vm is VmSafe {
     /// Expects given number of calls to an address with the specified `msg.value`, gas, and calldata.
     function expectCall(address callee, uint256 msgValue, uint64 gas, bytes calldata data, uint64 count) external;
 
+    /// Prepare an expected anonymous log with (bool checkTopic1, bool checkTopic2, bool checkTopic3, bool checkData.).
+    /// Call this function, then emit an anonymous event, then call a function. Internally after the call, we check if
+    /// logs were emitted in the expected order with the expected topics and data (as specified by the booleans).
+    function expectEmitAnonymous(bool checkTopic0, bool checkTopic1, bool checkTopic2, bool checkTopic3, bool checkData)
+        external;
+
+    /// Same as the previous method, but also checks supplied address against emitting contract.
+    function expectEmitAnonymous(
+        bool checkTopic0,
+        bool checkTopic1,
+        bool checkTopic2,
+        bool checkTopic3,
+        bool checkData,
+        address emitter
+    ) external;
+
+    /// Prepare an expected anonymous log with all topic and data checks enabled.
+    /// Call this function, then emit an anonymous event, then call a function. Internally after the call, we check if
+    /// logs were emitted in the expected order with the expected topics and data.
+    function expectEmitAnonymous() external;
+
+    /// Same as the previous method, but also checks supplied address against emitting contract.
+    function expectEmitAnonymous(address emitter) external;
+
     /// Prepare an expected log with (bool checkTopic1, bool checkTopic2, bool checkTopic3, bool checkData.).
     /// Call this function, then emit an event, then call a function. Internally after the call, we check if
     /// logs were emitted in the expected order with the expected topics and data (as specified by the booleans).
@@ -2058,10 +2227,13 @@ interface Vm is VmSafe {
     /// Same as the previous method, but also checks supplied address against emitting contract.
     function expectEmit(address emitter) external;
 
+    /// Expects an error on next call that starts with the revert data.
+    function expectPartialRevert(bytes4 revertData) external;
+
     /// Expects an error on next call with any revert data.
     function expectRevert() external;
 
-    /// Expects an error on next call that starts with the revert data.
+    /// Expects an error on next call that exactly matches the revert data.
     function expectRevert(bytes4 revertData) external;
 
     /// Expects an error on next call that exactly matches the revert data.
@@ -2086,1544 +2258,6 @@ interface Vm is VmSafe {
 // lib/forge-std/src/console.sol
 
 library console {
-    address constant CONSOLE_ADDRESS = address(0x000000000000000000636F6e736F6c652e6c6f67);
-
-    function _sendLogPayload(bytes memory payload) private view {
-        uint256 payloadLength = payload.length;
-        address consoleAddress = CONSOLE_ADDRESS;
-        /// @solidity memory-safe-assembly
-        assembly {
-            let payloadStart := add(payload, 32)
-            let r := staticcall(gas(), consoleAddress, payloadStart, payloadLength, 0, 0)
-        }
-    }
-
-    function log() internal view {
-        _sendLogPayload(abi.encodeWithSignature("log()"));
-    }
-
-    function logInt(int p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(int)", p0));
-    }
-
-    function logUint(uint p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint)", p0));
-    }
-
-    function logString(string memory p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string)", p0));
-    }
-
-    function logBool(bool p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool)", p0));
-    }
-
-    function logAddress(address p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address)", p0));
-    }
-
-    function logBytes(bytes memory p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes)", p0));
-    }
-
-    function logBytes1(bytes1 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes1)", p0));
-    }
-
-    function logBytes2(bytes2 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes2)", p0));
-    }
-
-    function logBytes3(bytes3 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes3)", p0));
-    }
-
-    function logBytes4(bytes4 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes4)", p0));
-    }
-
-    function logBytes5(bytes5 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes5)", p0));
-    }
-
-    function logBytes6(bytes6 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes6)", p0));
-    }
-
-    function logBytes7(bytes7 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes7)", p0));
-    }
-
-    function logBytes8(bytes8 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes8)", p0));
-    }
-
-    function logBytes9(bytes9 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes9)", p0));
-    }
-
-    function logBytes10(bytes10 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes10)", p0));
-    }
-
-    function logBytes11(bytes11 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes11)", p0));
-    }
-
-    function logBytes12(bytes12 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes12)", p0));
-    }
-
-    function logBytes13(bytes13 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes13)", p0));
-    }
-
-    function logBytes14(bytes14 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes14)", p0));
-    }
-
-    function logBytes15(bytes15 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes15)", p0));
-    }
-
-    function logBytes16(bytes16 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes16)", p0));
-    }
-
-    function logBytes17(bytes17 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes17)", p0));
-    }
-
-    function logBytes18(bytes18 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes18)", p0));
-    }
-
-    function logBytes19(bytes19 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes19)", p0));
-    }
-
-    function logBytes20(bytes20 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes20)", p0));
-    }
-
-    function logBytes21(bytes21 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes21)", p0));
-    }
-
-    function logBytes22(bytes22 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes22)", p0));
-    }
-
-    function logBytes23(bytes23 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes23)", p0));
-    }
-
-    function logBytes24(bytes24 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes24)", p0));
-    }
-
-    function logBytes25(bytes25 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes25)", p0));
-    }
-
-    function logBytes26(bytes26 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes26)", p0));
-    }
-
-    function logBytes27(bytes27 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes27)", p0));
-    }
-
-    function logBytes28(bytes28 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes28)", p0));
-    }
-
-    function logBytes29(bytes29 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes29)", p0));
-    }
-
-    function logBytes30(bytes30 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes30)", p0));
-    }
-
-    function logBytes31(bytes31 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes31)", p0));
-    }
-
-    function logBytes32(bytes32 p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bytes32)", p0));
-    }
-
-    function log(uint p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint)", p0));
-    }
-
-    function log(string memory p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string)", p0));
-    }
-
-    function log(bool p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool)", p0));
-    }
-
-    function log(address p0) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address)", p0));
-    }
-
-    function log(uint p0, uint p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint)", p0, p1));
-    }
-
-    function log(uint p0, string memory p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string)", p0, p1));
-    }
-
-    function log(uint p0, bool p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool)", p0, p1));
-    }
-
-    function log(uint p0, address p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address)", p0, p1));
-    }
-
-    function log(string memory p0, uint p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint)", p0, p1));
-    }
-
-    function log(string memory p0, string memory p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string)", p0, p1));
-    }
-
-    function log(string memory p0, bool p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool)", p0, p1));
-    }
-
-    function log(string memory p0, address p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address)", p0, p1));
-    }
-
-    function log(bool p0, uint p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint)", p0, p1));
-    }
-
-    function log(bool p0, string memory p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string)", p0, p1));
-    }
-
-    function log(bool p0, bool p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool)", p0, p1));
-    }
-
-    function log(bool p0, address p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address)", p0, p1));
-    }
-
-    function log(address p0, uint p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint)", p0, p1));
-    }
-
-    function log(address p0, string memory p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string)", p0, p1));
-    }
-
-    function log(address p0, bool p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool)", p0, p1));
-    }
-
-    function log(address p0, address p1) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address)", p0, p1));
-    }
-
-    function log(uint p0, uint p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint)", p0, p1, p2));
-    }
-
-    function log(uint p0, uint p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string)", p0, p1, p2));
-    }
-
-    function log(uint p0, uint p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool)", p0, p1, p2));
-    }
-
-    function log(uint p0, uint p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address)", p0, p1, p2));
-    }
-
-    function log(uint p0, string memory p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint)", p0, p1, p2));
-    }
-
-    function log(uint p0, string memory p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string)", p0, p1, p2));
-    }
-
-    function log(uint p0, string memory p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool)", p0, p1, p2));
-    }
-
-    function log(uint p0, string memory p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address)", p0, p1, p2));
-    }
-
-    function log(uint p0, bool p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint)", p0, p1, p2));
-    }
-
-    function log(uint p0, bool p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string)", p0, p1, p2));
-    }
-
-    function log(uint p0, bool p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool)", p0, p1, p2));
-    }
-
-    function log(uint p0, bool p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address)", p0, p1, p2));
-    }
-
-    function log(uint p0, address p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint)", p0, p1, p2));
-    }
-
-    function log(uint p0, address p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string)", p0, p1, p2));
-    }
-
-    function log(uint p0, address p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool)", p0, p1, p2));
-    }
-
-    function log(uint p0, address p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address)", p0, p1, p2));
-    }
-
-    function log(string memory p0, uint p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint)", p0, p1, p2));
-    }
-
-    function log(string memory p0, uint p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string)", p0, p1, p2));
-    }
-
-    function log(string memory p0, uint p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool)", p0, p1, p2));
-    }
-
-    function log(string memory p0, uint p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address)", p0, p1, p2));
-    }
-
-    function log(string memory p0, string memory p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint)", p0, p1, p2));
-    }
-
-    function log(string memory p0, string memory p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string)", p0, p1, p2));
-    }
-
-    function log(string memory p0, string memory p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool)", p0, p1, p2));
-    }
-
-    function log(string memory p0, string memory p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address)", p0, p1, p2));
-    }
-
-    function log(string memory p0, bool p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint)", p0, p1, p2));
-    }
-
-    function log(string memory p0, bool p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string)", p0, p1, p2));
-    }
-
-    function log(string memory p0, bool p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool)", p0, p1, p2));
-    }
-
-    function log(string memory p0, bool p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address)", p0, p1, p2));
-    }
-
-    function log(string memory p0, address p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint)", p0, p1, p2));
-    }
-
-    function log(string memory p0, address p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string)", p0, p1, p2));
-    }
-
-    function log(string memory p0, address p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool)", p0, p1, p2));
-    }
-
-    function log(string memory p0, address p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address)", p0, p1, p2));
-    }
-
-    function log(bool p0, uint p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint)", p0, p1, p2));
-    }
-
-    function log(bool p0, uint p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string)", p0, p1, p2));
-    }
-
-    function log(bool p0, uint p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool)", p0, p1, p2));
-    }
-
-    function log(bool p0, uint p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address)", p0, p1, p2));
-    }
-
-    function log(bool p0, string memory p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint)", p0, p1, p2));
-    }
-
-    function log(bool p0, string memory p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string)", p0, p1, p2));
-    }
-
-    function log(bool p0, string memory p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool)", p0, p1, p2));
-    }
-
-    function log(bool p0, string memory p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address)", p0, p1, p2));
-    }
-
-    function log(bool p0, bool p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint)", p0, p1, p2));
-    }
-
-    function log(bool p0, bool p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string)", p0, p1, p2));
-    }
-
-    function log(bool p0, bool p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool)", p0, p1, p2));
-    }
-
-    function log(bool p0, bool p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address)", p0, p1, p2));
-    }
-
-    function log(bool p0, address p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint)", p0, p1, p2));
-    }
-
-    function log(bool p0, address p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string)", p0, p1, p2));
-    }
-
-    function log(bool p0, address p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool)", p0, p1, p2));
-    }
-
-    function log(bool p0, address p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address)", p0, p1, p2));
-    }
-
-    function log(address p0, uint p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint)", p0, p1, p2));
-    }
-
-    function log(address p0, uint p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string)", p0, p1, p2));
-    }
-
-    function log(address p0, uint p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool)", p0, p1, p2));
-    }
-
-    function log(address p0, uint p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address)", p0, p1, p2));
-    }
-
-    function log(address p0, string memory p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint)", p0, p1, p2));
-    }
-
-    function log(address p0, string memory p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string)", p0, p1, p2));
-    }
-
-    function log(address p0, string memory p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool)", p0, p1, p2));
-    }
-
-    function log(address p0, string memory p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address)", p0, p1, p2));
-    }
-
-    function log(address p0, bool p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint)", p0, p1, p2));
-    }
-
-    function log(address p0, bool p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string)", p0, p1, p2));
-    }
-
-    function log(address p0, bool p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool)", p0, p1, p2));
-    }
-
-    function log(address p0, bool p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address)", p0, p1, p2));
-    }
-
-    function log(address p0, address p1, uint p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint)", p0, p1, p2));
-    }
-
-    function log(address p0, address p1, string memory p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string)", p0, p1, p2));
-    }
-
-    function log(address p0, address p1, bool p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool)", p0, p1, p2));
-    }
-
-    function log(address p0, address p1, address p2) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address)", p0, p1, p2));
-    }
-
-    function log(uint p0, uint p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, uint p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, string memory p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, bool p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(uint p0, address p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, uint p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, string memory p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, bool p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(string memory p0, address p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, uint p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, string memory p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, bool p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(bool p0, address p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, uint p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, string memory p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, bool p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, uint p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, uint p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, uint p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, uint p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, string memory p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, string memory p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, string memory p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, string memory p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, bool p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, bool p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, bool p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, bool p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,address)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, address p2, uint p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,uint)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, address p2, string memory p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,string)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, address p2, bool p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,bool)", p0, p1, p2, p3));
-    }
-
-    function log(address p0, address p1, address p2, address p3) internal view {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,address)", p0, p1, p2, p3));
-    }
-
-}
-
-// lib/forge-std/src/console2.sol
-
-/// @dev The original console.sol uses `int` and `uint` for computing function selectors, but it should
-/// use `int256` and `uint256`. This modified version fixes that. This version is recommended
-/// over `console.sol` if you don't need compatibility with Hardhat as the logs will show up in
-/// forge stack traces. If you do need compatibility with Hardhat, you must use `console.sol`.
-/// Reference: https://github.com/NomicFoundation/hardhat/issues/2178
-library console2 {
     address constant CONSOLE_ADDRESS = address(0x000000000000000000636F6e736F6c652e6c6f67);
 
     function _castLogPayloadViewToPure(
@@ -3652,12 +2286,12 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log()"));
     }
 
-    function logInt(int256 p0) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(int256)", p0));
+    function logInt(int p0) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(int)", p0));
     }
 
-    function logUint(uint256 p0) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256)", p0));
+    function logUint(uint p0) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint)", p0));
     }
 
     function logString(string memory p0) internal pure {
@@ -3804,12 +2438,12 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bytes32)", p0));
     }
 
-    function log(uint256 p0) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256)", p0));
+    function log(uint p0) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint)", p0));
     }
 
-    function log(int256 p0) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(int256)", p0));
+    function log(int p0) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(int)", p0));
     }
 
     function log(string memory p0) internal pure {
@@ -3824,28 +2458,28 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address)", p0));
     }
 
-    function log(uint256 p0, uint256 p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256)", p0, p1));
+    function log(uint p0, uint p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint)", p0, p1));
     }
 
-    function log(uint256 p0, string memory p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string)", p0, p1));
+    function log(uint p0, string memory p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string)", p0, p1));
     }
 
-    function log(uint256 p0, bool p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool)", p0, p1));
+    function log(uint p0, bool p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool)", p0, p1));
     }
 
-    function log(uint256 p0, address p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address)", p0, p1));
+    function log(uint p0, address p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address)", p0, p1));
     }
 
-    function log(string memory p0, uint256 p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256)", p0, p1));
+    function log(string memory p0, uint p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint)", p0, p1));
     }
 
-    function log(string memory p0, int256 p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,int256)", p0, p1));
+    function log(string memory p0, int p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,int)", p0, p1));
     }
 
     function log(string memory p0, string memory p1) internal pure {
@@ -3860,8 +2494,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,address)", p0, p1));
     }
 
-    function log(bool p0, uint256 p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256)", p0, p1));
+    function log(bool p0, uint p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint)", p0, p1));
     }
 
     function log(bool p0, string memory p1) internal pure {
@@ -3876,8 +2510,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,address)", p0, p1));
     }
 
-    function log(address p0, uint256 p1) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256)", p0, p1));
+    function log(address p0, uint p1) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint)", p0, p1));
     }
 
     function log(address p0, string memory p1) internal pure {
@@ -3892,88 +2526,88 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,address)", p0, p1));
     }
 
-    function log(uint256 p0, uint256 p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,uint256)", p0, p1, p2));
+    function log(uint p0, uint p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint)", p0, p1, p2));
     }
 
-    function log(uint256 p0, uint256 p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,string)", p0, p1, p2));
+    function log(uint p0, uint p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string)", p0, p1, p2));
     }
 
-    function log(uint256 p0, uint256 p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,bool)", p0, p1, p2));
+    function log(uint p0, uint p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool)", p0, p1, p2));
     }
 
-    function log(uint256 p0, uint256 p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,address)", p0, p1, p2));
+    function log(uint p0, uint p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address)", p0, p1, p2));
     }
 
-    function log(uint256 p0, string memory p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,uint256)", p0, p1, p2));
+    function log(uint p0, string memory p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint)", p0, p1, p2));
     }
 
-    function log(uint256 p0, string memory p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,string)", p0, p1, p2));
+    function log(uint p0, string memory p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string)", p0, p1, p2));
     }
 
-    function log(uint256 p0, string memory p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,bool)", p0, p1, p2));
+    function log(uint p0, string memory p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool)", p0, p1, p2));
     }
 
-    function log(uint256 p0, string memory p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,address)", p0, p1, p2));
+    function log(uint p0, string memory p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address)", p0, p1, p2));
     }
 
-    function log(uint256 p0, bool p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,uint256)", p0, p1, p2));
+    function log(uint p0, bool p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint)", p0, p1, p2));
     }
 
-    function log(uint256 p0, bool p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,string)", p0, p1, p2));
+    function log(uint p0, bool p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string)", p0, p1, p2));
     }
 
-    function log(uint256 p0, bool p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,bool)", p0, p1, p2));
+    function log(uint p0, bool p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool)", p0, p1, p2));
     }
 
-    function log(uint256 p0, bool p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,address)", p0, p1, p2));
+    function log(uint p0, bool p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address)", p0, p1, p2));
     }
 
-    function log(uint256 p0, address p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,uint256)", p0, p1, p2));
+    function log(uint p0, address p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint)", p0, p1, p2));
     }
 
-    function log(uint256 p0, address p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,string)", p0, p1, p2));
+    function log(uint p0, address p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string)", p0, p1, p2));
     }
 
-    function log(uint256 p0, address p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,bool)", p0, p1, p2));
+    function log(uint p0, address p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool)", p0, p1, p2));
     }
 
-    function log(uint256 p0, address p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,address)", p0, p1, p2));
+    function log(uint p0, address p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address)", p0, p1, p2));
     }
 
-    function log(string memory p0, uint256 p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,uint256)", p0, p1, p2));
+    function log(string memory p0, uint p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint)", p0, p1, p2));
     }
 
-    function log(string memory p0, uint256 p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,string)", p0, p1, p2));
+    function log(string memory p0, uint p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string)", p0, p1, p2));
     }
 
-    function log(string memory p0, uint256 p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,bool)", p0, p1, p2));
+    function log(string memory p0, uint p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool)", p0, p1, p2));
     }
 
-    function log(string memory p0, uint256 p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,address)", p0, p1, p2));
+    function log(string memory p0, uint p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address)", p0, p1, p2));
     }
 
-    function log(string memory p0, string memory p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint256)", p0, p1, p2));
+    function log(string memory p0, string memory p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint)", p0, p1, p2));
     }
 
     function log(string memory p0, string memory p1, string memory p2) internal pure {
@@ -3988,8 +2622,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,string,address)", p0, p1, p2));
     }
 
-    function log(string memory p0, bool p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint256)", p0, p1, p2));
+    function log(string memory p0, bool p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint)", p0, p1, p2));
     }
 
     function log(string memory p0, bool p1, string memory p2) internal pure {
@@ -4004,8 +2638,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,bool,address)", p0, p1, p2));
     }
 
-    function log(string memory p0, address p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint256)", p0, p1, p2));
+    function log(string memory p0, address p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint)", p0, p1, p2));
     }
 
     function log(string memory p0, address p1, string memory p2) internal pure {
@@ -4020,24 +2654,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,address,address)", p0, p1, p2));
     }
 
-    function log(bool p0, uint256 p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,uint256)", p0, p1, p2));
+    function log(bool p0, uint p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint)", p0, p1, p2));
     }
 
-    function log(bool p0, uint256 p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,string)", p0, p1, p2));
+    function log(bool p0, uint p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string)", p0, p1, p2));
     }
 
-    function log(bool p0, uint256 p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,bool)", p0, p1, p2));
+    function log(bool p0, uint p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool)", p0, p1, p2));
     }
 
-    function log(bool p0, uint256 p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,address)", p0, p1, p2));
+    function log(bool p0, uint p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address)", p0, p1, p2));
     }
 
-    function log(bool p0, string memory p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint256)", p0, p1, p2));
+    function log(bool p0, string memory p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint)", p0, p1, p2));
     }
 
     function log(bool p0, string memory p1, string memory p2) internal pure {
@@ -4052,8 +2686,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,string,address)", p0, p1, p2));
     }
 
-    function log(bool p0, bool p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint256)", p0, p1, p2));
+    function log(bool p0, bool p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint)", p0, p1, p2));
     }
 
     function log(bool p0, bool p1, string memory p2) internal pure {
@@ -4068,8 +2702,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address)", p0, p1, p2));
     }
 
-    function log(bool p0, address p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint256)", p0, p1, p2));
+    function log(bool p0, address p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint)", p0, p1, p2));
     }
 
     function log(bool p0, address p1, string memory p2) internal pure {
@@ -4084,24 +2718,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,address,address)", p0, p1, p2));
     }
 
-    function log(address p0, uint256 p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,uint256)", p0, p1, p2));
+    function log(address p0, uint p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint)", p0, p1, p2));
     }
 
-    function log(address p0, uint256 p1, string memory p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,string)", p0, p1, p2));
+    function log(address p0, uint p1, string memory p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string)", p0, p1, p2));
     }
 
-    function log(address p0, uint256 p1, bool p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,bool)", p0, p1, p2));
+    function log(address p0, uint p1, bool p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool)", p0, p1, p2));
     }
 
-    function log(address p0, uint256 p1, address p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,address)", p0, p1, p2));
+    function log(address p0, uint p1, address p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address)", p0, p1, p2));
     }
 
-    function log(address p0, string memory p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint256)", p0, p1, p2));
+    function log(address p0, string memory p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint)", p0, p1, p2));
     }
 
     function log(address p0, string memory p1, string memory p2) internal pure {
@@ -4116,8 +2750,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,string,address)", p0, p1, p2));
     }
 
-    function log(address p0, bool p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint256)", p0, p1, p2));
+    function log(address p0, bool p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint)", p0, p1, p2));
     }
 
     function log(address p0, bool p1, string memory p2) internal pure {
@@ -4132,8 +2766,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,bool,address)", p0, p1, p2));
     }
 
-    function log(address p0, address p1, uint256 p2) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint256)", p0, p1, p2));
+    function log(address p0, address p1, uint p2) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint)", p0, p1, p2));
     }
 
     function log(address p0, address p1, string memory p2) internal pure {
@@ -4148,344 +2782,344 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,address,address)", p0, p1, p2));
     }
 
-    function log(uint256 p0, uint256 p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,uint256,uint256)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,uint256,string)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,uint256,bool)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,uint256,address)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,string,uint256)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,string,string)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,string,bool)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,string,address)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,string,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,bool,uint256)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,bool,string)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,bool,bool)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,bool,address)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,address,uint256)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,address,string)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,address,bool)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, uint256 p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,uint256,address,address)", p0, p1, p2, p3));
+    function log(uint p0, uint p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,uint,address,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,uint256,uint256)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,uint256,string)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,uint256,bool)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,uint256,address)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,string,uint256)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,string,string)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,string,bool)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,string,address)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,string,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,bool,uint256)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,bool,string)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,bool,bool)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,bool,address)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,address,uint256)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,address,string)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,address,bool)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, string memory p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,string,address,address)", p0, p1, p2, p3));
+    function log(uint p0, string memory p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,string,address,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,uint256,uint256)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,uint256,string)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,uint256,bool)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,uint256,address)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,string,uint256)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,string,string)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,string,bool)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,string,address)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,string,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,bool,uint256)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,bool,string)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,bool,bool)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,bool,address)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,address,uint256)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,address,string)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,address,bool)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, bool p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,bool,address,address)", p0, p1, p2, p3));
+    function log(uint p0, bool p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,bool,address,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,uint256,uint256)", p0, p1, p2, p3));
+    function log(uint p0, address p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,uint256,string)", p0, p1, p2, p3));
+    function log(uint p0, address p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,uint256,bool)", p0, p1, p2, p3));
+    function log(uint p0, address p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,uint256,address)", p0, p1, p2, p3));
+    function log(uint p0, address p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,string,uint256)", p0, p1, p2, p3));
+    function log(uint p0, address p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,string,string)", p0, p1, p2, p3));
+    function log(uint p0, address p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,string,bool)", p0, p1, p2, p3));
+    function log(uint p0, address p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,string,address)", p0, p1, p2, p3));
+    function log(uint p0, address p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,string,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,bool,uint256)", p0, p1, p2, p3));
+    function log(uint p0, address p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,bool,string)", p0, p1, p2, p3));
+    function log(uint p0, address p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,bool,bool)", p0, p1, p2, p3));
+    function log(uint p0, address p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,bool,address)", p0, p1, p2, p3));
+    function log(uint p0, address p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,address,uint256)", p0, p1, p2, p3));
+    function log(uint p0, address p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,address,string)", p0, p1, p2, p3));
+    function log(uint p0, address p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,string)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,address,bool)", p0, p1, p2, p3));
+    function log(uint p0, address p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(uint256 p0, address p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(uint256,address,address,address)", p0, p1, p2, p3));
+    function log(uint p0, address p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(uint,address,address,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,uint256,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,uint256,string)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,uint256,bool)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,uint256,address)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,string,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,string,string)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,string,bool)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,string,address)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,string,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,bool,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,bool,string)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,bool,bool)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,bool,address)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,address,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,address,string)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,address,bool)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, uint256 p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,uint256,address,address)", p0, p1, p2, p3));
+    function log(string memory p0, uint p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,uint,address,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint256,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint256,string)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint256,bool)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint256,address)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,string,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, string memory p1, string memory p2, string memory p3) internal pure {
@@ -4500,8 +3134,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,string,string,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, string memory p1, bool p2, string memory p3) internal pure {
@@ -4516,8 +3150,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,string,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, string memory p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, string memory p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,string,address,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, string memory p1, address p2, string memory p3) internal pure {
@@ -4532,24 +3166,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,string,address,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint256,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint256,string)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint256,bool)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint256,address)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, bool p1, string memory p2, string memory p3) internal pure {
@@ -4564,8 +3198,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,bool,string,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, bool p1, bool p2, string memory p3) internal pure {
@@ -4580,8 +3214,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,bool,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, bool p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, bool p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, bool p1, address p2, string memory p3) internal pure {
@@ -4596,24 +3230,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,bool,address,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint256,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint256,string)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint256,bool)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint256,address)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,string,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, address p1, string memory p2, string memory p3) internal pure {
@@ -4628,8 +3262,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,address,string,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, address p1, bool p2, string memory p3) internal pure {
@@ -4644,8 +3278,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,address,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(string memory p0, address p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,uint256)", p0, p1, p2, p3));
+    function log(string memory p0, address p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(string,address,address,uint)", p0, p1, p2, p3));
     }
 
     function log(string memory p0, address p1, address p2, string memory p3) internal pure {
@@ -4660,88 +3294,88 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(string,address,address,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,uint256,uint256)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,uint256,string)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,uint256,bool)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,uint256,address)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,string,uint256)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,string,string)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,string,bool)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,string,address)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,string,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,bool,uint256)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,bool,string)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,bool,bool)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,bool,address)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,address,uint256)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,address,string)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,address,bool)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, uint256 p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,uint256,address,address)", p0, p1, p2, p3));
+    function log(bool p0, uint p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,uint,address,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint256,uint256)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint256,string)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint256,bool)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint256,address)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,uint256)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, string memory p1, string memory p2, string memory p3) internal pure {
@@ -4756,8 +3390,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,string,string,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,uint256)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, string memory p1, bool p2, string memory p3) internal pure {
@@ -4772,8 +3406,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,string,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, string memory p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,uint256)", p0, p1, p2, p3));
+    function log(bool p0, string memory p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, string memory p1, address p2, string memory p3) internal pure {
@@ -4788,24 +3422,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,string,address,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint256,uint256)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint256,string)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint256,bool)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint256,address)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,uint256)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, bool p1, string memory p2, string memory p3) internal pure {
@@ -4820,8 +3454,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,bool,string,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,uint256)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, bool p1, bool p2, string memory p3) internal pure {
@@ -4836,8 +3470,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,bool,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, bool p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,uint256)", p0, p1, p2, p3));
+    function log(bool p0, bool p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, bool p1, address p2, string memory p3) internal pure {
@@ -4852,24 +3486,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,bool,address,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint256,uint256)", p0, p1, p2, p3));
+    function log(bool p0, address p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint256,string)", p0, p1, p2, p3));
+    function log(bool p0, address p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint256,bool)", p0, p1, p2, p3));
+    function log(bool p0, address p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint256,address)", p0, p1, p2, p3));
+    function log(bool p0, address p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,uint256)", p0, p1, p2, p3));
+    function log(bool p0, address p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, address p1, string memory p2, string memory p3) internal pure {
@@ -4884,8 +3518,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,address,string,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,uint256)", p0, p1, p2, p3));
+    function log(bool p0, address p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, address p1, bool p2, string memory p3) internal pure {
@@ -4900,8 +3534,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,address,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(bool p0, address p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,uint256)", p0, p1, p2, p3));
+    function log(bool p0, address p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,uint)", p0, p1, p2, p3));
     }
 
     function log(bool p0, address p1, address p2, string memory p3) internal pure {
@@ -4916,88 +3550,88 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(bool,address,address,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,uint256,uint256)", p0, p1, p2, p3));
+    function log(address p0, uint p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,uint256,string)", p0, p1, p2, p3));
+    function log(address p0, uint p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,uint256,bool)", p0, p1, p2, p3));
+    function log(address p0, uint p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,uint256,address)", p0, p1, p2, p3));
+    function log(address p0, uint p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,string,uint256)", p0, p1, p2, p3));
+    function log(address p0, uint p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, string memory p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,string,string)", p0, p1, p2, p3));
+    function log(address p0, uint p1, string memory p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, string memory p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,string,bool)", p0, p1, p2, p3));
+    function log(address p0, uint p1, string memory p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, string memory p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,string,address)", p0, p1, p2, p3));
+    function log(address p0, uint p1, string memory p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,string,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,bool,uint256)", p0, p1, p2, p3));
+    function log(address p0, uint p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, bool p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,bool,string)", p0, p1, p2, p3));
+    function log(address p0, uint p1, bool p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, bool p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,bool,bool)", p0, p1, p2, p3));
+    function log(address p0, uint p1, bool p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, bool p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,bool,address)", p0, p1, p2, p3));
+    function log(address p0, uint p1, bool p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,address,uint256)", p0, p1, p2, p3));
+    function log(address p0, uint p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, address p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,address,string)", p0, p1, p2, p3));
+    function log(address p0, uint p1, address p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, address p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,address,bool)", p0, p1, p2, p3));
+    function log(address p0, uint p1, address p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, uint256 p1, address p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,uint256,address,address)", p0, p1, p2, p3));
+    function log(address p0, uint p1, address p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,uint,address,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint256,uint256)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint256,string)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint256,bool)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint256,address)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,uint256)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,string,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, string memory p1, string memory p2, string memory p3) internal pure {
@@ -5012,8 +3646,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,string,string,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,uint256)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, string memory p1, bool p2, string memory p3) internal pure {
@@ -5028,8 +3662,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,string,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, string memory p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,uint256)", p0, p1, p2, p3));
+    function log(address p0, string memory p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,string,address,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, string memory p1, address p2, string memory p3) internal pure {
@@ -5044,24 +3678,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,string,address,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint256,uint256)", p0, p1, p2, p3));
+    function log(address p0, bool p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint256,string)", p0, p1, p2, p3));
+    function log(address p0, bool p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint256,bool)", p0, p1, p2, p3));
+    function log(address p0, bool p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint256,address)", p0, p1, p2, p3));
+    function log(address p0, bool p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,uint256)", p0, p1, p2, p3));
+    function log(address p0, bool p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, bool p1, string memory p2, string memory p3) internal pure {
@@ -5076,8 +3710,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,bool,string,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,uint256)", p0, p1, p2, p3));
+    function log(address p0, bool p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, bool p1, bool p2, string memory p3) internal pure {
@@ -5092,8 +3726,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,bool,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, bool p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,uint256)", p0, p1, p2, p3));
+    function log(address p0, bool p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, bool p1, address p2, string memory p3) internal pure {
@@ -5108,24 +3742,24 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,bool,address,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, uint256 p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint256,uint256)", p0, p1, p2, p3));
+    function log(address p0, address p1, uint p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,uint)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, uint256 p2, string memory p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint256,string)", p0, p1, p2, p3));
+    function log(address p0, address p1, uint p2, string memory p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,string)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, uint256 p2, bool p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint256,bool)", p0, p1, p2, p3));
+    function log(address p0, address p1, uint p2, bool p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,bool)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, uint256 p2, address p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint256,address)", p0, p1, p2, p3));
+    function log(address p0, address p1, uint p2, address p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,uint,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, string memory p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,uint256)", p0, p1, p2, p3));
+    function log(address p0, address p1, string memory p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,string,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, address p1, string memory p2, string memory p3) internal pure {
@@ -5140,8 +3774,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,address,string,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, bool p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,uint256)", p0, p1, p2, p3));
+    function log(address p0, address p1, bool p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, address p1, bool p2, string memory p3) internal pure {
@@ -5156,8 +3790,8 @@ library console2 {
         _sendLogPayload(abi.encodeWithSignature("log(address,address,bool,address)", p0, p1, p2, p3));
     }
 
-    function log(address p0, address p1, address p2, uint256 p3) internal pure {
-        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,uint256)", p0, p1, p2, p3));
+    function log(address p0, address p1, address p2, uint p3) internal pure {
+        _sendLogPayload(abi.encodeWithSignature("log(address,address,address,uint)", p0, p1, p2, p3));
     }
 
     function log(address p0, address p1, address p2, string memory p3) internal pure {
@@ -5171,7 +3805,6 @@ library console2 {
     function log(address p0, address p1, address p2, address p3) internal pure {
         _sendLogPayload(abi.encodeWithSignature("log(address,address,address,address)", p0, p1, p2, p3));
     }
-
 }
 
 // lib/forge-std/src/interfaces/IERC165.sol
@@ -5312,6 +3945,7 @@ library safeconsole {
     function _sendLogPayload(uint256 offset, uint256 size) private pure {
         function(uint256, uint256) internal view fnIn = _sendLogPayloadView;
         function(uint256, uint256) internal pure pureSendLogPayload;
+        /// @solidity memory-safe-assembly
         assembly {
             pureSendLogPayload := fnIn
         }
@@ -5319,6 +3953,7 @@ library safeconsole {
     }
 
     function _sendLogPayloadView(uint256 offset, uint256 size) private view {
+        /// @solidity memory-safe-assembly
         assembly {
             pop(staticcall(gas(), CONSOLE_ADDR, offset, size, 0x0, 0x0))
         }
@@ -5327,6 +3962,7 @@ library safeconsole {
     function _memcopy(uint256 fromOffset, uint256 toOffset, uint256 length) private pure {
         function(uint256, uint256, uint256) internal view fnIn = _memcopyView;
         function(uint256, uint256, uint256) internal pure pureMemcopy;
+        /// @solidity memory-safe-assembly
         assembly {
             pureMemcopy := fnIn
         }
@@ -5334,6 +3970,7 @@ library safeconsole {
     }
 
     function _memcopyView(uint256 fromOffset, uint256 toOffset, uint256 length) private view {
+        /// @solidity memory-safe-assembly
         assembly {
             pop(staticcall(gas(), 0x4, fromOffset, length, toOffset, length))
         }
@@ -5345,16 +3982,18 @@ library safeconsole {
             bytes32 m0;
             bytes32 m1;
             bytes32 m2;
+            /// @solidity memory-safe-assembly
             assembly {
                 m0 := mload(sub(offset, 0x60))
                 m1 := mload(sub(offset, 0x40))
                 m2 := mload(sub(offset, 0x20))
-                // Selector of `logBytes(bytes)`.
-                mstore(sub(offset, 0x60), 0xe17bf956)
+                // Selector of `log(bytes)`.
+                mstore(sub(offset, 0x60), 0x0be77f56)
                 mstore(sub(offset, 0x40), 0x20)
                 mstore(sub(offset, 0x20), length)
             }
             _sendLogPayload(offset - 0x44, length + 0x44);
+            /// @solidity memory-safe-assembly
             assembly {
                 mstore(sub(offset, 0x60), m0)
                 mstore(sub(offset, 0x40), m1)
@@ -5366,20 +4005,23 @@ library safeconsole {
             bytes32 m1;
             bytes32 m2;
             uint256 endOffset = offset + length;
+            /// @solidity memory-safe-assembly
             assembly {
                 m0 := mload(add(endOffset, 0x00))
                 m1 := mload(add(endOffset, 0x20))
                 m2 := mload(add(endOffset, 0x40))
             }
             _memcopy(offset, offset + 0x60, length);
+            /// @solidity memory-safe-assembly
             assembly {
-                // Selector of `logBytes(bytes)`.
-                mstore(add(offset, 0x00), 0xe17bf956)
+                // Selector of `log(bytes)`.
+                mstore(add(offset, 0x00), 0x0be77f56)
                 mstore(add(offset, 0x20), 0x20)
                 mstore(add(offset, 0x40), length)
             }
             _sendLogPayload(offset + 0x1c, length + 0x44);
             _memcopy(offset + 0x60, offset, length);
+            /// @solidity memory-safe-assembly
             assembly {
                 mstore(add(endOffset, 0x00), m0)
                 mstore(add(endOffset, 0x20), m1)
@@ -5391,6 +4033,7 @@ library safeconsole {
     function log(address p0) internal pure {
         bytes32 m0;
         bytes32 m1;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5399,6 +4042,7 @@ library safeconsole {
             mstore(0x20, p0)
         }
         _sendLogPayload(0x1c, 0x24);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5408,6 +4052,7 @@ library safeconsole {
     function log(bool p0) internal pure {
         bytes32 m0;
         bytes32 m1;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5416,6 +4061,7 @@ library safeconsole {
             mstore(0x20, p0)
         }
         _sendLogPayload(0x1c, 0x24);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5425,6 +4071,7 @@ library safeconsole {
     function log(uint256 p0) internal pure {
         bytes32 m0;
         bytes32 m1;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5433,6 +4080,7 @@ library safeconsole {
             mstore(0x20, p0)
         }
         _sendLogPayload(0x1c, 0x24);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5444,6 +4092,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5462,6 +4111,7 @@ library safeconsole {
             writeString(0x40, p0)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5474,6 +4124,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5484,6 +4135,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5495,6 +4147,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5505,6 +4158,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5516,6 +4170,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5526,6 +4181,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5539,6 +4195,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5559,6 +4216,7 @@ library safeconsole {
             writeString(0x60, p1)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5572,6 +4230,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5582,6 +4241,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5593,6 +4253,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5603,6 +4264,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5614,6 +4276,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5624,6 +4287,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5637,6 +4301,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5657,6 +4322,7 @@ library safeconsole {
             writeString(0x60, p1)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5670,6 +4336,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5680,6 +4347,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5691,6 +4359,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5701,6 +4370,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5712,6 +4382,7 @@ library safeconsole {
         bytes32 m0;
         bytes32 m1;
         bytes32 m2;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5722,6 +4393,7 @@ library safeconsole {
             mstore(0x40, p1)
         }
         _sendLogPayload(0x1c, 0x44);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5735,6 +4407,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5755,6 +4428,7 @@ library safeconsole {
             writeString(0x60, p1)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5770,6 +4444,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5790,6 +4465,7 @@ library safeconsole {
             writeString(0x60, p0)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5805,6 +4481,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5825,6 +4502,7 @@ library safeconsole {
             writeString(0x60, p0)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5840,6 +4518,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5860,6 +4539,7 @@ library safeconsole {
             writeString(0x60, p0)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5877,6 +4557,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -5900,6 +4581,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5916,6 +4598,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5928,6 +4611,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5941,6 +4625,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5953,6 +4638,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5966,6 +4652,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -5978,6 +4665,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -5993,6 +4681,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6015,6 +4704,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6030,6 +4720,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6042,6 +4733,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6055,6 +4747,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6067,6 +4760,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6080,6 +4774,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6092,6 +4787,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6107,6 +4803,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6129,6 +4826,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6144,6 +4842,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6156,6 +4855,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6169,6 +4869,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6181,6 +4882,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6194,6 +4896,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6206,6 +4909,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6221,6 +4925,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6243,6 +4948,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6260,6 +4966,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6282,6 +4989,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6299,6 +5007,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6321,6 +5030,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6338,6 +5048,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6360,6 +5071,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6379,6 +5091,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6404,6 +5117,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6421,6 +5135,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6433,6 +5148,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6446,6 +5162,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6458,6 +5175,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6471,6 +5189,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6483,6 +5202,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6498,6 +5218,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6520,6 +5241,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6535,6 +5257,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6547,6 +5270,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6560,6 +5284,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6572,6 +5297,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6585,6 +5311,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6597,6 +5324,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6612,6 +5340,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6634,6 +5363,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6649,6 +5379,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6661,6 +5392,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6674,6 +5406,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6686,6 +5419,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6699,6 +5433,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6711,6 +5446,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6726,6 +5462,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6748,6 +5485,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6765,6 +5503,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6787,6 +5526,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6804,6 +5544,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6826,6 +5567,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6843,6 +5585,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6865,6 +5608,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6884,6 +5628,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -6909,6 +5654,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6926,6 +5672,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6938,6 +5685,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6951,6 +5699,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6963,6 +5712,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -6976,6 +5726,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -6988,6 +5739,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7003,6 +5755,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7025,6 +5778,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7040,6 +5794,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7052,6 +5807,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7065,6 +5821,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7077,6 +5834,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7090,6 +5848,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7102,6 +5861,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7117,6 +5877,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7139,6 +5900,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7154,6 +5916,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7166,6 +5929,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7179,6 +5943,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7191,6 +5956,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7204,6 +5970,7 @@ library safeconsole {
         bytes32 m1;
         bytes32 m2;
         bytes32 m3;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -7216,6 +5983,7 @@ library safeconsole {
             mstore(0x60, p2)
         }
         _sendLogPayload(0x1c, 0x64);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7231,6 +5999,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7253,6 +6022,7 @@ library safeconsole {
             writeString(0x80, p2)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7270,6 +6040,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7292,6 +6063,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7309,6 +6081,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7331,6 +6104,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7348,6 +6122,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7370,6 +6145,7 @@ library safeconsole {
             writeString(0x80, p1)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7389,6 +6165,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7414,6 +6191,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7433,6 +6211,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7455,6 +6234,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7472,6 +6252,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7494,6 +6275,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7511,6 +6293,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7533,6 +6316,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7552,6 +6336,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7577,6 +6362,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7596,6 +6382,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7618,6 +6405,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7635,6 +6423,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7657,6 +6446,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7674,6 +6464,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7696,6 +6487,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7715,6 +6507,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7740,6 +6533,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7759,6 +6553,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7781,6 +6576,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7798,6 +6594,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7820,6 +6617,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7837,6 +6635,7 @@ library safeconsole {
         bytes32 m3;
         bytes32 m4;
         bytes32 m5;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7859,6 +6658,7 @@ library safeconsole {
             writeString(0x80, p0)
         }
         _sendLogPayload(0x1c, 0xa4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7878,6 +6678,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7903,6 +6704,7 @@ library safeconsole {
             writeString(0xc0, p2)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7924,6 +6726,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7949,6 +6752,7 @@ library safeconsole {
             writeString(0xc0, p1)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -7970,6 +6774,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -7995,6 +6800,7 @@ library safeconsole {
             writeString(0xc0, p1)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8016,6 +6822,7 @@ library safeconsole {
         bytes32 m5;
         bytes32 m6;
         bytes32 m7;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8041,6 +6848,7 @@ library safeconsole {
             writeString(0xc0, p1)
         }
         _sendLogPayload(0x1c, 0xe4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8064,6 +6872,7 @@ library safeconsole {
         bytes32 m7;
         bytes32 m8;
         bytes32 m9;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8092,6 +6901,7 @@ library safeconsole {
             writeString(0x100, p2)
         }
         _sendLogPayload(0x1c, 0x124);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8112,6 +6922,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8126,6 +6937,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8141,6 +6953,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8155,6 +6968,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8170,6 +6984,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8184,6 +6999,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8201,6 +7017,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8225,6 +7042,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8242,6 +7060,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8256,6 +7075,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8271,6 +7091,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8285,6 +7106,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8300,6 +7122,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8314,6 +7137,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8331,6 +7155,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8355,6 +7180,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8372,6 +7198,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8386,6 +7213,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8401,6 +7229,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8415,6 +7244,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8430,6 +7260,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8444,6 +7275,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8461,6 +7293,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8485,6 +7318,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8504,6 +7338,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8528,6 +7363,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8547,6 +7383,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8571,6 +7408,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8590,6 +7428,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8614,6 +7453,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8635,6 +7475,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8662,6 +7503,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8681,6 +7523,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8695,6 +7538,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8710,6 +7554,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8724,6 +7569,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8739,6 +7585,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8753,6 +7600,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8770,6 +7618,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8794,6 +7643,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8811,6 +7661,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8825,6 +7676,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8840,6 +7692,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8854,6 +7707,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8869,6 +7723,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8883,6 +7738,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8900,6 +7756,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -8924,6 +7781,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8941,6 +7799,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8955,6 +7814,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8970,6 +7830,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -8984,6 +7845,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -8999,6 +7861,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9013,6 +7876,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9030,6 +7894,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9054,6 +7919,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9073,6 +7939,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9097,6 +7964,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9116,6 +7984,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9140,6 +8009,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9159,6 +8029,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9183,6 +8054,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9204,6 +8076,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9231,6 +8104,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9250,6 +8124,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9264,6 +8139,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9279,6 +8155,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9293,6 +8170,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9308,6 +8186,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9322,6 +8201,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9339,6 +8219,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9363,6 +8244,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9380,6 +8262,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9394,6 +8277,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9409,6 +8293,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9423,6 +8308,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9438,6 +8324,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9452,6 +8339,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9469,6 +8357,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9493,6 +8382,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9510,6 +8400,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9524,6 +8415,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9539,6 +8431,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9553,6 +8446,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9568,6 +8462,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -9582,6 +8477,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9599,6 +8495,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9623,6 +8520,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9642,6 +8540,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9666,6 +8565,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9685,6 +8585,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9709,6 +8610,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9728,6 +8630,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9752,6 +8655,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9773,6 +8677,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9800,6 +8705,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9821,6 +8727,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9845,6 +8752,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9864,6 +8772,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9888,6 +8797,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9907,6 +8817,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9931,6 +8842,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -9952,6 +8864,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -9979,6 +8892,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10000,6 +8914,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10024,6 +8939,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10043,6 +8959,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10067,6 +8984,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10086,6 +9004,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10110,6 +9029,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10131,6 +9051,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10158,6 +9079,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10179,6 +9101,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10203,6 +9126,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10222,6 +9146,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10246,6 +9171,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10265,6 +9191,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10289,6 +9216,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10310,6 +9238,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10337,6 +9266,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10360,6 +9290,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10387,6 +9318,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10410,6 +9342,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10437,6 +9370,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10460,6 +9394,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10487,6 +9422,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10512,6 +9448,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10542,6 +9479,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10563,6 +9501,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10577,6 +9516,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10592,6 +9532,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10606,6 +9547,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10621,6 +9563,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10635,6 +9578,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10652,6 +9596,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10676,6 +9621,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10693,6 +9639,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10707,6 +9654,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10722,6 +9670,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10736,6 +9685,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10751,6 +9701,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10765,6 +9716,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10782,6 +9734,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10806,6 +9759,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10823,6 +9777,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10837,6 +9792,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10852,6 +9808,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10866,6 +9823,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10881,6 +9839,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -10895,6 +9854,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10912,6 +9872,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10936,6 +9897,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10955,6 +9917,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -10979,6 +9942,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -10998,6 +9962,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11022,6 +9987,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11041,6 +10007,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11065,6 +10032,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11086,6 +10054,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11113,6 +10082,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11132,6 +10102,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11146,6 +10117,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11161,6 +10133,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11175,6 +10148,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11190,6 +10164,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11204,6 +10179,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11221,6 +10197,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11245,6 +10222,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11262,6 +10240,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11276,6 +10255,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11291,6 +10271,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11305,6 +10286,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11320,6 +10302,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11334,6 +10317,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11351,6 +10335,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11375,6 +10360,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11392,6 +10378,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11406,6 +10393,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11421,6 +10409,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11435,6 +10424,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11450,6 +10440,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11464,6 +10455,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11481,6 +10473,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11505,6 +10498,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11524,6 +10518,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11548,6 +10543,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11567,6 +10563,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11591,6 +10588,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11610,6 +10608,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11634,6 +10633,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11655,6 +10655,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11682,6 +10683,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11701,6 +10703,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11715,6 +10718,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11730,6 +10734,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11744,6 +10749,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11759,6 +10765,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11773,6 +10780,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11790,6 +10798,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11814,6 +10823,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11831,6 +10841,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11845,6 +10856,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11860,6 +10872,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11874,6 +10887,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11889,6 +10903,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11903,6 +10918,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11920,6 +10936,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -11944,6 +10961,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11961,6 +10979,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -11975,6 +10994,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -11990,6 +11010,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -12004,6 +11025,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12019,6 +11041,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -12033,6 +11056,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12050,6 +11074,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12074,6 +11099,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12093,6 +11119,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12117,6 +11144,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12136,6 +11164,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12160,6 +11189,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12179,6 +11209,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12203,6 +11234,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12224,6 +11256,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12251,6 +11284,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12272,6 +11306,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12296,6 +11331,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12315,6 +11351,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12339,6 +11376,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12358,6 +11396,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12382,6 +11421,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12403,6 +11443,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12430,6 +11471,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12451,6 +11493,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12475,6 +11518,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12494,6 +11538,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12518,6 +11563,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12537,6 +11583,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12561,6 +11608,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12582,6 +11630,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12609,6 +11658,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12630,6 +11680,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12654,6 +11705,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12673,6 +11725,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12697,6 +11750,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12716,6 +11770,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12740,6 +11795,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12761,6 +11817,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12788,6 +11845,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12811,6 +11869,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12838,6 +11897,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12861,6 +11921,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12888,6 +11949,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12911,6 +11973,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12938,6 +12001,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -12963,6 +12027,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -12993,6 +12058,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13014,6 +12080,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13028,6 +12095,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13043,6 +12111,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13057,6 +12126,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13072,6 +12142,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13086,6 +12157,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13103,6 +12175,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13127,6 +12200,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13144,6 +12218,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13158,6 +12233,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13173,6 +12249,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13187,6 +12264,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13202,6 +12280,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13216,6 +12295,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13233,6 +12313,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13257,6 +12338,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13274,6 +12356,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13288,6 +12371,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13303,6 +12387,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13317,6 +12402,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13332,6 +12418,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13346,6 +12433,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13363,6 +12451,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13387,6 +12476,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13406,6 +12496,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13430,6 +12521,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13449,6 +12541,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13473,6 +12566,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13492,6 +12586,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13516,6 +12611,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13537,6 +12633,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13564,6 +12661,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13583,6 +12681,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13597,6 +12696,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13612,6 +12712,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13626,6 +12727,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13641,6 +12743,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13655,6 +12758,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13672,6 +12776,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13696,6 +12801,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13713,6 +12819,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13727,6 +12834,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13742,6 +12850,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13756,6 +12865,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13771,6 +12881,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13785,6 +12896,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13802,6 +12914,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13826,6 +12939,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13843,6 +12957,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13857,6 +12972,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13872,6 +12988,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13886,6 +13003,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13901,6 +13019,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -13915,6 +13034,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13932,6 +13052,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13956,6 +13077,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -13975,6 +13097,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -13999,6 +13122,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14018,6 +13142,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14042,6 +13167,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14061,6 +13187,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14085,6 +13212,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14106,6 +13234,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14133,6 +13262,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14152,6 +13282,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14166,6 +13297,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14181,6 +13313,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14195,6 +13328,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14210,6 +13344,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14224,6 +13359,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14241,6 +13377,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14265,6 +13402,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14282,6 +13420,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14296,6 +13435,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14311,6 +13451,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14325,6 +13466,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14340,6 +13482,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14354,6 +13497,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14371,6 +13515,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14395,6 +13540,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14412,6 +13558,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14426,6 +13573,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14441,6 +13589,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14455,6 +13604,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14470,6 +13620,7 @@ library safeconsole {
         bytes32 m2;
         bytes32 m3;
         bytes32 m4;
+        /// @solidity memory-safe-assembly
         assembly {
             m0 := mload(0x00)
             m1 := mload(0x20)
@@ -14484,6 +13635,7 @@ library safeconsole {
             mstore(0x80, p3)
         }
         _sendLogPayload(0x1c, 0x84);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14501,6 +13653,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14525,6 +13678,7 @@ library safeconsole {
             writeString(0xa0, p3)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14544,6 +13698,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14568,6 +13723,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14587,6 +13743,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14611,6 +13768,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14630,6 +13788,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14654,6 +13813,7 @@ library safeconsole {
             writeString(0xa0, p2)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14675,6 +13835,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14702,6 +13863,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14723,6 +13885,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14747,6 +13910,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14766,6 +13930,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14790,6 +13955,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14809,6 +13975,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14833,6 +14000,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14854,6 +14022,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14881,6 +14050,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14902,6 +14072,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14926,6 +14097,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14945,6 +14117,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -14969,6 +14142,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -14988,6 +14162,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15012,6 +14187,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15033,6 +14209,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15060,6 +14237,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15081,6 +14259,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15105,6 +14284,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15124,6 +14304,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15148,6 +14329,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15167,6 +14349,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15191,6 +14374,7 @@ library safeconsole {
             writeString(0xa0, p1)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15212,6 +14396,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15239,6 +14424,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15262,6 +14448,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15289,6 +14476,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15312,6 +14500,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15339,6 +14528,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15362,6 +14552,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15389,6 +14580,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15414,6 +14606,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15444,6 +14637,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15467,6 +14661,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15491,6 +14686,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15510,6 +14706,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15534,6 +14731,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15553,6 +14751,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15577,6 +14776,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15598,6 +14798,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15625,6 +14826,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15646,6 +14848,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15670,6 +14873,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15689,6 +14893,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15713,6 +14918,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15732,6 +14938,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15756,6 +14963,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15777,6 +14985,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15804,6 +15013,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15825,6 +15035,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15849,6 +15060,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15868,6 +15080,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15892,6 +15105,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15911,6 +15125,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15935,6 +15150,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -15956,6 +15172,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -15983,6 +15200,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16006,6 +15224,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16033,6 +15252,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16056,6 +15276,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16083,6 +15304,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16106,6 +15328,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16133,6 +15356,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16158,6 +15382,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16188,6 +15413,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16211,6 +15437,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16235,6 +15462,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16254,6 +15482,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16278,6 +15507,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16297,6 +15527,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16321,6 +15552,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16342,6 +15574,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16369,6 +15602,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16390,6 +15624,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16414,6 +15649,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16433,6 +15669,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16457,6 +15694,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16476,6 +15714,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16500,6 +15739,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16521,6 +15761,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16548,6 +15789,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16569,6 +15811,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16593,6 +15836,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16612,6 +15856,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16636,6 +15881,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16655,6 +15901,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16679,6 +15926,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16700,6 +15948,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16727,6 +15976,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16750,6 +16000,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16777,6 +16028,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16800,6 +16052,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16827,6 +16080,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16850,6 +16104,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16877,6 +16132,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16902,6 +16158,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16932,6 +16189,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16955,6 +16213,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -16979,6 +16238,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -16998,6 +16258,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17022,6 +16283,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17041,6 +16303,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17065,6 +16328,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17086,6 +16350,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17113,6 +16378,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17134,6 +16400,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17158,6 +16425,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17177,6 +16445,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17201,6 +16470,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17220,6 +16490,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17244,6 +16515,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17265,6 +16537,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17292,6 +16565,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17313,6 +16587,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17337,6 +16612,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17356,6 +16632,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17380,6 +16657,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17399,6 +16677,7 @@ library safeconsole {
         bytes32 m4;
         bytes32 m5;
         bytes32 m6;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17423,6 +16702,7 @@ library safeconsole {
             writeString(0xa0, p0)
         }
         _sendLogPayload(0x1c, 0xc4);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17444,6 +16724,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17471,6 +16752,7 @@ library safeconsole {
             writeString(0xe0, p3)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17494,6 +16776,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17521,6 +16804,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17544,6 +16828,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17571,6 +16856,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17594,6 +16880,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17621,6 +16908,7 @@ library safeconsole {
             writeString(0xe0, p2)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17646,6 +16934,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17676,6 +16965,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17701,6 +16991,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17728,6 +17019,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17751,6 +17043,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17778,6 +17071,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17801,6 +17095,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17828,6 +17123,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17853,6 +17149,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17883,6 +17180,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17908,6 +17206,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17935,6 +17234,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -17958,6 +17258,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -17985,6 +17286,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18008,6 +17310,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18035,6 +17338,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18060,6 +17364,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18090,6 +17395,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18115,6 +17421,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18142,6 +17449,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18165,6 +17473,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18192,6 +17501,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18215,6 +17525,7 @@ library safeconsole {
         bytes32 m6;
         bytes32 m7;
         bytes32 m8;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18242,6 +17553,7 @@ library safeconsole {
             writeString(0xe0, p1)
         }
         _sendLogPayload(0x1c, 0x104);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18267,6 +17579,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18297,6 +17610,7 @@ library safeconsole {
             writeString(0x120, p3)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18324,6 +17638,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18354,6 +17669,7 @@ library safeconsole {
             writeString(0x120, p2)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18381,6 +17697,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18411,6 +17728,7 @@ library safeconsole {
             writeString(0x120, p2)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18438,6 +17756,7 @@ library safeconsole {
         bytes32 m8;
         bytes32 m9;
         bytes32 m10;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18468,6 +17787,7 @@ library safeconsole {
             writeString(0x120, p2)
         }
         _sendLogPayload(0x1c, 0x144);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -18497,6 +17817,7 @@ library safeconsole {
         bytes32 m10;
         bytes32 m11;
         bytes32 m12;
+        /// @solidity memory-safe-assembly
         assembly {
             function writeString(pos, w) {
                 let length := 0
@@ -18530,6 +17851,7 @@ library safeconsole {
             writeString(0x160, p3)
         }
         _sendLogPayload(0x1c, 0x184);
+        /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, m0)
             mstore(0x20, m1)
@@ -19944,7 +19266,7 @@ abstract contract StdChains {
 
         stdChainsInitialized = true;
 
-        // If adding an RPC here, make sure to test the default RPC URL in `testRpcs`
+        // If adding an RPC here, make sure to test the default RPC URL in `test_Rpcs` in `StdChains.t.sol`
         setChainWithDefaultRpcUrl("anvil", ChainData("Anvil", 31337, "http://127.0.0.1:8545"));
         setChainWithDefaultRpcUrl(
             "mainnet", ChainData("Mainnet", 1, "https://eth-mainnet.alchemyapi.io/v2/pwc5rmJhrdoaSEfimoKEmsvOjKSmPDrP")
@@ -19987,8 +19309,19 @@ abstract contract StdChains {
         setChainWithDefaultRpcUrl("base", ChainData("Base", 8453, "https://mainnet.base.org"));
         setChainWithDefaultRpcUrl("blast_sepolia", ChainData("Blast Sepolia", 168587773, "https://sepolia.blast.io"));
         setChainWithDefaultRpcUrl("blast", ChainData("Blast", 81457, "https://rpc.blast.io"));
+        setChainWithDefaultRpcUrl("fantom_opera", ChainData("Fantom Opera", 250, "https://rpc.ankr.com/fantom/"));
+        setChainWithDefaultRpcUrl(
+            "fantom_opera_testnet", ChainData("Fantom Opera Testnet", 4002, "https://rpc.ankr.com/fantom_testnet/")
+        );
         setChainWithDefaultRpcUrl("fraxtal", ChainData("Fraxtal", 252, "https://rpc.frax.com"));
         setChainWithDefaultRpcUrl("fraxtal_testnet", ChainData("Fraxtal Testnet", 2522, "https://rpc.testnet.frax.com"));
+        setChainWithDefaultRpcUrl(
+            "berachain_bartio_testnet", ChainData("Berachain bArtio Testnet", 80084, "https://bartio.rpc.berachain.com")
+        );
+        setChainWithDefaultRpcUrl("flare", ChainData("Flare", 14, "https://flare-api.flare.network/ext/C/rpc"));
+        setChainWithDefaultRpcUrl(
+            "flare_coston2", ChainData("Flare Coston2", 114, "https://coston2-api.flare.network/ext/C/rpc")
+        );
     }
 
     // set chain info, with priority to chainAlias' rpc url in foundry.toml
@@ -20298,7 +19631,7 @@ library stdStorageSafe {
         if (reads.length == 0) {
             revert("stdStorage find(StdStorage): No storage use detected for target.");
         } else {
-            for (uint256 i = 0; i < reads.length; i++) {
+            for (uint256 i = reads.length; --i >= 0;) {
                 bytes32 prev = vm.load(who, reads[i]);
                 if (prev == bytes32(0)) {
                     emit WARNING_UninitedSlot(who, uint256(reads[i]));
@@ -21153,6 +20486,8 @@ library stdToml {
     }
 }
 
+// lib/forge-std/src/console2.sol
+
 // lib/forge-std/src/interfaces/IERC721.sol
 
 /// @title ERC-721 Non-Fungible Token Standard
@@ -21967,6 +21302,286 @@ library Initialization {
     }
 }
 
+// lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol
+
+// OpenZeppelin Contracts (last updated v5.0.0) (proxy/ERC1967/ERC1967Utils.sol)
+
+/**
+ * @dev This abstract contract provides getters and event emitting update functions for
+ * https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.
+ */
+library ERC1967Utils {
+    // We re-declare ERC-1967 events here because they can't be used directly from IERC1967.
+    // This will be fixed in Solidity 0.8.21. At that point we should remove these events.
+    /**
+     * @dev Emitted when the implementation is upgraded.
+     */
+    event Upgraded(address indexed implementation);
+
+    /**
+     * @dev Emitted when the admin account has changed.
+     */
+    event AdminChanged(address previousAdmin, address newAdmin);
+
+    /**
+     * @dev Emitted when the beacon is changed.
+     */
+    event BeaconUpgraded(address indexed beacon);
+
+    /**
+     * @dev Storage slot with the address of the current implementation.
+     * This is the keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1.
+     */
+    // solhint-disable-next-line private-vars-leading-underscore
+    bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+
+    /**
+     * @dev The `implementation` of the proxy is invalid.
+     */
+    error ERC1967InvalidImplementation(address implementation);
+
+    /**
+     * @dev The `admin` of the proxy is invalid.
+     */
+    error ERC1967InvalidAdmin(address admin);
+
+    /**
+     * @dev The `beacon` of the proxy is invalid.
+     */
+    error ERC1967InvalidBeacon(address beacon);
+
+    /**
+     * @dev An upgrade function sees `msg.value > 0` that may be lost.
+     */
+    error ERC1967NonPayable();
+
+    /**
+     * @dev Returns the current implementation address.
+     */
+    function getImplementation() internal view returns (address) {
+        return StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value;
+    }
+
+    /**
+     * @dev Stores a new address in the EIP1967 implementation slot.
+     */
+    function _setImplementation(address newImplementation) private {
+        if (newImplementation.code.length == 0) {
+            revert ERC1967InvalidImplementation(newImplementation);
+        }
+        StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value = newImplementation;
+    }
+
+    /**
+     * @dev Performs implementation upgrade with additional setup call if data is nonempty.
+     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
+     * to avoid stuck value in the contract.
+     *
+     * Emits an {IERC1967-Upgraded} event.
+     */
+    function upgradeToAndCall(address newImplementation, bytes memory data) internal {
+        _setImplementation(newImplementation);
+        emit Upgraded(newImplementation);
+
+        if (data.length > 0) {
+            Address.functionDelegateCall(newImplementation, data);
+        } else {
+            _checkNonPayable();
+        }
+    }
+
+    /**
+     * @dev Storage slot with the admin of the contract.
+     * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1.
+     */
+    // solhint-disable-next-line private-vars-leading-underscore
+    bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
+
+    /**
+     * @dev Returns the current admin.
+     *
+     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using
+     * the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
+     * `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
+     */
+    function getAdmin() internal view returns (address) {
+        return StorageSlot.getAddressSlot(ADMIN_SLOT).value;
+    }
+
+    /**
+     * @dev Stores a new address in the EIP1967 admin slot.
+     */
+    function _setAdmin(address newAdmin) private {
+        if (newAdmin == address(0)) {
+            revert ERC1967InvalidAdmin(address(0));
+        }
+        StorageSlot.getAddressSlot(ADMIN_SLOT).value = newAdmin;
+    }
+
+    /**
+     * @dev Changes the admin of the proxy.
+     *
+     * Emits an {IERC1967-AdminChanged} event.
+     */
+    function changeAdmin(address newAdmin) internal {
+        emit AdminChanged(getAdmin(), newAdmin);
+        _setAdmin(newAdmin);
+    }
+
+    /**
+     * @dev The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy.
+     * This is the keccak-256 hash of "eip1967.proxy.beacon" subtracted by 1.
+     */
+    // solhint-disable-next-line private-vars-leading-underscore
+    bytes32 internal constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
+
+    /**
+     * @dev Returns the current beacon.
+     */
+    function getBeacon() internal view returns (address) {
+        return StorageSlot.getAddressSlot(BEACON_SLOT).value;
+    }
+
+    /**
+     * @dev Stores a new beacon in the EIP1967 beacon slot.
+     */
+    function _setBeacon(address newBeacon) private {
+        if (newBeacon.code.length == 0) {
+            revert ERC1967InvalidBeacon(newBeacon);
+        }
+
+        StorageSlot.getAddressSlot(BEACON_SLOT).value = newBeacon;
+
+        address beaconImplementation = IBeacon(newBeacon).implementation();
+        if (beaconImplementation.code.length == 0) {
+            revert ERC1967InvalidImplementation(beaconImplementation);
+        }
+    }
+
+    /**
+     * @dev Change the beacon and trigger a setup call if data is nonempty.
+     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
+     * to avoid stuck value in the contract.
+     *
+     * Emits an {IERC1967-BeaconUpgraded} event.
+     *
+     * CAUTION: Invoking this function has no effect on an instance of {BeaconProxy} since v5, since
+     * it uses an immutable beacon without looking at the value of the ERC-1967 beacon slot for
+     * efficiency.
+     */
+    function upgradeBeaconToAndCall(address newBeacon, bytes memory data) internal {
+        _setBeacon(newBeacon);
+        emit BeaconUpgraded(newBeacon);
+
+        if (data.length > 0) {
+            Address.functionDelegateCall(IBeacon(newBeacon).implementation(), data);
+        } else {
+            _checkNonPayable();
+        }
+    }
+
+    /**
+     * @dev Reverts if `msg.value` is not zero. It can be used to avoid `msg.value` stuck in the contract
+     * if an upgrade doesn't perform an initialization call.
+     */
+    function _checkNonPayable() private {
+        if (msg.value > 0) {
+            revert ERC1967NonPayable();
+        }
+    }
+}
+
+// lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol
+
+// OpenZeppelin Contracts (last updated v5.0.0) (proxy/beacon/UpgradeableBeacon.sol)
+
+/**
+ * @dev This contract is used in conjunction with one or more instances of {BeaconProxy} to determine their
+ * implementation contract, which is where they will delegate all function calls.
+ *
+ * An owner is able to change the implementation the beacon points to, thus upgrading the proxies that use this beacon.
+ */
+contract UpgradeableBeacon is IBeacon, Ownable {
+    address private _implementation;
+
+    /**
+     * @dev The `implementation` of the beacon is invalid.
+     */
+    error BeaconInvalidImplementation(address implementation);
+
+    /**
+     * @dev Emitted when the implementation returned by the beacon is changed.
+     */
+    event Upgraded(address indexed implementation);
+
+    /**
+     * @dev Sets the address of the initial implementation, and the initial owner who can upgrade the beacon.
+     */
+    constructor(address implementation_, address initialOwner) Ownable(initialOwner) {
+        _setImplementation(implementation_);
+    }
+
+    /**
+     * @dev Returns the current implementation address.
+     */
+    function implementation() public view virtual returns (address) {
+        return _implementation;
+    }
+
+    /**
+     * @dev Upgrades the beacon to a new implementation.
+     *
+     * Emits an {Upgraded} event.
+     *
+     * Requirements:
+     *
+     * - msg.sender must be the owner of the contract.
+     * - `newImplementation` must be a contract.
+     */
+    function upgradeTo(address newImplementation) public virtual onlyOwner {
+        _setImplementation(newImplementation);
+    }
+
+    /**
+     * @dev Sets the implementation contract address for this beacon
+     *
+     * Requirements:
+     *
+     * - `newImplementation` must be a contract.
+     */
+    function _setImplementation(address newImplementation) private {
+        if (newImplementation.code.length == 0) {
+            revert BeaconInvalidImplementation(newImplementation);
+        }
+        _implementation = newImplementation;
+        emit Upgraded(newImplementation);
+    }
+}
+
+// src/std/functions/protected/protection/MsgSender.sol
+
+library MsgSender {
+    error NotAdmin();
+    function shouldBeAdmin() internal view {
+        console.log(msg.sender);
+        console.log(Storage.Admin().admin);
+        if (msg.sender != Storage.Admin().admin) revert NotAdmin();
+    }
+
+    error NotMember();
+    function shouldBeMember() internal view {
+        bool _isMember;
+        address[] memory _members = Storage.Member().members;
+        for (uint i; i < _members.length; ++i) {
+            if (msg.sender == _members[i]) {
+                _isMember = true;
+                break;
+            }
+        }
+        if (!_isMember) revert NotMember();
+    }
+}
+
 // lib/forge-std/src/StdCheats.sol
 
 abstract contract StdCheatsSafe {
@@ -22284,8 +21899,8 @@ abstract contract StdCheatsSafe {
         // Note: For some chains like Optimism these are technically predeploys (i.e. bytecode placed at a specific
         // address), but the same rationale for excluding them applies so we include those too.
 
-        // These should be present on all EVM-compatible chains.
-        vm.assume(addr < address(0x1) || addr > address(0x9));
+        // These are reserved by Ethereum and may be on all EVM-compatible chains.
+        vm.assume(addr < address(0x1) || addr > address(0xff));
 
         // forgefmt: disable-start
         if (chainId == 10 || chainId == 420) {
@@ -22778,286 +22393,6 @@ abstract contract StdCheats is StdCheatsSafe {
     }
 }
 
-// lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol
-
-// OpenZeppelin Contracts (last updated v5.0.0) (proxy/ERC1967/ERC1967Utils.sol)
-
-/**
- * @dev This abstract contract provides getters and event emitting update functions for
- * https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.
- */
-library ERC1967Utils {
-    // We re-declare ERC-1967 events here because they can't be used directly from IERC1967.
-    // This will be fixed in Solidity 0.8.21. At that point we should remove these events.
-    /**
-     * @dev Emitted when the implementation is upgraded.
-     */
-    event Upgraded(address indexed implementation);
-
-    /**
-     * @dev Emitted when the admin account has changed.
-     */
-    event AdminChanged(address previousAdmin, address newAdmin);
-
-    /**
-     * @dev Emitted when the beacon is changed.
-     */
-    event BeaconUpgraded(address indexed beacon);
-
-    /**
-     * @dev Storage slot with the address of the current implementation.
-     * This is the keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1.
-     */
-    // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
-
-    /**
-     * @dev The `implementation` of the proxy is invalid.
-     */
-    error ERC1967InvalidImplementation(address implementation);
-
-    /**
-     * @dev The `admin` of the proxy is invalid.
-     */
-    error ERC1967InvalidAdmin(address admin);
-
-    /**
-     * @dev The `beacon` of the proxy is invalid.
-     */
-    error ERC1967InvalidBeacon(address beacon);
-
-    /**
-     * @dev An upgrade function sees `msg.value > 0` that may be lost.
-     */
-    error ERC1967NonPayable();
-
-    /**
-     * @dev Returns the current implementation address.
-     */
-    function getImplementation() internal view returns (address) {
-        return StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value;
-    }
-
-    /**
-     * @dev Stores a new address in the EIP1967 implementation slot.
-     */
-    function _setImplementation(address newImplementation) private {
-        if (newImplementation.code.length == 0) {
-            revert ERC1967InvalidImplementation(newImplementation);
-        }
-        StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value = newImplementation;
-    }
-
-    /**
-     * @dev Performs implementation upgrade with additional setup call if data is nonempty.
-     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
-     * to avoid stuck value in the contract.
-     *
-     * Emits an {IERC1967-Upgraded} event.
-     */
-    function upgradeToAndCall(address newImplementation, bytes memory data) internal {
-        _setImplementation(newImplementation);
-        emit Upgraded(newImplementation);
-
-        if (data.length > 0) {
-            Address.functionDelegateCall(newImplementation, data);
-        } else {
-            _checkNonPayable();
-        }
-    }
-
-    /**
-     * @dev Storage slot with the admin of the contract.
-     * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1.
-     */
-    // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
-
-    /**
-     * @dev Returns the current admin.
-     *
-     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using
-     * the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
-     * `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
-     */
-    function getAdmin() internal view returns (address) {
-        return StorageSlot.getAddressSlot(ADMIN_SLOT).value;
-    }
-
-    /**
-     * @dev Stores a new address in the EIP1967 admin slot.
-     */
-    function _setAdmin(address newAdmin) private {
-        if (newAdmin == address(0)) {
-            revert ERC1967InvalidAdmin(address(0));
-        }
-        StorageSlot.getAddressSlot(ADMIN_SLOT).value = newAdmin;
-    }
-
-    /**
-     * @dev Changes the admin of the proxy.
-     *
-     * Emits an {IERC1967-AdminChanged} event.
-     */
-    function changeAdmin(address newAdmin) internal {
-        emit AdminChanged(getAdmin(), newAdmin);
-        _setAdmin(newAdmin);
-    }
-
-    /**
-     * @dev The storage slot of the UpgradeableBeacon contract which defines the implementation for this proxy.
-     * This is the keccak-256 hash of "eip1967.proxy.beacon" subtracted by 1.
-     */
-    // solhint-disable-next-line private-vars-leading-underscore
-    bytes32 internal constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
-
-    /**
-     * @dev Returns the current beacon.
-     */
-    function getBeacon() internal view returns (address) {
-        return StorageSlot.getAddressSlot(BEACON_SLOT).value;
-    }
-
-    /**
-     * @dev Stores a new beacon in the EIP1967 beacon slot.
-     */
-    function _setBeacon(address newBeacon) private {
-        if (newBeacon.code.length == 0) {
-            revert ERC1967InvalidBeacon(newBeacon);
-        }
-
-        StorageSlot.getAddressSlot(BEACON_SLOT).value = newBeacon;
-
-        address beaconImplementation = IBeacon(newBeacon).implementation();
-        if (beaconImplementation.code.length == 0) {
-            revert ERC1967InvalidImplementation(beaconImplementation);
-        }
-    }
-
-    /**
-     * @dev Change the beacon and trigger a setup call if data is nonempty.
-     * This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
-     * to avoid stuck value in the contract.
-     *
-     * Emits an {IERC1967-BeaconUpgraded} event.
-     *
-     * CAUTION: Invoking this function has no effect on an instance of {BeaconProxy} since v5, since
-     * it uses an immutable beacon without looking at the value of the ERC-1967 beacon slot for
-     * efficiency.
-     */
-    function upgradeBeaconToAndCall(address newBeacon, bytes memory data) internal {
-        _setBeacon(newBeacon);
-        emit BeaconUpgraded(newBeacon);
-
-        if (data.length > 0) {
-            Address.functionDelegateCall(IBeacon(newBeacon).implementation(), data);
-        } else {
-            _checkNonPayable();
-        }
-    }
-
-    /**
-     * @dev Reverts if `msg.value` is not zero. It can be used to avoid `msg.value` stuck in the contract
-     * if an upgrade doesn't perform an initialization call.
-     */
-    function _checkNonPayable() private {
-        if (msg.value > 0) {
-            revert ERC1967NonPayable();
-        }
-    }
-}
-
-// lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol
-
-// OpenZeppelin Contracts (last updated v5.0.0) (proxy/beacon/UpgradeableBeacon.sol)
-
-/**
- * @dev This contract is used in conjunction with one or more instances of {BeaconProxy} to determine their
- * implementation contract, which is where they will delegate all function calls.
- *
- * An owner is able to change the implementation the beacon points to, thus upgrading the proxies that use this beacon.
- */
-contract UpgradeableBeacon is IBeacon, Ownable {
-    address private _implementation;
-
-    /**
-     * @dev The `implementation` of the beacon is invalid.
-     */
-    error BeaconInvalidImplementation(address implementation);
-
-    /**
-     * @dev Emitted when the implementation returned by the beacon is changed.
-     */
-    event Upgraded(address indexed implementation);
-
-    /**
-     * @dev Sets the address of the initial implementation, and the initial owner who can upgrade the beacon.
-     */
-    constructor(address implementation_, address initialOwner) Ownable(initialOwner) {
-        _setImplementation(implementation_);
-    }
-
-    /**
-     * @dev Returns the current implementation address.
-     */
-    function implementation() public view virtual returns (address) {
-        return _implementation;
-    }
-
-    /**
-     * @dev Upgrades the beacon to a new implementation.
-     *
-     * Emits an {Upgraded} event.
-     *
-     * Requirements:
-     *
-     * - msg.sender must be the owner of the contract.
-     * - `newImplementation` must be a contract.
-     */
-    function upgradeTo(address newImplementation) public virtual onlyOwner {
-        _setImplementation(newImplementation);
-    }
-
-    /**
-     * @dev Sets the implementation contract address for this beacon
-     *
-     * Requirements:
-     *
-     * - `newImplementation` must be a contract.
-     */
-    function _setImplementation(address newImplementation) private {
-        if (newImplementation.code.length == 0) {
-            revert BeaconInvalidImplementation(newImplementation);
-        }
-        _implementation = newImplementation;
-        emit Upgraded(newImplementation);
-    }
-}
-
-// src/std/functions/protected/protection/MsgSender.sol
-
-library MsgSender {
-    error NotAdmin();
-    function shouldBeAdmin() internal view {
-        console2.log(msg.sender);
-        console2.log(Storage.Admin().admin);
-        if (msg.sender != Storage.Admin().admin) revert NotAdmin();
-    }
-
-    error NotMember();
-    function shouldBeMember() internal view {
-        bool _isMember;
-        address[] memory _members = Storage.Member().members;
-        for (uint i; i < _members.length; ++i) {
-            if (msg.sender == _members[i]) {
-                _isMember = true;
-                break;
-            }
-        }
-        if (!_isMember) revert NotMember();
-    }
-}
-
 // lib/ucs-contracts/src/dictionary/BeaconDictionary.sol
 
 /**
@@ -23193,35 +22528,6 @@ abstract contract ProtectionBase {
         MsgSender.shouldBeMember();
         _;
     }
-}
-
-// lib/ucs-contracts/src/dictionary/ImmutableDictionary.sol
-
-/**
-    @title ERC7546: Immutable Dictionary Contract
- */
-contract ImmutableDictionary is DictionaryBase {
-    struct Function {
-        bytes4 selector;
-        address implementation;
-    }
-
-    error SelectorAlreadyExists(bytes4 selector);
-
-    constructor(Function[] memory _functions, address _facade) {
-        for (uint i; i < _functions.length; ++i) {
-            _setImplementation(_functions[i].selector, _functions[i].implementation);
-        }
-        _upgradeFacade(_facade);
-    }
-
-    function __existsSameSelector(bytes4 _selector) internal override returns(bool) {
-        for (uint i; i < functionSelectorList.length; ++i) {
-            if (functionSelectorList[i] == _selector) revert SelectorAlreadyExists(_selector);
-        }
-        return false;
-    }
-
 }
 
 // src/std/functions/protected/FeatureToggle.sol
@@ -23482,6 +22788,35 @@ abstract contract StdUtils {
     function console2_log_StdUtils(string memory p0, string memory p1) private pure {
         _sendLogPayload(abi.encodeWithSignature("log(string,string)", p0, p1));
     }
+}
+
+// lib/ucs-contracts/src/dictionary/ImmutableDictionary.sol
+
+/**
+    @title ERC7546: Immutable Dictionary Contract
+ */
+contract ImmutableDictionary is DictionaryBase {
+    struct Function {
+        bytes4 selector;
+        address implementation;
+    }
+
+    error SelectorAlreadyExists(bytes4 selector);
+
+    constructor(Function[] memory _functions, address _facade) {
+        for (uint i; i < _functions.length; ++i) {
+            _setImplementation(_functions[i].selector, _functions[i].implementation);
+        }
+        _upgradeFacade(_facade);
+    }
+
+    function __existsSameSelector(bytes4 _selector) internal override returns(bool) {
+        for (uint i; i < functionSelectorList.length; ++i) {
+            if (functionSelectorList[i] == _selector) revert SelectorAlreadyExists(_selector);
+        }
+        return false;
+    }
+
 }
 
 // lib/ucs-contracts/src/dictionary/Dictionary.sol
@@ -23766,7 +23101,7 @@ library BundleLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignName", param_23(name));
+        uint pid = bundle.startProcess("assignName", param_25(name));
         Validator.MUST_NotEmptyName(name);
         bundle.startBuilding();
         bundle.name = name;
@@ -23778,7 +23113,7 @@ library BundleLib {
         🧩 Push Function(s)
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunction", param_8(func));
+        uint pid = bundle.startProcess("pushFunction", param_26(func));
         Validator.MUST_Completed(func);
         Validator.MUST_HaveUniqueSelector(bundle, func);
         bundle.startBuilding();
@@ -23787,7 +23122,7 @@ library BundleLib {
         return bundle.finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunctions", param_18(functions));
+        uint pid = bundle.startProcess("pushFunctions", param_7(functions));
         for (uint i; i < functions.length; ++i) {
             bundle.pushFunction(functions[i]);
         }
@@ -23798,7 +23133,7 @@ library BundleLib {
         🪟 Assign Facade
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignFacade", param_25(facade));
+        uint pid = bundle.startProcess("assignFacade", param_24(facade));
         Validator.MUST_AddressIsContract(facade);
         bundle.startBuilding();
         bundle.facade = facade;
@@ -23853,7 +23188,7 @@ library DictionaryLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Dictionary_1 memory dictionary, string memory name) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("assignName", param_23(name));
+        uint pid = dictionary.startProcess("assignName", param_25(name));
         dictionary.startBuilding();
         dictionary.name = name;
         dictionary.finishBuilding();
@@ -23867,7 +23202,7 @@ library DictionaryLib {
             - Beacon
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deploy", param_25(owner));
+        uint pid = dictionary.startProcess("deploy", param_24(owner));
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
         dictionary.addr = address(new Dictionary_0(owner));
@@ -23877,7 +23212,7 @@ library DictionaryLib {
     }
 
     function deployImmutable(Function[] storage functions, address facade) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deployImmutable", param_10(functions, facade));
+        uint pid = dictionary.startProcess("deployImmutable", param_12(functions, facade));
         Validator.SHOULD_FacadeIsContract(facade);
         dictionary.startBuilding();
         ImmutableDictionary.Function[] memory funcs;
@@ -23891,7 +23226,7 @@ library DictionaryLib {
     }
 
     function deployBeacon(address implementation, address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deployBeacon", param_24(implementation, owner));
+        uint pid = dictionary.startProcess("deployBeacon", param_17(implementation, owner));
         Validator.MUST_AddressIsContract(implementation);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
@@ -23905,7 +23240,7 @@ library DictionaryLib {
         📩 Load Dictionary
     -------------------------*/
     function load(string memory name, address dictionaryAddr) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("load", param_25(dictionaryAddr));
+        uint pid = dictionary.startProcess("load", param_24(dictionaryAddr));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_AddressIsContract(dictionaryAddr);
         // TODO Validate
@@ -23921,7 +23256,7 @@ library DictionaryLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicate(Dictionary_1 storage dictionary, address owner) internal returns(Dictionary_1 memory duplicatedDictionary) {
-        uint pid = dictionary.startProcess("duplicate", param_20(dictionary));
+        uint pid = dictionary.startProcess("duplicate", param_0(dictionary));
         Validator.MUST_Completed(dictionary);
 
         duplicatedDictionary = deploy(owner).assignName(dictionary.name);
@@ -23942,7 +23277,7 @@ library DictionaryLib {
         🧩 Set Function or Bundle
     -------------------------------*/
     function set(Dictionary_1 memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_6(selector, implementation));
+        uint pid = dictionary.startProcess("set", param_23(selector, implementation));
         Validator.MUST_Completed(dictionary);
         Validator.SHOULD_NotEmptySelector(selector);
         Validator.MUST_AddressIsContract(implementation);
@@ -23953,12 +23288,12 @@ library DictionaryLib {
         return dictionary.finishProcess(pid);
     }
     function set(Dictionary_1 memory dictionary, Function memory func) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_8(func));
+        uint pid = dictionary.startProcess("set", param_26(func));
         set(dictionary, func.selector, func.implementation);
         return dictionary.finishProcess(pid);
     }
     function set(Dictionary_1 memory dictionary, Bundle storage bundle) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_11(bundle));
+        uint pid = dictionary.startProcess("set", param_4(bundle));
         Validator.MUST_HaveFunction(bundle);
         Function[] memory functions = bundle.functions;
         for (uint i; i < functions.length; ++i) {
@@ -23977,7 +23312,7 @@ library DictionaryLib {
         🪟 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary_1 memory dictionary, address newFacade) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("upgradeFacade", param_9(dictionary, newFacade));
+        uint pid = dictionary.startProcess("upgradeFacade", param_27(dictionary, newFacade));
         Validator.MUST_AddressIsContract(newFacade);
         Validator.MUST_Verifiable(dictionary);
         IDictionary(dictionary.addr).upgradeFacade(newFacade);
@@ -23988,7 +23323,7 @@ library DictionaryLib {
         🤖 Create Dictionary Mock
     --------------------------------*/
     function createMock(Bundle storage bundle, address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("createMock", param_13(bundle, owner));
+        uint pid = dictionary.startProcess("createMock", param_8(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
@@ -24041,7 +23376,7 @@ library FunctionLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
-        uint pid = func.startProcess("assignName", param_23(name));
+        uint pid = func.startProcess("assignName", param_25(name));
         func.startBuilding();
         func.name = name;
         func.finishBuilding();
@@ -24052,7 +23387,7 @@ library FunctionLib {
         🎯 Assign Selector
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
-        uint pid = func.startProcess("assignSelector", param_22(selector));
+        uint pid = func.startProcess("assignSelector", param_20(selector));
         func.startBuilding();
         func.selector = selector;
         func.finishBuilding();
@@ -24063,7 +23398,7 @@ library FunctionLib {
         🎨 Assign Implementation
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assignImplementation", param_25(implementation));
+        uint pid = func.startProcess("assignImplementation", param_24(implementation));
         func.startBuilding();
         func.implementation = implementation;
         func.finishBuilding();
@@ -24074,7 +23409,7 @@ library FunctionLib {
         🌈 Assign
     -----------------*/
     function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assign", param_21(name, selector, implementation));
+        uint pid = func.startProcess("assign", param_18(name, selector, implementation));
         func.assignName(name);
         func.assignSelector(selector);
         func.assignImplementation(implementation);
@@ -24085,7 +23420,7 @@ library FunctionLib {
         📨 Fetch Function
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
-        uint pid = func.startProcess("fetch", param_23(envKey));
+        uint pid = func.startProcess("fetch", param_25(envKey));
         Validator.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
@@ -24125,7 +23460,7 @@ library ProxyLib {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary_1 memory dictionary, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = proxy.startProcess("deploy", param_3(dictionary, initData));
+        uint pid = proxy.startProcess("deploy", param_6(dictionary, initData));
         Validator.MUST_Completed(dictionary);
         proxy.startBuilding();
         proxy.addr = address(new Proxy_1(dictionary.addr, initData));
@@ -24138,7 +23473,7 @@ library ProxyLib {
         🤖 Create Proxy Mock
     ----------------------------*/
     function createSimpleMock(Function[] memory functions) internal returns(Proxy_2 memory mockProxy) {
-        uint pid = mockProxy.startProcess("createSimpleMock", param_18(functions));
+        uint pid = mockProxy.startProcess("createSimpleMock", param_7(functions));
         for (uint i; i < functions.length; ++i) {
             Validator.MUST_Completed(functions[i]);
         }
@@ -24192,7 +23527,7 @@ library BundleRegistryLib {
         🌱 Init Bundle
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = registry.startProcess("init", param_23(name));
+        uint pid = registry.startProcess("init", param_25(name));
         Validator.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
         Validator.MUST_NotInitialized(bundle);
@@ -24210,7 +23545,7 @@ library BundleRegistryLib {
         🔍 Find Bundle
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage bundle) {
-        uint pid = registry.startProcess("find", param_23(name));
+        uint pid = registry.startProcess("find", param_25(name));
         Validator.MUST_NotEmptyName(name);
         bundle = registry.bundles[name];
         Validator.SHOULD_Completed(bundle);
@@ -24263,7 +23598,7 @@ library DictionaryRegistryLib {
         🗳️ Register Dictionary
     -----------------------------*/
     function register(DictionaryRegistry storage registry, Dictionary_1 memory _dictionary) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = registry.startProcess("register", param_20(_dictionary));
+        uint pid = registry.startProcess("register", param_0(_dictionary));
         Validator.MUST_Completed(_dictionary);
         string memory uniqueName = registry.genUniqueName(_dictionary.name);
         _dictionary.assignName(uniqueName);
@@ -24276,7 +23611,7 @@ library DictionaryRegistryLib {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = registry.startProcess("find", param_23(name));
+        uint pid = registry.startProcess("find", param_25(name));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_Registered(registry, name);
         dictionary = registry.dictionaries[name];
@@ -24294,7 +23629,7 @@ library DictionaryRegistryLib {
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(DictionaryRegistry storage registry, string memory baseName) internal returns(string memory name) {
-        uint pid = registry.startProcess("genUniqueName", param_23(baseName));
+        uint pid = registry.startProcess("genUniqueName", param_25(baseName));
         name = registry.dictionaries.genUniqueName(baseName);
         registry.finishProcess(pid);
     }
@@ -24390,7 +23725,7 @@ library ProxyRegistryLib {
         🗳️ Register Proxy
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy_2 memory _proxy) internal returns(Proxy_2 storage proxy) {
-        uint pid = registry.startProcess("register", param_0(name, _proxy));
+        uint pid = registry.startProcess("register", param_13(name, _proxy));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_Completed(_proxy);
         Validator.MUST_NotRegistered(registry, name);
@@ -24403,7 +23738,7 @@ library ProxyRegistryLib {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy_2 storage proxy) {
-        uint pid = registry.startProcess("find", param_23(name));
+        uint pid = registry.startProcess("find", param_25(name));
         Validator.MUST_NotEmptyName(name);
         proxy = registry.proxies[name];
         Validator.MUST_Completed(proxy);
@@ -24643,7 +23978,7 @@ library CurrentLib {
         🔄 Update Current Context
     ---------------------------------*/
     function update(Current storage current, string memory name) internal {
-        uint pid = current.startProcess("update", param_23(name));
+        uint pid = current.startProcess("update", param_25(name));
         Validator.MUST_NotEmptyName(name);
         current.name = name;
         current.finishProcess(pid);
@@ -24771,10 +24106,10 @@ library Logger {
         💬 Logging
     --------------------*/
     function log(string memory message) internal pure {
-        console2.log(message);
+        console.log(message);
     }
     function log(string memory header, string memory message) internal pure {
-        console2.log(header, message);
+        console.log(header, message);
     }
 
     function logException(string memory messageHead, string memory messageBody) internal view {
@@ -25097,95 +24432,95 @@ library Tracer {
     Params
  */
  /* solhint-disable 2519 */
-function param_23(string memory str) pure returns(string memory) {
+function param_25(string memory str) pure returns(string memory) {
     return str;
 }
-function param_26(string memory str, address addr) pure returns(string memory) {
+function param_16(string memory str, address addr) pure returns(string memory) {
     return str.comma(addr);
 }
-function param_2(string memory str, address addr, Function[] memory funcs) pure returns(string memory) {
-    return str.comma(addr).comma(param_18(funcs));
+function param_22(string memory str, address addr, Function[] memory funcs) pure returns(string memory) {
+    return str.comma(addr).comma(param_7(funcs));
 }
-function param_21(string memory str, bytes4 b4, address addr) pure returns(string memory) {
+function param_18(string memory str, bytes4 b4, address addr) pure returns(string memory) {
     return str.comma(b4).comma(addr);
 }
-function param_0(string memory str, Proxy_2 memory proxy) pure returns(string memory) {
+function param_13(string memory str, Proxy_2 memory proxy) pure returns(string memory) {
     return str.comma(proxy.addr);
 }
-function param_27(string memory str, Dictionary_1 memory dictionary) pure returns(string memory) {
+function param_5(string memory str, Dictionary_1 memory dictionary) pure returns(string memory) {
     return str.comma(dictionary.addr);
 }
-function param_7(string memory str, Dictionary_1 memory dictionary, bytes memory b) pure returns(string memory) {
+function param_11(string memory str, Dictionary_1 memory dictionary, bytes memory b) pure returns(string memory) {
     return str.comma(dictionary.addr).comma(string(b));
 }
-function param_17(string memory str, Function[] memory funcs) pure returns(string memory) {
-    return str.comma(param_18(funcs));
+function param_1(string memory str, Function[] memory funcs) pure returns(string memory) {
+    return str.comma(param_7(funcs));
 }
-function param_1(string memory str, bytes memory b) pure returns(string memory) {
+function param_14(string memory str, bytes memory b) pure returns(string memory) {
     return str.comma(string(b));
 }
 
-function param_22(bytes4 b4) pure returns(string memory) {
+function param_20(bytes4 b4) pure returns(string memory) {
     return b4.toString();
 }
-function param_6(bytes4 b4, address addr) pure returns(string memory) {
+function param_23(bytes4 b4, address addr) pure returns(string memory) {
     return b4.toString().comma(addr);
 }
 
-function param_25(address addr) pure returns(string memory) {
+function param_24(address addr) pure returns(string memory) {
     return addr.toString();
 }
-function param_24(address addr, address addr2) pure returns(string memory) {
+function param_17(address addr, address addr2) pure returns(string memory) {
     return addr.toString().comma(addr2);
 }
-function param_12(address addr, string memory str) pure returns(string memory) {
+function param_19(address addr, string memory str) pure returns(string memory) {
     return addr.toString().comma(str);
 }
 
-function param_20(Dictionary_1 memory dict) pure returns(string memory) {
-    return param_23(dict.name);
+function param_0(Dictionary_1 memory dict) pure returns(string memory) {
+    return param_25(dict.name);
 }
-function param_9(Dictionary_1 memory dict, address addr) pure returns(string memory) {
-    return param_24(dict.addr, addr);
+function param_27(Dictionary_1 memory dict, address addr) pure returns(string memory) {
+    return param_17(dict.addr, addr);
 }
-function param_5(Dictionary_1 memory dict, bytes4 b4, address addr) pure returns(string memory) {
-    return param_25(dict.addr).comma(b4).comma(addr);
+function param_3(Dictionary_1 memory dict, bytes4 b4, address addr) pure returns(string memory) {
+    return param_24(dict.addr).comma(b4).comma(addr);
 }
-function param_3(Dictionary_1 memory dict, bytes memory b) pure returns(string memory) {
-    return param_12(dict.addr, string(b));
+function param_6(Dictionary_1 memory dict, bytes memory b) pure returns(string memory) {
+    return param_19(dict.addr, string(b));
 }
-function param_4(Dictionary_1 memory dict1, Dictionary_1 memory dict2) pure returns(string memory) {
-    return param_24(dict1.addr, dict2.addr);
+function param_2(Dictionary_1 memory dict1, Dictionary_1 memory dict2) pure returns(string memory) {
+    return param_17(dict1.addr, dict2.addr);
 }
 
-function param_8(Function memory func) pure returns(string memory) {
+function param_26(Function memory func) pure returns(string memory) {
     return func.name;
 }
-function param_18(Function[] memory functions) pure returns(string memory res) {
+function param_7(Function[] memory functions) pure returns(string memory res) {
     for (uint i; i < functions.length; ++i) {
         res = res.comma(functions[i].name);
     }
 }
-function param_10(Function[] memory functions, address facade) pure returns(string memory res) {
-    return param_18(functions).comma(facade);
+function param_12(Function[] memory functions, address facade) pure returns(string memory res) {
+    return param_7(functions).comma(facade);
 }
 
-function param_11(Bundle memory bundle) pure returns(string memory) {
+function param_4(Bundle memory bundle) pure returns(string memory) {
     return bundle.name;
 }
-function param_13(Bundle memory bundle, address addr) pure returns(string memory) {
+function param_8(Bundle memory bundle, address addr) pure returns(string memory) {
     return bundle.name.comma(addr);
 }
-function param_14(Bundle memory bundle, bytes memory b) pure returns(string memory) {
+function param_9(Bundle memory bundle, bytes memory b) pure returns(string memory) {
     return bundle.name.comma(string(b));
 }
-function param_15(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
+function param_21(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
     return bundle.name.comma(addr).comma(string(b));
 }
-function param_16(address addr, bytes memory b) pure returns(string memory) {
-    return param_25(addr).comma(string(b));
+function param_15(address addr, bytes memory b) pure returns(string memory) {
+    return param_24(addr).comma(string(b));
 }
-function param_19(bytes memory b) pure returns(string memory) {
+function param_10(bytes memory b) pure returns(string memory) {
     return string(b);
 }
 
@@ -26200,7 +25535,7 @@ library MCDeployLib {
         🌞 Deploy Meta Contract
     -------------------------------*/
     function deploy(MCDevKit storage mc, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_15(bundle, owner, initData));
+        uint pid = mc.startProcess("deploy", param_21(bundle, owner, initData));
         Dictionary_1 storage dictionary = mc.deployDictionary(bundle, owner);
         mc.deployProxy(dictionary, initData);
         return mc.finishProcess(pid);
@@ -26212,32 +25547,32 @@ library MCDeployLib {
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_11(bundle));
+        uint pid = mc.startProcess("deploy", param_4(bundle));
         mc.deploy(bundle, ForgeHelper.msgSender(), "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_13(bundle, owner));
+        uint pid = mc.startProcess("deploy", param_8(bundle, owner));
         mc.deploy(bundle, owner, "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_14(bundle, initData));
+        uint pid = mc.startProcess("deploy", param_9(bundle, initData));
         mc.deploy(bundle, ForgeHelper.msgSender(), initData);
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, address owner) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_25(owner));
+        uint pid = mc.startProcess("deploy", param_24(owner));
         mc.deploy(mc.bundle.findCurrent(), owner, "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_16(owner, initData));
+        uint pid = mc.startProcess("deploy", param_15(owner, initData));
         mc.deploy(mc.bundle.findCurrent(), owner, initData);
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_19(initData));
+        uint pid = mc.startProcess("deploy", param_10(initData));
         mc.deploy(mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
         return mc.finishProcess(pid);
     }
@@ -26246,7 +25581,7 @@ library MCDeployLib {
         🏠 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, Dictionary_1 storage dictionary, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_3(dictionary, initData));
+        uint pid = mc.startProcess("deployProxy", param_6(dictionary, initData));
         Validator.MUST_Completed(dictionary);
         /// @dev Accepts any initData as input
         Proxy_2 memory _proxy = ProxyLib.deploy(dictionary, initData);
@@ -26260,12 +25595,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, Dictionary_1 storage dictionary) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_20(dictionary));
+        uint pid = mc.startProcess("deployProxy", param_0(dictionary));
         proxy = mc.deployProxy(dictionary, "");
         mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_19(initData));
+        uint pid = mc.startProcess("deployProxy", param_10(initData));
         proxy = mc.deployProxy(mc.dictionary.findCurrent(), initData);
         mc.finishProcess(pid);
     }
@@ -26274,7 +25609,7 @@ library MCDeployLib {
         📚 Deploy Dictionary
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_13(bundle, owner));
+        uint pid = mc.startProcess("deployDictionary", param_8(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary_1 memory _dictionary = DictionaryLib
@@ -26292,12 +25627,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_11(bundle));
+        uint pid = mc.startProcess("deployDictionary", param_4(bundle));
         dictionary = mc.deployDictionary(bundle, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_25(owner));
+        uint pid = mc.startProcess("deployDictionary", param_24(owner));
         dictionary = mc.deployDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);
     }
@@ -26306,7 +25641,7 @@ library MCDeployLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, Dictionary_1 storage dictionary, address owner) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_9(dictionary, owner));
+        uint pid = mc.startProcess("duplicateDictionary", param_27(dictionary, owner));
         Dictionary_1 memory _duplicatedDictionary = DictionaryLib.duplicate(dictionary, owner);
         duplicatedDictionary = mc.dictionary.register(_duplicatedDictionary);
         mc.finishProcess(pid);
@@ -26318,12 +25653,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, Dictionary_1 storage dictionary) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_20(dictionary));
+        uint pid = mc.startProcess("duplicateDictionary", param_0(dictionary));
         duplicatedDictionary = mc.duplicateDictionary(dictionary, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_25(owner));
+        uint pid = mc.startProcess("duplicateDictionary", param_24(owner));
         duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), owner);
         mc.finishProcess(pid);
     }
@@ -26332,7 +25667,7 @@ library MCDeployLib {
         💽 Load Dictionary
     --------------------------*/
     function loadDictionary(MCDevKit storage mc, string memory name, address dictionaryAddr) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("load", param_26(name, dictionaryAddr));
+        uint pid = mc.startProcess("load", param_16(name, dictionaryAddr));
         Dictionary_1 memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
         dictionary = mc.dictionary.register(_dictionary);
         mc.finishProcess(pid);
@@ -26408,7 +25743,7 @@ library MCHelpers {
         🤲 Set Storage Reader
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary_1 memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setStorageReader", param_5(dictionary, selector, implementation));
+        uint pid = mc.startProcess("setStorageReader", param_3(dictionary, selector, implementation));
         dictionary.set(selector, implementation);
         return mc.finishProcess(pid);
     }
@@ -26514,7 +25849,7 @@ library MCInitLib {
         🌱 Init Bundle
     ----------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("init", param_23(name));
+        uint pid = mc.startProcess("init", param_25(name));
         mc.bundle.init(name);
         return mc.finishProcess(pid);
     }
@@ -26526,7 +25861,7 @@ library MCInitLib {
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("use", param_21(name, selector, implementation));
+        uint pid = mc.startProcess("use", param_18(name, selector, implementation));
         // Register new function
         Validator.MUST_NotEmptyName(name);
         Validator.SHOULD_NotEmptySelector(selector);
@@ -26552,7 +25887,7 @@ library MCInitLib {
     --------------------*/
     /// @notice Assign facade address to current bundle
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("useFacade", param_25(facade));
+        uint pid = mc.startProcess("useFacade", param_24(facade));
         mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);
@@ -26598,19 +25933,19 @@ library MCMockLib {
         🏠 Mocking Proxy
     -----------------------*/
     function createMockProxy(MCDevKit storage mc, Bundle storage bundle, bytes memory initData) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_14(bundle, initData));
+        uint pid = mc.startProcess("createMockProxy", param_9(bundle, initData));
         Validator.MUST_Completed(bundle);
         Proxy_2 memory _mockProxy = ProxyLib.createSimpleMock(bundle.functions);
         mockProxy = mc.proxy.register(mc.proxy.genUniqueMockName(bundle.name), _mockProxy);
         mc.finishProcess(pid);
     }
     function createMockProxy(MCDevKit storage mc, Bundle storage bundle) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_11(bundle));
+        uint pid = mc.startProcess("createMockProxy", param_4(bundle));
         mockProxy = mc.createMockProxy(bundle, "");
         mc.finishProcess(pid);
     }
     function createMockProxy(MCDevKit storage mc, bytes memory initData) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_19(initData));
+        uint pid = mc.startProcess("createMockProxy", param_10(initData));
         mockProxy = mc.createMockProxy(mc.bundle.findCurrent(), initData);
         mc.finishProcess(pid);
     }
@@ -26624,7 +25959,7 @@ library MCMockLib {
         📚 Mocking Dictionary
     ---------------------------*/
     function createMockDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_13(bundle, owner));
+        uint pid = mc.startProcess("createMockDictionary", param_8(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary_1 memory _mockDictionary = DictionaryLib
@@ -26640,12 +25975,12 @@ library MCMockLib {
         mc.finishProcess(pid);
     }
     function createMockDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_11(bundle));
+        uint pid = mc.startProcess("createMockDictionary", param_4(bundle));
         mockDictionary = mc.createMockDictionary(bundle, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function createMockDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_25(owner));
+        uint pid = mc.startProcess("createMockDictionary", param_24(owner));
         mockDictionary = mc.createMockDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);
     }
