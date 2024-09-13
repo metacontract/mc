@@ -1,0 +1,9 @@
+{
+	"name": "mc",
+	"workspaces": ["book/*"],
+	"scripts": {
+		"book:start": "cd book && npm run start",
+		"book:build": "cd book && npm run build",
+		"book:clear": "cd book && npm run clear"
+	}
+}
