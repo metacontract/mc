@@ -3,7 +3,7 @@ import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
-	title: "Meta Contract",
+	title: "Meta Contract Documentation",
 	tagline: "Meta Contract is a smart contract development framework.",
 	favicon: "img/favicon.ico",
 
@@ -37,6 +37,11 @@ const config: Config = {
 			} satisfies Preset.Options,
 		],
 	],
+
+	markdown: {
+		mermaid: true,
+	},
+	themes: ["@docusaurus/theme-mermaid"],
 
 	themeConfig: {
 		image: "img/ecdysis-logo.png",
@@ -135,6 +140,7 @@ const config: Config = {
 		prism: {
 			theme: prismThemes.github,
 			darkTheme: prismThemes.dracula,
+			additionalLanguages: ["solidity"],
 		},
 	} satisfies Preset.ThemeConfig,
 };
