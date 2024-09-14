@@ -128,5 +128,5 @@ These key concepts and architectural components work together to create a flexib
 
 For more detailed information on specific aspects of Meta Contracts, please refer to the following resources:
 
-- [Meta Contract Deployment](../03-devops/01-deployment.md)
+- [Meta Contract Deployment](../03-devops/02-deployment.md)
 - [Upgrading Meta Contracts](../03-devops/03-upgrades.md)

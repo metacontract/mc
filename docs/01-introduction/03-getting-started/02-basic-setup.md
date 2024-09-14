@@ -124,7 +124,7 @@ If this command executes without errors, your basic setup is complete and workin
 Now that your development environment is set up, you're ready to start building with Meta Contract:
 
 1. Explore the [Simple DAO Tutorial](../../02-tutorials/01-simple-dao.md) for a hands-on introduction to Meta Contract development.
-2. Review the [MC DevKit Usage Guide](../../05-resources/03-devkit/01-usage.md) to learn about the development tools available.
-3. Check out the [Best Practices](../../05-resources/05-best-practices/01-ai-tdd.md) for tips on efficient Meta Contract development.
+2. Review the [MC DevKit Usage Guide](../../05-resources/04-devkit/01-usage.md) to learn about the development tools available.
+3. Check out the [Best Practices](../../05-resources/06-best-practices/01-ai-tdd.md) for tips on efficient Meta Contract development.
 
 For any issues or questions, reach out to our [community support channels](https://github.com/orgs/metacontract/discussions).

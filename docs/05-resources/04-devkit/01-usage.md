@@ -1,7 +1,7 @@
 # Usage
 
-## MCScript
-- [startBroadcastWithDeployerPrivKey](./start-broadcast-with-deployer-priv-key) (modifier)
+<!-- ## MCScript
+- [startBroadcastWithDeployerPrivKey](./start-broadcast-with-deployer-priv-key) (modifier) -->
 
 ## startBroadcastWithDeployerPrivKey
 
@@ -18,11 +18,11 @@ This modifier facilitates the broadcasting of transactions with the deployer's p
 function run() public startBroadcastWithDeployerPrivKey {}
 ```
 
-## MCTest
+<!-- ## MCTest
 
 - [startPrankWithDeployer](./start-prank-with-deployer) (modifier)
 - [setDictionary](./set-dictionary)
-- [ignorePrecompiles](./ignore-precompile)
+- [ignorePrecompiles](./ignore-precompile) -->
 
 ## startPrankWithDeployer
 

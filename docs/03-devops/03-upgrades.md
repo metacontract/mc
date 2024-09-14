@@ -22,11 +22,11 @@ This guide outlines the upgrade mechanisms available in Meta Contract and how to
 1. [Understanding Meta Contract Upgrades](#understanding-meta-contract-upgrades)
 2. [Preparing for an Upgrade](#preparing-for-an-upgrade)
 3. [Implementing the Upgrade](#implementing-the-upgrade)
-4. [Testing Upgraded Contracts](#testing-upgraded-contracts)
+<!-- 4. [Testing Upgraded Contracts](#testing-upgraded-contracts) -->
 5. [Deploying the Upgrade](#deploying-the-upgrade)
 6. [Post-Upgrade Verification](#post-upgrade-verification)
-7. [Security Considerations](#security-considerations)
-8. [Best Practices](#best-practices)
+<!-- 7. [Security Considerations](#security-considerations) -->
+<!-- 8. [Best Practices](#best-practices) -->
 
 ## Understanding Meta Contract Upgrades
 

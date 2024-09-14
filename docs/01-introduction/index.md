@@ -19,7 +19,7 @@ This section provides an overview of the Meta Contract project and its fundament
 
 - [What is Meta Contract?](01-what-is-meta-contract.md): An introduction to the Meta Contract project and its goals.
 - [Key Concepts](02-key-concepts.md): Essential concepts and terminology used throughout the Meta Contract ecosystem.
-- [Getting Started](03-getting-started/): A guide to help you set up and start using Meta Contract.
+- [Getting Started](03-getting-started/index.md): A guide to help you set up and start using Meta Contract.
   - [Installation](03-getting-started/01-installation.md)
   - [Basic Setup](03-getting-started/02-basic-setup.md)
 
