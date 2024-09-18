@@ -2,9 +2,10 @@
 	"name": "mc",
 	"workspaces": ["book/*"],
 	"scripts": {
+		"book:install": "cd book && bun install",
 		"book:start": "cd book && npm run start",
 		"book:build": "cd book && npm run build",
 		"book:clear": "cd book && npm run clear",
-		"book:soldocs": "sh ./shell-script/gen-soldocs.sh ./"
+		"book:soldocs": "sh ./shell-script/generate_soldocs.sh"
 	}
 }
