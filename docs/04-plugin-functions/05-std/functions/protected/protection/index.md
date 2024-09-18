@@ -1,4 +1,4 @@
-# Index
+# Protection
 
 <!-- START_INDEX -->
 - [FeatureToggle.sol](./FeatureToggle.sol/index.md)

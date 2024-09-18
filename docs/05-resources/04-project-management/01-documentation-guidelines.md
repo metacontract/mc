@@ -146,11 +146,6 @@ docs/
     │   ├── 01-overview.md
     │   ├── 02-usage.md
     │   ├── 03-api-reference
-    │   │   ├── 01-deployment.md
-    │   │   ├── 02-bundle.md
-    │   │   ├── 03-finder.md
-    │   │   ├── 04-mock.md
-    │   │   ├── 05-helper.md
     │   │   ├── Flattened.sol
     │   │   │   ├── abstract.CommonBase.md
     │   │   │   ├── abstract.Context.md

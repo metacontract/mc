@@ -1,4 +1,4 @@
-# Index
+# Standard Functions
 
 <!-- START_INDEX -->
 - [functions](./functions/index.md)

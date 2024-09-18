@@ -1,4 +1,4 @@
-# Index
+# Functions
 
 <!-- START_INDEX -->
 - [internal](./internal/index.md)

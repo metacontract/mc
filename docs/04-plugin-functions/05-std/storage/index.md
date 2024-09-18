@@ -1,4 +1,4 @@
-# Index
+# Storage
 
 <!-- START_INDEX -->
 - [Schema](./Schema.sol/interface.Schema.md)
