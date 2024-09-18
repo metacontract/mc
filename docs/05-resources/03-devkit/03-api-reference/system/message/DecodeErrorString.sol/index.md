@@ -1,4 +1,4 @@
-# Index
+# DecodeErrorString.sol
 
 <!-- START_INDEX -->
 - [library.DecodeErrorString](./library.DecodeErrorString.md)

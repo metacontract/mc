@@ -1,4 +1,4 @@
-# Index
+# Message
 
 <!-- START_INDEX -->
 - [DecodeErrorString.sol](./DecodeErrorString.sol/index.md)

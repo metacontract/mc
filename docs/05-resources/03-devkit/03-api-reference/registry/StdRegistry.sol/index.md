@@ -1,4 +1,4 @@
-# Index
+# StdRegistry.sol
 
 <!-- START_INDEX -->
 - [library.StdFunctionsArgs](./library.StdFunctionsArgs.md)

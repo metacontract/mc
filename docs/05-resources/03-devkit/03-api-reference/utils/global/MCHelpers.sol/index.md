@@ -1,4 +1,4 @@
-# Index
+# MCHelpers.sol
 
 <!-- START_INDEX -->
 - [library.MCHelpers](./library.MCHelpers.md)

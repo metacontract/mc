@@ -1,4 +1,4 @@
-# Index
+# StdFunctions.sol
 
 <!-- START_INDEX -->
 - [library.StdFunctionsLib](./library.StdFunctionsLib.md)

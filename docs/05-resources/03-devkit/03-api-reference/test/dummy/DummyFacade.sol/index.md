@@ -1,4 +1,4 @@
-# Index
+# DummyFacade.sol
 
 <!-- START_INDEX -->
 - [contract.DummyFacade](./contract.DummyFacade.md)

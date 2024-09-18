@@ -1,4 +1,4 @@
-# Index
+# Test
 
 <!-- START_INDEX -->
 - [dummy](./dummy/index.md)

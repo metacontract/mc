@@ -1,4 +1,4 @@
-# Index
+# Mocks
 
 <!-- START_INDEX -->
 - [MockDictionary.sol](./MockDictionary.sol/index.md)

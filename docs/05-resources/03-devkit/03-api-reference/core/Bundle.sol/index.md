@@ -1,4 +1,4 @@
-# Index
+# Bundle.sol
 
 <!-- START_INDEX -->
 - [library.BundleLib](./library.BundleLib.md)

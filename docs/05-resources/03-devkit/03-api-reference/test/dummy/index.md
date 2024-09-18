@@ -1,4 +1,4 @@
-# Index
+# Dummy
 
 <!-- START_INDEX -->
 - [Dummy.sol](./Dummy.sol/index.md)

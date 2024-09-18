@@ -1,4 +1,4 @@
-# Index
+# Dictionary.sol
 
 <!-- START_INDEX -->
 - [enum.DictionaryKind](./enum.DictionaryKind.md)

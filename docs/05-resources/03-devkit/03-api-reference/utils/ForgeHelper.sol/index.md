@@ -1,4 +1,4 @@
-# Index
+# ForgeHelper.sol
 
 <!-- START_INDEX -->
 - [constants.ForgeHelper](./constants.ForgeHelper.md)

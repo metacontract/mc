@@ -1,4 +1,4 @@
-# Index
+# Core
 
 <!-- START_INDEX -->
 - [Bundle](./Bundle.sol/struct.Bundle.md)

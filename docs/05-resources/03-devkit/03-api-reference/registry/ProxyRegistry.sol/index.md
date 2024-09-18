@@ -1,4 +1,4 @@
-# Index
+# ProxyRegistry.sol
 
 <!-- START_INDEX -->
 - [library.ProxyRegistryLib](./library.ProxyRegistryLib.md)

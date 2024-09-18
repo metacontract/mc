@@ -1,4 +1,4 @@
-# Index
+# Global
 
 <!-- START_INDEX -->
 - [MCDeployLib.sol](./MCDeployLib.sol/index.md)

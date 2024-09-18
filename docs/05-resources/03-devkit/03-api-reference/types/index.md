@@ -1,4 +1,4 @@
-# Index
+# Types
 
 <!-- START_INDEX -->
 - [Formatter](./Formatter.sol/library.Formatter.md)

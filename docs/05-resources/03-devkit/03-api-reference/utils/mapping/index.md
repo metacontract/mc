@@ -1,4 +1,4 @@
-# Index
+# mapping
 
 <!-- START_INDEX -->
 - [NameGenerator.sol](./NameGenerator.sol/index.md)

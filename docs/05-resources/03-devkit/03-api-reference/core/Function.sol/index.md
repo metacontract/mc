@@ -1,4 +1,4 @@
-# Index
+# Function.sol
 
 <!-- START_INDEX -->
 - [library.FunctionLib](./library.FunctionLib.md)

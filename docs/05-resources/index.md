@@ -1,5 +1,5 @@
 ---
-title: "Meta Contract Resources"
+title: "Resources"
 version: 0.1.0
 lastUpdated: 2024-09-19
 author: Meta Contract Development Team
@@ -8,7 +8,7 @@ type: index
 tags: [resources, documentation]
 ---
 
-# Meta Contract Resources
+# Resources
 
 This section contains various resources and references for the Meta Contract project. Here you'll find information on general smart contract development concepts, Meta Contract architecture, DevKit usage, project management guidelines, and integration details.
 

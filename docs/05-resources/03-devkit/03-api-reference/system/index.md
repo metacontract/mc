@@ -1,4 +1,4 @@
-# Index
+# System
 
 <!-- START_INDEX -->
 - [message](./message/index.md)

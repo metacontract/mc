@@ -1,4 +1,4 @@
-# Index
+# Registry
 
 <!-- START_INDEX -->
 - [context](./context/index.md)

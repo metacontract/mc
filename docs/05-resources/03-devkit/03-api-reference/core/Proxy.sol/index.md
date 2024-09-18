@@ -1,4 +1,4 @@
-# Index
+# Proxy.sol
 
 <!-- START_INDEX -->
 - [enum.ProxyKind](./enum.ProxyKind.md)

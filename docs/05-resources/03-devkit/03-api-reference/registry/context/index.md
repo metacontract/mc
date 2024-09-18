@@ -1,4 +1,4 @@
-# Index
+# Context
 
 <!-- START_INDEX -->
 - [Current.sol](./Current.sol/index.md)

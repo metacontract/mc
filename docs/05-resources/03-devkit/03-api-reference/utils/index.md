@@ -1,4 +1,4 @@
-# Index
+# Utils
 
 <!-- START_INDEX -->
 - [global](./global/index.md)
