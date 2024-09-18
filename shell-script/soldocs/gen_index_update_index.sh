@@ -14,24 +14,79 @@ count_md_files() {
 
 generate_links_for_directory() {
     dir="$1"
-    for file in "$dir"/*; do
-        if [ -f "$file" ]; then
-            filename=$(basename "$file")
+    has_content=false
+
+    for item in "$dir"/*; do
+        if [ -f "$item" ]; then
+            filename=$(basename "$item")
             case "$filename" in
                 index.md|README.md)
                     # Skip index.md and README.md
                     ;;
                 *.md)
                     # For .md files, use the file name as the link text
-                    echo "- [$(basename "$filename" .md)](./$filename)"
+                    printf -- "- [%s](./%s)\n" "$(basename "$filename" .md)" "$filename"
+                    has_content=true
                     ;;
                 *)
                     # For non-.md files, use the full filename as the link text
-                    echo "- [$filename](./$filename)"
+                    printf -- "- [%s](./%s)\n" "$filename" "$filename"
+                    has_content=true
                     ;;
             esac
+        elif [ -d "$item" ]; then
+            dirname=$(basename "$item")
+            # For directories, create a link to the index.md file inside
+            printf -- "- [%s](./%s/index.md)\n" "$dirname" "$dirname"
+            has_content=true
         fi
     done
+
+    # If no content was generated, return non-zero exit code
+    if [ "$has_content" = false ]; then
+        return 1
+    fi
+}
+
+update_index_content() {
+    index_file="$1"
+    temp_file="${index_file}.tmp"
+    start_marker="<!-- START_INDEX -->"
+    end_marker="<!-- END_INDEX -->"
+
+    # Generate new content
+    new_content=$(generate_links_for_directory "$(dirname "$index_file")") || {
+        echo "No content generated for index. The directory might be empty or contain only index.md/README.md."
+        return 1
+    }
+
+    # Check if the file exists and contains markers
+    if [ -f "$index_file" ] && grep -q "$start_marker" "$index_file" && grep -q "$end_marker" "$index_file"; then
+        # Update existing file while preserving marker positions
+        {
+            sed -n "1,/$start_marker/p" "$index_file"
+            echo "$new_content"
+            sed -n "/$end_marker/,\$p" "$index_file"
+        } > "$temp_file"
+
+        # Check if the temp file was created successfully
+        if [ -s "$temp_file" ]; then
+            mv "$temp_file" "$index_file"
+        else
+            echo "Error: Failed to update index file" >&2
+            rm -f "$temp_file"
+            return 1
+        fi
+    else
+        # Create new file with content
+        {
+            echo "# Index"
+            echo
+            echo "$start_marker"
+            echo "$new_content"
+            echo "$end_marker"
+        } > "$index_file"
+    fi
 }
 
 gen_index_update_index() {
@@ -63,19 +118,10 @@ gen_index_update_index() {
         rm "$readme_file"
     else
         echo "README.md not found. Checking directory contents..."
-        md_count=$(count_md_files "$basepath")
-        if [ "$md_count" -eq 0 ] || [ "$md_count" -gt 1 ]; then
-            echo "Generating links for directory contents..."
-            {
-                echo "# Index"
-                echo
-                echo "<!-- START_INDEX -->"
-                generate_links_for_directory "$basepath"
-                echo "<!-- END_INDEX -->"
-            } > "$index_file"
-        else
-            echo "Only one .md file found (excluding README.md and index.md). Skipping index.md creation."
-        fi
+        update_index_content "$index_file" || {
+            echo "Failed to update index.md. The directory might be empty or contain only index.md/README.md."
+            return 1
+        }
     fi
 
     echo "Index update completed for $basepath"
