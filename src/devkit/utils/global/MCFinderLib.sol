@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
 // Core
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 //  proxy
-import {Proxy} from "devkit/core/Proxy.sol";
+import {Proxy} from "@mc-devkit/core/Proxy.sol";
 //  dictionary
-import {Dictionary} from "devkit/core/Dictionary.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
 
 
 /********************************************

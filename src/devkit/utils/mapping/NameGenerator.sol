@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {Validator} from "devkit/system/Validator.sol";
-import {System} from "devkit/system/System.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
+import {System} from "@mc-devkit/system/System.sol";
 // Core Types
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {Proxy} from "devkit/core/Proxy.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
+import {Proxy} from "@mc-devkit/core/Proxy.sol";
 // Utils
-import {Formatter} from "devkit/types/Formatter.sol";
+import {Formatter} from "@mc-devkit/types/Formatter.sol";
     using Formatter for string;
 
 

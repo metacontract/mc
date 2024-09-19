@@ -3,20 +3,20 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer, param} from "devkit/system/Tracer.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
+import {Tracer, param} from "@mc-devkit/system/Tracer.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {TypeGuard, TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 
 // External Lib Contract
 import {Proxy as UCSProxy} from "@ucs.mc/proxy/Proxy.sol";
 // Mock Contract
-import {SimpleMockProxy} from "devkit/test/mocks/SimpleMockProxy.sol";
+import {SimpleMockProxy} from "@mc-devkit/test/mocks/SimpleMockProxy.sol";
 
 // Core Types
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 
 
 ///////////////////////////////////////////

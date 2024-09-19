@@ -3,8 +3,8 @@ pragma solidity ^0.8.23;
 
 import {Test} from "forge-std/Test.sol";
 
-import {Initialization} from "mc-std/functions/protected/protection/Initialization.sol";
-import {Storage} from "mc-std/storage/Storage.sol";
+import {Initialization} from "@mc-std/functions/protected/protection/Initialization.sol";
+import {Storage} from "@mc-std/storage/Storage.sol";
 
 contract InitializationTest is Test {
 

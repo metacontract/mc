@@ -3,14 +3,14 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer} from "devkit/system/Tracer.sol";
+import {Tracer} from "@mc-devkit/system/Tracer.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 
 // Context
-import {Current} from "devkit/registry/context/Current.sol";
+import {Current} from "@mc-devkit/registry/context/Current.sol";
 // Core Type
-import {Function} from "devkit/core/Function.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 
 
 //////////////////////////////////////////////////////////////

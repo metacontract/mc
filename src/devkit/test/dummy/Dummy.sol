@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
 import {DummyFunction} from "./DummyFunction.sol";
 import {DummyFacade} from "./DummyFacade.sol";
-import {DummyContract} from "devkit/test/dummy/DummyContract.sol";
-import {MCTest} from "devkit/MCTest.sol";
+import {DummyContract} from "@mc-devkit/test/dummy/DummyContract.sol";
+import {MCTest} from "@mc-devkit/MCTest.sol";
 
 library Dummy {
     function bundleName() internal returns(string memory) {

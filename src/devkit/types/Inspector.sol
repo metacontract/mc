@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {Validator} from "devkit/system/Validator.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
-import {TypeStatus} from "devkit/types/TypeGuard.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
+import {ForgeHelper} from "@mc-devkit/utils/ForgeHelper.sol";
 // External Library
 import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
 import {IBeacon as IVerifiable} from "@oz.mc/proxy/beacon/IBeacon.sol";
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
-import {BundleRegistry} from "devkit/registry/BundleRegistry.sol";
-import {Proxy, ProxyKind} from "devkit/core/Proxy.sol";
-import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
-import {Dictionary, DictionaryKind} from "devkit/core/Dictionary.sol";
-import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {BundleRegistry} from "@mc-devkit/registry/BundleRegistry.sol";
+import {Proxy, ProxyKind} from "@mc-devkit/core/Proxy.sol";
+import {ProxyRegistry} from "@mc-devkit/registry/ProxyRegistry.sol";
+import {Dictionary, DictionaryKind} from "@mc-devkit/core/Dictionary.sol";
+import {DictionaryRegistry} from "@mc-devkit/registry/DictionaryRegistry.sol";
 
 /**===================
     🕵️‍♀️ Inspector

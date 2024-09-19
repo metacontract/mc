@@ -4,9 +4,9 @@ pragma solidity ^0.8.23;
 // Forge-std
 import {console} from "forge-std/console.sol";
 // System
-import {System} from "devkit/system/System.sol";
-import {Tracer} from "devkit/system/Tracer.sol";
-import {Formatter} from "devkit/types/Formatter.sol";
+import {System} from "@mc-devkit/system/System.sol";
+import {Tracer} from "@mc-devkit/system/Tracer.sol";
+import {Formatter} from "@mc-devkit/types/Formatter.sol";
 
 
 /**===============

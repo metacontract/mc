@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {System} from "devkit/system/System.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
+import {ForgeHelper} from "@mc-devkit/utils/ForgeHelper.sol";
+import {System} from "@mc-devkit/system/System.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
     using Inspector for string;
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 // Utils
-import {param} from "devkit/system/Tracer.sol";
+import {param} from "@mc-devkit/system/Tracer.sol";
 // Core
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "@mc-devkit/core/Dictionary.sol";
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
+import {Proxy, ProxyLib} from "@mc-devkit/core/Proxy.sol";
 
-import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+import {NameGenerator} from "@mc-devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Dictionary);
     using NameGenerator for mapping(string => Proxy);
 

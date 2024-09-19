@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {ConfigState} from "devkit/system/Config.sol";
-import {Trace} from "devkit/system/Tracer.sol";
-import {Logger} from "devkit/system/Logger.sol";
-import {Formatter} from "devkit/types/Formatter.sol";
+import {ConfigState} from "@mc-devkit/system/Config.sol";
+import {Trace} from "@mc-devkit/system/Tracer.sol";
+import {Logger} from "@mc-devkit/system/Logger.sol";
+import {Formatter} from "@mc-devkit/types/Formatter.sol";
 
 
 /**===============\

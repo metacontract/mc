@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 // Utils
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
-import {param} from "devkit/system/Tracer.sol";
+import {ForgeHelper} from "@mc-devkit/utils/ForgeHelper.sol";
+import {param} from "@mc-devkit/system/Tracer.sol";
 // Core
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
 
-import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+import {NameGenerator} from "@mc-devkit/utils/mapping/NameGenerator.sol";
     using NameGenerator for mapping(string => Bundle);
 
 

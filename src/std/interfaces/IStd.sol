@@ -2,7 +2,7 @@
 pragma solidity ^0.8.23;
 
 import {IProxy} from "@ucs.mc/proxy/IProxy.sol";
-import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
+import {GetFunctions} from "@mc-std/functions/GetFunctions.sol";
 
 interface IStd is IProxy {
     function clone(bytes calldata initData) external returns (address proxy);

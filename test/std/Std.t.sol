@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCTest, MCDevKit} from "devkit/Flattened.sol";
+import {MCTest, MCDevKit} from "@mc-devkit/Flattened.sol";
 import {DeployLib} from "script/DeployLib.sol";
 
-import {IStd} from "mc-std/interfaces/IStd.sol";
-import {Initialization} from "mc-std/functions/protected/protection/Initialization.sol";
+import {IStd} from "@mc-std/interfaces/IStd.sol";
+import {Initialization} from "@mc-std/functions/protected/protection/Initialization.sol";
 
 contract StdTest is MCTest {
     using DeployLib for MCDevKit;

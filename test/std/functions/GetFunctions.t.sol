@@ -8,10 +8,10 @@ import {
     Dummy,
     DummyFunction,
     DummyFacade
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
-import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
-import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
+import {GetFunctions} from "@mc-std/functions/GetFunctions.sol";
+import {ProxyCreator} from "@mc-std/functions/internal/ProxyCreator.sol";
 
 contract GetFunctionsTest is MCTest {
     function setUp() public {

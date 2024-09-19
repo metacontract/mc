@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {MCDevKit} from "devkit/Flattened.sol";
-import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
-import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
+import {MCDevKit} from "@mc-devkit/Flattened.sol";
+import {StdFacade} from "@mc-std/interfaces/StdFacade.sol";
+import {InitSetAdmin} from "@mc-std/functions/protected/InitSetAdmin.sol";
 
 library DeployLib {
     using DeployLib for MCDevKit;

@@ -9,11 +9,11 @@ import {
     Bundle,
     DummyFunction,
     DummyFacade
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
-import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
-import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
-import {Clone} from "mc-std/functions/Clone.sol";
+import {InitSetAdmin} from "@mc-std/functions/protected/InitSetAdmin.sol";
+import {GetFunctions} from "@mc-std/functions/GetFunctions.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
 
 contract MCInitLibTest is MCTestBase {
     using Inspector for string;

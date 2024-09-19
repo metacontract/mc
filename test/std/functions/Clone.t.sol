@@ -6,10 +6,10 @@ import {
     console,
     ForgeHelper,
     Dummy
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
-import {Clone} from "mc-std/functions/Clone.sol";
-import {ProxyCreator} from "mc-std/functions/internal/ProxyCreator.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
+import {ProxyCreator} from "@mc-std/functions/internal/ProxyCreator.sol";
 
 contract CloneTest is MCTest {
     function setUp() public {

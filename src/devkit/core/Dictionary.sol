@@ -3,13 +3,13 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer, param} from "devkit/system/Tracer.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
+import {Tracer, param} from "@mc-devkit/system/Tracer.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {TypeGuard, TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 // Util
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {ForgeHelper} from "@mc-devkit/utils/ForgeHelper.sol";
 
 // External Libs
 import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
@@ -17,11 +17,11 @@ import {Dictionary as UCSDictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 import {ImmutableDictionary} from "@ucs.mc/dictionary/ImmutableDictionary.sol";
 import {BeaconDictionary} from "@ucs.mc/dictionary/BeaconDictionary.sol";
 // Mock
-import {MockDictionary} from "devkit/test/mocks/MockDictionary.sol";
+import {MockDictionary} from "@mc-devkit/test/mocks/MockDictionary.sol";
 
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
 
 
 //////////////////////////////////////////////////

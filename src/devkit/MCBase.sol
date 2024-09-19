@@ -6,8 +6,8 @@ import {CommonBase} from "forge-std/Base.sol";
 import {Script as ForgeScript} from "forge-std/Script.sol";
 import {Test as ForgeTest} from "forge-std/Test.sol";
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
-import {System} from "devkit/system/System.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
+import {System} from "@mc-devkit/system/System.sol";
 
 
 abstract contract MCBase is CommonBase {

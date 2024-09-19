@@ -5,8 +5,8 @@ pragma solidity ^0.8.23;
 import {Vm, VmSafe} from "forge-std/Vm.sol";
 import {stdToml} from "forge-std/StdToml.sol";
 // MC Devkit
-import {Logger} from "devkit/system/Logger.sol";
-import {Parser} from "devkit/types/Parser.sol";
+import {Logger} from "@mc-devkit/system/Logger.sol";
+import {Parser} from "@mc-devkit/types/Parser.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 
 // Constants

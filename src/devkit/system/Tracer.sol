@@ -2,29 +2,29 @@
 pragma solidity ^0.8.23;
 
 // System
-import {System} from "devkit/system/System.sol";
-import {Logger} from "devkit/system/Logger.sol";
+import {System} from "@mc-devkit/system/System.sol";
+import {Logger} from "@mc-devkit/system/Logger.sol";
 // Types
-import {Inspector} from "devkit/types/Inspector.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
     using Inspector for bool;
-import {Formatter} from "devkit/types/Formatter.sol";
+import {Formatter} from "@mc-devkit/types/Formatter.sol";
     using Formatter for Process global;
     using Formatter for bytes4;
     using Formatter for address;
     using Formatter for string;
 // Core Types
-import {MCDevKit} from "devkit/MCDevKit.sol";
-import {Function} from "devkit/core/Function.sol";
-import {FunctionRegistry} from "devkit/registry/FunctionRegistry.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
-import {BundleRegistry} from "devkit/registry/BundleRegistry.sol";
-import {StdRegistry} from "devkit/registry/StdRegistry.sol";
-import {StdFunctions} from "devkit/registry/StdFunctions.sol";
-import {Proxy} from "devkit/core/Proxy.sol";
-import {ProxyRegistry} from "devkit/registry/ProxyRegistry.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {DictionaryRegistry} from "devkit/registry/DictionaryRegistry.sol";
-import {Current} from "devkit/registry/context/Current.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {FunctionRegistry} from "@mc-devkit/registry/FunctionRegistry.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {BundleRegistry} from "@mc-devkit/registry/BundleRegistry.sol";
+import {StdRegistry} from "@mc-devkit/registry/StdRegistry.sol";
+import {StdFunctions} from "@mc-devkit/registry/StdFunctions.sol";
+import {Proxy} from "@mc-devkit/core/Proxy.sol";
+import {ProxyRegistry} from "@mc-devkit/registry/ProxyRegistry.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
+import {DictionaryRegistry} from "@mc-devkit/registry/DictionaryRegistry.sol";
+import {Current} from "@mc-devkit/registry/context/Current.sol";
 
 
 /**=================

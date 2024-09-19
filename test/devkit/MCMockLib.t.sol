@@ -9,7 +9,7 @@ import {
     Function,
     DummyFunction,
     DummyFacade
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
 contract MCMockLibTest is MCTestBase {
     using Inspector for string;

@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {Inspector} from "devkit/types/Inspector.sol";
-import {Validator} from "devkit/system/Validator.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
-import {Proxy} from "devkit/core/Proxy.sol";
-import {StdRegistry} from "devkit/registry/StdRegistry.sol";
-import {StdFunctions} from "devkit/registry/StdFunctions.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
+import {Proxy} from "@mc-devkit/core/Proxy.sol";
+import {StdRegistry} from "@mc-devkit/registry/StdRegistry.sol";
+import {StdFunctions} from "@mc-devkit/registry/StdFunctions.sol";
 
 
 using Inspector for TypeStatus global;

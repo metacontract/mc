@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {MCTest} from "devkit/Flattened.sol";
+import {MCTest} from "@mc-devkit/Flattened.sol";
 
-import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
-import {Initialization} from "mc-std/functions/protected/protection/Initialization.sol";
-import {Storage} from "mc-std/storage/Storage.sol";
+import {InitSetAdmin} from "@mc-std/functions/protected/InitSetAdmin.sol";
+import {Initialization} from "@mc-std/functions/protected/protection/Initialization.sol";
+import {Storage} from "@mc-std/storage/Storage.sol";
 
 contract InitSetAdminTest is MCTest {
     function setUp() public {

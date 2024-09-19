@@ -5,7 +5,7 @@ import {
     MCTestBase,
     MessageHead as REASON,
     Dummy
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
 contract MCFinderLibTest is MCTestBase {
 

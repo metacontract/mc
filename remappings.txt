@@ -1,5 +1,4 @@
-@oz.mc/=lib/ucs-contracts/lib/openzeppelin-contracts/contracts/
-@ucs.mc/=lib/ucs-contracts/src/
-mc-std/=src/std/
-devkit/=src/devkit/
+@mc-std/=src/std/
 @mc-devkit/=src/devkit/
+@ucs.mc/=lib/ucs-contracts/src/
+@oz.mc/=lib/ucs-contracts/lib/openzeppelin-contracts/contracts/

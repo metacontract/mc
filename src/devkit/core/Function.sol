@@ -3,14 +3,14 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer, param} from "devkit/system/Tracer.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
-import {Formatter} from "devkit/types/Formatter.sol";
+import {Tracer, param} from "@mc-devkit/system/Tracer.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {TypeGuard, TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
+import {Formatter} from "@mc-devkit/types/Formatter.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 // Loader
-import {loadAddressFrom} from "devkit/utils/ForgeHelper.sol";
+import {loadAddressFrom} from "@mc-devkit/utils/ForgeHelper.sol";
 
 
 //////////////////////////////////////////////

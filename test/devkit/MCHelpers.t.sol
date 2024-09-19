@@ -5,7 +5,7 @@ import {
     MCTestBase,
     MessageHead as HEAD,
     Inspector
-} from "devkit/Flattened.sol";
+} from "@mc-devkit/Flattened.sol";
 
 contract MCHelpersTest is MCTestBase {
     using Inspector for string;

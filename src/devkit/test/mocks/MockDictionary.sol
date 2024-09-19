@@ -2,7 +2,7 @@
 pragma solidity ^0.8.23;
 
 // Core
-import {Function} from "devkit/core/Function.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 // External Lib
 import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 

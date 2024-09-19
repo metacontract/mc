@@ -5,11 +5,11 @@ pragma solidity ^0.8.23;
 import {StdStyle} from "forge-std/StdStyle.sol";
 
 // Core Types
-import {Function} from "devkit/core/Function.sol";
-import {Bundle} from "devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
 // Utils
-import {vm} from "devkit/utils/ForgeHelper.sol";
-import {Process} from "devkit/system/Tracer.sol";
+import {vm} from "@mc-devkit/utils/ForgeHelper.sol";
+import {Process} from "@mc-devkit/system/Tracer.sol";
 
 
 /**==================

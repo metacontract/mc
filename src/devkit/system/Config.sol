@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {ForgeHelper, vm} from "devkit/utils/ForgeHelper.sol";
+import {ForgeHelper, vm} from "@mc-devkit/utils/ForgeHelper.sol";
     using ForgeHelper for string;
-import {Logger} from "devkit/system/Logger.sol";
-import {Validator} from "devkit/system/Validator.sol";
+import {Logger} from "@mc-devkit/system/Logger.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 
-import {Parser} from "devkit/types/Parser.sol";
+import {Parser} from "@mc-devkit/types/Parser.sol";
     using Parser for string;
 
 /**----------------------

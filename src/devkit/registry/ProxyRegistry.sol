@@ -3,17 +3,17 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer, param} from "devkit/system/Tracer.sol";
-import {Inspector} from "devkit/types/Inspector.sol";
-import {NameGenerator} from "devkit/utils/mapping/NameGenerator.sol";
+import {Tracer, param} from "@mc-devkit/system/Tracer.sol";
+import {Inspector} from "@mc-devkit/types/Inspector.sol";
+import {NameGenerator} from "@mc-devkit/utils/mapping/NameGenerator.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 
 // Context
-import {Current} from "devkit/registry/context/Current.sol";
+import {Current} from "@mc-devkit/registry/context/Current.sol";
 // Core Type
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
-import {Dictionary} from "devkit/core/Dictionary.sol";
+import {Proxy, ProxyLib} from "@mc-devkit/core/Proxy.sol";
+import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
 
 
 ////////////////////////////////////////////////////////

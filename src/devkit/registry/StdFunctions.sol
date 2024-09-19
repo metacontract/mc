@@ -3,21 +3,21 @@ pragma solidity ^0.8.23;
 /**---------------------
     Support Methods
 -----------------------*/
-import {Tracer} from "devkit/system/Tracer.sol";
-import {TypeGuard, TypeStatus} from "devkit/types/TypeGuard.sol";
+import {Tracer} from "@mc-devkit/system/Tracer.sol";
+import {TypeGuard, TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
-import {Logger} from "devkit/system/Logger.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
+import {Logger} from "@mc-devkit/system/Logger.sol";
 
 // Core Types
-import {Function} from "devkit/core/Function.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 // MC Std
-import {Clone} from "mc-std/functions/Clone.sol";
-import {GetFunctions} from "mc-std/functions/GetFunctions.sol";
-import {FeatureToggle} from "mc-std/functions/protected/FeatureToggle.sol";
-import {InitSetAdmin} from "mc-std/functions/protected/InitSetAdmin.sol";
-import {UpgradeDictionary} from "mc-std/functions/protected/UpgradeDictionary.sol";
-import {StdFacade} from "mc-std/interfaces/StdFacade.sol";
+import {Clone} from "@mc-std/functions/Clone.sol";
+import {GetFunctions} from "@mc-std/functions/GetFunctions.sol";
+import {FeatureToggle} from "@mc-std/functions/protected/FeatureToggle.sol";
+import {InitSetAdmin} from "@mc-std/functions/protected/InitSetAdmin.sol";
+import {UpgradeDictionary} from "@mc-std/functions/protected/UpgradeDictionary.sol";
+import {StdFacade} from "@mc-std/interfaces/StdFacade.sol";
 
 
 //////////////////////////////////////////////////////

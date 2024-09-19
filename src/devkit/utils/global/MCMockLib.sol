@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 // Validation
-import {Validator} from "devkit/system/Validator.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 
-import {MCDevKit} from "devkit/MCDevKit.sol";
-import {System} from "devkit/system/System.sol";
+import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
+import {System} from "@mc-devkit/system/System.sol";
 // Utils
-import {param} from "devkit/system/Tracer.sol";
-import {ForgeHelper} from "devkit/utils/ForgeHelper.sol";
+import {param} from "@mc-devkit/system/Tracer.sol";
+import {ForgeHelper} from "@mc-devkit/utils/ForgeHelper.sol";
 // Core
 //  functions
-import {Bundle} from "devkit/core/Bundle.sol";
-import {Function} from "devkit/core/Function.sol";
+import {Bundle} from "@mc-devkit/core/Bundle.sol";
+import {Function} from "@mc-devkit/core/Function.sol";
 //  proxy
-import {Proxy, ProxyLib} from "devkit/core/Proxy.sol";
+import {Proxy, ProxyLib} from "@mc-devkit/core/Proxy.sol";
 //  dictionary
-import {Dictionary, DictionaryLib} from "devkit/core/Dictionary.sol";
+import {Dictionary, DictionaryLib} from "@mc-devkit/core/Dictionary.sol";
 
 
 /*************************************
