@@ -10,7 +10,7 @@ generate_forge_docs() {
 # Move generated docs to appropriate directories
 move_forge_docs() {
     cp -r soldocs/src/src/std/ docs/04-plugin-functions/05-std/ || { echo "Failed to move plugin docs"; exit 1; }
-    cp -r soldocs/src/src/devkit/ docs/05-resources/04-devkit/02-utils/ || { echo "Failed to move devkit docs"; exit 1; }
+    cp -r soldocs/src/src/devkit/ docs/05-resources/03-devkit/03-api-reference/ || { echo "Failed to move devkit docs"; exit 1; }
 }
 
 # Remove unnecessary soldocs/

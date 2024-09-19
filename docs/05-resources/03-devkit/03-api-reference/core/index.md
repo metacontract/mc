@@ -11,5 +11,4 @@
 - [Proxy](./Proxy.sol/struct.Proxy.md)
 - [ProxyLib](./Proxy.sol/library.ProxyLib.md)
 - [ProxyKind](./Proxy.sol/enum.ProxyKind.md)
-
 <!-- END_INDEX -->

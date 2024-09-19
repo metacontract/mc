@@ -15,5 +15,4 @@
 - [StdRegistry](./StdRegistry.sol/struct.StdRegistry.md)
 - [StdRegistryLib](./StdRegistry.sol/library.StdRegistryLib.md)
 - [StdFunctionsArgs](./StdRegistry.sol/library.StdFunctionsArgs.md)
-
 <!-- END_INDEX -->

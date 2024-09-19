@@ -1,5 +1,5 @@
 # stdToml
-[Git Source](https://github.com/metacontract/mc/blob/0cf91165f9ec2cbeeba800a4baf4e81e2df5c3bb/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
 
 
 ## State Variables
@@ -11,6 +11,13 @@ VmSafe private constant vm = VmSafe(address(uint160(uint256(keccak256("hevm chea
 
 
 ## Functions
+### keyExists
+
+
+```solidity
+function keyExists(string memory toml, string memory key) internal view returns (bool);
+```
+
 ### parseRaw
 
 
@@ -114,6 +121,131 @@ function readBytes(string memory toml, string memory key) internal pure returns 
 
 ```solidity
 function readBytesArray(string memory toml, string memory key) internal pure returns (bytes[] memory);
+```
+
+### readUintOr
+
+
+```solidity
+function readUintOr(string memory toml, string memory key, uint256 defaultValue) internal view returns (uint256);
+```
+
+### readUintArrayOr
+
+
+```solidity
+function readUintArrayOr(string memory toml, string memory key, uint256[] memory defaultValue)
+    internal
+    view
+    returns (uint256[] memory);
+```
+
+### readIntOr
+
+
+```solidity
+function readIntOr(string memory toml, string memory key, int256 defaultValue) internal view returns (int256);
+```
+
+### readIntArrayOr
+
+
+```solidity
+function readIntArrayOr(string memory toml, string memory key, int256[] memory defaultValue)
+    internal
+    view
+    returns (int256[] memory);
+```
+
+### readBytes32Or
+
+
+```solidity
+function readBytes32Or(string memory toml, string memory key, bytes32 defaultValue) internal view returns (bytes32);
+```
+
+### readBytes32ArrayOr
+
+
+```solidity
+function readBytes32ArrayOr(string memory toml, string memory key, bytes32[] memory defaultValue)
+    internal
+    view
+    returns (bytes32[] memory);
+```
+
+### readStringOr
+
+
+```solidity
+function readStringOr(string memory toml, string memory key, string memory defaultValue)
+    internal
+    view
+    returns (string memory);
+```
+
+### readStringArrayOr
+
+
+```solidity
+function readStringArrayOr(string memory toml, string memory key, string[] memory defaultValue)
+    internal
+    view
+    returns (string[] memory);
+```
+
+### readAddressOr
+
+
+```solidity
+function readAddressOr(string memory toml, string memory key, address defaultValue) internal view returns (address);
+```
+
+### readAddressArrayOr
+
+
+```solidity
+function readAddressArrayOr(string memory toml, string memory key, address[] memory defaultValue)
+    internal
+    view
+    returns (address[] memory);
+```
+
+### readBoolOr
+
+
+```solidity
+function readBoolOr(string memory toml, string memory key, bool defaultValue) internal view returns (bool);
+```
+
+### readBoolArrayOr
+
+
+```solidity
+function readBoolArrayOr(string memory toml, string memory key, bool[] memory defaultValue)
+    internal
+    view
+    returns (bool[] memory);
+```
+
+### readBytesOr
+
+
+```solidity
+function readBytesOr(string memory toml, string memory key, bytes memory defaultValue)
+    internal
+    view
+    returns (bytes memory);
+```
+
+### readBytesArrayOr
+
+
+```solidity
+function readBytesArrayOr(string memory toml, string memory key, bytes[] memory defaultValue)
+    internal
+    view
+    returns (bytes[] memory);
 ```
 
 ### serialize

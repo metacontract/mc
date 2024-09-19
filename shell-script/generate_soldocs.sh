@@ -13,7 +13,7 @@ main() {
 
     # Generate index files: process directories
     generate_index docs/04-plugin-functions/05-std/
-    generate_index docs/05-resources/04-devkit/02-utils/
+    generate_index docs/05-resources/03-devkit/03-api-reference/
 
     echo "Successfully generated Solidity API docs and processed $(find docs -type f | wc -l) files!"
 }

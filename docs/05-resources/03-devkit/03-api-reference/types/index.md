@@ -6,5 +6,4 @@
 - [Parser](./Parser.sol/library.Parser.md)
 - [TypeStatus](./TypeGuard.sol/enum.TypeStatus.md)
 - [TypeGuard](./TypeGuard.sol/library.TypeGuard.md)
-
 <!-- END_INDEX -->

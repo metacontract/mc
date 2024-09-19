@@ -7,5 +7,4 @@
 - [Create](./Create.sol/contract.Create.md)
 - [GetFunctions](./GetFunctions.sol/contract.GetFunctions.md)
 - [Receive](./Receive.sol/contract.Receive.md)
-
 <!-- END_INDEX -->
