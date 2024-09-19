@@ -2,168 +2,6 @@
 pragma solidity <0.9.0 >=0.4.22 >=0.6.0 >=0.6.2 ^0.8.20 ^0.8.22 ^0.8.23;
 pragma experimental ABIEncoderV2;
 
-// devkit/system/message/MessageBody.sol
-
-/// @title Message Body
-library MessageBody {
-    // Config
-    string constant CONFIG_FILE_MISSING = "Please ensure that the configuration file is present in the project root directory. If the file is missing, create a new one or restore it from the 'lib/mc/mc.toml' template.";
-    string constant CONFIG_FILE_REQUIRED = "The configuration file is required and must be present in the project root directory. Please create a new 'mc.toml' file or restore it from the 'lib/mc/mc.toml' template.";
-    // Primitives
-    string constant NAME_REQUIRED = "The provided name cannot be an empty string. Please enter a non-empty value for the name and try again.";
-    string constant ENV_KEY_REQUIRED = "The provided environment key cannot be an empty string. Please enter a non-empty value for the key and try again.";
-    string constant SELECTOR_RECOMMENDED = "The provided function selector is empty (0x00000000). It is recommended to use a non-empty selector.";
-    string constant ADDRESS_NOT_CONTRACT = "The provided address is not a contract address. Please provide the address of a deployed contract and try again.";
-    string constant FACADE_NOT_CONTRACT = "The provided facade address is not a contract address. It is recommended to use the address of a deployed facade contract and try again.";
-    string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "The provided owner address is the zero address (0x0). It is recommended to use a non-zero address for the owner to ensure proper access control and security.";
-    // Current Context
-    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
-    // Function
-    string constant FUNC_NAME_UNASSIGNED = "The function name is currently unassigned. It is recommended to provide a non-empty value for the name.";
-    string constant FUNC_CONTRACT_UNASSIGNED = "The implementation contract address is currently unassigned. It is recommended to set the address of a deployed contract.";
-    string constant FUNC_NOT_COMPLETE = "The function is not marked as complete. Please ensure all requirements are met before proceeding.";
-    string constant FUNC_LOCKED = "The function object is currently locked and cannot be modified.";
-    string constant FUNC_NOT_BUILDING = "The function is not currently in the building state. Please initiate the building process before proceeding.";
-    string constant FUNC_NOT_BUILT = "The function has not been successfully built yet. Please complete the building process before attempting to use the function.";
-    string constant FUNC_NOT_REGISTERED = "The function name is not registered in the registry. Please register the function before proceeding.";
-    // Bundle
-    string constant BUNDLE_NAME_UNASSIGNED = "The name of the bundle is currently unassigned. It is recommended to provide a non-empty value for the bundle name.";
-    string constant NO_FUNCTIONS_IN_BUNDLE = "The bundle should contain at least one function. Please add functions before attempting to build the bundle.";
-    string constant NO_FUNCTIONS_IN_BUNDLE_REQUIRED = "The bundle must contain at least one function. Please add functions before attempting to build the bundle.";
-    string constant BUNDLE_FACADE_UNASSIGNED = "The facade contract for the bundle is currently unassigned. It is recommended to set the address of a deployed contract as the facade.";
-    string constant BUNDLE_NOT_INITIALIZED = "The bundle has not been initialized. Please ensure the bundle is properly initialized before proceeding.";
-    string constant BUNDLE_NOT_COMPLETE = "The bundle is not marked as complete. It is recommended to ensure all requirements are met before proceeding.";
-    string constant BUNDLE_NOT_COMPLETE_REQUIRED = "The bundle is not marked as complete. It is required to ensure all requirements are met before proceeding.";
-    string constant BUNDLE_CONTAINS_SAME_SELECTOR = "The bundle cannot contain multiple functions with the same 4-byte selector. The function selector is already present in the bundle.";
-    string constant BUNDLE_LOCKED = "The bundle object is currently locked and cannot be modified.";
-    string constant BUNDLE_NOT_BUILDING = "The bundle is not currently in the building state. Please initiate the building process before proceeding.";
-    string constant BUNDLE_NOT_BUILT = "The bundle has not been successfully built yet. Please complete the building process before attempting to use the bundle.";
-    string constant CURRENT_BUNDLE_NOT_EXIST = "There is no current bundle set in the registry. It is recommended to set a bundle as the current one before proceeding.";
-    string constant CURRENT_BUNDLE_NOT_EXIST_REQUIRED = "There is no current bundle set in the registry. It is required to set a bundle as the current one before proceeding. Please make sure to call the mc.init() method to initialize the current bundle.";
-    // Proxy
-    string constant PROXY_ADDR_UNASSIGNED = "The address of the proxy contract is currently unassigned. Please set the address of a deployed contract.";
-    string constant PROXY_KIND_UNDEFINED = "The kind of proxy is not defined. Please specify the proxy kind before proceeding.";
-    string constant PROXY_NOT_COMPLETE = "The proxy object is not marked as complete. Please ensure all requirements are met before proceeding.";
-    string constant PROXY_LOCKED = "The proxy object is currently locked and cannot be modified.";
-    string constant PROXY_NOT_BUILDING = "The proxy is not currently in the building state. Please initiate the building process before proceeding.";
-    string constant PROXY_NOT_BUILT = "The proxy has not been successfully built yet. Please complete the building process before attempting to use the proxy.";
-    string constant PROXY_ALREADY_REGISTERED = "The proxy name is already registered in the registry. Please use a different name.";
-    string constant PROXY_NOT_REGISTERED = "The proxy name is not registered in the registry. Please register the proxy name before proceeding.";
-    string constant CURRENT_PROXY_NOT_EXIST = "There is no current proxy set in the registry. It is required to set a proxy as the current one before proceeding. Please make sure to deploy the current proxy.";
-    // Dictionary
-    string constant DICTIONARY_NAME_UNASSIGNED = "The name of the dictionary contract is currently unassigned. Please set the name of a deployed contract.";
-    string constant DICTIONARY_ADDR_UNASSIGNED = "The address of the dictionary contract is currently unassigned. Please set the address of a deployed contract.";
-    string constant DICTIONARY_KIND_UNDEFINED = "The kind of dictionary is not defined. Please specify the dictionary kind before proceeding.";
-    string constant DICTIONARY_NOT_COMPLETE = "The dictionary object is not marked as complete. Please ensure all requirements are met before proceeding.";
-    string constant DICTIONARY_NOT_VERIFIABLE = "The dictionary is not verifiable. Please ensure all prerequisites are met for verification.";
-    string constant DICTIONARY_LOCKED = "The dictionary object is currently locked and cannot be modified.";
-    string constant DICTIONARY_NOT_BUILDING = "The dictionary is not currently in the building state. Please initiate the building process before proceeding.";
-    string constant DICTIONARY_NOT_BUILT = "The dictionary has not been successfully built yet. Please complete the building process before attempting to use the dictionary.";
-    string constant DICTIONARY_ALREADY_REGISTERED = "The dictionary name is already registered in the registry. Please use a different name.";
-    string constant DICTIONARY_NOT_REGISTERED = "The dictionary name is not registered in the registry. Please register the dictionary name before proceeding.";
-    string constant CURRENT_DICTIONARY_NOT_EXIST = "There is no current dictionary set in the registry. It is required to set a dictionary as the current one before proceeding. Please make sure to deploy/load/duplicate the current dictionary.";
-    // Std Registry
-    string constant STD_REGISTRY_NOT_COMPLETE = "The standard registry is not marked as complete. Please ensure all requirements are met before proceeding.";
-    string constant STD_REGISTRY_LOCKED = "The standard registry is currently locked and cannot be modified.";
-    string constant STD_REGISTRY_NOT_BUILDING = "The standard registry is not currently in the building state. Please initiate the building process before proceeding.";
-    string constant STD_REGISTRY_NOT_BUILT = "The standard registry has not been successfully built yet. Please complete the building process before attempting to use the registry.";
-    // Std Functions
-    string constant STD_FUNCTIONS_NOT_COMPLETE = "The standard functions object is not marked as complete. Please ensure all requirements are met before proceeding.";
-    string constant STD_FUNCTIONS_LOCKED = "The standard functions object is currently locked and cannot be modified.";
-    string constant STD_FUNCTIONS_NOT_BUILDING = "The standard functions are not currently in the building state. Please initiate the building process before proceeding.";
-    string constant STD_FUNCTIONS_NOT_BUILT = "The standard functions have not been successfully built yet. Please complete the building process before attempting to use them.";
-    // Name Generator
-    string constant NOT_FOUND_IN_RANGE = "The value was not found within the expected range. Please provide a value that falls within the specified range and try again.";
-
-}
-
-// devkit/system/message/MessageHead.sol
-
-/// @title Message Head
-library MessageHead {
-    // Config
-    string constant CONFIG_FILE_MISSING = "Config File Missing";
-    string constant CONFIG_FILE_REQUIRED = "Config File Required";
-    // Primitives
-    string constant NAME_REQUIRED = "Name Required";
-    string constant ENV_KEY_REQUIRED = "EnvKey Required";
-    string constant SELECTOR_RECOMMENDED = "Empty Selector";
-    string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
-    string constant FACADE_NOT_CONTRACT = "Facade Not Contract";
-    string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
-    // Current Context
-    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
-    // Function
-    string constant FUNC_NAME_UNASSIGNED = "Function Name Unassigned";
-    string constant FUNC_CONTRACT_UNASSIGNED = "Implementation Contract Unassigned";
-    string constant FUNC_NOT_COMPLETE = "Function Not Complete";
-    string constant FUNC_LOCKED = "Function Locked";
-    string constant FUNC_NOT_BUILDING = "Function Not Building";
-    string constant FUNC_NOT_BUILT = "Function Not Built";
-    string constant FUNC_NOT_REGISTERED = "Function Not Registered";
-    // Bundle
-    string constant BUNDLE_NAME_UNASSIGNED = "Bundle Name Unassigned";
-    string constant NO_FUNCTIONS_IN_BUNDLE = "No Functions in Bundle";
-    string constant BUNDLE_FACADE_UNASSIGNED = "Bundle Facade Unassigned";
-    string constant BUNDLE_NOT_INITIALIZED = "Bundle Not Initialized";
-    string constant BUNDLE_NOT_COMPLETE = "Bundle Not Complete";
-    string constant BUNDLE_CONTAINS_SAME_SELECTOR = "Bundle Contains Same Selector";
-    string constant BUNDLE_LOCKED = "Bundle Locked";
-    string constant BUNDLE_NOT_BUILDING = "Bundle Not Building";
-    string constant BUNDLE_NOT_BUILT = "Bundle Not Built";
-    string constant CURRENT_BUNDLE_NOT_EXIST = "Current Bundle Not Exist";
-    // Proxy
-    string constant PROXY_ADDR_UNASSIGNED = "Proxy Address Unassigned";
-    string constant PROXY_KIND_UNDEFINED = "Proxy Kind Undefined";
-    string constant PROXY_NOT_COMPLETE = "Proxy Not Complete";
-    string constant PROXY_LOCKED = "Proxy Locked";
-    string constant PROXY_NOT_BUILDING = "Proxy Not Building";
-    string constant PROXY_NOT_BUILT = "Proxy Not Built";
-    string constant PROXY_ALREADY_REGISTERED = "Proxy Already Registered";
-    string constant PROXY_NOT_REGISTERED = "Proxy Not Registered";
-    string constant CURRENT_PROXY_NOT_EXIST = "Current Proxy Not Exist";
-    // Dictionary
-    string constant DICTIONARY_NAME_UNASSIGNED = "Dictionary Name Unassigned";
-    string constant DICTIONARY_ADDR_UNASSIGNED = "Dictionary Address Unassigned";
-    string constant DICTIONARY_KIND_UNDEFINED = "Dictionary Kind Undefined";
-    string constant DICTIONARY_NOT_COMPLETE = "Dictionary Not Complete";
-    string constant DICTIONARY_NOT_VERIFIABLE = "Dictionary Not Verifiable";
-    string constant DICTIONARY_LOCKED = "Dictionary Locked";
-    string constant DICTIONARY_NOT_BUILDING = "Dictionary Not Building";
-    string constant DICTIONARY_NOT_BUILT = "Dictionary Not Built";
-    string constant DICTIONARY_ALREADY_REGISTERED = "Dictionary Already Registered";
-    string constant DICTIONARY_NOT_REGISTERED = "Dictionary Not Registered";
-    string constant CURRENT_DICTIONARY_NOT_EXIST = "Current Dictionary Not Exist";
-    // Std Registry
-    string constant STD_REGISTRY_NOT_COMPLETE = "Std Registry Not Complete";
-    string constant STD_REGISTRY_LOCKED = "Std Registry Locked";
-    string constant STD_REGISTRY_NOT_BUILDING = "Std Registry Not Building";
-    string constant STD_REGISTRY_NOT_BUILT = "Std Registry Not Built";
-    // Std Functions
-    string constant STD_FUNCTIONS_NOT_COMPLETE = "Std Functions Not Complete";
-    string constant STD_FUNCTIONS_LOCKED = "Std Functions Locked";
-    string constant STD_FUNCTIONS_NOT_BUILDING = "Std Functions Not Building";
-    string constant STD_FUNCTIONS_NOT_BUILT = "Std Functions Not Built";
-    // Name Generator
-    string constant NOT_FOUND_IN_RANGE = "Not Found In Range";
-
-}
-
-// devkit/test/dummy/DummyContract.sol
-
-contract DummyContract {}
-
-// devkit/test/dummy/DummyFacade.sol
-
-contract DummyFacade {}
-
-// devkit/test/dummy/DummyFunction.sol
-
-contract DummyFunction {
-    function dummy() external {}
-    function dummy2() external {}
-}
-
 // lib/forge-std/src/StdError.sol
 
 // Panics work for versions >=0.8.0, but we lowered the pragma to make this compatible with Test
@@ -18330,6 +18168,168 @@ interface IProxy {
     error NON_CONTRACT();
 }
 
+// src/devkit/system/message/MessageBody.sol
+
+/// @title Message Body
+library MessageBody {
+    // Config
+    string constant CONFIG_FILE_MISSING = "Please ensure that the configuration file is present in the project root directory. If the file is missing, create a new one or restore it from the 'lib/mc/mc.toml' template.";
+    string constant CONFIG_FILE_REQUIRED = "The configuration file is required and must be present in the project root directory. Please create a new 'mc.toml' file or restore it from the 'lib/mc/mc.toml' template.";
+    // Primitives
+    string constant NAME_REQUIRED = "The provided name cannot be an empty string. Please enter a non-empty value for the name and try again.";
+    string constant ENV_KEY_REQUIRED = "The provided environment key cannot be an empty string. Please enter a non-empty value for the key and try again.";
+    string constant SELECTOR_RECOMMENDED = "The provided function selector is empty (0x00000000). It is recommended to use a non-empty selector.";
+    string constant ADDRESS_NOT_CONTRACT = "The provided address is not a contract address. Please provide the address of a deployed contract and try again.";
+    string constant FACADE_NOT_CONTRACT = "The provided facade address is not a contract address. It is recommended to use the address of a deployed facade contract and try again.";
+    string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "The provided owner address is the zero address (0x0). It is recommended to use a non-zero address for the owner to ensure proper access control and security.";
+    // Current Context
+    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
+    // Function
+    string constant FUNC_NAME_UNASSIGNED = "The function name is currently unassigned. It is recommended to provide a non-empty value for the name.";
+    string constant FUNC_CONTRACT_UNASSIGNED = "The implementation contract address is currently unassigned. It is recommended to set the address of a deployed contract.";
+    string constant FUNC_NOT_COMPLETE = "The function is not marked as complete. Please ensure all requirements are met before proceeding.";
+    string constant FUNC_LOCKED = "The function object is currently locked and cannot be modified.";
+    string constant FUNC_NOT_BUILDING = "The function is not currently in the building state. Please initiate the building process before proceeding.";
+    string constant FUNC_NOT_BUILT = "The function has not been successfully built yet. Please complete the building process before attempting to use the function.";
+    string constant FUNC_NOT_REGISTERED = "The function name is not registered in the registry. Please register the function before proceeding.";
+    // Bundle
+    string constant BUNDLE_NAME_UNASSIGNED = "The name of the bundle is currently unassigned. It is recommended to provide a non-empty value for the bundle name.";
+    string constant NO_FUNCTIONS_IN_BUNDLE = "The bundle should contain at least one function. Please add functions before attempting to build the bundle.";
+    string constant NO_FUNCTIONS_IN_BUNDLE_REQUIRED = "The bundle must contain at least one function. Please add functions before attempting to build the bundle.";
+    string constant BUNDLE_FACADE_UNASSIGNED = "The facade contract for the bundle is currently unassigned. It is recommended to set the address of a deployed contract as the facade.";
+    string constant BUNDLE_NOT_INITIALIZED = "The bundle has not been initialized. Please ensure the bundle is properly initialized before proceeding.";
+    string constant BUNDLE_NOT_COMPLETE = "The bundle is not marked as complete. It is recommended to ensure all requirements are met before proceeding.";
+    string constant BUNDLE_NOT_COMPLETE_REQUIRED = "The bundle is not marked as complete. It is required to ensure all requirements are met before proceeding.";
+    string constant BUNDLE_CONTAINS_SAME_SELECTOR = "The bundle cannot contain multiple functions with the same 4-byte selector. The function selector is already present in the bundle.";
+    string constant BUNDLE_LOCKED = "The bundle object is currently locked and cannot be modified.";
+    string constant BUNDLE_NOT_BUILDING = "The bundle is not currently in the building state. Please initiate the building process before proceeding.";
+    string constant BUNDLE_NOT_BUILT = "The bundle has not been successfully built yet. Please complete the building process before attempting to use the bundle.";
+    string constant CURRENT_BUNDLE_NOT_EXIST = "There is no current bundle set in the registry. It is recommended to set a bundle as the current one before proceeding.";
+    string constant CURRENT_BUNDLE_NOT_EXIST_REQUIRED = "There is no current bundle set in the registry. It is required to set a bundle as the current one before proceeding. Please make sure to call the mc.init() method to initialize the current bundle.";
+    // Proxy
+    string constant PROXY_ADDR_UNASSIGNED = "The address of the proxy contract is currently unassigned. Please set the address of a deployed contract.";
+    string constant PROXY_KIND_UNDEFINED = "The kind of proxy is not defined. Please specify the proxy kind before proceeding.";
+    string constant PROXY_NOT_COMPLETE = "The proxy object is not marked as complete. Please ensure all requirements are met before proceeding.";
+    string constant PROXY_LOCKED = "The proxy object is currently locked and cannot be modified.";
+    string constant PROXY_NOT_BUILDING = "The proxy is not currently in the building state. Please initiate the building process before proceeding.";
+    string constant PROXY_NOT_BUILT = "The proxy has not been successfully built yet. Please complete the building process before attempting to use the proxy.";
+    string constant PROXY_ALREADY_REGISTERED = "The proxy name is already registered in the registry. Please use a different name.";
+    string constant PROXY_NOT_REGISTERED = "The proxy name is not registered in the registry. Please register the proxy name before proceeding.";
+    string constant CURRENT_PROXY_NOT_EXIST = "There is no current proxy set in the registry. It is required to set a proxy as the current one before proceeding. Please make sure to deploy the current proxy.";
+    // Dictionary
+    string constant DICTIONARY_NAME_UNASSIGNED = "The name of the dictionary contract is currently unassigned. Please set the name of a deployed contract.";
+    string constant DICTIONARY_ADDR_UNASSIGNED = "The address of the dictionary contract is currently unassigned. Please set the address of a deployed contract.";
+    string constant DICTIONARY_KIND_UNDEFINED = "The kind of dictionary is not defined. Please specify the dictionary kind before proceeding.";
+    string constant DICTIONARY_NOT_COMPLETE = "The dictionary object is not marked as complete. Please ensure all requirements are met before proceeding.";
+    string constant DICTIONARY_NOT_VERIFIABLE = "The dictionary is not verifiable. Please ensure all prerequisites are met for verification.";
+    string constant DICTIONARY_LOCKED = "The dictionary object is currently locked and cannot be modified.";
+    string constant DICTIONARY_NOT_BUILDING = "The dictionary is not currently in the building state. Please initiate the building process before proceeding.";
+    string constant DICTIONARY_NOT_BUILT = "The dictionary has not been successfully built yet. Please complete the building process before attempting to use the dictionary.";
+    string constant DICTIONARY_ALREADY_REGISTERED = "The dictionary name is already registered in the registry. Please use a different name.";
+    string constant DICTIONARY_NOT_REGISTERED = "The dictionary name is not registered in the registry. Please register the dictionary name before proceeding.";
+    string constant CURRENT_DICTIONARY_NOT_EXIST = "There is no current dictionary set in the registry. It is required to set a dictionary as the current one before proceeding. Please make sure to deploy/load/duplicate the current dictionary.";
+    // Std Registry
+    string constant STD_REGISTRY_NOT_COMPLETE = "The standard registry is not marked as complete. Please ensure all requirements are met before proceeding.";
+    string constant STD_REGISTRY_LOCKED = "The standard registry is currently locked and cannot be modified.";
+    string constant STD_REGISTRY_NOT_BUILDING = "The standard registry is not currently in the building state. Please initiate the building process before proceeding.";
+    string constant STD_REGISTRY_NOT_BUILT = "The standard registry has not been successfully built yet. Please complete the building process before attempting to use the registry.";
+    // Std Functions
+    string constant STD_FUNCTIONS_NOT_COMPLETE = "The standard functions object is not marked as complete. Please ensure all requirements are met before proceeding.";
+    string constant STD_FUNCTIONS_LOCKED = "The standard functions object is currently locked and cannot be modified.";
+    string constant STD_FUNCTIONS_NOT_BUILDING = "The standard functions are not currently in the building state. Please initiate the building process before proceeding.";
+    string constant STD_FUNCTIONS_NOT_BUILT = "The standard functions have not been successfully built yet. Please complete the building process before attempting to use them.";
+    // Name Generator
+    string constant NOT_FOUND_IN_RANGE = "The value was not found within the expected range. Please provide a value that falls within the specified range and try again.";
+
+}
+
+// src/devkit/system/message/MessageHead.sol
+
+/// @title Message Head
+library MessageHead {
+    // Config
+    string constant CONFIG_FILE_MISSING = "Config File Missing";
+    string constant CONFIG_FILE_REQUIRED = "Config File Required";
+    // Primitives
+    string constant NAME_REQUIRED = "Name Required";
+    string constant ENV_KEY_REQUIRED = "EnvKey Required";
+    string constant SELECTOR_RECOMMENDED = "Empty Selector";
+    string constant ADDRESS_NOT_CONTRACT = "Address Not Contract";
+    string constant FACADE_NOT_CONTRACT = "Facade Not Contract";
+    string constant OWNER_ZERO_ADDRESS_RECOMMENDED = "Owner Zero Address";
+    // Current Context
+    string constant CURRENT_NAME_NOT_FOUND = "Current Name Not Found";
+    // Function
+    string constant FUNC_NAME_UNASSIGNED = "Function Name Unassigned";
+    string constant FUNC_CONTRACT_UNASSIGNED = "Implementation Contract Unassigned";
+    string constant FUNC_NOT_COMPLETE = "Function Not Complete";
+    string constant FUNC_LOCKED = "Function Locked";
+    string constant FUNC_NOT_BUILDING = "Function Not Building";
+    string constant FUNC_NOT_BUILT = "Function Not Built";
+    string constant FUNC_NOT_REGISTERED = "Function Not Registered";
+    // Bundle
+    string constant BUNDLE_NAME_UNASSIGNED = "Bundle Name Unassigned";
+    string constant NO_FUNCTIONS_IN_BUNDLE = "No Functions in Bundle";
+    string constant BUNDLE_FACADE_UNASSIGNED = "Bundle Facade Unassigned";
+    string constant BUNDLE_NOT_INITIALIZED = "Bundle Not Initialized";
+    string constant BUNDLE_NOT_COMPLETE = "Bundle Not Complete";
+    string constant BUNDLE_CONTAINS_SAME_SELECTOR = "Bundle Contains Same Selector";
+    string constant BUNDLE_LOCKED = "Bundle Locked";
+    string constant BUNDLE_NOT_BUILDING = "Bundle Not Building";
+    string constant BUNDLE_NOT_BUILT = "Bundle Not Built";
+    string constant CURRENT_BUNDLE_NOT_EXIST = "Current Bundle Not Exist";
+    // Proxy
+    string constant PROXY_ADDR_UNASSIGNED = "Proxy Address Unassigned";
+    string constant PROXY_KIND_UNDEFINED = "Proxy Kind Undefined";
+    string constant PROXY_NOT_COMPLETE = "Proxy Not Complete";
+    string constant PROXY_LOCKED = "Proxy Locked";
+    string constant PROXY_NOT_BUILDING = "Proxy Not Building";
+    string constant PROXY_NOT_BUILT = "Proxy Not Built";
+    string constant PROXY_ALREADY_REGISTERED = "Proxy Already Registered";
+    string constant PROXY_NOT_REGISTERED = "Proxy Not Registered";
+    string constant CURRENT_PROXY_NOT_EXIST = "Current Proxy Not Exist";
+    // Dictionary
+    string constant DICTIONARY_NAME_UNASSIGNED = "Dictionary Name Unassigned";
+    string constant DICTIONARY_ADDR_UNASSIGNED = "Dictionary Address Unassigned";
+    string constant DICTIONARY_KIND_UNDEFINED = "Dictionary Kind Undefined";
+    string constant DICTIONARY_NOT_COMPLETE = "Dictionary Not Complete";
+    string constant DICTIONARY_NOT_VERIFIABLE = "Dictionary Not Verifiable";
+    string constant DICTIONARY_LOCKED = "Dictionary Locked";
+    string constant DICTIONARY_NOT_BUILDING = "Dictionary Not Building";
+    string constant DICTIONARY_NOT_BUILT = "Dictionary Not Built";
+    string constant DICTIONARY_ALREADY_REGISTERED = "Dictionary Already Registered";
+    string constant DICTIONARY_NOT_REGISTERED = "Dictionary Not Registered";
+    string constant CURRENT_DICTIONARY_NOT_EXIST = "Current Dictionary Not Exist";
+    // Std Registry
+    string constant STD_REGISTRY_NOT_COMPLETE = "Std Registry Not Complete";
+    string constant STD_REGISTRY_LOCKED = "Std Registry Locked";
+    string constant STD_REGISTRY_NOT_BUILDING = "Std Registry Not Building";
+    string constant STD_REGISTRY_NOT_BUILT = "Std Registry Not Built";
+    // Std Functions
+    string constant STD_FUNCTIONS_NOT_COMPLETE = "Std Functions Not Complete";
+    string constant STD_FUNCTIONS_LOCKED = "Std Functions Locked";
+    string constant STD_FUNCTIONS_NOT_BUILDING = "Std Functions Not Building";
+    string constant STD_FUNCTIONS_NOT_BUILT = "Std Functions Not Built";
+    // Name Generator
+    string constant NOT_FOUND_IN_RANGE = "Not Found In Range";
+
+}
+
+// src/devkit/test/dummy/DummyContract.sol
+
+contract DummyContract {}
+
+// src/devkit/test/dummy/DummyFacade.sol
+
+contract DummyFacade {}
+
+// src/devkit/test/dummy/DummyFunction.sol
+
+contract DummyFunction {
+    function dummy() external {}
+    function dummy2() external {}
+}
+
 // src/std/functions/Receive.sol
 
 /** < MC Standard Function >
@@ -19356,6 +19356,10 @@ abstract contract StdChains {
 library stdJson {
     VmSafe private constant vm = VmSafe(address(uint160(uint256(keccak256("hevm cheat code")))));
 
+    function keyExists(string memory json, string memory key) internal view returns (bool) {
+        return vm.keyExistsJson(json, key);
+    }
+
     function parseRaw(string memory json, string memory key) internal pure returns (bytes memory) {
         return vm.parseJson(json, key);
     }
@@ -19414,6 +19418,106 @@ library stdJson {
 
     function readBytesArray(string memory json, string memory key) internal pure returns (bytes[] memory) {
         return vm.parseJsonBytesArray(json, key);
+    }
+
+    function readUintOr(string memory json, string memory key, uint256 defaultValue) internal view returns (uint256) {
+        return keyExists(json, key) ? readUint(json, key) : defaultValue;
+    }
+
+    function readUintArrayOr(string memory json, string memory key, uint256[] memory defaultValue)
+        internal
+        view
+        returns (uint256[] memory)
+    {
+        return keyExists(json, key) ? readUintArray(json, key) : defaultValue;
+    }
+
+    function readIntOr(string memory json, string memory key, int256 defaultValue) internal view returns (int256) {
+        return keyExists(json, key) ? readInt(json, key) : defaultValue;
+    }
+
+    function readIntArrayOr(string memory json, string memory key, int256[] memory defaultValue)
+        internal
+        view
+        returns (int256[] memory)
+    {
+        return keyExists(json, key) ? readIntArray(json, key) : defaultValue;
+    }
+
+    function readBytes32Or(string memory json, string memory key, bytes32 defaultValue)
+        internal
+        view
+        returns (bytes32)
+    {
+        return keyExists(json, key) ? readBytes32(json, key) : defaultValue;
+    }
+
+    function readBytes32ArrayOr(string memory json, string memory key, bytes32[] memory defaultValue)
+        internal
+        view
+        returns (bytes32[] memory)
+    {
+        return keyExists(json, key) ? readBytes32Array(json, key) : defaultValue;
+    }
+
+    function readStringOr(string memory json, string memory key, string memory defaultValue)
+        internal
+        view
+        returns (string memory)
+    {
+        return keyExists(json, key) ? readString(json, key) : defaultValue;
+    }
+
+    function readStringArrayOr(string memory json, string memory key, string[] memory defaultValue)
+        internal
+        view
+        returns (string[] memory)
+    {
+        return keyExists(json, key) ? readStringArray(json, key) : defaultValue;
+    }
+
+    function readAddressOr(string memory json, string memory key, address defaultValue)
+        internal
+        view
+        returns (address)
+    {
+        return keyExists(json, key) ? readAddress(json, key) : defaultValue;
+    }
+
+    function readAddressArrayOr(string memory json, string memory key, address[] memory defaultValue)
+        internal
+        view
+        returns (address[] memory)
+    {
+        return keyExists(json, key) ? readAddressArray(json, key) : defaultValue;
+    }
+
+    function readBoolOr(string memory json, string memory key, bool defaultValue) internal view returns (bool) {
+        return keyExists(json, key) ? readBool(json, key) : defaultValue;
+    }
+
+    function readBoolArrayOr(string memory json, string memory key, bool[] memory defaultValue)
+        internal
+        view
+        returns (bool[] memory)
+    {
+        return keyExists(json, key) ? readBoolArray(json, key) : defaultValue;
+    }
+
+    function readBytesOr(string memory json, string memory key, bytes memory defaultValue)
+        internal
+        view
+        returns (bytes memory)
+    {
+        return keyExists(json, key) ? readBytes(json, key) : defaultValue;
+    }
+
+    function readBytesArrayOr(string memory json, string memory key, bytes[] memory defaultValue)
+        internal
+        view
+        returns (bytes[] memory)
+    {
+        return keyExists(json, key) ? readBytesArray(json, key) : defaultValue;
     }
 
     function serialize(string memory jsonKey, string memory rootObject) internal returns (string memory) {
@@ -20333,6 +20437,10 @@ library StdStyle {
 library stdToml {
     VmSafe private constant vm = VmSafe(address(uint160(uint256(keccak256("hevm cheat code")))));
 
+    function keyExists(string memory toml, string memory key) internal view returns (bool) {
+        return vm.keyExistsToml(toml, key);
+    }
+
     function parseRaw(string memory toml, string memory key) internal pure returns (bytes memory) {
         return vm.parseToml(toml, key);
     }
@@ -20391,6 +20499,106 @@ library stdToml {
 
     function readBytesArray(string memory toml, string memory key) internal pure returns (bytes[] memory) {
         return vm.parseTomlBytesArray(toml, key);
+    }
+
+    function readUintOr(string memory toml, string memory key, uint256 defaultValue) internal view returns (uint256) {
+        return keyExists(toml, key) ? readUint(toml, key) : defaultValue;
+    }
+
+    function readUintArrayOr(string memory toml, string memory key, uint256[] memory defaultValue)
+        internal
+        view
+        returns (uint256[] memory)
+    {
+        return keyExists(toml, key) ? readUintArray(toml, key) : defaultValue;
+    }
+
+    function readIntOr(string memory toml, string memory key, int256 defaultValue) internal view returns (int256) {
+        return keyExists(toml, key) ? readInt(toml, key) : defaultValue;
+    }
+
+    function readIntArrayOr(string memory toml, string memory key, int256[] memory defaultValue)
+        internal
+        view
+        returns (int256[] memory)
+    {
+        return keyExists(toml, key) ? readIntArray(toml, key) : defaultValue;
+    }
+
+    function readBytes32Or(string memory toml, string memory key, bytes32 defaultValue)
+        internal
+        view
+        returns (bytes32)
+    {
+        return keyExists(toml, key) ? readBytes32(toml, key) : defaultValue;
+    }
+
+    function readBytes32ArrayOr(string memory toml, string memory key, bytes32[] memory defaultValue)
+        internal
+        view
+        returns (bytes32[] memory)
+    {
+        return keyExists(toml, key) ? readBytes32Array(toml, key) : defaultValue;
+    }
+
+    function readStringOr(string memory toml, string memory key, string memory defaultValue)
+        internal
+        view
+        returns (string memory)
+    {
+        return keyExists(toml, key) ? readString(toml, key) : defaultValue;
+    }
+
+    function readStringArrayOr(string memory toml, string memory key, string[] memory defaultValue)
+        internal
+        view
+        returns (string[] memory)
+    {
+        return keyExists(toml, key) ? readStringArray(toml, key) : defaultValue;
+    }
+
+    function readAddressOr(string memory toml, string memory key, address defaultValue)
+        internal
+        view
+        returns (address)
+    {
+        return keyExists(toml, key) ? readAddress(toml, key) : defaultValue;
+    }
+
+    function readAddressArrayOr(string memory toml, string memory key, address[] memory defaultValue)
+        internal
+        view
+        returns (address[] memory)
+    {
+        return keyExists(toml, key) ? readAddressArray(toml, key) : defaultValue;
+    }
+
+    function readBoolOr(string memory toml, string memory key, bool defaultValue) internal view returns (bool) {
+        return keyExists(toml, key) ? readBool(toml, key) : defaultValue;
+    }
+
+    function readBoolArrayOr(string memory toml, string memory key, bool[] memory defaultValue)
+        internal
+        view
+        returns (bool[] memory)
+    {
+        return keyExists(toml, key) ? readBoolArray(toml, key) : defaultValue;
+    }
+
+    function readBytesOr(string memory toml, string memory key, bytes memory defaultValue)
+        internal
+        view
+        returns (bytes memory)
+    {
+        return keyExists(toml, key) ? readBytes(toml, key) : defaultValue;
+    }
+
+    function readBytesArrayOr(string memory toml, string memory key, bytes[] memory defaultValue)
+        internal
+        view
+        returns (bytes[] memory)
+    {
+        return keyExists(toml, key) ? readBytesArray(toml, key) : defaultValue;
     }
 
     function serialize(string memory jsonKey, string memory rootObject) internal returns (string memory) {
@@ -23048,7 +23256,7 @@ abstract contract Test is TestBase, StdAssertions, StdChains, StdCheats, StdInva
     bool public IS_TEST = true;
 }
 
-// devkit/MCDevKit.sol
+// src/devkit/MCDevKit.sol
 
 // Registries
 
@@ -23073,7 +23281,7 @@ using MCMockLib for MCDevKit global;
 using MCHelpers for MCDevKit global;
 using Tracer for MCDevKit global;
 
-// devkit/core/Bundle.sol
+// src/devkit/core/Bundle.sol
 
 /**---------------------
     Support Methods
@@ -23101,7 +23309,7 @@ library BundleLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Bundle storage bundle, string memory name) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignName", param_25(name));
+        uint pid = bundle.startProcess("assignName", param_11(name));
         Validator.MUST_NotEmptyName(name);
         bundle.startBuilding();
         bundle.name = name;
@@ -23113,7 +23321,7 @@ library BundleLib {
         🧩 Push Function(s)
     ---------------------------*/
     function pushFunction(Bundle storage bundle, Function storage func) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunction", param_26(func));
+        uint pid = bundle.startProcess("pushFunction", param_10(func));
         Validator.MUST_Completed(func);
         Validator.MUST_HaveUniqueSelector(bundle, func);
         bundle.startBuilding();
@@ -23122,7 +23330,7 @@ library BundleLib {
         return bundle.finishProcess(pid);
     }
     function pushFunctions(Bundle storage bundle, Function[] storage functions) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("pushFunctions", param_7(functions));
+        uint pid = bundle.startProcess("pushFunctions", param_25(functions));
         for (uint i; i < functions.length; ++i) {
             bundle.pushFunction(functions[i]);
         }
@@ -23133,7 +23341,7 @@ library BundleLib {
         🪟 Assign Facade
     ------------------------*/
     function assignFacade(Bundle storage bundle, address facade) internal returns(Bundle storage) {
-        uint pid = bundle.startProcess("assignFacade", param_24(facade));
+        uint pid = bundle.startProcess("assignFacade", param_14(facade));
         Validator.MUST_AddressIsContract(facade);
         bundle.startBuilding();
         bundle.facade = facade;
@@ -23143,7 +23351,7 @@ library BundleLib {
 
 }
 
-// devkit/core/Dictionary.sol
+// src/devkit/core/Dictionary.sol
 
 /**---------------------
     Support Methods
@@ -23188,7 +23396,7 @@ library DictionaryLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Dictionary_1 memory dictionary, string memory name) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("assignName", param_25(name));
+        uint pid = dictionary.startProcess("assignName", param_11(name));
         dictionary.startBuilding();
         dictionary.name = name;
         dictionary.finishBuilding();
@@ -23202,7 +23410,7 @@ library DictionaryLib {
             - Beacon
     ---------------------------*/
     function deploy(address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deploy", param_24(owner));
+        uint pid = dictionary.startProcess("deploy", param_14(owner));
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
         dictionary.addr = address(new Dictionary_0(owner));
@@ -23212,7 +23420,7 @@ library DictionaryLib {
     }
 
     function deployImmutable(Function[] storage functions, address facade) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deployImmutable", param_12(functions, facade));
+        uint pid = dictionary.startProcess("deployImmutable", param_17(functions, facade));
         Validator.SHOULD_FacadeIsContract(facade);
         dictionary.startBuilding();
         ImmutableDictionary.Function[] memory funcs;
@@ -23226,7 +23434,7 @@ library DictionaryLib {
     }
 
     function deployBeacon(address implementation, address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("deployBeacon", param_17(implementation, owner));
+        uint pid = dictionary.startProcess("deployBeacon", param_7(implementation, owner));
         Validator.MUST_AddressIsContract(implementation);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
@@ -23240,7 +23448,7 @@ library DictionaryLib {
         📩 Load Dictionary
     -------------------------*/
     function load(string memory name, address dictionaryAddr) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("load", param_24(dictionaryAddr));
+        uint pid = dictionary.startProcess("load", param_14(dictionaryAddr));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_AddressIsContract(dictionaryAddr);
         // TODO Validate
@@ -23256,7 +23464,7 @@ library DictionaryLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicate(Dictionary_1 storage dictionary, address owner) internal returns(Dictionary_1 memory duplicatedDictionary) {
-        uint pid = dictionary.startProcess("duplicate", param_0(dictionary));
+        uint pid = dictionary.startProcess("duplicate", param_4(dictionary));
         Validator.MUST_Completed(dictionary);
 
         duplicatedDictionary = deploy(owner).assignName(dictionary.name);
@@ -23277,7 +23485,7 @@ library DictionaryLib {
         🧩 Set Function or Bundle
     -------------------------------*/
     function set(Dictionary_1 memory dictionary, bytes4 selector, address implementation) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_23(selector, implementation));
+        uint pid = dictionary.startProcess("set", param_2(selector, implementation));
         Validator.MUST_Completed(dictionary);
         Validator.SHOULD_NotEmptySelector(selector);
         Validator.MUST_AddressIsContract(implementation);
@@ -23288,12 +23496,12 @@ library DictionaryLib {
         return dictionary.finishProcess(pid);
     }
     function set(Dictionary_1 memory dictionary, Function memory func) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_26(func));
+        uint pid = dictionary.startProcess("set", param_10(func));
         set(dictionary, func.selector, func.implementation);
         return dictionary.finishProcess(pid);
     }
     function set(Dictionary_1 memory dictionary, Bundle storage bundle) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("set", param_4(bundle));
+        uint pid = dictionary.startProcess("set", param_24(bundle));
         Validator.MUST_HaveFunction(bundle);
         Function[] memory functions = bundle.functions;
         for (uint i; i < functions.length; ++i) {
@@ -23312,7 +23520,7 @@ library DictionaryLib {
         🪟 Upgrade Facade
     ------------------------*/
     function upgradeFacade(Dictionary_1 memory dictionary, address newFacade) internal returns(Dictionary_1 memory) {
-        uint pid = dictionary.startProcess("upgradeFacade", param_27(dictionary, newFacade));
+        uint pid = dictionary.startProcess("upgradeFacade", param_21(dictionary, newFacade));
         Validator.MUST_AddressIsContract(newFacade);
         Validator.MUST_Verifiable(dictionary);
         IDictionary(dictionary.addr).upgradeFacade(newFacade);
@@ -23323,7 +23531,7 @@ library DictionaryLib {
         🤖 Create Dictionary Mock
     --------------------------------*/
     function createMock(Bundle storage bundle, address owner) internal returns(Dictionary_1 memory dictionary) {
-        uint pid = dictionary.startProcess("createMock", param_8(bundle, owner));
+        uint pid = dictionary.startProcess("createMock", param_26(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         dictionary.startBuilding();
@@ -23347,7 +23555,7 @@ enum DictionaryKind {
 }
 using Inspector for DictionaryKind global;
 
-// devkit/core/Function.sol
+// src/devkit/core/Function.sol
 
 /**---------------------
     Support Methods
@@ -23376,7 +23584,7 @@ library FunctionLib {
         📛 Assign Name
     ----------------------*/
     function assignName(Function storage func, string memory name) internal returns(Function storage) {
-        uint pid = func.startProcess("assignName", param_25(name));
+        uint pid = func.startProcess("assignName", param_11(name));
         func.startBuilding();
         func.name = name;
         func.finishBuilding();
@@ -23387,7 +23595,7 @@ library FunctionLib {
         🎯 Assign Selector
     --------------------------*/
     function assignSelector(Function storage func, bytes4 selector) internal returns(Function storage) {
-        uint pid = func.startProcess("assignSelector", param_20(selector));
+        uint pid = func.startProcess("assignSelector", param_12(selector));
         func.startBuilding();
         func.selector = selector;
         func.finishBuilding();
@@ -23398,7 +23606,7 @@ library FunctionLib {
         🎨 Assign Implementation
     --------------------------------*/
     function assignImplementation(Function storage func, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assignImplementation", param_24(implementation));
+        uint pid = func.startProcess("assignImplementation", param_14(implementation));
         func.startBuilding();
         func.implementation = implementation;
         func.finishBuilding();
@@ -23409,7 +23617,7 @@ library FunctionLib {
         🌈 Assign
     -----------------*/
     function assign(Function storage func, string memory name, bytes4 selector, address implementation) internal returns(Function storage) {
-        uint pid = func.startProcess("assign", param_18(name, selector, implementation));
+        uint pid = func.startProcess("assign", param_22(name, selector, implementation));
         func.assignName(name);
         func.assignSelector(selector);
         func.assignImplementation(implementation);
@@ -23420,7 +23628,7 @@ library FunctionLib {
         📨 Fetch Function
     -------------------------*/
     function fetch(Function storage func, string memory envKey) internal returns(Function storage) {
-        uint pid = func.startProcess("fetch", param_25(envKey));
+        uint pid = func.startProcess("fetch", param_11(envKey));
         Validator.MUST_NotEmptyEnvKey(envKey);
         func.assignName(envKey);
         func.assignImplementation(loadAddressFrom(envKey));
@@ -23429,7 +23637,7 @@ library FunctionLib {
 
 }
 
-// devkit/core/Proxy.sol
+// src/devkit/core/Proxy.sol
 
 /**---------------------
     Support Methods
@@ -23460,7 +23668,7 @@ library ProxyLib {
         🚀 Deploy Proxy
     -----------------------*/
     function deploy(Dictionary_1 memory dictionary, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = proxy.startProcess("deploy", param_6(dictionary, initData));
+        uint pid = proxy.startProcess("deploy", param_13(dictionary, initData));
         Validator.MUST_Completed(dictionary);
         proxy.startBuilding();
         proxy.addr = address(new Proxy_1(dictionary.addr, initData));
@@ -23473,7 +23681,7 @@ library ProxyLib {
         🤖 Create Proxy Mock
     ----------------------------*/
     function createSimpleMock(Function[] memory functions) internal returns(Proxy_2 memory mockProxy) {
-        uint pid = mockProxy.startProcess("createSimpleMock", param_7(functions));
+        uint pid = mockProxy.startProcess("createSimpleMock", param_25(functions));
         for (uint i; i < functions.length; ++i) {
             Validator.MUST_Completed(functions[i]);
         }
@@ -23497,7 +23705,7 @@ enum ProxyKind {
 }
 using Inspector for ProxyKind global;
 
-// devkit/registry/BundleRegistry.sol
+// src/devkit/registry/BundleRegistry.sol
 
 /**---------------------
     Support Methods
@@ -23527,7 +23735,7 @@ library BundleRegistryLib {
         🌱 Init Bundle
     -----------------------*/
     function init(BundleRegistry storage registry, string memory name) internal returns(BundleRegistry storage) {
-        uint pid = registry.startProcess("init", param_25(name));
+        uint pid = registry.startProcess("init", param_11(name));
         Validator.MUST_NotEmptyName(name);
         Bundle storage bundle = registry.bundles[name];
         Validator.MUST_NotInitialized(bundle);
@@ -23545,7 +23753,7 @@ library BundleRegistryLib {
         🔍 Find Bundle
     ----------------------*/
     function find(BundleRegistry storage registry, string memory name) internal returns(Bundle storage bundle) {
-        uint pid = registry.startProcess("find", param_25(name));
+        uint pid = registry.startProcess("find", param_11(name));
         Validator.MUST_NotEmptyName(name);
         bundle = registry.bundles[name];
         Validator.SHOULD_Completed(bundle);
@@ -23569,7 +23777,7 @@ library BundleRegistryLib {
 
 }
 
-// devkit/registry/DictionaryRegistry.sol
+// src/devkit/registry/DictionaryRegistry.sol
 
 /**---------------------
     Support Methods
@@ -23598,7 +23806,7 @@ library DictionaryRegistryLib {
         🗳️ Register Dictionary
     -----------------------------*/
     function register(DictionaryRegistry storage registry, Dictionary_1 memory _dictionary) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = registry.startProcess("register", param_0(_dictionary));
+        uint pid = registry.startProcess("register", param_4(_dictionary));
         Validator.MUST_Completed(_dictionary);
         string memory uniqueName = registry.genUniqueName(_dictionary.name);
         _dictionary.assignName(uniqueName);
@@ -23611,7 +23819,7 @@ library DictionaryRegistryLib {
         🔍 Find Dictionary
     --------------------------*/
     function find(DictionaryRegistry storage registry, string memory name) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = registry.startProcess("find", param_25(name));
+        uint pid = registry.startProcess("find", param_11(name));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_Registered(registry, name);
         dictionary = registry.dictionaries[name];
@@ -23629,7 +23837,7 @@ library DictionaryRegistryLib {
         🏷 Generate Unique Name
     -------------------------------*/
     function genUniqueName(DictionaryRegistry storage registry, string memory baseName) internal returns(string memory name) {
-        uint pid = registry.startProcess("genUniqueName", param_25(baseName));
+        uint pid = registry.startProcess("genUniqueName", param_11(baseName));
         name = registry.dictionaries.genUniqueName(baseName);
         registry.finishProcess(pid);
     }
@@ -23641,7 +23849,7 @@ library DictionaryRegistryLib {
 
 }
 
-// devkit/registry/FunctionRegistry.sol
+// src/devkit/registry/FunctionRegistry.sol
 
 /**---------------------
     Support Methods
@@ -23696,7 +23904,7 @@ library FunctionRegistryLib {
 
 }
 
-// devkit/registry/ProxyRegistry.sol
+// src/devkit/registry/ProxyRegistry.sol
 
 /**---------------------
     Support Methods
@@ -23725,7 +23933,7 @@ library ProxyRegistryLib {
         🗳️ Register Proxy
     -------------------------*/
     function register(ProxyRegistry storage registry, string memory name, Proxy_2 memory _proxy) internal returns(Proxy_2 storage proxy) {
-        uint pid = registry.startProcess("register", param_13(name, _proxy));
+        uint pid = registry.startProcess("register", param_0(name, _proxy));
         Validator.MUST_NotEmptyName(name);
         Validator.MUST_Completed(_proxy);
         Validator.MUST_NotRegistered(registry, name);
@@ -23738,7 +23946,7 @@ library ProxyRegistryLib {
         🔍 Find Proxy
     ---------------------*/
     function find(ProxyRegistry storage registry, string memory name) internal returns(Proxy_2 storage proxy) {
-        uint pid = registry.startProcess("find", param_25(name));
+        uint pid = registry.startProcess("find", param_11(name));
         Validator.MUST_NotEmptyName(name);
         proxy = registry.proxies[name];
         Validator.MUST_Completed(proxy);
@@ -23767,7 +23975,7 @@ library ProxyRegistryLib {
 
 }
 
-// devkit/registry/StdFunctions.sol
+// src/devkit/registry/StdFunctions.sol
 
 /**---------------------
     Support Methods
@@ -23887,7 +24095,7 @@ library StdFunctionsLib {
 
 }
 
-// devkit/registry/StdRegistry.sol
+// src/devkit/registry/StdRegistry.sol
 
 /**---------------------
     Support Methods
@@ -23956,7 +24164,7 @@ library StdFunctionsArgs {
 
 }
 
-// devkit/registry/context/Current.sol
+// src/devkit/registry/context/Current.sol
 
 /**---------------------
     Support Methods
@@ -23978,7 +24186,7 @@ library CurrentLib {
         🔄 Update Current Context
     ---------------------------------*/
     function update(Current storage current, string memory name) internal {
-        uint pid = current.startProcess("update", param_25(name));
+        uint pid = current.startProcess("update", param_11(name));
         Validator.MUST_NotEmptyName(name);
         current.name = name;
         current.finishProcess(pid);
@@ -24005,7 +24213,7 @@ library CurrentLib {
 
 }
 
-// devkit/system/Config.sol
+// src/devkit/system/Config.sol
 
     using ForgeHelper for string;
 
@@ -24076,7 +24284,7 @@ library ConfigLib {
 
 }
 
-// devkit/system/Logger.sol
+// src/devkit/system/Logger.sol
 
 // Forge-std
 
@@ -24154,7 +24362,7 @@ library Logger {
 
 }
 
-// devkit/system/System.sol
+// src/devkit/system/System.sol
 
 /**===============\
 |   💻 System     |
@@ -24174,7 +24382,7 @@ library System {
 
 }
 
-// devkit/system/Tracer.sol
+// src/devkit/system/Tracer.sol
 
 // System
 
@@ -24432,99 +24640,99 @@ library Tracer {
     Params
  */
  /* solhint-disable 2519 */
-function param_25(string memory str) pure returns(string memory) {
+function param_11(string memory str) pure returns(string memory) {
     return str;
 }
-function param_16(string memory str, address addr) pure returns(string memory) {
+function param_8(string memory str, address addr) pure returns(string memory) {
     return str.comma(addr);
 }
-function param_22(string memory str, address addr, Function[] memory funcs) pure returns(string memory) {
-    return str.comma(addr).comma(param_7(funcs));
+function param_1(string memory str, address addr, Function[] memory funcs) pure returns(string memory) {
+    return str.comma(addr).comma(param_25(funcs));
 }
-function param_18(string memory str, bytes4 b4, address addr) pure returns(string memory) {
+function param_22(string memory str, bytes4 b4, address addr) pure returns(string memory) {
     return str.comma(b4).comma(addr);
 }
-function param_13(string memory str, Proxy_2 memory proxy) pure returns(string memory) {
+function param_0(string memory str, Proxy_2 memory proxy) pure returns(string memory) {
     return str.comma(proxy.addr);
 }
 function param_5(string memory str, Dictionary_1 memory dictionary) pure returns(string memory) {
     return str.comma(dictionary.addr);
 }
-function param_11(string memory str, Dictionary_1 memory dictionary, bytes memory b) pure returns(string memory) {
+function param_23(string memory str, Dictionary_1 memory dictionary, bytes memory b) pure returns(string memory) {
     return str.comma(dictionary.addr).comma(string(b));
 }
-function param_1(string memory str, Function[] memory funcs) pure returns(string memory) {
-    return str.comma(param_7(funcs));
+function param_15(string memory str, Function[] memory funcs) pure returns(string memory) {
+    return str.comma(param_25(funcs));
 }
-function param_14(string memory str, bytes memory b) pure returns(string memory) {
+function param_16(string memory str, bytes memory b) pure returns(string memory) {
     return str.comma(string(b));
 }
 
-function param_20(bytes4 b4) pure returns(string memory) {
+function param_12(bytes4 b4) pure returns(string memory) {
     return b4.toString();
 }
-function param_23(bytes4 b4, address addr) pure returns(string memory) {
+function param_2(bytes4 b4, address addr) pure returns(string memory) {
     return b4.toString().comma(addr);
 }
 
-function param_24(address addr) pure returns(string memory) {
+function param_14(address addr) pure returns(string memory) {
     return addr.toString();
 }
-function param_17(address addr, address addr2) pure returns(string memory) {
+function param_7(address addr, address addr2) pure returns(string memory) {
     return addr.toString().comma(addr2);
 }
-function param_19(address addr, string memory str) pure returns(string memory) {
+function param_9(address addr, string memory str) pure returns(string memory) {
     return addr.toString().comma(str);
 }
 
-function param_0(Dictionary_1 memory dict) pure returns(string memory) {
-    return param_25(dict.name);
+function param_4(Dictionary_1 memory dict) pure returns(string memory) {
+    return param_11(dict.name);
 }
-function param_27(Dictionary_1 memory dict, address addr) pure returns(string memory) {
-    return param_17(dict.addr, addr);
+function param_21(Dictionary_1 memory dict, address addr) pure returns(string memory) {
+    return param_7(dict.addr, addr);
 }
-function param_3(Dictionary_1 memory dict, bytes4 b4, address addr) pure returns(string memory) {
-    return param_24(dict.addr).comma(b4).comma(addr);
+function param_6(Dictionary_1 memory dict, bytes4 b4, address addr) pure returns(string memory) {
+    return param_14(dict.addr).comma(b4).comma(addr);
 }
-function param_6(Dictionary_1 memory dict, bytes memory b) pure returns(string memory) {
-    return param_19(dict.addr, string(b));
+function param_13(Dictionary_1 memory dict, bytes memory b) pure returns(string memory) {
+    return param_9(dict.addr, string(b));
 }
-function param_2(Dictionary_1 memory dict1, Dictionary_1 memory dict2) pure returns(string memory) {
-    return param_17(dict1.addr, dict2.addr);
+function param_20(Dictionary_1 memory dict1, Dictionary_1 memory dict2) pure returns(string memory) {
+    return param_7(dict1.addr, dict2.addr);
 }
 
-function param_26(Function memory func) pure returns(string memory) {
+function param_10(Function memory func) pure returns(string memory) {
     return func.name;
 }
-function param_7(Function[] memory functions) pure returns(string memory res) {
+function param_25(Function[] memory functions) pure returns(string memory res) {
     for (uint i; i < functions.length; ++i) {
         res = res.comma(functions[i].name);
     }
 }
-function param_12(Function[] memory functions, address facade) pure returns(string memory res) {
-    return param_7(functions).comma(facade);
+function param_17(Function[] memory functions, address facade) pure returns(string memory res) {
+    return param_25(functions).comma(facade);
 }
 
-function param_4(Bundle memory bundle) pure returns(string memory) {
+function param_24(Bundle memory bundle) pure returns(string memory) {
     return bundle.name;
 }
-function param_8(Bundle memory bundle, address addr) pure returns(string memory) {
+function param_26(Bundle memory bundle, address addr) pure returns(string memory) {
     return bundle.name.comma(addr);
 }
-function param_9(Bundle memory bundle, bytes memory b) pure returns(string memory) {
+function param_3(Bundle memory bundle, bytes memory b) pure returns(string memory) {
     return bundle.name.comma(string(b));
 }
-function param_21(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
+function param_27(Bundle memory bundle, address addr, bytes memory b) pure returns(string memory) {
     return bundle.name.comma(addr).comma(string(b));
 }
-function param_15(address addr, bytes memory b) pure returns(string memory) {
-    return param_24(addr).comma(string(b));
+function param_18(address addr, bytes memory b) pure returns(string memory) {
+    return param_14(addr).comma(string(b));
 }
-function param_10(bytes memory b) pure returns(string memory) {
+function param_19(bytes memory b) pure returns(string memory) {
     return string(b);
 }
 
-// devkit/system/Validator.sol
+// src/devkit/system/Validator.sol
 
     using Formatter for string;
 
@@ -24792,7 +25000,7 @@ library Validator {
 
 }
 
-// devkit/test/mocks/MockDictionary.sol
+// src/devkit/test/mocks/MockDictionary.sol
 
 // Core
 
@@ -24811,7 +25019,7 @@ contract MockDictionary is Dictionary_0 {
 
 // TODO DictionaryWithPermissionsMock.sol
 
-// devkit/test/mocks/SimpleMockProxy.sol
+// src/devkit/test/mocks/SimpleMockProxy.sol
 
 // Core
 
@@ -24856,7 +25064,7 @@ library SimpleMockProxyLib {
     // }
 }
 
-// devkit/types/Formatter.sol
+// src/devkit/types/Formatter.sol
 
 // Forge-std
 
@@ -25015,7 +25223,7 @@ library Formatter {
 
 }
 
-// devkit/types/Inspector.sol
+// src/devkit/types/Inspector.sol
 
 // External Library
 
@@ -25208,7 +25416,7 @@ library Inspector {
 
 }
 
-// devkit/types/Parser.sol
+// src/devkit/types/Parser.sol
 
     using Inspector for string;
 
@@ -25228,7 +25436,7 @@ library Parser {
     }
 }
 
-// devkit/types/TypeGuard.sol
+// src/devkit/types/TypeGuard.sol
 
 // Core Types
 
@@ -25376,7 +25584,7 @@ library TypeGuard {
 
 }
 
-// devkit/utils/ForgeHelper.sol
+// src/devkit/utils/ForgeHelper.sol
 
 // Forge-std
 
@@ -25500,7 +25708,7 @@ library ForgeHelper {
 
 }
 
-// devkit/utils/global/MCDeployLib.sol
+// src/devkit/utils/global/MCDeployLib.sol
 
     using Inspector for string;
 // Validation
@@ -25535,7 +25743,7 @@ library MCDeployLib {
         🌞 Deploy Meta Contract
     -------------------------------*/
     function deploy(MCDevKit storage mc, Bundle storage bundle, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_21(bundle, owner, initData));
+        uint pid = mc.startProcess("deploy", param_27(bundle, owner, initData));
         Dictionary_1 storage dictionary = mc.deployDictionary(bundle, owner);
         mc.deployProxy(dictionary, initData);
         return mc.finishProcess(pid);
@@ -25547,32 +25755,32 @@ library MCDeployLib {
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_4(bundle));
+        uint pid = mc.startProcess("deploy", param_24(bundle));
         mc.deploy(bundle, ForgeHelper.msgSender(), "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_8(bundle, owner));
+        uint pid = mc.startProcess("deploy", param_26(bundle, owner));
         mc.deploy(bundle, owner, "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, Bundle storage bundle, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_9(bundle, initData));
+        uint pid = mc.startProcess("deploy", param_3(bundle, initData));
         mc.deploy(bundle, ForgeHelper.msgSender(), initData);
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, address owner) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_24(owner));
+        uint pid = mc.startProcess("deploy", param_14(owner));
         mc.deploy(mc.bundle.findCurrent(), owner, "");
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, address owner, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_15(owner, initData));
+        uint pid = mc.startProcess("deploy", param_18(owner, initData));
         mc.deploy(mc.bundle.findCurrent(), owner, initData);
         return mc.finishProcess(pid);
     }
     function deploy(MCDevKit storage mc, bytes memory initData) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("deploy", param_10(initData));
+        uint pid = mc.startProcess("deploy", param_19(initData));
         mc.deploy(mc.bundle.findCurrent(), ForgeHelper.msgSender(), initData);
         return mc.finishProcess(pid);
     }
@@ -25581,7 +25789,7 @@ library MCDeployLib {
         🏠 Deploy Proxy
     -----------------------*/
     function deployProxy(MCDevKit storage mc, Dictionary_1 storage dictionary, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_6(dictionary, initData));
+        uint pid = mc.startProcess("deployProxy", param_13(dictionary, initData));
         Validator.MUST_Completed(dictionary);
         /// @dev Accepts any initData as input
         Proxy_2 memory _proxy = ProxyLib.deploy(dictionary, initData);
@@ -25595,12 +25803,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, Dictionary_1 storage dictionary) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_0(dictionary));
+        uint pid = mc.startProcess("deployProxy", param_4(dictionary));
         proxy = mc.deployProxy(dictionary, "");
         mc.finishProcess(pid);
     }
     function deployProxy(MCDevKit storage mc, bytes memory initData) internal returns(Proxy_2 memory proxy) {
-        uint pid = mc.startProcess("deployProxy", param_10(initData));
+        uint pid = mc.startProcess("deployProxy", param_19(initData));
         proxy = mc.deployProxy(mc.dictionary.findCurrent(), initData);
         mc.finishProcess(pid);
     }
@@ -25609,7 +25817,7 @@ library MCDeployLib {
         📚 Deploy Dictionary
     ---------------------------*/
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_8(bundle, owner));
+        uint pid = mc.startProcess("deployDictionary", param_26(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary_1 memory _dictionary = DictionaryLib
@@ -25627,12 +25835,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function deployDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_4(bundle));
+        uint pid = mc.startProcess("deployDictionary", param_24(bundle));
         dictionary = mc.deployDictionary(bundle, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function deployDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("deployDictionary", param_24(owner));
+        uint pid = mc.startProcess("deployDictionary", param_14(owner));
         dictionary = mc.deployDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);
     }
@@ -25641,7 +25849,7 @@ library MCDeployLib {
         🔂 Duplicate Dictionary
     ------------------------------*/
     function duplicateDictionary(MCDevKit storage mc, Dictionary_1 storage dictionary, address owner) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_27(dictionary, owner));
+        uint pid = mc.startProcess("duplicateDictionary", param_21(dictionary, owner));
         Dictionary_1 memory _duplicatedDictionary = DictionaryLib.duplicate(dictionary, owner);
         duplicatedDictionary = mc.dictionary.register(_duplicatedDictionary);
         mc.finishProcess(pid);
@@ -25653,12 +25861,12 @@ library MCDeployLib {
         mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, Dictionary_1 storage dictionary) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_0(dictionary));
+        uint pid = mc.startProcess("duplicateDictionary", param_4(dictionary));
         duplicatedDictionary = mc.duplicateDictionary(dictionary, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function duplicateDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage duplicatedDictionary) {
-        uint pid = mc.startProcess("duplicateDictionary", param_24(owner));
+        uint pid = mc.startProcess("duplicateDictionary", param_14(owner));
         duplicatedDictionary = mc.duplicateDictionary(mc.dictionary.findCurrent(), owner);
         mc.finishProcess(pid);
     }
@@ -25667,7 +25875,7 @@ library MCDeployLib {
         💽 Load Dictionary
     --------------------------*/
     function loadDictionary(MCDevKit storage mc, string memory name, address dictionaryAddr) internal returns(Dictionary_1 storage dictionary) {
-        uint pid = mc.startProcess("load", param_16(name, dictionaryAddr));
+        uint pid = mc.startProcess("load", param_8(name, dictionaryAddr));
         Dictionary_1 memory _dictionary = DictionaryLib.load(name, dictionaryAddr);
         dictionary = mc.dictionary.register(_dictionary);
         mc.finishProcess(pid);
@@ -25675,7 +25883,7 @@ library MCDeployLib {
 
 }
 
-// devkit/utils/global/MCFinderLib.sol
+// src/devkit/utils/global/MCFinderLib.sol
 
 // Core
 //  functions
@@ -25707,7 +25915,7 @@ library MCFinderLib {
 
 }
 
-// devkit/utils/global/MCHelpers.sol
+// src/devkit/utils/global/MCHelpers.sol
 
 // Validation
 
@@ -25743,7 +25951,7 @@ library MCHelpers {
         🤲 Set Storage Reader
     ----------------------------*/
     function setStorageReader(MCDevKit storage mc, Dictionary_1 memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setStorageReader", param_3(dictionary, selector, implementation));
+        uint pid = mc.startProcess("setStorageReader", param_6(dictionary, selector, implementation));
         dictionary.set(selector, implementation);
         return mc.finishProcess(pid);
     }
@@ -25826,7 +26034,7 @@ library MCHelpers {
     }
 }
 
-// devkit/utils/global/MCInitLib.sol
+// src/devkit/utils/global/MCInitLib.sol
 
 // Validation
 
@@ -25849,7 +26057,7 @@ library MCInitLib {
         🌱 Init Bundle
     ----------------------*/
     function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("init", param_25(name));
+        uint pid = mc.startProcess("init", param_11(name));
         mc.bundle.init(name);
         return mc.finishProcess(pid);
     }
@@ -25861,7 +26069,7 @@ library MCInitLib {
         🔗 Use Function
     -----------------------*/
     function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("use", param_18(name, selector, implementation));
+        uint pid = mc.startProcess("use", param_22(name, selector, implementation));
         // Register new function
         Validator.MUST_NotEmptyName(name);
         Validator.SHOULD_NotEmptySelector(selector);
@@ -25887,7 +26095,7 @@ library MCInitLib {
     --------------------*/
     /// @notice Assign facade address to current bundle
     function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("useFacade", param_24(facade));
+        uint pid = mc.startProcess("useFacade", param_14(facade));
         mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);
@@ -25904,7 +26112,7 @@ library MCInitLib {
 
 }
 
-// devkit/utils/global/MCMockLib.sol
+// src/devkit/utils/global/MCMockLib.sol
 
 // Validation
 
@@ -25933,19 +26141,19 @@ library MCMockLib {
         🏠 Mocking Proxy
     -----------------------*/
     function createMockProxy(MCDevKit storage mc, Bundle storage bundle, bytes memory initData) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_9(bundle, initData));
+        uint pid = mc.startProcess("createMockProxy", param_3(bundle, initData));
         Validator.MUST_Completed(bundle);
         Proxy_2 memory _mockProxy = ProxyLib.createSimpleMock(bundle.functions);
         mockProxy = mc.proxy.register(mc.proxy.genUniqueMockName(bundle.name), _mockProxy);
         mc.finishProcess(pid);
     }
     function createMockProxy(MCDevKit storage mc, Bundle storage bundle) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_4(bundle));
+        uint pid = mc.startProcess("createMockProxy", param_24(bundle));
         mockProxy = mc.createMockProxy(bundle, "");
         mc.finishProcess(pid);
     }
     function createMockProxy(MCDevKit storage mc, bytes memory initData) internal returns(Proxy_2 storage mockProxy) {
-        uint pid = mc.startProcess("createMockProxy", param_10(initData));
+        uint pid = mc.startProcess("createMockProxy", param_19(initData));
         mockProxy = mc.createMockProxy(mc.bundle.findCurrent(), initData);
         mc.finishProcess(pid);
     }
@@ -25959,7 +26167,7 @@ library MCMockLib {
         📚 Mocking Dictionary
     ---------------------------*/
     function createMockDictionary(MCDevKit storage mc, Bundle storage bundle, address owner) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_8(bundle, owner));
+        uint pid = mc.startProcess("createMockDictionary", param_26(bundle, owner));
         Validator.MUST_Completed(bundle);
         Validator.SHOULD_OwnerIsNotZeroAddress(owner);
         Dictionary_1 memory _mockDictionary = DictionaryLib
@@ -25975,19 +26183,19 @@ library MCMockLib {
         mc.finishProcess(pid);
     }
     function createMockDictionary(MCDevKit storage mc, Bundle storage bundle) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_4(bundle));
+        uint pid = mc.startProcess("createMockDictionary", param_24(bundle));
         mockDictionary = mc.createMockDictionary(bundle, ForgeHelper.msgSender());
         mc.finishProcess(pid);
     }
     function createMockDictionary(MCDevKit storage mc, address owner) internal returns(Dictionary_1 storage mockDictionary) {
-        uint pid = mc.startProcess("createMockDictionary", param_24(owner));
+        uint pid = mc.startProcess("createMockDictionary", param_14(owner));
         mockDictionary = mc.createMockDictionary(mc.bundle.findCurrent(), owner);
         mc.finishProcess(pid);
     }
 
 }
 
-// devkit/utils/mapping/NameGenerator.sol
+// src/devkit/utils/mapping/NameGenerator.sol
 
 // Core Types
 
@@ -26076,7 +26284,7 @@ library NameGenerator {
 
 }
 
-// devkit/MCBase.sol
+// src/devkit/MCBase.sol
 
 // 🛠 FORGE STD
 
@@ -26107,17 +26315,39 @@ abstract contract MCTestBase is MCBase, Test {
     }
 }
 
-// devkit/MCScript.sol
+// src/devkit/MCScript.sol
 
 // 💬 ABOUT
 // Meta Contract's default Script based on Forge Std Script
 
+// 🛠 FORGE STD INTERFACE
+
 // 📦 BOILERPLATE
 
 // ⭐️ MC SCRIPT
-abstract contract MCScript is MCScriptBase {}
+abstract contract MCScript is MCScriptBase {
+    function _saveAddrToEnv(address addr, string memory envKeyBase) internal {
+        if (!vm.isContext(VmSafe.ForgeContext.ScriptBroadcast)) return;
 
-// devkit/MCTest.sol
+        uint256 _chainId;
+        assembly {
+            _chainId := chainid()
+        }
+        string memory _chainIdString = vm.toString(_chainId);
+
+        vm.writeLine(
+            string.concat(vm.projectRoot(), "/.env"),
+            string.concat(
+                envKeyBase,
+                _chainIdString,
+                "=",
+                vm.toString(address(addr))
+            )
+        );
+    }
+}
+
+// src/devkit/MCTest.sol
 
 // 💬 ABOUT
 // Meta Contract's default Test based on Forge Std Test
@@ -26156,7 +26386,7 @@ abstract contract MCTest is MCTestBase, Proxy_0 { // solhint-disable-line payabl
 
 }
 
-// devkit/test/dummy/Dummy.sol
+// src/devkit/test/dummy/Dummy.sol
 
 library Dummy {
     function bundleName() internal returns(string memory) {
@@ -26201,4 +26431,4 @@ library Dummy {
 
 }
 
-// devkit/Files.sol
+// src/devkit/Files.sol
