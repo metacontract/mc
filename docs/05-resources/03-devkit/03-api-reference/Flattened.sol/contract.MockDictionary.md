@@ -1,8 +1,8 @@
 # MockDictionary
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
 
 **Inherits:**
-[Dictionary_0](/src/devkit/Flattened.sol/contract.Dictionary_0.md)
+[Dictionary_0](/resources/devkit/api-reference/Flattened.sol/contract.Dictionary_0)
 
 
 ## Functions

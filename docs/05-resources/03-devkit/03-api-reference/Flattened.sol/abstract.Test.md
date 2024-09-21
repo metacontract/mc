@@ -1,8 +1,8 @@
 # Test
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
 
 **Inherits:**
-[TestBase](/src/devkit/Flattened.sol/abstract.TestBase.md), [StdAssertions](/src/devkit/Flattened.sol/abstract.StdAssertions.md), [StdChains](/src/devkit/Flattened.sol/abstract.StdChains.md), [StdCheats](/src/devkit/Flattened.sol/abstract.StdCheats.md), [StdInvariant](/src/devkit/Flattened.sol/abstract.StdInvariant.md), [StdUtils](/src/devkit/Flattened.sol/abstract.StdUtils.md)
+[TestBase](/resources/devkit/api-reference/Flattened.sol/abstract.TestBase), [StdAssertions](/resources/devkit/api-reference/Flattened.sol/abstract.StdAssertions), [StdChains](/resources/devkit/api-reference/Flattened.sol/abstract.StdChains), [StdCheats](/resources/devkit/api-reference/Flattened.sol/abstract.StdCheats), [StdInvariant](/resources/devkit/api-reference/Flattened.sol/abstract.StdInvariant), [StdUtils](/resources/devkit/api-reference/Flattened.sol/abstract.StdUtils)
 
 
 ## State Variables

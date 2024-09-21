@@ -1,8 +1,8 @@
 # MCTest
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/MCTest.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/MCTest.sol)
 
 **Inherits:**
-[MCTestBase](/src/devkit/Flattened.sol/abstract.MCTestBase.md), OZProxy
+[MCTestBase](/resources/devkit/api-reference/Flattened.sol/abstract.MCTestBase), OZProxy
 
 
 ## State Variables

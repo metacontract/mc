@@ -1,8 +1,8 @@
 # SimpleMockProxy
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
 
 **Inherits:**
-[Proxy_0](/src/devkit/Flattened.sol/abstract.Proxy_0.md)
+[Proxy_0](/resources/devkit/api-reference/Flattened.sol/abstract.Proxy_0)
 
 
 ## Functions

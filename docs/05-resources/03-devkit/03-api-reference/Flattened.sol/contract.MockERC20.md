@@ -1,8 +1,8 @@
 # MockERC20
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
 
 **Inherits:**
-[IERC20](/src/devkit/Flattened.sol/interface.IERC20.md)
+[IERC20](/resources/devkit/api-reference/Flattened.sol/interface.IERC20)
 
 This is a mock contract of the ERC20 standard for testing purposes only, it SHOULD NOT be used in production.
 

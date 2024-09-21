@@ -1,8 +1,8 @@
 # IERC721
-[Git Source](https://github.com/metacontract/mc/blob/20ed737f21a46d89afffe1322a75b1ecfcacff9a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
 
 **Inherits:**
-[IERC165_0](/src/devkit/Flattened.sol/interface.IERC165_0.md)
+[IERC165_0](/resources/devkit/api-reference/Flattened.sol/interface.IERC165_0)
 
 *See https://eips.ethereum.org/EIPS/eip-721
 Note: the ERC-165 identifier for this interface is 0x80ac58cd.*
