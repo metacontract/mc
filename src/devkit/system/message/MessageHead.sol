@@ -68,5 +68,7 @@ library MessageHead {
     string constant STD_FUNCTIONS_NOT_BUILT = "Std Functions Not Built";
     // Name Generator
     string constant NOT_FOUND_IN_RANGE = "Not Found In Range";
+    // MCTest
+    string constant TEST_MUST_USE_FUNCTION = "MCTest: Function Not Found";
 
 }

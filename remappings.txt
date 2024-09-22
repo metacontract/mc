@@ -2,3 +2,10 @@
 @mc-devkit/=src/devkit/
 @ucs.mc/=lib/ucs-contracts/src/
 @oz.mc/=lib/ucs-contracts/lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts/=lib/ucs-contracts/lib/openzeppelin-contracts/contracts/
+@oz.ucs/=lib/ucs-contracts/lib/openzeppelin-contracts/contracts/
+ds-test/=lib/ucs-contracts/lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/
+erc4626-tests/=lib/ucs-contracts/lib/openzeppelin-contracts/lib/erc4626-tests/
+forge-std/=lib/forge-std/src/
+openzeppelin-contracts/=lib/ucs-contracts/lib/openzeppelin-contracts/
+ucs-contracts/=lib/ucs-contracts/

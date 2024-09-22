@@ -71,5 +71,7 @@ library MessageBody {
     string constant STD_FUNCTIONS_NOT_BUILT = "The standard functions have not been successfully built yet. Please complete the building process before attempting to use them.";
     // Name Generator
     string constant NOT_FOUND_IN_RANGE = "The value was not found within the expected range. Please provide a value that falls within the specified range and try again.";
+    // MCTest
+    string constant TEST_MUST_USE_FUNCTION = "The function required for testing is not configured. Please set it up using '_use'.";
 
 }
