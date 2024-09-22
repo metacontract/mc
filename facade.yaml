@@ -1,0 +1,5 @@
+bundleName: "MetacontractStandards"
+bundleDirName: "std"
+facades:
+  - name: "MetacontractStandardFacade"
+
