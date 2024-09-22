@@ -4,6 +4,7 @@ pragma solidity ^0.8.23;
 import {Proxy as OZProxy} from "@oz.ucs/proxy/Proxy.sol";
 
 import {System} from "@mc-devkit/system/System.sol";
+import {Validator} from "@mc-devkit/system/Validator.sol";
 import {Receive} from "@mc-std/functions/Receive.sol";
 import {Formatter} from "@mc-devkit/types/Formatter.sol";
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
@@ -41,8 +42,10 @@ abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payabl
         vm.store(address(this), ProxyUtils.DICTIONARY_SLOT, Formatter.toBytes32(dictionary_));
     }
 
-    function _implementation() internal view override returns (address) {
-        return implementations[msg.sig];
+    function _implementation() internal view override returns (address implementation) {
+        implementation = implementations[msg.sig];
+        Validator.MUST_UseFunctionContract(implementation);
+        return implementation;
     }
 
 }

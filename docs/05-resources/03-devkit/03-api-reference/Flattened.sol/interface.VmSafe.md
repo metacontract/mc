@@ -1,5 +1,5 @@
 # VmSafe
-[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/Flattened.sol)
 
 The `VmSafe` interface does not allow manipulation of the EVM state or other actions that may
 result in Script simulations differing from on-chain execution. It is recommended to only use

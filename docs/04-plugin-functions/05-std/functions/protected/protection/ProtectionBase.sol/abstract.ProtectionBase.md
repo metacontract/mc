@@ -1,5 +1,5 @@
 # ProtectionBase
-[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/plugin-functions/std/functions/protected/protection/ProtectionBase.sol)
+[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/plugin-functions/std/functions/protected/protection/ProtectionBase.sol)
 
 
 ## Functions

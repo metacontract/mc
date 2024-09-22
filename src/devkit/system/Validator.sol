@@ -283,4 +283,11 @@ library Validator {
         validate(MUST, false, HEAD.NOT_FOUND_IN_RANGE, BODY.NOT_FOUND_IN_RANGE);
     }
 
+    /**================
+        🧪 MCTest
+    ==================*/
+    function MUST_UseFunctionContract(address implementation) internal view {
+        validate(MUST, implementation.isContract(), HEAD.TEST_MUST_USE_FUNCTION, BODY.TEST_MUST_USE_FUNCTION);
+    }
+
 }

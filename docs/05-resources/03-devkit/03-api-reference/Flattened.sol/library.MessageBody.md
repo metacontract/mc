@@ -1,5 +1,5 @@
 # MessageBody
-[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/Flattened.sol)
 
 
 ## State Variables
@@ -457,6 +457,14 @@ string constant STD_FUNCTIONS_NOT_BUILT =
 ```solidity
 string constant NOT_FOUND_IN_RANGE =
     "The value was not found within the expected range. Please provide a value that falls within the specified range and try again.";
+```
+
+
+### TEST_MUST_USE_FUNCTION
+
+```solidity
+string constant TEST_MUST_USE_FUNCTION =
+    "The function required for testing is not configured. Please set it up using '_use'.";
 ```
 
 
