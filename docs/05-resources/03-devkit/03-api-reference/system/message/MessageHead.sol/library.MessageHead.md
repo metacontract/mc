@@ -1,5 +1,5 @@
 # MessageHead
-[Git Source](https://github.com/metacontract/mc/blob/c3fc2b414d37afc92bb1cf2e606b4b2bede47403/resources/devkit/api-reference/system/message/MessageHead.sol)
+[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/system/message/MessageHead.sol)
 
 
 ## State Variables
@@ -385,6 +385,13 @@ string constant STD_FUNCTIONS_NOT_BUILT = "Std Functions Not Built";
 
 ```solidity
 string constant NOT_FOUND_IN_RANGE = "Not Found In Range";
+```
+
+
+### TEST_MUST_USE_FUNCTION
+
+```solidity
+string constant TEST_MUST_USE_FUNCTION = "MCTest: Function Not Found";
 ```
 
 
