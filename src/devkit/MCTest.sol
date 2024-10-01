@@ -17,7 +17,7 @@ import {Dummy} from "@mc-devkit/test/dummy/Dummy.sol";
 import {MCTestBase} from "./MCBase.sol";
 
 // 🌟 MC State Fuzzing Test
-abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payable-fallback
+abstract contract MCTest is MCTestBase, OZProxy {
     struct Function {
         bytes4 selector;
         address implementation;
@@ -27,10 +27,7 @@ abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payabl
     address target = address(this);
     Function[] internal functions;
     address dictionary;
-
-    constructor() {
-        _use(bytes4(0), address(new Receive()));
-    }
+    address receiver = address(new Receive());
 
     function _use(bytes4 selector_, address impl_) internal {
         functions.push(Function(selector_, impl_));
@@ -48,4 +45,7 @@ abstract contract MCTest is MCTestBase, OZProxy { // solhint-disable-line payabl
         return implementation;
     }
 
+    receive() external payable {
+        _delegate(receiver);
+    }
 }
