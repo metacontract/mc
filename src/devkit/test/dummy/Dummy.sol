@@ -8,11 +8,11 @@ import {DummyContract} from "@mc-devkit/test/dummy/DummyContract.sol";
 import {MCTest} from "@mc-devkit/MCTest.sol";
 
 library Dummy {
-    function bundleName() internal returns(string memory) {
+    function bundleName() internal pure returns(string memory) {
         return "DummyBundleName";
     }
 
-    function functionSelector() internal returns(bytes4) {
+    function functionSelector() internal pure returns(bytes4) {
         return DummyFunction.dummy.selector;
     }
 
