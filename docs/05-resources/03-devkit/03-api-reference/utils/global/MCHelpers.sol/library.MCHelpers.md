@@ -1,5 +1,5 @@
 # MCHelpers
-[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/utils/global/MCHelpers.sol)
+[Git Source](https://github.com/metacontract/mc/blob/8438d83ed04f942f1b69f22b0cb556723d88a8f9/resources/devkit/api-reference/utils/global/MCHelpers.sol)
 
 🛠️ Helper
 ♻️ Reset Current Context

@@ -1,5 +1,5 @@
 # Context
-[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/8438d83ed04f942f1b69f22b0cb556723d88a8f9/resources/devkit/api-reference/Flattened.sol)
 
 *Provides information about the current execution context, including the
 sender of the transaction and its data. While these are generally available

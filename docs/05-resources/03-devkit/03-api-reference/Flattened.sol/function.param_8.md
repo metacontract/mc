@@ -1,8 +1,8 @@
 # param_8
-[Git Source](https://github.com/metacontract/mc/blob/d41f04df9ea19494be75c66f344b8104caf03cd2/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/8438d83ed04f942f1b69f22b0cb556723d88a8f9/resources/devkit/api-reference/Flattened.sol)
 
 
 ```solidity
-function param_8(string memory str, Function[] memory funcs) pure returns (string memory);
+function param_8(Dictionary_1 memory dict, address addr) pure returns (string memory);
 ```
 
