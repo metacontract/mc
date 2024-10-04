@@ -1,0 +1,8 @@
+bundleName: "TextDAO"
+bundleDirName: "textDAO"
+facades:
+  - name: "TextDAOFacade"
+    excludeFileNames:
+      - "OnlyAdminCheats.sol"
+  - name: "TextDAOFacadeWithCheat"
+
