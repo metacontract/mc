@@ -1,0 +1,17 @@
+{
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space",
+		"lineWidth": 120
+	},
+	"linter": {
+		"enabled": true
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"files": {
+		"ignore": [".docusaurus/**", "node_modules/**"],
+		"include": ["./**/*.{js,ts,tsx,json}"]
+	}
+}

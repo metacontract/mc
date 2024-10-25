@@ -1,8 +1,19 @@
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import Heading from "@theme/Heading";
+import CodeBlock from "@theme/CodeBlock";
 import Layout from "@theme/Layout";
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 import clsx from "clsx";
+import {
+	CheckCircle,
+	Layers,
+	MoveUpRight,
+	RefreshCw,
+	Settings,
+	TrendingUp,
+} from "lucide-react";
+import type React from "react";
 
 import styles from "./index.module.css";
 
@@ -13,96 +24,109 @@ export default function Home(): JSX.Element {
 			title={`${siteConfig.title}`}
 			description="Description will go into a meta tag in <head />"
 		>
-			<Header />
-			<main>
-				<Features />
-			</main>
+			<div className={styles.home__container}>
+				<header className={styles.home__headerContainer}>
+					<section className={styles.home__hero}>
+						<h1 className={styles.home__title}>{siteConfig.title}</h1>
+						<div className={styles.home__tagline}>{siteConfig.tagline}</div>
+						<div className={styles.home__buttonGroup}>
+							<Link
+								className={clsx(
+									"button",
+									styles.home__header__button,
+									styles.primaryButton,
+								)}
+								to="/introduction/getting-started"
+							>
+								Get started
+							</Link>
+							<Link
+								className={clsx(
+									"button",
+									styles.home__header__button,
+									styles.secondaryButton,
+								)}
+								to="https://github.com/metacontract/mc/"
+							>
+								View on GitHub{" "}
+								<MoveUpRight className={styles.externalLinkIcon} />
+							</Link>
+						</div>
+					</section>
+					<section className={styles.home__install}>
+						<Tabs>
+							<TabItem value="deployment" label="Deployment">
+								<CodeBlock className="language-solidity">
+									{`${siteConfig.customFields.deploymentCode}`}
+								</CodeBlock>
+							</TabItem>
+							{/* <TabItem value="upgrade" label="Upgrade">
+							<CodeBlock className="language-solidity">
+								{`${siteConfig.customFields.upgradeCode}`}
+							</CodeBlock>
+						</TabItem> */}
+						</Tabs>
+					</section>
+				</header>
+
+				<main className={styles.home__main}>
+					<article className={styles.article}>
+						<h3 className={styles.article__title}>
+							<RefreshCw className={styles.article__icon} />
+							Upgradeability
+						</h3>
+						<p className={styles.article__description}>
+							Meta Contracts can be upgraded without changing their address,
+							allowing for seamless improvements and bug fixes.
+						</p>
+					</article>
+
+					<article className={styles.article}>
+						<h3 className={styles.article__title}>
+							<Layers className={styles.article__icon} />
+							Modularity
+						</h3>
+						<p className={styles.article__description}>
+							The framework separates contract logic into distinct, manageable
+							components, enhancing code organization and reusability.
+						</p>
+					</article>
+
+					<article className={styles.article}>
+						<h3 className={styles.article__title}>
+							<TrendingUp className={styles.article__icon} />
+							Scalability
+						</h3>
+						<p className={styles.article__description}>
+							Meta Contracts are designed to handle growth efficiently, making
+							them suitable for large-scale applications.
+						</p>
+					</article>
+
+					<article className={styles.article}>
+						<h3 className={styles.article__title}>
+							<Settings className={styles.article__icon} />
+							Flexibility
+						</h3>
+						<p className={styles.article__description}>
+							Developers can easily extend and customize Meta Contracts to suit
+							specific project needs.
+						</p>
+					</article>
+
+					<article className={styles.article}>
+						<h3 className={styles.article__title}>
+							<CheckCircle className={styles.article__icon} />
+							Testability
+						</h3>
+						<p className={styles.article__description}>
+							The modular structure of Meta Contracts facilitates comprehensive
+							testing, including unit tests for individual functions and
+							integration tests for the entire system.
+						</p>
+					</article>
+				</main>
+			</div>
 		</Layout>
 	);
 }
-
-function Header() {
-	const { siteConfig } = useDocusaurusContext();
-	return (
-		<header className={clsx("hero hero--primary", styles.heroBanner)}>
-			<div className="container">
-				<Heading as="h1" className="hero__title">
-					{siteConfig.title}
-				</Heading>
-				<p className="hero__subtitle">{siteConfig.tagline}</p>
-				<div className={styles.buttons}>
-					<Link
-						className="button button--secondary button--lg"
-						to="/introduction"
-					>
-						Introduction
-					</Link>
-				</div>
-			</div>
-		</header>
-	);
-}
-
-const Features = (): JSX.Element => {
-	return (
-		<section className={styles.features}>
-			<div className="container">
-				<div className="row">
-					{FeatureList.map((feature) => (
-						<Feature key={feature.title} {...feature} />
-					))}
-				</div>
-			</div>
-		</section>
-	);
-};
-
-const Feature = ({ title, to, Svg, description }: FeatureItem) => {
-	return (
-		<div className={clsx("col col--4")}>
-			<Link to={to}>
-				<div className="text--center">
-					<Svg className={styles.featureSvg} role="img" />
-				</div>
-				<div className="text--center padding-horiz--md">
-					<Heading as="h3">{title}</Heading>
-					<p>{description}</p>
-				</div>
-			</Link>
-		</div>
-	);
-};
-
-type FeatureItem = {
-	title: string;
-	to: string;
-	Svg: React.ComponentType<React.ComponentProps<"svg">>;
-	description: JSX.Element;
-};
-
-const FeatureList: FeatureItem[] = [
-	{
-		title: "Tutorials",
-		to: "/tutorials",
-		Svg: require("@site/static/img/undraw_docusaurus_mountain.svg").default,
-		description: <></>,
-	},
-	{
-		title: "DevOps",
-		to: "/devops",
-		Svg: require("@site/static/img/undraw_docusaurus_tree.svg").default,
-		description: <></>,
-	},
-	{
-		title: "Plugin Functions",
-		to: "/plugin-functions",
-		Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
-		description: <></>,
-	},
-	{
-		title: "Resources",
-		to: "/resources",
-		Svg: require("@site/static/img/undraw_docusaurus_react.svg").default,
-		description: <></>,
-	},
-];
