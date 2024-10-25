@@ -1,12 +1,12 @@
 {
 	"name": "mc",
-	"workspaces": ["book/*"],
+	"workspaces": ["site/*"],
 	"scripts": {
-		"book:install": "cd book && bun install",
-		"book:start": "cd book && npm run start",
-		"book:build": "cd book && npm run build",
-		"book:serve": "cd book && npm run serve",
-		"book:clear": "cd book && npm run clear",
-		"book:soldocs": "sh ./shell-script/generate_soldocs.sh"
+		"site:install": "cd site && bun install",
+		"site:start": "cd site && npm run start",
+		"site:build": "cd site && npm run build",
+		"site:serve": "cd site && npm run serve",
+		"site:clear": "cd site && npm run clear",
+		"site:soldocs": "sh ./shell-script/generate_soldocs.sh"
 	}
 }
