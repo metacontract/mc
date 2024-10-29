@@ -1,3 +1,0 @@
-# Plugin Functions
-
-comming soon

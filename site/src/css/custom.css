@@ -35,6 +35,7 @@
   --divider-color: rgb(220, 220, 220);
   --sidebar-divider-color: rgb(220, 220, 220);
   --ifm-spacing-horizontal: 3rem;
+  --ifm-code-font-size: 12px;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

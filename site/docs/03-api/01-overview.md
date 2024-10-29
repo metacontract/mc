@@ -1,11 +1,9 @@
 ---
-title: "Overview"
-version: 0.1.0
-lastUpdated: 2024-09-19
-author: Meta Contract Development Team
-scope: development
-type: overview
+keywords: [devkit, overview, features]
 tags: [devkit, overview, features]
+last_update:
+  date: 2024-10-28
+  author: Meta Contract Development Team
 ---
 
 # Overview
@@ -14,11 +12,11 @@ The Meta Contract DevKit is a comprehensive suite of tools and libraries designe
 
 ## Key Features
 
-1. **Scripting Utilities**: Facilitates deployment scripts and interaction sequences with built-in transaction broadcasting capabilities.
+1. **Testing Helpers**: Provides a set of functions and modifiers to simulate various scenarios and streamline the testing process.
 
-2. **Testing Helpers**: Provides a set of functions and modifiers to simulate various scenarios and streamline the testing process.
+2. **Scripting Utilities**: Facilitates deployment and upgrade scripts and interaction sequences with built-in transaction broadcasting capabilities.
 
-3. **Object Lifecycle Management**: Offers a robust system for managing the states and transitions of core Meta Contract objects (Function, Bundle, Proxy, Dictionary).
+3. **Object Lifecycle Management**: Offers a robust system for managing the states and transitions of core Meta Contract objects (Function, Bundle, Proxy, Dictionary) to efficiently handle the core architecture known as UCS.
 
 4. **Integration with Foundry**: Seamlessly integrates with the Foundry development environment, enhancing its capabilities for Meta Contract development.
 
@@ -26,17 +24,14 @@ The Meta Contract DevKit is a comprehensive suite of tools and libraries designe
 
 ## Components
 
-The DevKit consists of several key components:
+The DevKit consists of two base contracts:
 
-- **MCScript**: A base contract for deployment and interaction scripts.
-- **MCTest**: A base contract for writing and running tests.
-- **Core Libraries**: A collection of libraries for managing Meta Contract objects and their lifecycles.
-- **Utility Functions**: Helper functions for common tasks in Meta Contract development.
+- **MCTest**: A base contract for writing and running tests. Within contracts that inherit from MCTest, you can utilize the primary object `mc` for various testing functionalities.
 
-## Getting Started
+- **MCScript**: A base contract for deployment and interaction scripts. Contracts inheriting from MCScript can also use the primary object `mc` to facilitate deployment and interaction processes.
+
+## How to Use
 
 To start using the Meta Contract DevKit, refer to the [Usage Guide](./02-usage.md) for detailed instructions on installation, setup, and basic usage patterns.
 
-For a deep dive into the API and available functions, check out the [API Reference](./03-api-reference/index.md).
-
-The Meta Contract DevKit is designed to empower developers to build, test, and deploy Meta Contracts with ease and efficiency. Whether you're new to Meta Contracts or an experienced developer, the DevKit provides the tools you need to streamline your workflow and focus on creating innovative smart contract solutions.
+For a deep dive into the API and available functions, check out the [DevKit API Details](./03-api-details/index.md).

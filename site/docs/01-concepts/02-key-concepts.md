@@ -1,25 +1,18 @@
 ---
-title: "Key Concepts and Architecture"
-version: 0.1.0
-lastUpdated: 2024-09-08
-scope: arch
-type: guide
+keywords: [meta-contract, concepts, architecture, proxy, dictionary, function-contracts, upgradeability, cloneability, ucs]
 tags: [meta-contract, concepts, architecture, proxy, dictionary, function-contracts, upgradeability, cloneability, ucs]
-relatedDocs: ["03-devops/01-deployment.md", "03-devops/03-upgrades.md"]
 last_update:
-  date: 2024-09-06
+  date: 2024-10-26
   author: Meta Contract Development Team
 ---
 
 # Key Concepts and Architecture
 
----
-
 Meta Contract implements the UCS (Upgradeable Clone for Scalable Contracts) architecture, providing a flexible and modular approach to smart contract development. This document outlines the key concepts of Meta Contract and provides an overview of its architecture, explaining how its components interact to create upgradeable and scalable smart contract systems.
 
 ## Core Components and Concepts
 
-The Meta Contract architecture consists of three main components:
+The UCS architecture consists of three main components:
 
 1. Proxy Contract
 2. Dictionary Contract
@@ -41,7 +34,7 @@ Key points:
 
 ### 2. Dictionary Contract
 
-The Dictionary Contract acts as a registry for all Function Contracts within a Meta Contract system. Its main responsibilities are:
+The Dictionary Contract acts as a registry for all Function Contracts within a Meta Contract. Its main responsibilities are:
 
 - Mapping function selectors to the addresses of their corresponding Function Contracts.
 - Providing a mechanism to update these mappings, enabling upgrades.
@@ -60,10 +53,11 @@ Key characteristics:
 - They don't store state directly but instead work with the state stored in the Proxy Contract.
 - Function Contracts can be shared across multiple Meta Contract instances, promoting code reuse.
 - They are designed to be stateless, working with the state stored in the Proxy Contract.
+- In Meta Contracts, a collection of multiple functions made available together is referred to as a ***bundle***.
 
 ## Architecture Overview
 
-The following diagram illustrates how these components interact within the Meta Contract architecture:
+The following diagram illustrates how these components interact within the UCS architecture:
 
 ```mermaid
 graph TD
@@ -73,13 +67,18 @@ graph TD
     B -->|Delegates call| D[Function Contract]
     D -->|Executes logic| B
     B -->|Returns result| A
+
+    style A color:#000000,fill:#ffffcc,stroke:#cccc00,stroke-width:2px
+    style B color:#000000,fill:#ffcccc,stroke:#ff0000,stroke-width:2px
+    style C color:#000000,fill:#ccffcc,stroke:#00ff00,stroke-width:2px
+    style D color:#000000,fill:#ccccff,stroke:#0000ff,stroke-width:2px
 ```
 
 ## Key Features
 
 ### 1. Upgradeability
 
-Upgradeability is a core feature of Meta Contracts, allowing for the evolution of contract functionality without changing the contract's address or losing its state.
+Upgradeability is a core feature of Meta Contracts, allowing for the evolution of contract functionality without changing the contract's address or losing its state. This allows for granular upgrades without changing the Proxy Contract's address or disrupting the overall system.
 
 How it works:
 - To upgrade a function, deploy a new Function Contract and update the Dictionary Contract to point to the new address.
@@ -91,7 +90,7 @@ Benefits:
 
 ### 2. Cloneability
 
-Cloneability refers to the ability to create multiple instances of a Meta Contract system with minimal gas costs.
+Cloneability refers to the ability to create multiple instances of a Meta Contract with minimal gas costs.
 
 Key aspects:
 - Multiple Proxy Contracts can be deployed, each with its own state.
@@ -100,17 +99,15 @@ Key aspects:
 
 Use cases:
 - Creating multiple instances of a standardized contract (e.g., token contracts, voting systems).
-- Deploying personalized contract instances for users or organizations.
+- Deploying personalized contract instances for users or organizations. (e.g. contract wallets, DAO contracts)
 
-## Upgrade Process
+### 3. Contract Size Management
 
-The upgrade process in the Meta Contract architecture is straightforward:
+By splitting logic into individual Function Contracts, Meta Contracts effectively bypass the 24.576kB contract size limit. This modular approach allows for more complex and feature-rich contracts without being constrained by size limitations.
 
-1. Deploy a new Function Contract with updated logic.
-2. Update the Dictionary Contract to point the relevant function selector(s) to the new Function Contract address.
-3. The Proxy Contract will automatically use the new Function Contract for subsequent calls.
+### 4. Schema-based Storage Management
 
-This process allows for granular upgrades without changing the Proxy Contract's address or disrupting the overall system.
+The use of a schema-based storage management system simplifies handling storage conflicts during contract upgrades. This system ensures that storage layouts remain consistent and conflicts are minimized, facilitating smoother upgrades and maintenance.
 
 ## Security Considerations
 

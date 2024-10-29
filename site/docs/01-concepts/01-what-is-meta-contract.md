@@ -1,21 +1,14 @@
 ---
-# --- Docusaurus front matter ---
 keywords: [meta-contract, introduction, overview, features, benefits]
 tags: [meta-contract, introduction, overview, features, benefits]
 last_update:
-  date: 2024-09-06
+  date: 2024-10-26
   author: Meta Contract Development Team
-# See details in https://docusaurus.io/docs/api/plugins/@docusaurus/plugin-content-docs#markdown-front-matter
-
-# --- Meta Contract front matter ---
-scope: intro
-type: concept
-relatedDocs: ["02-key-concepts.md", "./03-getting-started/01-installation.md"]
 ---
 
 # What is Meta Contract?
 
-Meta Contract (MC) is an innovative smart contract framework designed to create flexible, upgradeable, and scalable blockchain applications. It implements the UCS (Upgradeable Clone for Scalable Contracts) architecture, providing developers with powerful tools to build and maintain complex decentralized systems.
+Meta Contract (MC) is an innovative smart contract framework designed to create flexible, upgradeable, and scalable blockchain applications. It implements the UCS (Upgradeable Clone for Scalable Contracts, defined in [ERC-7546](https://eips.ethereum.org/EIPS/eip-7546)) architecture, providing developers with powerful tools to build and maintain complex decentralized systems.
 
 ## Key Features
 
@@ -57,8 +50,8 @@ Meta Contracts are particularly well-suited for:
 
 To start building with Meta Contract:
 
-1. Explore the [Key Concepts](02-key-concepts.md) to understand the core principles.
-2. Follow our [Installation Guide](03-getting-started/01-installation.md) to set up your development environment.
-3. Check out our [Tutorials](../02-tutorials/index.md) for hands-on examples.
+1. Explore the [Key Concepts](./02-key-concepts.md) to understand the core principles.
+2. Follow our [Installation Guide](../02-guides/01-setup/01-installation.md) to set up your development environment.
+3. Check out our [Examples](../04-examples/index.md).
 
 For any questions or support, join our [community forum](https://github.com/orgs/metacontract/discussions).
