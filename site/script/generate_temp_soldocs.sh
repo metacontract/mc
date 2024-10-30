@@ -5,7 +5,7 @@ command -v forge >/dev/null 2>&1 || {
 	curl -L https://foundry.paradigm.xyz | bash
 
     # Update PATH to include Foundry binaries
-    export PATH=$HOME/.foundry/bin:$PATH
+    # export PATH=$HOME/.foundry/bin:$PATH
 
 	# Update Foundry
 	foundryup
