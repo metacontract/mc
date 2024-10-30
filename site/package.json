@@ -5,7 +5,7 @@
 	"scripts": {
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start",
-		"prebuild": "npm run generate-soldocs",
+		"prebuild": "npm run soldocs",
 		"build": "docusaurus build",
 		"swizzle": "docusaurus swizzle",
 		"deploy": "docusaurus deploy",
@@ -14,10 +14,9 @@
 		"write-translations": "docusaurus write-translations",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc",
-		"pregenerate-soldocs": "npm run install-foundry",
-		"generate-soldocs": "sh ./script/generate-soldocs.sh",
-		"preinstall-foundry": "command -v forge >/dev/null 2>&1 ||",
-		"install-foundry": "sh ./script/install-foundry.sh"
+		"presoldocs": "sh ./script/generate_temp_soldocs.sh",
+		"soldocs": "npm run ./script/integrate_soldocs.ts",
+		"postsoldocs": "sh ./script/remove_temp_soldocs.sh"
 	},
 	"dependencies": {
 		"@docusaurus/core": "3.5.2",

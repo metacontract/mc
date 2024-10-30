@@ -1,6 +1,6 @@
 import { config } from "./config";
-import { updateLinks } from "./soldocs/update_links";
 import { generateAndMoveForgeDocs } from "./soldocs/generate_and_move_forge_docs";
+import { updateLinks } from "./soldocs/update_links";
 import { upsertIndexFile } from "./soldocs/upsert_index_file";
 import {
 	extractPaths,
@@ -9,7 +9,7 @@ import {
 } from "./soldocs/utils";
 
 function integrateSolDocs() {
-	generateAndMoveForgeDocs(); // TODO remove unexisting docs
+	generateAndMoveForgeDocs();
 
 	processPathsInSubdirectories(extractPaths(config.copyPaths), [
 		upsertIndexFile,

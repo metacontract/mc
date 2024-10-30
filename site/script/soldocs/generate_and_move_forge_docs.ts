@@ -60,9 +60,9 @@ export function generateAndMoveForgeDocs() {
 			}
 		}
 
-		// Remove unnecessary temporary directory
-		removeSync(`${config.rootPath}/${config.tempDir}`);
-		logInfo(`Removed temporary directory ${config.rootPath}/${config.tempDir}`);
+		// // Remove unnecessary temporary directory
+		// removeSync(`${config.rootPath}/${config.tempDir}`);
+		// logInfo(`Removed temporary directory ${config.rootPath}/${config.tempDir}`);
 
 		logSuccess("Successfully generated and moved solidity docs");
 	} catch (error) {
