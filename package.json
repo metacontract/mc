@@ -7,6 +7,6 @@
 		"site:build": "cd site && npm run build",
 		"site:serve": "cd site && npm run serve",
 		"site:clear": "cd site && npm run clear",
-		"site:soldocs": "sh ./shell-script/generate_soldocs.sh"
+		"site:soldocs": "cd site && npm run soldocs"
 	}
 }

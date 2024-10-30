@@ -5,6 +5,7 @@
 	"scripts": {
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start",
+		"prebuild": "npm run soldocs",
 		"build": "docusaurus build",
 		"swizzle": "docusaurus swizzle",
 		"deploy": "docusaurus deploy",
@@ -12,7 +13,8 @@
 		"serve": "docusaurus serve",
 		"write-translations": "docusaurus write-translations",
 		"write-heading-ids": "docusaurus write-heading-ids",
-		"typecheck": "tsc"
+		"typecheck": "tsc",
+		"soldocs": "npm run ./script/integrate_soldocs.ts"
 	},
 	"dependencies": {
 		"@docusaurus/core": "3.5.2",
