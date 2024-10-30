@@ -1,4 +1,4 @@
-# Index
+# IStd.sol
 
 <!-- START_INDEX -->
 - [interface.IStd](./interface.IStd.md)

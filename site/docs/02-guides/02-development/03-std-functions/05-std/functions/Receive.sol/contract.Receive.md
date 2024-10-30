@@ -1,5 +1,5 @@
 # Receive
-[Git Source](https://github.com/metacontract/mc/blob/20954f1387efa0bc72b42d3e78a22f9f845eebbd/src/std/functions/Receive.sol)
+[Git Source](https://github.com/metacontract/mc/blob/7db22f6d7abc05705d21c7601fb406ca49c18557/src/std/functions/Receive.sol)
 
 < MC Standard Function >
 

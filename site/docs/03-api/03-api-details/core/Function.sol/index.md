@@ -1,4 +1,4 @@
-# Index
+# Function.sol
 
 <!-- START_INDEX -->
 - [struct.Function](./struct.Function.md)

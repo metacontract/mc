@@ -1,4 +1,4 @@
-# Index
+# MCDeployLib.sol
 
 <!-- START_INDEX -->
 - [library.MCDeployLib](./library.MCDeployLib.md)

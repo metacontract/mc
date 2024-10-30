@@ -1,4 +1,4 @@
-# Index
+# BundleRegistry.sol
 
 <!-- START_INDEX -->
 - [struct.BundleRegistry](./struct.BundleRegistry.md)
