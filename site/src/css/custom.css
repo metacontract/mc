@@ -165,7 +165,7 @@ html[data-theme='dark'] {
 }
 
 .menu__link--active {
-  color: var(--docs-color_backgroundAccent);
+  color: var(--ifm-navbar-link-hover-color) !important;
 }
 
 .theme-doc-sidebar-menu > .theme-doc-sidebar-item-category {
