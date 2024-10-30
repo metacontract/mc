@@ -25,6 +25,8 @@ function getMarkdownFiles(directoryPath: string): string[] {
 }
 
 function replaceLinks(markdown: string, directoryPath: string) {
+	logMessage("replaceLinks", true);
+
 	return markdown
 		.replace(
 			/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
@@ -40,9 +42,9 @@ function replaceLinks(markdown: string, directoryPath: string) {
 			/\[([^\]]+)\]\((https:\/\/github\.com\/[^)]+)(#[^\s)]+)?\)/g,
 			(match, text, path, fragment) => {
 				if (path.startsWith("https://github.com/")) {
-					logMessage(path);
+					logMessage(path, true);
 					const updatedPath = updateGitHubPath(path, "/metacontract/mc/");
-					logMessage(updatedPath);
+					logMessage(updatedPath, true);
 					return `[${text}](${updatedPath}${fragment || ""})`;
 				}
 				return match;
