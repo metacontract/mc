@@ -1,0 +1,195 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+:root {
+  --prism-background-color: aqua;
+}
+
+.home__container {
+  padding: 5rem 2rem 4rem;
+}
+
+/* Header styling */
+
+.home__headerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.home__hero {
+  max-width: 43%;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.home__title {
+  font-family: var(--title-font-family);
+  font-size: 5vw;
+  font-weight: 600;
+}
+
+.home__tagline {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  padding-left: 0.2rem;
+}
+
+.home__buttonGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-left: 0.1rem;
+}
+
+.home__header__button {
+  padding-left: 0.2rem;
+  font-size: 0.9rem;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  color: var(--docs-color_textAccent);
+}
+
+.primaryButton {
+  color: var(--docs-color_textAccent);
+  background-color: var(--docs-color_backgroundAccent);
+}
+
+.primaryButton:hover {
+  color: var(--docs-color_textAccent);
+  background-color: var(--docs-color_backgroundAccentHover);
+}
+
+.secondaryButton {
+  color: var(--docs-color_textSecondary);
+  background-color: var(--docs-color_backgroundSecondary);
+}
+
+.secondaryButton:hover {
+  color: var(--docs-color_textSecondary);
+  background-color: var(--docs-color_backgroundSecondaryHover);
+}
+
+.externalLinkIcon {
+  height: 1rem;
+  width: 1rem;
+}
+
+.home__install {
+  margin-top: 2rem;
+  width: 40%;
+}
+
+.language-solidity {
+  background-color: aqua !important;
+}
+
+.home__install .tabs-container {
+  background-color: aqua;
+}
+
+@media (max-width: 996px) {
+  .home__hero {
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .home__title {
+    font-size: 7vw;
+  }
+
+  .home__tagline {
+    padding: 0 2rem;
+  }
+
+  .home__buttonGroup {
+    justify-content: center;
+  }
+
+  .home__install {
+    display: none;
+  }
+}
+
+/* Main styling */
+
+.home__main {
+  max-width: 82%;
+  margin: 4rem auto 0;
+  display: grid;
+}
+
+/* lg */
+@media (min-width: 997px) {
+  .home__main {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+  }
+
+  .home__main .article:nth-child(1),
+  .home__main .article:nth-child(2),
+  .home__main .article:nth-child(3) {
+    grid-column: span 2;
+  }
+
+  .home__main .article:nth-child(4),
+  .home__main .article:nth-child(5) {
+    grid-column: span 3;
+  }
+}
+
+/* md */
+@media (min-width: 640px) and (max-width: 996px) {
+  .home__main {
+    max-width: 90%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .home__main .article:last-child {
+    grid-column: span 2;
+  }
+}
+
+/* sm */
+@media (max-width: 639px) {
+  .home__main {
+    max-width: 90%;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .home__title {
+    font-size: 3rem;
+  }
+}
+
+.article {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--ifm-background-color);
+  width: 100%;
+}
+
+.article__title {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.article__icon {
+  height: 20px;
+  width: 20px;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+.article__description {
+  margin-top: 0.25rem;
+}

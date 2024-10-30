@@ -1,1 +1,0 @@
-# Schema-based Storage Management
