@@ -2,7 +2,7 @@
 [Git Source](https://github.com/metacontract/mc/blob/main/src/devkit/test/mocks/MockDictionary.sol)
 
 **Inherits:**
-[Dictionary](../../../../../lib/ucs-contracts/src/dictionary/Dictionary.sol/contract.Dictionary.md)
+Dictionary
 
 
 ## Functions
