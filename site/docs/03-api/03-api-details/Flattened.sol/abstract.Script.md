@@ -1,8 +1,8 @@
 # Script
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 **Inherits:**
-[ScriptBase](/resources/devkit/api-reference/Flattened.sol/abstract.ScriptBase), [StdChains](/resources/devkit/api-reference/Flattened.sol/abstract.StdChains), [StdCheatsSafe](/resources/devkit/api-reference/Flattened.sol/abstract.StdCheatsSafe), [StdUtils](/resources/devkit/api-reference/Flattened.sol/abstract.StdUtils)
+[ScriptBase](abstract.ScriptBase.md), [StdChains](abstract.StdChains.md), [StdCheatsSafe](abstract.StdCheatsSafe.md), [StdUtils](abstract.StdUtils.md)
 
 
 ## State Variables

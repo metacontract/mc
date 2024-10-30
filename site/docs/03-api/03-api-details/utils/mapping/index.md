@@ -1,5 +1,5 @@
 # mapping
 
 <!-- START_INDEX -->
-- [NameGenerator.sol](./NameGenerator.sol/index.md)
+- [NameGenerator](./NameGenerator.sol/library.NameGenerator.md)
 <!-- END_INDEX -->

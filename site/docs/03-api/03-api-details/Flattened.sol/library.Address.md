@@ -1,5 +1,5 @@
 # Address
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 *Collection of functions related to the address type*
 
@@ -12,7 +12,7 @@
 https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost
 of certain opcodes, possibly making contracts go over the 2300 gas limit
 imposed by `transfer`, making them unable to receive funds via
-`transfer`. [sendValue](/resources/devkit/api-reference/Flattened.sol/library.Address#sendvalue) removes this limitation.
+`transfer`. [sendValue](/src/devkit/Flattened.sol/library.Address.md#sendvalue) removes this limitation.
 https://consensys.net/diligence/blog/2019/09/stop-using-soliditys-transfer-now/[Learn more].
 IMPORTANT: because control is transferred to `recipient`, care must be
 taken to not create reentrancy vulnerabilities. Consider using
@@ -32,7 +32,7 @@ function instead.
 If `target` reverts with a revert reason or custom error, it is bubbled
 up by this function (like regular Solidity function calls). However, if
 the call reverted with no returned reason, this function reverts with a
-[FailedInnerCall](/resources/devkit/api-reference/Flattened.sol/library.Address#failedinnercall) error.
+[FailedInnerCall](/src/devkit/Flattened.sol/library.Address.md#failedinnercall) error.
 Returns the raw returned data. To convert to the expected return value,
 use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].
 Requirements:
@@ -80,7 +80,7 @@ function functionDelegateCall(address target, bytes memory data) internal return
 ### verifyCallResultFromTarget
 
 *Tool to verify that a low level call to smart-contract was successful, and reverts if the target
-was not a contract or bubbling up the revert reason (falling back to [FailedInnerCall](/resources/devkit/api-reference/Flattened.sol/library.Address#failedinnercall)) in case of an
+was not a contract or bubbling up the revert reason (falling back to [FailedInnerCall](/src/devkit/Flattened.sol/library.Address.md#failedinnercall)) in case of an
 unsuccessful call.*
 
 
@@ -94,7 +94,7 @@ function verifyCallResultFromTarget(address target, bool success, bytes memory r
 ### verifyCallResult
 
 *Tool to verify that a low level call was successful, and reverts if it wasn't, either by bubbling the
-revert reason or with a default [FailedInnerCall](/resources/devkit/api-reference/Flattened.sol/library.Address#failedinnercall) error.*
+revert reason or with a default [FailedInnerCall](/src/devkit/Flattened.sol/library.Address.md#failedinnercall) error.*
 
 
 ```solidity
@@ -103,7 +103,7 @@ function verifyCallResult(bool success, bytes memory returndata) internal pure r
 
 ### _revert
 
-*Reverts with returndata if present. Otherwise reverts with [FailedInnerCall](/resources/devkit/api-reference/Flattened.sol/library.Address#failedinnercall).*
+*Reverts with returndata if present. Otherwise reverts with [FailedInnerCall](/src/devkit/Flattened.sol/library.Address.md#failedinnercall).*
 
 
 ```solidity

@@ -1,7 +1,7 @@
 # Message
 
 <!-- START_INDEX -->
-- [DecodeErrorString.sol](./DecodeErrorString.sol/index.md)
-- [MessageBody.sol](./MessageBody.sol/index.md)
-- [MessageHead.sol](./MessageHead.sol/index.md)
+- [DecodeErrorString](./DecodeErrorString.sol/library.DecodeErrorString.md)
+- [MessageBody](./MessageBody.sol/library.MessageBody.md)
+- [MessageHead](./MessageHead.sol/library.MessageHead.md)
 <!-- END_INDEX -->

@@ -1,5 +1,6 @@
 # Context
 
 <!-- START_INDEX -->
-- [Current.sol](./Current.sol/index.md)
+- [Current](./Current.sol/struct.Current.md)
+- [CurrentLib](./Current.sol/library.CurrentLib.md)
 <!-- END_INDEX -->

@@ -1,8 +1,8 @@
 # UpgradeableBeacon
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 **Inherits:**
-[IBeacon](/resources/devkit/api-reference/Flattened.sol/interface.IBeacon), [Ownable](/resources/devkit/api-reference/Flattened.sol/abstract.Ownable)
+[IBeacon](interface.IBeacon.md), [Ownable](abstract.Ownable.md)
 
 *This contract is used in conjunction with one or more instances of {BeaconProxy} to determine their
 implementation contract, which is where they will delegate all function calls.
@@ -39,7 +39,7 @@ function implementation() public view virtual returns (address);
 ### upgradeTo
 
 *Upgrades the beacon to a new implementation.
-Emits an [Upgraded](/resources/devkit/api-reference/Flattened.sol/contract.UpgradeableBeacon#upgraded) event.
+Emits an [Upgraded](/src/devkit/Flattened.sol/contract.UpgradeableBeacon.md#upgraded) event.
 Requirements:
 - msg.sender must be the owner of the contract.
 - `newImplementation` must be a contract.*

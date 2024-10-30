@@ -1,6 +1,7 @@
 # Mocks
 
 <!-- START_INDEX -->
-- [MockDictionary.sol](./MockDictionary.sol/index.md)
-- [SimpleMockProxy.sol](./SimpleMockProxy.sol/index.md)
+- [MockDictionary](./MockDictionary.sol/contract.MockDictionary.md)
+- [SimpleMockProxy](./SimpleMockProxy.sol/contract.SimpleMockProxy.md)
+- [SimpleMockProxyLib](./SimpleMockProxy.sol/library.SimpleMockProxyLib.md)
 <!-- END_INDEX -->

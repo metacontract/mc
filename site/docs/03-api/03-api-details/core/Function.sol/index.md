@@ -1,6 +1,7 @@
 # Function.sol
 
 <!-- START_INDEX -->
-- [library.FunctionLib](./library.FunctionLib.md)
 - [struct.Function](./struct.Function.md)
+- [library.FunctionLib](./library.FunctionLib.md)
+
 <!-- END_INDEX -->

@@ -1,5 +1,5 @@
 # Internal
 
 <!-- START_INDEX -->
-- [ProxyCreator.sol](./ProxyCreator.sol/index.md)
+- [ProxyCreator](./ProxyCreator.sol/library.ProxyCreator.md)
 <!-- END_INDEX -->

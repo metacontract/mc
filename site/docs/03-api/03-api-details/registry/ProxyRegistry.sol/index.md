@@ -1,6 +1,7 @@
 # ProxyRegistry.sol
 
 <!-- START_INDEX -->
-- [library.ProxyRegistryLib](./library.ProxyRegistryLib.md)
 - [struct.ProxyRegistry](./struct.ProxyRegistry.md)
+- [library.ProxyRegistryLib](./library.ProxyRegistryLib.md)
+
 <!-- END_INDEX -->

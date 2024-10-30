@@ -1,8 +1,8 @@
 # Protection
 
 <!-- START_INDEX -->
-- [FeatureToggle.sol](./FeatureToggle.sol/index.md)
-- [Initialization.sol](./Initialization.sol/index.md)
-- [MsgSender.sol](./MsgSender.sol/index.md)
-- [ProtectionBase.sol](./ProtectionBase.sol/index.md)
+- [FeatureToggle](./FeatureToggle.sol/library.FeatureToggle.md)
+- [Initialization](./Initialization.sol/library.Initialization.md)
+- [MsgSender](./MsgSender.sol/library.MsgSender.md)
+- [ProtectionBase](./ProtectionBase.sol/abstract.ProtectionBase.md)
 <!-- END_INDEX -->

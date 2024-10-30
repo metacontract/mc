@@ -1,8 +1,8 @@
 # StdFacade
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/plugin-functions/std/interfaces/StdFacade.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/std/interfaces/StdFacade.sol)
 
 **Inherits:**
-[IStd](/plugin-functions/std/interfaces/IStd.sol/interface.IStd)
+[IStd](../IStd.sol/interface.IStd.md)
 
 
 ## Functions

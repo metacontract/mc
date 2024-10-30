@@ -1,5 +1,5 @@
 # SimpleMockProxyLib
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/test/mocks/SimpleMockProxy.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/test/mocks/SimpleMockProxy.sol)
 
 
 ## State Variables
@@ -34,6 +34,9 @@ function getImplementation(bytes4 selector) internal view returns (address);
 
 ## Structs
 ### SimpleMockProxyStorage
+**Note:**
+erc7021:mc.mock.proxy
+
 
 ```solidity
 struct SimpleMockProxyStorage {

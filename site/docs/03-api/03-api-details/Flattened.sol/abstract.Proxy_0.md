@@ -1,9 +1,9 @@
 # Proxy_0
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 *This abstract contract provides a fallback function that delegates all calls to another contract using the EVM
 instruction `delegatecall`. We refer to the second contract as the _implementation_ behind the proxy, and it has to
-be specified by overriding the virtual [_implementation](/resources/devkit/api-reference/Flattened.sol/abstract.Proxy_0#_implementation) function.
+be specified by overriding the virtual [_implementation](/src/devkit/Flattened.sol/abstract.Proxy_0.md#_implementation) function.
 Additionally, delegation to the implementation can be triggered manually through the {_fallback} function, or to a
 different contract through the {_delegate} function.
 The success and return data of the delegated call will be returned back to the caller of the proxy.*
@@ -23,7 +23,7 @@ function _delegate(address implementation) internal virtual;
 ### _implementation
 
 *This is a virtual function that should be overridden so it returns the address to which the fallback
-function and [_fallback](/resources/devkit/api-reference/Flattened.sol/abstract.Proxy_0#_fallback) should delegate.*
+function and [_fallback](/src/devkit/Flattened.sol/abstract.Proxy_0.md#_fallback) should delegate.*
 
 
 ```solidity

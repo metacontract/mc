@@ -1,8 +1,8 @@
 # Vm
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 **Inherits:**
-[VmSafe](/resources/devkit/api-reference/Flattened.sol/interface.VmSafe)
+[VmSafe](interface.VmSafe.md)
 
 The `Vm` interface does allow manipulation of the EVM state. These are all intended to be used
 in tests, but it is not recommended to use these cheats in scripts.

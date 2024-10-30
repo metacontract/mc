@@ -1,6 +1,7 @@
 # BundleRegistry.sol
 
 <!-- START_INDEX -->
-- [library.BundleRegistryLib](./library.BundleRegistryLib.md)
 - [struct.BundleRegistry](./struct.BundleRegistry.md)
+- [library.BundleRegistryLib](./library.BundleRegistryLib.md)
+
 <!-- END_INDEX -->

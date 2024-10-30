@@ -1,5 +1,5 @@
 # ERC1967Utils
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 *This abstract contract provides getters and event emitting update functions for
 https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.*
@@ -60,7 +60,7 @@ function _setImplementation(address newImplementation) private;
 *Performs implementation upgrade with additional setup call if data is nonempty.
 This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
 to avoid stuck value in the contract.
-Emits an [IERC1967-Upgraded](/resources/devkit/api-reference/Flattened.sol/contract.UpgradeableBeacon#upgraded) event.*
+Emits an [IERC1967-Upgraded](/src/devkit/Flattened.sol/contract.UpgradeableBeacon.md#upgraded) event.*
 
 
 ```solidity

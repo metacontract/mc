@@ -1,5 +1,5 @@
 # Storage
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/plugin-functions/std/storage/Storage.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/std/storage/Storage.sol)
 
 Storage Library v0.1.0
 

@@ -1,8 +1,8 @@
 # Protected Functions
 
 <!-- START_INDEX -->
-- [FeatureToggle.sol](./FeatureToggle.sol/index.md)
-- [InitSetAdmin.sol](./InitSetAdmin.sol/index.md)
-- [UpgradeDictionary.sol](./UpgradeDictionary.sol/index.md)
 - [protection](./protection/index.md)
+- [FeatureToggle](./FeatureToggle.sol/contract.FeatureToggle.md)
+- [InitSetAdmin](./InitSetAdmin.sol/contract.InitSetAdmin.md)
+- [UpgradeDictionary](./UpgradeDictionary.sol/contract.UpgradeDictionary.md)
 <!-- END_INDEX -->

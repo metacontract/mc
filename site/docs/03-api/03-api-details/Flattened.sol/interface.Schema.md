@@ -1,11 +1,14 @@
 # Schema
-[Git Source](https://github.com/metacontract/mc/blob/df7a49283d8212c99bebd64a186325e91d34c075/resources/devkit/api-reference/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
 
 Storage Schema v0.1.0
 
 
 ## Structs
 ### $Admin
+**Note:**
+erc7201:mc.std.admin
+
 
 ```solidity
 struct $Admin {
@@ -14,6 +17,9 @@ struct $Admin {
 ```
 
 ### $Clone
+**Note:**
+erc7201:mc.std.clone
+
 
 ```solidity
 struct $Clone {
@@ -22,6 +28,9 @@ struct $Clone {
 ```
 
 ### $Proposal
+**Note:**
+erc7201:mc.std.proposal
+
 
 ```solidity
 struct $Proposal {
@@ -65,6 +74,9 @@ struct Op {
 ```
 
 ### $Member
+**Note:**
+erc7201:mc.std.member
+
 
 ```solidity
 struct $Member {
@@ -73,6 +85,9 @@ struct $Member {
 ```
 
 ### $FeatureToggle
+**Note:**
+erc7201:mc.std.featureToggle
+
 
 ```solidity
 struct $FeatureToggle {
@@ -81,6 +96,9 @@ struct $FeatureToggle {
 ```
 
 ### $Initialization
+**Note:**
+erc7201:mc.std.initializer
+
 
 ```solidity
 struct $Initialization {

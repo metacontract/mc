@@ -1,7 +1,8 @@
 # StdRegistry.sol
 
 <!-- START_INDEX -->
+- [struct.StdRegistry](./struct.StdRegistry.md)
 - [library.StdFunctionsArgs](./library.StdFunctionsArgs.md)
 - [library.StdRegistryLib](./library.StdRegistryLib.md)
-- [struct.StdRegistry](./struct.StdRegistry.md)
+
 <!-- END_INDEX -->
