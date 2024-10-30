@@ -1,5 +1,5 @@
 # Ownable
-[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/93e4f2d4a013f48ae1db91ed21bff3eb8a27ce1d/src/devkit/Flattened.sol)
 
 **Inherits:**
 [Context](abstract.Context.md)
@@ -8,7 +8,7 @@
 there is an account (an owner) that can be granted exclusive access to
 specific functions.
 The initial owner is set to the address provided by the deployer. This can
-later be changed with [transferOwnership](/src/devkit/Flattened.sol/abstract.Ownable.md#transferownership).
+later be changed with [transferOwnership](abstract.Ownable.md#transferownership).
 This module is used through inheritance. It will make available the modifier
 `onlyOwner`, which can be applied to your functions to restrict their use to
 the owner.*

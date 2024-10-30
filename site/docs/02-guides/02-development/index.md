@@ -14,5 +14,5 @@ This section covers recommended practices and methodologies for developing with 
 
 - [Useful Resources](./01-resources.md)
 - [Test-Driven Development](./02-tdd.md)
-- [Using Standard Functions](./03-std-functions/)
+- [Using Standard Functions](./03-std-functions/index.md)
 - [Using Internal Libraries](./04-using-internal-library.md)

@@ -12,7 +12,7 @@ This guide will walk you through the process of setting up your development envi
 
 ## Prerequisites
 
-Before proceeding with the setup, ensure you have completed the [installation process](01-installation.md) for Meta Contract.
+Before proceeding with the setup, ensure you have completed the [installation process](./01-installation.md) for Meta Contract.
 
 ## Development Environment Setup
 
@@ -121,8 +121,8 @@ If this command executes without errors, your basic setup is complete and workin
 
 Now that your development environment is set up, you're ready to start building with Meta Contract 🚀🚀🚀
 
-- Refer to the [Development Guide](../02-development/), [Operation Guide](../03-operation/) and [Middleware Guide](../04-middleware/) for best practices and tips.
-- Find implementation examples in the [Examples](../04-examples/) section.
-- Check out the [MC DevKit API Reference](../../03-api/) for detailed information about the development tools available.
+- Refer to the [Development Guide](../02-development/index.md), [Operation Guide](../03-operations/index.md) and [Middleware Guide](../04-middlewares/index.md) for best practices and tips.
+- Find implementation examples in the [Examples](../../04-examples/index.md) section.
+- Check out the [MC DevKit API Reference](../../03-api/index.md) for detailed information about the development tools available.
 
 For any issues or questions, reach out to our [community support channels](https://github.com/metacontract/mc/discussions).

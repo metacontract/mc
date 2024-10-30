@@ -12,21 +12,21 @@ This section outlines key DevOps processes and tools for Meta Contract projects,
 
 ## Contents
 
-1. **[Setup](01-setup/index.md)**: Setup overview.
+1. **[Setup](./01-setup/index.md)**: Setup overview.
    - Installation
    - Configuration
-2. **[Development](02-development/index.md)**: Development best practices.
+2. **[Development](./02-development/index.md)**: Development best practices.
    - Resources
    - TDD
    - Functions
    - Libraries
-3. **[Operations](02-operations/index.md)**: Deployment strategies.
+3. **[Operations](./03-operations/index.md)**: Deployment strategies.
    - Deployment
    - Contract Verification
    - Upgrade
    - CI/CD
-4. **[Middleware](03-middleware/index.md)**: Middleware tools.
+4. **[Middleware](./04-middlewares/index.md)**: Middleware tools.
    - The Graph
-5. **[Project Management](05-project-management/index.md)**: Management guidelines.
+5. **[Project Management](./05-project-management/index.md)**: Management guidelines.
    - Community Profile
    - Project Documentations

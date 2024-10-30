@@ -15,4 +15,4 @@ This section covers recommended practices and methodologies for operating with M
 - [Deployment](./01-deployment.md)
 - [Contract Verification](./02-contract-verification.md)
 - [Upgrades](./03-upgrades.md)
-- [CI/CD](./04-cicd.md)
+- [CI/CD](./04-ci-cd.md)

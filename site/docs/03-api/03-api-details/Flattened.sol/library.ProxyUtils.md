@@ -1,5 +1,5 @@
 # ProxyUtils
-[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/93e4f2d4a013f48ae1db91ed21bff3eb8a27ce1d/src/devkit/Flattened.sol)
 
 *Library version has been tested with version 5.0.0.*
 
@@ -32,7 +32,7 @@ function getDictionary() internal view returns (address);
 Change the dictionary and trigger a setup call if data is nonempty.
 This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
 to avoid stuck value in the contract.
-Emits an [IERC7546-DictionaryUpgraded](/lib/ucs-contracts/src/proxy/IProxy.sol/interface.IProxy.md#dictionaryupgraded) event.
+Emits an [IERC7546-DictionaryUpgraded](../../../lib/ucs-contracts/src/proxy/IProxy.sol/interface.IProxy.md#dictionaryupgraded) event.
 
 
 ```solidity

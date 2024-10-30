@@ -10,7 +10,7 @@ last_update:
 
 This guide provides a comprehensive overview of the Meta Contract setup process, including installation, configuration.
 
-1. **[Installation](01-basic-setup.md)**: How to install Meta Contract.
-2. **[Basic Setup](02-basic-setup.md)**: How to configure Meta Contract.
+1. **[Installation](./01-installation.md)**: How to install Meta Contract.
+2. **[Basic Setup](./02-basic-setup.md)**: How to configure Meta Contract.
 
 If you're new to Meta Contract, we recommend starting with "Installation" and then proceeding through the documents in the order listed above.

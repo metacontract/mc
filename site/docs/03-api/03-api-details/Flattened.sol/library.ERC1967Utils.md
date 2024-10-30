@@ -1,5 +1,5 @@
 # ERC1967Utils
-[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/93e4f2d4a013f48ae1db91ed21bff3eb8a27ce1d/src/devkit/Flattened.sol)
 
 *This abstract contract provides getters and event emitting update functions for
 https://eips.ethereum.org/EIPS/eip-1967[EIP1967] slots.*
@@ -60,7 +60,7 @@ function _setImplementation(address newImplementation) private;
 *Performs implementation upgrade with additional setup call if data is nonempty.
 This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
 to avoid stuck value in the contract.
-Emits an [IERC1967-Upgraded](/src/devkit/Flattened.sol/contract.UpgradeableBeacon.md#upgraded) event.*
+Emits an [IERC1967-Upgraded](contract.UpgradeableBeacon.md#upgraded) event.*
 
 
 ```solidity
@@ -91,7 +91,7 @@ function _setAdmin(address newAdmin) private;
 ### changeAdmin
 
 *Changes the admin of the proxy.
-Emits an [IERC1967-AdminChanged](/lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol/library.ERC1967Utils.md#adminchanged) event.*
+Emits an [IERC1967-AdminChanged](../../../lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol/library.ERC1967Utils.md#adminchanged) event.*
 
 
 ```solidity
@@ -121,7 +121,7 @@ function _setBeacon(address newBeacon) private;
 *Change the beacon and trigger a setup call if data is nonempty.
 This function is payable only if the setup call is performed, otherwise `msg.value` is rejected
 to avoid stuck value in the contract.
-Emits an [IERC1967-BeaconUpgraded](/lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol/library.ERC1967Utils.md#beaconupgraded) event.
+Emits an [IERC1967-BeaconUpgraded](../../../lib/ucs-contracts/lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol/library.ERC1967Utils.md#beaconupgraded) event.
 CAUTION: Invoking this function has no effect on an instance of {BeaconProxy} since v5, since
 it uses an immutable beacon without looking at the value of the ERC-1967 beacon slot for
 efficiency.*

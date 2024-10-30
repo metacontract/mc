@@ -1,5 +1,5 @@
 # StdChains
-[Git Source](https://github.com/metacontract/mc/blob/b874bc295b567a7e9bd6d6c63dfe84df116a2f3a/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/93e4f2d4a013f48ae1db91ed21bff3eb8a27ce1d/src/devkit/Flattened.sol)
 
 StdChains provides information about EVM compatible chains that can be used in scripts/tests.
 For each chain, the chain's name, chain ID, and a default RPC URL are provided. Chains are
