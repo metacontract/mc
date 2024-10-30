@@ -16,9 +16,9 @@ cd ..
 forge doc -o temp_soldocs/
 
 # Check if the file exists
-if [ -f "temp_soldcs/src/src/devkit/Flattened.sol/abstract.CommonBase.md" ]; then
+if [ -f "temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md" ]; then
     # Output the contents of the file
-    cat temp_soldcs/src/src/devkit/Flattened.sol/abstract.CommonBase.md
+    cat temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md
 else
-    echo "File not found: temp_soldcs/src/src/devkit/Flattened.sol/abstract.CommonBase.md"
+    echo "File not found: temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md"
 fi
