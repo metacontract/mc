@@ -1,4 +1,4 @@
-# Index
+# Flattened.sol
 
 <!-- START_INDEX -->
 - [abstract.StdInvariant](./abstract.StdInvariant.md)

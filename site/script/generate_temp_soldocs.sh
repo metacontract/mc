@@ -14,4 +14,4 @@ command -v forge >/dev/null 2>&1 || {
 
 # Navigate to the parent directory, set PATH, generate docs, and return to site directory
 cd ..
-forge doc -o temp_soldocs
+forge doc -o temp_soldocs/

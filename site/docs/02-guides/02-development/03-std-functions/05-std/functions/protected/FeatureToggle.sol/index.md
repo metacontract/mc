@@ -1,4 +1,4 @@
-# Index
+# FeatureToggle.sol
 
 <!-- START_INDEX -->
 - [contract.FeatureToggle](./contract.FeatureToggle.md)
