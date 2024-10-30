@@ -5,7 +5,7 @@
 	"scripts": {
 		"docusaurus": "docusaurus",
 		"start": "docusaurus start",
-		"prebuild": "npm run soldocs",
+		"prebuild": "npm run install-foundry && npm run soldocs",
 		"build": "docusaurus build",
 		"swizzle": "docusaurus swizzle",
 		"deploy": "docusaurus deploy",
@@ -14,7 +14,8 @@
 		"write-translations": "docusaurus write-translations",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc",
-		"soldocs": "npm run ./script/integrate_soldocs.ts"
+		"soldocs": "npm run ./script/integrate_soldocs.ts",
+		"install-foundry": "command -v forge >/dev/null 2>&1 || (curl -L https://foundry.paradigm.xyz | bash && source ~/.bashrc && foundryup)"
 	},
 	"dependencies": {
 		"@docusaurus/core": "3.5.2",

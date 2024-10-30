@@ -26,13 +26,13 @@ function getMarkdownFiles(directoryPath: string): string[] {
 
 function replaceLinks(markdown: string, directoryPath: string) {
 	return markdown.replace(
-		/\[([^\]]+)\]\((\/[^)]+\.md)\)/g,
-		(match, text, path) => {
+		/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
+		(match, text, path, fragment) => {
 			if (!path.startsWith("/")) return match;
 
 			const newPath = getNewPath(path, directoryPath);
 
-			return `[${text}](${newPath})`;
+			return `[${text}](${newPath}${fragment || ""})`;
 		},
 	);
 }
