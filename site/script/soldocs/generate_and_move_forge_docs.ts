@@ -33,14 +33,14 @@ function compareAndDeleteDirectories(from: string, to: string) {
 
 export function generateAndMoveForgeDocs() {
 	try {
-		// Ensure the PATH includes the directory where forge is installed
-		process.env.PATH = `${process.env.HOME}/.foundry/bin:${process.env.PATH}`;
+		// // Ensure the PATH includes the directory where forge is installed
+		// process.env.PATH = `${process.env.HOME}/.foundry/bin:${process.env.PATH}`;
 
-		// Generate solidity docs into the temporary directory using `forge doc`
-		execSync(`cd ${config.rootPath} && forge doc -o ${config.tempDir}`, {
-			stdio: "inherit",
-		});
-		logInfo(`Generated solidity docs in ${config.rootPath}/${config.tempDir}`);
+		// // Generate solidity docs into the temporary directory using `forge doc`
+		// execSync(`cd ${config.rootPath} && forge doc -o ${config.tempDir}`, {
+		// 	stdio: "inherit",
+		// });
+		// logInfo(`Generated solidity docs in ${config.rootPath}/${config.tempDir}`);
 
 		// Move generated docs to appropriate directories
 		if (config.copyPaths.length > 0) {
