@@ -1,5 +1,5 @@
 # Constants
-[Git Source](https://github.com/metacontract/mc/blob/7db22f6d7abc05705d21c7601fb406ca49c18557/src/devkit/utils/ForgeHelper.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/devkit/utils/ForgeHelper.sol)
 
 ### vm
 *address(uint160(uint256(keccak256("hevm cheat code"))));*

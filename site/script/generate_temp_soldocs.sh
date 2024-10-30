@@ -13,12 +13,4 @@ command -v forge >/dev/null 2>&1 || {
 
 # Navigate to the parent directory, set PATH, generate docs, and return to site directory
 cd ..
-forge doc -o temp_soldocs/
-
-# Check if the file exists
-if [ -f "temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md" ]; then
-    # Output the contents of the file
-    cat temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md
-else
-    echo "File not found: temp_soldocs/src/src/devkit/Flattened.sol/abstract.CommonBase.md"
-fi
+forge doc -o temp_soldocs/ -i

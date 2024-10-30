@@ -25,16 +25,49 @@ function getMarkdownFiles(directoryPath: string): string[] {
 }
 
 function replaceLinks(markdown: string, directoryPath: string) {
-	return markdown.replace(
-		/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
-		(match, text, path, fragment) => {
-			if (!path.startsWith("/")) return match;
+	return markdown
+		.replace(
+			/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
+			(match, text, path, fragment) => {
+				logMessage(path);
+				if (!path.startsWith("/")) return match;
 
-			const newPath = getNewPath(path, directoryPath);
+				const newPath = getNewPath(path, directoryPath);
+				return `[${text}](${newPath}${fragment || ""})`;
+			},
+		)
+		.replace(
+			/\[([^\]]+)\]\((https:\/\/github\.com\/[^)]+)(#[^\s)]+)?\)/g,
+			(match, text, path, fragment) => {
+				if (path.startsWith("https://github.com/")) {
+					logMessage(path);
+					const updatedPath = updateGitHubPath(path, "/metacontract/mc/");
+					logMessage(updatedPath);
+					return `[${text}](${updatedPath}${fragment || ""})`;
+				}
+				return match;
+			},
+		);
+}
 
-			return `[${text}](${newPath}${fragment || ""})`;
-		},
-	);
+function updateGitHubPath(githubPath: string, repo: string): string {
+	const github = "https://github.com";
+
+	// Split the URL into components
+	const urlPattern =
+		/https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/;
+	const match = githubPath.match(urlPattern);
+
+	if (!match) {
+		return githubPath; // Return original if pattern doesn't match
+	}
+
+	const [, token, repository, commit, rest] = match;
+
+	// Construct the new path
+	const updatedPath = `${github}${repo}blob/main/${rest}`;
+
+	return updatedPath;
 }
 
 function getNewPath(path: string, directoryPath: string): string {

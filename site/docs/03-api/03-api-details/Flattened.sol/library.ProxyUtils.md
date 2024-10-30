@@ -1,5 +1,5 @@
 # ProxyUtils
-[Git Source](https://github.com/metacontract/mc/blob/7db22f6d7abc05705d21c7601fb406ca49c18557/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/devkit/Flattened.sol)
 
 *Library version has been tested with version 5.0.0.*
 

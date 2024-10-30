@@ -1,5 +1,5 @@
 # IERC165_1
-[Git Source](https://github.com/metacontract/mc/blob/7db22f6d7abc05705d21c7601fb406ca49c18557/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/devkit/Flattened.sol)
 
 *Interface of the ERC165 standard, as defined in the
 https://eips.ethereum.org/EIPS/eip-165[EIP].
