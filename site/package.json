@@ -14,7 +14,7 @@
 		"write-translations": "docusaurus write-translations",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc",
-		"soldocs": "command -v forge >/dev/null 2>&1 || npm run install-foundry && forge doc -o ./temp_soldocs && npm run ./script/integrate_soldocs.ts",
+		"soldocs": "command -v forge >/dev/null 2>&1 || npm run install-foundry && export PATH=$HOME/.foundry/bin:$PATH && forge doc -o ./temp_soldocs && npm run ./script/integrate_soldocs.ts",
 		"install-foundry": "curl -L https://foundry.paradigm.xyz | bash && export PATH=$HOME/.foundry/bin:$PATH && foundryup"
 	},
 	"dependencies": {
