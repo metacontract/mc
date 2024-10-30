@@ -1,4 +1,4 @@
-# Inspector.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Inspector](./library.Inspector.md)

@@ -1,4 +1,4 @@
-# ForgeHelper.sol
+# Index
 
 <!-- START_INDEX -->
 - [function.loadAddressFrom](./function.loadAddressFrom.md)

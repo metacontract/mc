@@ -1,4 +1,4 @@
-# MsgSender.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.MsgSender](./library.MsgSender.md)

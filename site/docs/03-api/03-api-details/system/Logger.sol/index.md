@@ -1,4 +1,4 @@
-# Logger.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Logger](./library.Logger.md)

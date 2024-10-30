@@ -1,4 +1,4 @@
-# Schema.sol
+# Index
 
 <!-- START_INDEX -->
 - [interface.Schema](./interface.Schema.md)

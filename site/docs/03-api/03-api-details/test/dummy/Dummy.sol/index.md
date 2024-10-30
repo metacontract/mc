@@ -1,4 +1,4 @@
-# Dummy.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Dummy](./library.Dummy.md)

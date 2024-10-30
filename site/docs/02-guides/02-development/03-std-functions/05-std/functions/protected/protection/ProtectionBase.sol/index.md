@@ -1,4 +1,4 @@
-# ProtectionBase.sol
+# Index
 
 <!-- START_INDEX -->
 - [abstract.ProtectionBase](./abstract.ProtectionBase.md)

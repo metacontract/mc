@@ -1,4 +1,4 @@
-# StdRegistry.sol
+# Index
 
 <!-- START_INDEX -->
 - [struct.StdRegistry](./struct.StdRegistry.md)

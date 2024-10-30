@@ -1,4 +1,4 @@
-# Storage.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Storage](./library.Storage.md)

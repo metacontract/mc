@@ -68,7 +68,7 @@ const config: Config = {
 							return !("id" in item) || !item.id.endsWith("index");
 						});
 					},
-					editUrl: "https://github.com/metacontract/mc/tree/main/book",
+					editUrl: "https://github.com/metacontract/mc/tree/main/site",
 					breadcrumbs: false,
 					showLastUpdateTime: true,
 				},

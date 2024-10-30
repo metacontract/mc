@@ -1,4 +1,4 @@
-# ProxyRegistry.sol
+# Index
 
 <!-- START_INDEX -->
 - [struct.ProxyRegistry](./struct.ProxyRegistry.md)

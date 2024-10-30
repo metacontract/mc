@@ -1,4 +1,4 @@
-# Receive.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.Receive](./contract.Receive.md)

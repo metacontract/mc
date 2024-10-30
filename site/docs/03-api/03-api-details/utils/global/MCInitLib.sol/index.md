@@ -1,4 +1,4 @@
-# MCInitLib.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.MCInitLib](./library.MCInitLib.md)

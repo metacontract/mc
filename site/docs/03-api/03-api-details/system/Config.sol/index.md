@@ -1,4 +1,4 @@
-# Config.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.ConfigLib](./library.ConfigLib.md)

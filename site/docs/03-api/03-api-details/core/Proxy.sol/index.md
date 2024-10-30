@@ -1,4 +1,4 @@
-# Proxy.sol
+# Index
 
 <!-- START_INDEX -->
 - [struct.Proxy](./struct.Proxy.md)

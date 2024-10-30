@@ -1,4 +1,4 @@
-# MCMockLib.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.MCMockLib](./library.MCMockLib.md)

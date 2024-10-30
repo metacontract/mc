@@ -1,4 +1,4 @@
-# StdFacade.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.StdFacade](./contract.StdFacade.md)

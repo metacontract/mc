@@ -1,4 +1,4 @@
-# Dictionary.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.DictionaryLib](./library.DictionaryLib.md)

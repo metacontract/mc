@@ -1,4 +1,4 @@
-# MCDevKit.sol
+# Index
 
 <!-- START_INDEX -->
 - [struct.MCDevKit](./struct.MCDevKit.md)

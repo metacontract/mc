@@ -1,4 +1,4 @@
-# MCFinderLib.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.MCFinderLib](./library.MCFinderLib.md)

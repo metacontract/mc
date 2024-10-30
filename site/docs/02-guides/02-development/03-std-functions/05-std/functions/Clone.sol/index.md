@@ -1,4 +1,4 @@
-# Clone.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.Clone](./contract.Clone.md)

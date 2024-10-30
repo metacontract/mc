@@ -1,4 +1,4 @@
-# Parser.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Parser](./library.Parser.md)

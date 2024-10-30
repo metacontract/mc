@@ -1,4 +1,4 @@
-# FunctionRegistry.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.FunctionRegistryLib](./library.FunctionRegistryLib.md)

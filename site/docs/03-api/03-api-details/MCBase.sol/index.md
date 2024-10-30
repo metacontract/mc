@@ -1,4 +1,4 @@
-# MCBase.sol
+# Index
 
 <!-- START_INDEX -->
 - [abstract.MCScriptBase](./abstract.MCScriptBase.md)

@@ -1,4 +1,4 @@
-# SimpleMockProxy.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.SimpleMockProxy](./contract.SimpleMockProxy.md)

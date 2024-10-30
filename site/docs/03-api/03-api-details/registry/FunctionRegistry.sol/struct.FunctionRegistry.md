@@ -1,5 +1,5 @@
 # FunctionRegistry
-[Git Source](https://github.com/metacontract/mc/blob/93e4f2d4a013f48ae1db91ed21bff3eb8a27ce1d/src/devkit/registry/FunctionRegistry.sol)
+[Git Source](https://github.com/metacontract/mc/blob/20954f1387efa0bc72b42d3e78a22f9f845eebbd/src/devkit/registry/FunctionRegistry.sol)
 
 ---------------------
 Support Methods

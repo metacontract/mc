@@ -1,4 +1,4 @@
-# Initialization.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.Initialization](./library.Initialization.md)

@@ -1,4 +1,4 @@
-# UpgradeDictionary.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.UpgradeDictionary](./contract.UpgradeDictionary.md)

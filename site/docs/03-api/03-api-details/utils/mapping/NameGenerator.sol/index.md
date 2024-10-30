@@ -1,4 +1,4 @@
-# NameGenerator.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.NameGenerator](./library.NameGenerator.md)

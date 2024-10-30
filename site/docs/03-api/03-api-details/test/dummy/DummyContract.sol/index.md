@@ -1,4 +1,4 @@
-# DummyContract.sol
+# Index
 
 <!-- START_INDEX -->
 - [contract.DummyContract](./contract.DummyContract.md)

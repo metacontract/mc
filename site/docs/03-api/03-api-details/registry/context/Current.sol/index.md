@@ -1,4 +1,4 @@
-# Current.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.CurrentLib](./library.CurrentLib.md)

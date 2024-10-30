@@ -1,4 +1,4 @@
-# System.sol
+# Index
 
 <!-- START_INDEX -->
 - [library.System](./library.System.md)
