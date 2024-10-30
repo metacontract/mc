@@ -15,7 +15,7 @@
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"typecheck": "tsc",
 		"soldocs": "command -v forge >/dev/null 2>&1 || npm run install-foundry && npm run ./script/integrate_soldocs.ts",
-		"install-foundry": "curl -L https://foundry.paradigm.xyz | bash && echo 'export PATH=$HOME/.foundry/bin:$PATH' >> ~/.bashrc && source ~/.bashrc && foundryup"
+		"install-foundry": "curl -L https://foundry.paradigm.xyz | bash && echo 'export PATH=$HOME/.foundry/bin:$PATH' >> /opt/buildhome/.bashrc && source /opt/buildhome/.bashrc && foundryup"
 	},
 	"dependencies": {
 		"@docusaurus/core": "3.5.2",
