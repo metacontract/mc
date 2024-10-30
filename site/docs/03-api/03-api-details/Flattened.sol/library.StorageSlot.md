@@ -1,5 +1,5 @@
 # StorageSlot
-[Git Source](https://github.com/metacontract/mc/blob/20954f1387efa0bc72b42d3e78a22f9f845eebbd/src/devkit/Flattened.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/devkit/Flattened.sol)
 
 *Library for reading and writing primitive types to specific storage slots.
 Storage slots are often used to avoid storage conflict when dealing with upgradeable contracts.

@@ -1,4 +1,4 @@
-# Index
+# DictionaryRegistry.sol
 
 <!-- START_INDEX -->
 - [library.DictionaryRegistryLib](./library.DictionaryRegistryLib.md)

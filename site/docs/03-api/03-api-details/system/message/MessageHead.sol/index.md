@@ -1,4 +1,4 @@
-# Index
+# MessageHead.sol
 
 <!-- START_INDEX -->
 - [library.MessageHead](./library.MessageHead.md)

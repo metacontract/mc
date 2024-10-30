@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import { config } from "../config";
-import { logMessage, logSuccess } from "./utils";
+import { logError, logInfo, logMessage, logSuccess } from "./utils";
 
 export function updateLinks(directoryPath: string) {
 	const markdownFiles = getMarkdownFiles(directoryPath);
@@ -25,16 +25,44 @@ function getMarkdownFiles(directoryPath: string): string[] {
 }
 
 function replaceLinks(markdown: string, directoryPath: string) {
-	return markdown.replace(
-		/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
-		(match, text, path, fragment) => {
-			if (!path.startsWith("/")) return match;
+	// logMessage("replaceLinks", true);
 
-			const newPath = getNewPath(path, directoryPath);
+	return markdown
+		.replace(
+			/\[([^\]]+)\]\((\/[^)]+\.md)(#[^\s)]+)?\)/g,
+			(match, text, path, fragment) => {
+				logMessage(path);
+				if (!path.startsWith("/")) return match;
 
-			return `[${text}](${newPath}${fragment || ""})`;
-		},
-	);
+				const newPath = getNewPath(path, directoryPath);
+				return `[${text}](${newPath}${fragment || ""})`;
+			},
+		)
+		.replace(
+			/\[([^\]]+)\]\((https:\/\/github\.com\/[^)]+)(#[^\s)]+)?\)/g,
+			(match, text, path, fragment) => {
+				if (path.startsWith("https://github.com/")) {
+					// logMessage(path, true);
+					const updatedPath = updateGitHubPath(path);
+					// logMessage(updatedPath, true);
+					return `[${text}](${updatedPath}${fragment || ""})`;
+				}
+				return match;
+			},
+		);
+}
+
+function updateGitHubPath(githubPath: string): string {
+	const urlPattern = /blob\/([^/]+)\/(.+)/;
+	const match = githubPath.match(urlPattern);
+
+	if (match) {
+		// Remove the <commit> part from the path
+		const [, , rest] = match; // Extract the part after <commit>
+		return `https://github.com/metacontract/mc/blob/main/${rest}`; // Return the part after 'blob/'
+	}
+
+	return null; // Return null if pattern doesn't match
 }
 
 function getNewPath(path: string, directoryPath: string): string {

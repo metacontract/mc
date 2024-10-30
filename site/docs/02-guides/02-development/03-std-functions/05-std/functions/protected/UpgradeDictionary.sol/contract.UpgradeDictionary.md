@@ -1,5 +1,5 @@
 # UpgradeDictionary
-[Git Source](https://github.com/metacontract/mc/blob/20954f1387efa0bc72b42d3e78a22f9f845eebbd/src/std/functions/protected/UpgradeDictionary.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/std/functions/protected/UpgradeDictionary.sol)
 
 **Inherits:**
 [ProtectionBase](../protection/ProtectionBase.sol/abstract.ProtectionBase.md)

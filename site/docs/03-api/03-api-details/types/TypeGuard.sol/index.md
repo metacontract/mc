@@ -1,4 +1,4 @@
-# Index
+# TypeGuard.sol
 
 <!-- START_INDEX -->
 - [enum.TypeStatus](./enum.TypeStatus.md)

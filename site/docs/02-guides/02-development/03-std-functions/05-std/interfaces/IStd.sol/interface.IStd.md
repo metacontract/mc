@@ -1,5 +1,5 @@
 # IStd
-[Git Source](https://github.com/metacontract/mc/blob/20954f1387efa0bc72b42d3e78a22f9f845eebbd/src/std/interfaces/IStd.sol)
+[Git Source](https://github.com/metacontract/mc/blob/main/src/std/interfaces/IStd.sol)
 
 **Inherits:**
 [IProxy](../../../../../../03-api/03-api-details/Flattened.sol/interface.IProxy.md)
