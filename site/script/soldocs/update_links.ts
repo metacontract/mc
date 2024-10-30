@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import { config } from "../config";
-import { logInfo, logMessage, logSuccess } from "./utils";
+import { logError, logInfo, logMessage, logSuccess } from "./utils";
 
 export function updateLinks(directoryPath: string) {
 	const markdownFiles = getMarkdownFiles(directoryPath);
@@ -25,7 +25,7 @@ function getMarkdownFiles(directoryPath: string): string[] {
 }
 
 function replaceLinks(markdown: string, directoryPath: string) {
-	logMessage("replaceLinks", true);
+	// logMessage("replaceLinks", true);
 
 	return markdown
 		.replace(
@@ -42,9 +42,9 @@ function replaceLinks(markdown: string, directoryPath: string) {
 			/\[([^\]]+)\]\((https:\/\/github\.com\/[^)]+)(#[^\s)]+)?\)/g,
 			(match, text, path, fragment) => {
 				if (path.startsWith("https://github.com/")) {
-					logMessage(path, true);
-					const updatedPath = updateGitHubPath(path, "/metacontract/mc/");
-					logMessage(updatedPath, true);
+					// logMessage(path, true);
+					const updatedPath = updateGitHubPath(path);
+					// logMessage(updatedPath, true);
 					return `[${text}](${updatedPath}${fragment || ""})`;
 				}
 				return match;
@@ -52,25 +52,17 @@ function replaceLinks(markdown: string, directoryPath: string) {
 		);
 }
 
-function updateGitHubPath(githubPath: string, repo: string): string {
-	const github = "https://github.com";
-
-	// Split the URL into components
-	const urlPattern =
-		/https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)/;
+function updateGitHubPath(githubPath: string): string {
+	const urlPattern = /blob\/([^/]+)\/(.+)/;
 	const match = githubPath.match(urlPattern);
 
-	if (!match) {
-		return githubPath; // Return original if pattern doesn't match
+	if (match) {
+		// Remove the <commit> part from the path
+		const [, , rest] = match; // Extract the part after <commit>
+		return `https://github.com/metacontract/mc/blob/main/${rest}`; // Return the part after 'blob/'
 	}
 
-	const [, token, repository, commit, rest] = match;
-
-	// Construct the new path
-	const updatedPath = `${github}${repo}blob/main/${rest}`;
-
-	logInfo(updatedPath, true);
-	return updatedPath;
+	return null; // Return null if pattern doesn't match
 }
 
 function getNewPath(path: string, directoryPath: string): string {
