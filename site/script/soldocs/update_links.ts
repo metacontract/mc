@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import { config } from "../config";
-import { logMessage, logSuccess } from "./utils";
+import { logInfo, logMessage, logSuccess } from "./utils";
 
 export function updateLinks(directoryPath: string) {
 	const markdownFiles = getMarkdownFiles(directoryPath);
@@ -67,6 +67,7 @@ function updateGitHubPath(githubPath: string, repo: string): string {
 	// Construct the new path
 	const updatedPath = `${github}${repo}blob/main/${rest}`;
 
+	logInfo(updatedPath, true);
 	return updatedPath;
 }
 
