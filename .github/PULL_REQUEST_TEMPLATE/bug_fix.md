@@ -1,10 +1,9 @@
 ---
 name: Bug Fix
 about: Create a pull request for bug fix
-title: "[Bug Fix] "
-labels: 'type: bug, status: in-progress'
-assignees: ''
-
+title: "[bug fix] "
+labels: "type: bug, status: in-progress"
+assignees: ""
 ---
 
 This pull request is to propose a bug fix for the `mc` project.

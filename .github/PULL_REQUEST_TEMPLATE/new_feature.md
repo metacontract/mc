@@ -1,10 +1,9 @@
 ---
 name: New Feature
 about: Create a pull request for new feature
-title: "[New Feature] "
-labels: 'type: feature, status: in-progress'
-assignees: ''
-
+title: "[feature] "
+labels: "type: feature, status: in-progress"
+assignees: ""
 ---
 
 This pull request is to propose the new feature of the `mc` project.

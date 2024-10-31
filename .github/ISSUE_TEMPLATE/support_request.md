@@ -1,10 +1,9 @@
 ---
-name: Support request
+name: Support Request
 about: Request support or ask a question
-title: "[Support] "
-labels: 'type: support, status: todo'
-assignees: ''
-
+title: "[support] "
+labels: "type: support"
+assignees: ""
 ---
 
 ## Question

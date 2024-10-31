@@ -1,10 +1,9 @@
 ---
 name: New Release
 about: Create a pull request for new release
-title: "[Release] vX.X.X"
-labels: 'type: release, status: in-progress'
-assignees: ''
-
+title: "[release] vX.X.X"
+labels: "type: release, status: in-progress"
+assignees: ""
 ---
 
 ## Overview
