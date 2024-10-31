@@ -1,10 +1,9 @@
 ---
 name: Update Docs
 about: Create a pull request to update the documentation
-title: "[Docs] "
-labels: 'type: documentation, status: in-progress'
-assignees: ''
-
+title: "[docs] "
+labels: "type: documentation, status: in-progress"
+assignees: ""
 ---
 
 This pull request is to propose a documentation update for the `mc` project.
