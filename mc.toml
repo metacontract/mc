@@ -1,17 +1,15 @@
 [setup]
-STD_FUNCS = true
+    STD_FUNCS = true
 
 [system]
-LOG_LEVEL = "Warn"
-SCAN_RANGE = 5
+    LOG_LEVEL = "Warn"
+    SCAN_RANGE = 5
 
 [naming]
-DEFAULT_DICTIONARY = 'Dictionary'
-DEFAULT_DICTIONARY_DUPLICATED = 'DuplicatedDictionary'
-DEFAULT_DICTIONARY_MOCK = 'MockDictionary'
-DEFAULT_PROXY = 'Proxy'
-DEFAULT_PROXY_MOCK = 'MockProxy'
-DEFAULT_BUNDLE = 'Bundle'
-DEFAULT_FUNCTION = 'Function'
-
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+    DEFAULT_DICTIONARY = 'Dictionary'
+    DEFAULT_DICTIONARY_DUPLICATED = 'DuplicatedDictionary'
+    DEFAULT_DICTIONARY_MOCK = 'MockDictionary'
+    DEFAULT_PROXY = 'Proxy'
+    DEFAULT_PROXY_MOCK = 'MockProxy'
+    DEFAULT_BUNDLE = 'Bundle'
+    DEFAULT_FUNCTION = 'Function'

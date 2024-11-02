@@ -18,10 +18,11 @@ import {MCHelpers} from "@mc-devkit/utils/global/MCHelpers.sol";
 // System Methods
 import {Tracer} from "@mc-devkit/system/Tracer.sol";
 
-
-/********************************
-    🌟 Meta Contract DevKit
-*********************************/
+/**
+ *
+ *     🌟 Meta Contract DevKit
+ *
+ */
 struct MCDevKit {
     StdRegistry std;
     FunctionRegistry functions;
@@ -29,6 +30,7 @@ struct MCDevKit {
     DictionaryRegistry dictionary;
     ProxyRegistry proxy;
 }
+
 using MCInitLib for MCDevKit global;
 using MCDeployLib for MCDevKit global;
 using MCFinderLib for MCDevKit global;

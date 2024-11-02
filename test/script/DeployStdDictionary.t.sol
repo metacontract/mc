@@ -14,5 +14,4 @@ contract DeployStdDictionaryTest is MCTestBase {
     function test_Run_Success() public startPrankWith("DEPLOYER_PRIV_KEY") {
         mc.deployStdDictionary();
     }
-
 }

@@ -6,6 +6,7 @@ import {console} from "forge-std/console.sol";
 
 library MsgSender {
     error NotAdmin();
+
     function shouldBeAdmin() internal view {
         console.log(msg.sender);
         console.log(Storage.Admin().admin);
@@ -13,10 +14,11 @@ library MsgSender {
     }
 
     error NotMember();
+
     function shouldBeMember() internal view {
         bool _isMember;
         address[] memory _members = Storage.Member().members;
-        for (uint i; i < _members.length; ++i) {
+        for (uint256 i; i < _members.length; ++i) {
             if (msg.sender == _members[i]) {
                 _isMember = true;
                 break;

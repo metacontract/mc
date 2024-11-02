@@ -7,8 +7,7 @@ import {Initialization} from "@mc-std/functions/protected/protection/Initializat
 import {Storage} from "@mc-std/storage/Storage.sol";
 
 contract InitializationTest is Test {
-
-    function test_ShouldNotBeCompleted_Success() public {
+    function test_ShouldNotBeCompleted_Success() public view {
         Initialization.shouldNotBeCompleted();
     }
 
@@ -26,5 +25,4 @@ contract InitializationTest is Test {
 
         assertEq(Storage.Initialization().initialized, 1);
     }
-
 }

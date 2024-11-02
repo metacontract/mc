@@ -9,7 +9,6 @@ import {Test as ForgeTest} from "forge-std/Test.sol";
 import {MCDevKit} from "@mc-devkit/MCDevKit.sol";
 import {System} from "@mc-devkit/system/System.sol";
 
-
 abstract contract MCBase is CommonBase {
     MCDevKit internal mc;
     uint256 internal deployerKey;

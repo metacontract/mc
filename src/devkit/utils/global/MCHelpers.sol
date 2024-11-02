@@ -22,18 +22,21 @@ import {Proxy, ProxyLib} from "@mc-devkit/core/Proxy.sol";
 //  dictionary
 import {Dictionary, DictionaryLib} from "@mc-devkit/core/Dictionary.sol";
 
-/******************************************
+/**
+ *
  *  🛠️ Helper
  *      ♻️ Reset Current Context
  *      🤲 Set Storage Reader
-*******************************************/
+ *
+ */
 library MCHelpers {
-
-    /**-----------------------------
-        ♻️ Reset Current Context
-    -------------------------------*/
-    function reset(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("reset");
+    /**
+     * -----------------------------
+     *     ♻️ Reset Current Context
+     * -------------------------------
+     */
+    function reset(MCDevKit storage mc) internal returns (MCDevKit storage) {
+        uint256 pid = mc.startProcess("reset");
         mc.bundle.current.reset();
         mc.functions.current.reset();
         mc.dictionary.current.reset();
@@ -41,40 +44,56 @@ library MCHelpers {
         return mc.finishProcess(pid);
     }
 
-
-    /**--------------------------
-        🤲 Set Storage Reader
-    ----------------------------*/
-    function setStorageReader(MCDevKit storage mc, Dictionary memory dictionary, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setStorageReader", param(dictionary, selector, implementation));
+    /**
+     * --------------------------
+     *     🤲 Set Storage Reader
+     * ----------------------------
+     */
+    function setStorageReader(
+        MCDevKit storage mc,
+        Dictionary memory dictionary,
+        bytes4 selector,
+        address implementation
+    ) internal returns (MCDevKit storage) {
+        uint256 pid = mc.startProcess("setStorageReader", param(dictionary, selector, implementation));
         dictionary.set(selector, implementation);
         return mc.finishProcess(pid);
     }
-    function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+
+    function setStorageReader(MCDevKit storage mc, string memory bundleName, bytes4 selector, address implementation)
+        internal
+        returns (MCDevKit storage)
+    {
         return mc.setStorageReader(mc.dictionary.find(bundleName), selector, implementation);
     }
-    function setStorageReader(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+
+    function setStorageReader(MCDevKit storage mc, bytes4 selector, address implementation)
+        internal
+        returns (MCDevKit storage)
+    {
         return mc.setStorageReader(mc.dictionary.findCurrent(), selector, implementation);
     }
 
-
     /// ForgeHelper Wrapper
 
-    /**-------------------
-        🔧 Env File
-    ---------------------*/
-    function loadPrivateKey(MCDevKit storage, string memory envKey) internal view returns(uint256) {
+    /**
+     * -------------------
+     *     🔧 Env File
+     * ---------------------
+     */
+    function loadPrivateKey(MCDevKit storage, string memory envKey) internal view returns (uint256) {
         return ForgeHelper.loadPrivateKey(envKey);
     }
 
-    function loadAddressFromEnv(MCDevKit storage, string memory envKey) internal view returns(address) {
+    function loadAddressFromEnv(MCDevKit storage, string memory envKey) internal view returns (address) {
         return ForgeHelper.loadAddressFromEnv(envKey);
     }
 
-
-    /**-------------------------
-        📍 Address Operation
-    ---------------------------*/
+    /**
+     * -------------------------
+     *     📍 Address Operation
+     * ---------------------------
+     */
     function injectCode(MCDevKit storage, address target, bytes memory runtimeBytecode) internal {
         ForgeHelper.injectCode(target, runtimeBytecode);
     }
@@ -83,11 +102,11 @@ library MCHelpers {
         ForgeHelper.injectDictionary(proxy, dictionary);
     }
 
-    function getAddress(MCDevKit storage, address target, bytes32 slot) internal view returns(address) {
+    function getAddress(MCDevKit storage, address target, bytes32 slot) internal view returns (address) {
         return ForgeHelper.getAddress(target, slot);
     }
 
-    function getDictionaryAddress(MCDevKit storage, address proxy) internal view returns(address) {
+    function getDictionaryAddress(MCDevKit storage, address proxy) internal view returns (address) {
         return ForgeHelper.getDictionaryAddress(proxy);
     }
 
@@ -95,41 +114,46 @@ library MCHelpers {
         ForgeHelper.assumeAddressIsNotReserved(addr);
     }
 
-
-    /**----------------
-        📓 Context
-    ------------------*/
-    function msgSender(MCDevKit storage) internal returns(address) {
+    /**
+     * ----------------
+     *     📓 Context
+     * ------------------
+     */
+    function msgSender(MCDevKit storage) internal returns (address) {
         return ForgeHelper.msgSender();
     }
 
-
-    /**---------------
-        🏷️ Label
-    -----------------*/
-    function assignLabel(MCDevKit storage, address addr, string memory name) internal returns(address) {
+    /**
+     * ---------------
+     *     🏷️ Label
+     * -----------------
+     */
+    function assignLabel(MCDevKit storage, address addr, string memory name) internal returns (address) {
         return ForgeHelper.assignLabel(addr, name);
     }
 
-    function getLabel(MCDevKit storage, address addr) internal view returns(string memory) {
+    function getLabel(MCDevKit storage, address addr) internal view returns (string memory) {
         return ForgeHelper.getLabel(addr);
     }
 
-
-    /**------------------
-        📡 Broadcast
-    --------------------*/
+    /**
+     * ------------------
+     *     📡 Broadcast
+     * --------------------
+     */
     function pauseBroadcast(MCDevKit storage) internal {
         ForgeHelper.pauseBroadcast();
     }
+
     function resumeBroadcast(MCDevKit storage, bool isBroadcasting, address currentSender) internal {
         ForgeHelper.resumeBroadcast(isBroadcasting, currentSender);
     }
 
-
-    /**----------------------
-        🛠️ Forge Extender
-    ------------------------*/
+    /**
+     * ----------------------
+     *     🛠️ Forge Extender
+     * ------------------------
+     */
     function expectRevert(MCDevKit storage, string memory message) internal {
         vm.expectRevert(bytes(message));
     }

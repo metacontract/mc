@@ -3,16 +3,21 @@ pragma solidity ^0.8.23;
 
 import {Logger} from "@mc-devkit/system/Logger.sol";
 import {Inspector} from "@mc-devkit/types/Inspector.sol";
-    using Inspector for string;
 
-/**===============
-    🗒️ Parser
-=================*/
+using Inspector for string;
+
+/**
+ * ===============
+ *     🗒️ Parser
+ * =================
+ */
 library Parser {
-    /**===============
-        📊 Logger
-    =================*/
-    function toLogLevel(string memory str) internal pure returns(Logger.Level) {
+    /**
+     * ===============
+     *     📊 Logger
+     * =================
+     */
+    function toLogLevel(string memory str) internal pure returns (Logger.Level) {
         if (str.isEqual("Debug")) return Logger.Level.Debug;
         if (str.isEqual("Info")) return Logger.Level.Info;
         if (str.isEqual("Warn")) return Logger.Level.Warn;

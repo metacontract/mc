@@ -8,19 +8,19 @@ import {DummyContract} from "@mc-devkit/test/dummy/DummyContract.sol";
 import {MCTest} from "@mc-devkit/MCTest.sol";
 
 library Dummy {
-    function bundleName() internal pure returns(string memory) {
+    function bundleName() internal pure returns (string memory) {
         return "DummyBundleName";
     }
 
-    function functionSelector() internal pure returns(bytes4) {
+    function functionSelector() internal pure returns (bytes4) {
         return DummyFunction.dummy.selector;
     }
 
-    function functionAddress() internal returns(address) {
+    function functionAddress() internal returns (address) {
         return address(new DummyFunction());
     }
 
-    function facadeAddress() internal returns(address) {
+    function facadeAddress() internal returns (address) {
         return address(new DummyFacade());
     }
 
@@ -30,22 +30,21 @@ library Dummy {
         mc.useFacade(address(new DummyFacade()));
     }
 
-    function dictionary(MCDevKit storage mc) internal returns(address) {
+    function dictionary(MCDevKit storage mc) internal returns (address) {
         setBundle(mc);
         return mc.createMockDictionary().addr;
     }
 
-    function dictionary(MCDevKit storage mc, MCTest.Function[] memory functions) internal returns(address) {
+    function dictionary(MCDevKit storage mc, MCTest.Function[] memory functions) internal returns (address) {
         mc.init("DummyBundle");
-        for (uint i; i < functions.length; ++i) {
+        for (uint256 i; i < functions.length; ++i) {
             mc.use(functions[i].selector, functions[i].implementation);
         }
         mc.useFacade(address(new DummyFacade()));
         return mc.createMockDictionary().addr;
     }
 
-    function contractAddr() internal returns(address) {
+    function contractAddr() internal returns (address) {
         return address(new DummyContract());
     }
-
 }

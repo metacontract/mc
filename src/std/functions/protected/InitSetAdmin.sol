@@ -7,7 +7,8 @@ import {Storage} from "../../storage/Storage.sol";
 // predicates
 import {ProtectionBase} from "./protection/ProtectionBase.sol";
 
-/** < MC Standard Function >
+/**
+ * < MC Standard Function >
  *  @title InitSetAdmin
  *  @custom:version v0.1.0
  *  @custom:schema v0.1.0

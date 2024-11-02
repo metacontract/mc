@@ -70,5 +70,4 @@ library MessageHead {
     string constant NOT_FOUND_IN_RANGE = "Not Found In Range";
     // MCTest
     string constant TEST_MUST_USE_FUNCTION = "MCTest: Function Not Found";
-
 }

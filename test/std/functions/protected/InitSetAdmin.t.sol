@@ -22,5 +22,4 @@ contract InitSetAdminTest is MCTest {
 
         assertEq(Storage.Admin().admin, admin);
     }
-
 }

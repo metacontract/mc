@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
-/**---------------------
-    Support Methods
------------------------*/
+/**
+ * ---------------------
+ *     Support Methods
+ * -----------------------
+ */
+
 import {Tracer, param} from "@mc-devkit/system/Tracer.sol";
 import {Inspector} from "@mc-devkit/types/Inspector.sol";
 import {TypeGuard, TypeStatus} from "@mc-devkit/types/TypeGuard.sol";
@@ -18,25 +21,28 @@ import {SimpleMockProxy} from "@mc-devkit/test/mocks/SimpleMockProxy.sol";
 import {Dictionary} from "@mc-devkit/core/Dictionary.sol";
 import {Function} from "@mc-devkit/core/Function.sol";
 
-
 ///////////////////////////////////////////
 //  🏠 Proxy   ////////////////////////////
-    using ProxyLib for Proxy global;
-    using Tracer for Proxy global;
-    using Inspector for Proxy global;
-    using TypeGuard for Proxy global;
+using ProxyLib for Proxy global;
+using Tracer for Proxy global;
+using Inspector for Proxy global;
+using TypeGuard for Proxy global;
 ///////////////////////////////////////////
+
 struct Proxy {
     address addr;
     ProxyKind kind;
     TypeStatus status;
 }
+
 library ProxyLib {
-    /**---------------------
-        🚀 Deploy Proxy
-    -----------------------*/
-    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns(Proxy memory proxy) {
-        uint pid = proxy.startProcess("deploy", param(dictionary, initData));
+    /**
+     * ---------------------
+     *     🚀 Deploy Proxy
+     * -----------------------
+     */
+    function deploy(Dictionary memory dictionary, bytes memory initData) internal returns (Proxy memory proxy) {
+        uint256 pid = proxy.startProcess("deploy", param(dictionary, initData));
         Validator.MUST_Completed(dictionary);
         proxy.startBuilding();
         proxy.addr = address(new UCSProxy(dictionary.addr, initData));
@@ -45,12 +51,14 @@ library ProxyLib {
         return proxy.finishProcess(pid);
     }
 
-    /**--------------------------
-        🤖 Create Proxy Mock
-    ----------------------------*/
-    function createSimpleMock(Function[] memory functions) internal returns(Proxy memory mockProxy) {
-        uint pid = mockProxy.startProcess("createSimpleMock", param(functions));
-        for (uint i; i < functions.length; ++i) {
+    /**
+     * --------------------------
+     *     🤖 Create Proxy Mock
+     * ----------------------------
+     */
+    function createSimpleMock(Function[] memory functions) internal returns (Proxy memory mockProxy) {
+        uint256 pid = mockProxy.startProcess("createSimpleMock", param(functions));
+        for (uint256 i; i < functions.length; ++i) {
             Validator.MUST_Completed(functions[i]);
         }
         mockProxy.startBuilding();
@@ -59,17 +67,18 @@ library ProxyLib {
         mockProxy.finishBuilding();
         return mockProxy.finishProcess(pid);
     }
-
 }
 
-
-/**---------------
-    Proxy Kind
------------------*/
+/**
+ * ---------------
+ *     Proxy Kind
+ * -----------------
+ */
 enum ProxyKind {
     undefined,
     Normal,
     Verifiable,
     Mock
 }
+
 using Inspector for ProxyKind global;
