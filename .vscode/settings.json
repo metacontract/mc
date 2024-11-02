@@ -1,6 +1,5 @@
 {
-  "solidity.packageDefaultDependenciesContractsDirectory": "src",
-  "solidity.packageDefaultDependenciesDirectory": "lib",
-  "solidity.compileUsingRemoteVersion": "true",
-  "solidity.compileUsingLocalVersion": "false"
+	"solidity-language-server.trace.server.verbosity": "verbose",
+	"solidity.formatter": "forge",
+	"solidity.telemetry": false
 }
