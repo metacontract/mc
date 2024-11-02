@@ -1,5 +1,9 @@
 {
 	"solidity-language-server.trace.server.verbosity": "verbose",
 	"solidity.formatter": "forge",
-	"solidity.telemetry": false
+	"solidity.telemetry": false,
+	"editor.formatOnSave": true,
+	"[solidity]": {
+		"editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+	}
 }
