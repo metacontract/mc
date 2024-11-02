@@ -4,9 +4,11 @@ pragma solidity ^0.8.23;
 import {MCTestBase, Dummy} from "@mc-devkit/Flattened.sol";
 
 contract MCDeployLibTest is MCTestBase {
-    /**-----------------------------
-        🌞 Deploy Meta Contract
-    -------------------------------*/
+    /**
+     * -----------------------------
+     *     🌞 Deploy Meta Contract
+     * -------------------------------
+     */
     function test_deploy_Success() public {
         string memory name = Dummy.bundleName();
         bytes4 selector = Dummy.functionSelector();
@@ -24,9 +26,11 @@ contract MCDeployLibTest is MCTestBase {
         assertTrue(success);
     }
 
-    /**---------------------
-        🏠 Deploy Proxy
-    -----------------------*/
+    /**
+     * ---------------------
+     *     🏠 Deploy Proxy
+     * -----------------------
+     */
     function test_deployProxy_Success() public {
         string memory name = Dummy.bundleName();
         bytes4 selector = Dummy.functionSelector();
@@ -43,9 +47,11 @@ contract MCDeployLibTest is MCTestBase {
         assertTrue(success);
     }
 
-    /**-------------------------
-        📚 Deploy Dictionary
-    ---------------------------*/
+    /**
+     * -------------------------
+     *     📚 Deploy Dictionary
+     * ---------------------------
+     */
     function test_deployDictionary_Success() public {
         string memory name = Dummy.bundleName();
         bytes4 selector = Dummy.functionSelector();
@@ -60,14 +66,17 @@ contract MCDeployLibTest is MCTestBase {
         assertTrue(mc.dictionary.find(name).isComplete());
         assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
-        (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
+        (bool success, bytes memory ret) =
+            dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         assertTrue(success);
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
-    /**----------------------------
-        🔂 Duplicate Dictionary
-    ------------------------------*/
+    /**
+     * ----------------------------
+     *     🔂 Duplicate Dictionary
+     * ------------------------------
+     */
     function test_duplicateDictionary_Success() public {
         string memory name = Dummy.bundleName();
         bytes4 selector = Dummy.functionSelector();
@@ -84,14 +93,17 @@ contract MCDeployLibTest is MCTestBase {
         assertTrue(mc.dictionary.find(duplicatedDictionaryName).isComplete());
         assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
-        (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
+        (bool success, bytes memory ret) =
+            dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         assertTrue(success);
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
 
-    /**------------------------
-        💽 Load Dictionary
-    --------------------------*/
+    /**
+     * ------------------------
+     *     💽 Load Dictionary
+     * --------------------------
+     */
     function test_loadDictionary_Success() public {
         string memory name = Dummy.bundleName();
         bytes4 selector = Dummy.functionSelector();
@@ -107,9 +119,9 @@ contract MCDeployLibTest is MCTestBase {
         assertTrue(mc.dictionary.find("LoadedDictionary").isComplete());
         assertEq(mc.dictionary.findCurrent().addr, dictionary);
 
-        (bool success, bytes memory ret) = dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
+        (bool success, bytes memory ret) =
+            dictionary.call(abi.encodeWithSignature("getImplementation(bytes4)", selector));
         assertTrue(success);
         assertEq(address(uint160(uint256(bytes32(ret)))), impl);
     }
-
 }

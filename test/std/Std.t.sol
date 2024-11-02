@@ -9,9 +9,10 @@ import {Initialization} from "@mc-std/functions/protected/protection/Initializat
 
 contract StdTest is MCTest {
     using DeployLib for MCDevKit;
+
     IStd std;
 
-    function setUp() public  {
+    function setUp() public {
         mc.setupStdFunctions();
         std = IStd(mc.deployStd(address(this)));
     }
@@ -33,5 +34,4 @@ contract StdTest is MCTest {
         vm.expectRevert(Initialization.InvalidInitialization.selector);
         std.initSetAdmin(makeAddr("ADMIN"));
     }
-
 }

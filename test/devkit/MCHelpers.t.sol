@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
-import {
-    MCTestBase,
-    MessageHead as HEAD,
-    Inspector
-} from "@mc-devkit/Flattened.sol";
+import {MCTestBase, MessageHead as HEAD, Inspector} from "@mc-devkit/Flattened.sol";
 
 contract MCHelpersTest is MCTestBase {
     using Inspector for string;
 
-    /**-----------------------------
-        ♻️ Reset Current Context
-    -------------------------------*/
+    /**
+     * -----------------------------
+     *     ♻️ Reset Current Context
+     * -------------------------------
+     */
     function test_reset_Success() public {
         mc.functions.current.name = "Current Function";
         mc.bundle.current.name = "Current Bundle";
@@ -26,5 +24,4 @@ contract MCHelpersTest is MCTestBase {
         assertTrue(mc.dictionary.current.name.isEmpty());
         assertTrue(mc.proxy.current.name.isEmpty());
     }
-
 }

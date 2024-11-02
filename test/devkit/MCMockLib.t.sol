@@ -18,13 +18,17 @@ contract MCMockLibTest is MCTestBase {
         mc.setupStdFunctions();
     }
 
-    /**-----------------------------
-        🌞 Mocking Meta Contract
-    -------------------------------*/
+    /**
+     * -----------------------------
+     *     🌞 Mocking Meta Contract
+     * -------------------------------
+     */
 
-    /**---------------------
-        🏠 Mocking Proxy
-    -----------------------*/
+    /**
+     * ---------------------
+     *     🏠 Mocking Proxy
+     * -----------------------
+     */
     function test_createMockProxy_Success() public {
         string memory name = mc.proxy.genUniqueMockName(mc.std.all.name);
 
@@ -34,9 +38,11 @@ contract MCMockLibTest is MCTestBase {
         assertEq(mc.proxy.findCurrent().addr, proxy);
     }
 
-    /**-------------------------
-        📚 Mocking Dictionary
-    ---------------------------*/
+    /**
+     * -------------------------
+     *     📚 Mocking Dictionary
+     * ---------------------------
+     */
     function test_createMockDictionary_Success() public {
         string memory name = mc.dictionary.genUniqueMockName(mc.std.all.name);
 
@@ -46,5 +52,4 @@ contract MCMockLibTest is MCTestBase {
         assertTrue(mc.dictionary.find(name).isComplete());
         assertEq(mc.dictionary.findCurrent().addr, dictionary);
     }
-
 }

@@ -1,12 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.22;
 
-import {
-    MCTest,
-    console,
-    ForgeHelper,
-    Dummy
-} from "@mc-devkit/Flattened.sol";
+import {MCTest, console, ForgeHelper, Dummy} from "@mc-devkit/Flattened.sol";
 
 import {Clone} from "@mc-std/functions/Clone.sol";
 import {ProxyCreator} from "@mc-std/functions/internal/ProxyCreator.sol";
@@ -21,10 +16,10 @@ contract CloneTest is MCTest {
         vm.expectEmit(true, false, false, false, target);
         emit ProxyCreator.ProxyCreated(dictionary, address(0));
         address cloned = Clone(target).clone("");
+        // forgefmt: disable-next-item
         assertEq(
             ForgeHelper.getDictionaryAddress(address(this)),
             ForgeHelper.getDictionaryAddress(cloned)
         );
     }
-
 }

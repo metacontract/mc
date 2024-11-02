@@ -6,7 +6,6 @@ import {MCTest, ForgeHelper, Dummy} from "@mc-devkit/Flattened.sol";
 import {ProxyCreator} from "@mc-std/functions/internal/ProxyCreator.sol";
 
 contract ProxyCreatorTest is MCTest {
-
     function test_create_Success() public {
         address dictionary = Dummy.contractAddr();
 
@@ -16,5 +15,4 @@ contract ProxyCreatorTest is MCTest {
 
         assertEq(ForgeHelper.getDictionaryAddress(proxy), dictionary);
     }
-
 }

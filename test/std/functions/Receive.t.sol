@@ -14,9 +14,9 @@ contract ReceiveTest is MCTest {
 
         vm.expectEmit(target);
         emit Receive.Received(address(this), 100 ether);
-        target.call{value: 100 ether}("");
+        (bool success,) = target.call{value: 100 ether}("");
 
+        assertTrue(success);
         assertEq(target.balance, 100 ether);
     }
-
 }

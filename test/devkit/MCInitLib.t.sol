@@ -19,31 +19,25 @@ contract MCInitLibTest is MCTestBase {
     using Inspector for string;
     using Inspector for address;
 
-    function _isInitSetAdmin(Function memory func) internal returns(bool) {
-        return
-            func.name.isEqual("InitSetAdmin") &&
-            func.selector == InitSetAdmin.initSetAdmin.selector &&
-            func.implementation.isContract();
+    function _isInitSetAdmin(Function memory func) internal returns (bool) {
+        return func.name.isEqual("InitSetAdmin") && func.selector == InitSetAdmin.initSetAdmin.selector
+            && func.implementation.isContract();
     }
 
-    function _isGetFunctions(Function memory func) internal returns(bool) {
-        return
-            func.name.isEqual("GetFunctions") &&
-            func.selector == GetFunctions.getFunctions.selector &&
-            func.implementation.isContract();
+    function _isGetFunctions(Function memory func) internal view returns (bool) {
+        return func.name.isEqual("GetFunctions") && func.selector == GetFunctions.getFunctions.selector
+            && func.implementation.isContract();
     }
 
-    function _isClone(Function memory func) internal returns(bool) {
-        return
-            func.name.isEqual("Clone") &&
-            func.selector == Clone.clone.selector &&
-            func.implementation.isContract();
+    function _isClone(Function memory func) internal view returns (bool) {
+        return func.name.isEqual("Clone") && func.selector == Clone.clone.selector && func.implementation.isContract();
     }
 
-
-    /**--------------------
-        🌱 Init Bundle
-    ----------------------*/
+    /**
+     * --------------------
+     *     🌱 Init Bundle
+     * ----------------------
+     */
     function test_init_Success_withName() public {
         string memory name = "TestBundleName";
         mc.init(name);
@@ -52,11 +46,18 @@ contract MCInitLibTest is MCTestBase {
         assertTrue(mc.bundle.current.name.isEqual(name));
     }
 
-
-    /**---------------------
-        🔗 Use Function
-    -----------------------*/
-    function assertFunctionAdded(string memory bundleName, uint256 functionsIndex, string memory functionName, bytes4 selector, address impl) internal view {
+    /**
+     * ---------------------
+     *     🔗 Use Function
+     * -----------------------
+     */
+    function assertFunctionAdded(
+        string memory bundleName,
+        uint256 functionsIndex,
+        string memory functionName,
+        bytes4 selector,
+        address impl
+    ) internal view {
         Bundle memory bundle = mc.bundle.bundles[bundleName];
         assertEq(bundle.name, bundleName);
         assertEq(bundle.facade, address(0));
@@ -73,7 +74,7 @@ contract MCInitLibTest is MCTestBase {
 
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  address(new DummyFunction());
+        address impl = address(new DummyFunction());
 
         mc.use(functionName, selector, impl);
 
@@ -86,7 +87,7 @@ contract MCInitLibTest is MCTestBase {
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
         bytes4 selector2 = DummyFunction.dummy2.selector;
-        address impl =  address(new DummyFunction());
+        address impl = address(new DummyFunction());
 
         mc.use(functionName, selector, impl);
         mc.use(functionName, selector2, impl);
@@ -97,7 +98,7 @@ contract MCInitLibTest is MCTestBase {
     function test_use_Revert_WithSameSelector() public {
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  address(new DummyFunction());
+        address impl = address(new DummyFunction());
 
         mc.use(functionName, selector, impl);
 
@@ -108,7 +109,7 @@ contract MCInitLibTest is MCTestBase {
     function test_use_Revert_EmptyName() public {
         string memory functionName = "";
         bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  address(new DummyFunction());
+        address impl = address(new DummyFunction());
 
         mc.expectRevert(HEAD.NAME_REQUIRED);
         mc.use(functionName, selector, impl);
@@ -117,26 +118,28 @@ contract MCInitLibTest is MCTestBase {
     function test_use_Revert_NotContract() public {
         string memory functionName = "DummyFunction";
         bytes4 selector = DummyFunction.dummy.selector;
-        address impl =  makeAddr("EOA");
+        address impl = makeAddr("EOA");
 
         mc.expectRevert(HEAD.ADDRESS_NOT_CONTRACT);
         mc.use(functionName, selector, impl);
     }
 
-
-    /**------------------
-        🪟 Use Facade
-    --------------------*/
+    /**
+     * ------------------
+     *     🪟 Use Facade
+     * --------------------
+     */
     function test_useFacade_Success() public {
         address facade = address(new DummyFacade());
         mc.init();
         mc.useFacade(facade);
     }
 
-
-    /**--------------------------------
-        🏰 Setup Standard Functions
-    ----------------------------------*/
+    /**
+     * --------------------------------
+     *     🏰 Setup Standard Functions
+     * ----------------------------------
+     */
     function test_setupStdFuncs_Success() public {
         mc.setupStdFunctions();
 
@@ -149,5 +152,4 @@ contract MCInitLibTest is MCTestBase {
         assertTrue(_isGetFunctions(mc.std.all.functions[1]));
         assertTrue(_isClone(mc.std.all.functions[2]));
     }
-
 }
