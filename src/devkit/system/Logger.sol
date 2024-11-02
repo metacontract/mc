@@ -8,12 +8,13 @@ import {System} from "@mc-devkit/system/System.sol";
 import {Tracer} from "@mc-devkit/system/Tracer.sol";
 import {Formatter} from "@mc-devkit/types/Formatter.sol";
 
-
-/**===============
-    📊 Logger
-=================*/
+/**
+ * ===============
+ *     📊 Logger
+ * =================
+ */
 library Logger {
-
+    // forgefmt: disable-start
     enum Level {
         Critical,   // Display critical error messages only
         Error,      // Display error messages only
@@ -21,6 +22,7 @@ library Logger {
         Info,       // Display info, warning, and error messages
         Debug       // Display all messages including debug details
     }
+    // forgefmt: disable-end
 
     // Message Header
     string constant CRITICAL = "\u001b[91m[\xF0\x9F\x9A\xA8CRITICAL]\u001b[0m";
@@ -29,13 +31,15 @@ library Logger {
     string constant INFO = "\u001b[92m[INFO]\u001b[0m";
     string constant DEBUG = "\u001b[94m[DEBUG]\u001b[0m";
 
-
-    /**------------------
-        💬 Logging
-    --------------------*/
+    /**
+     * ------------------
+     *     💬 Logging
+     * --------------------
+     */
     function log(string memory message) internal pure {
         console.log(message);
     }
+
     function log(string memory header, string memory message) internal pure {
         console.log(header, message);
     }
@@ -44,44 +48,46 @@ library Logger {
         if (currentLevel() == Level.Critical) logCritical(messageHead);
         if (currentLevel() >= Level.Error) logError(Formatter.toMessage(messageHead, messageBody));
     }
+
     function logCritical(string memory messageHead) internal pure {
         log(CRITICAL, messageHead);
     }
+
     function logError(string memory message) internal view {
         log(ERROR, message);
         log(Tracer.traceErrorLocations());
     }
+
     function logWarn(string memory message) internal view {
         if (shouldLog(Level.Warn)) log(WARN, message);
     }
+
     function logInfo(string memory message) internal view {
         if (shouldLog(Level.Info)) log(INFO, message);
     }
+
     function logDebug(string memory message) internal view {
         if (shouldLog(Level.Debug)) log(DEBUG, message);
     }
 
-
-    /**-------------------
-        💾 Export Log
-    ---------------------*/
+    /**
+     * -------------------
+     *     💾 Export Log
+     * ---------------------
+     */
     function exportTo(string memory fileName) internal {}
 
-
     // Check Current Log Level
-    function currentLevel() internal view returns(Level) {
+    function currentLevel() internal view returns (Level) {
         return System.Config().SYSTEM.LOG_LEVEL;
     }
 
-    function shouldLog(Level level) internal view returns(bool) {
+    function shouldLog(Level level) internal view returns (bool) {
         Level _currentLevel = currentLevel();
         return level <= _currentLevel;
     }
 
-    function isDisable() internal view returns(bool) {
+    function isDisable() internal view returns (bool) {
         return currentLevel() == Level.Critical;
     }
-
 }
-
-

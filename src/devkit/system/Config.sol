@@ -2,43 +2,53 @@
 pragma solidity ^0.8.23;
 
 import {ForgeHelper, vm} from "@mc-devkit/utils/ForgeHelper.sol";
-    using ForgeHelper for string;
+
+using ForgeHelper for string;
+
 import {Logger} from "@mc-devkit/system/Logger.sol";
 import {Validator} from "@mc-devkit/system/Validator.sol";
 
 import {Parser} from "@mc-devkit/types/Parser.sol";
-    using Parser for string;
 
-/**----------------------
-    📝 Config
-------------------------*/
+using Parser for string;
+
+/**
+ * ----------------------
+ *     📝 Config
+ * ------------------------
+ */
 using ConfigLib for ConfigState global;
 
-/**===============\
-|   📝 Config     |
-\================*/
+/**
+ * ===============\
+ * |   📝 Config     |
+ * \================
+ */
 /// @custom:storage-location erc7201:mc.devkit.config
 struct ConfigState {
     SetupConfig SETUP;
     SystemConfig SYSTEM;
     NamingConfig DEFAULT_NAME;
 }
-    struct SetupConfig {
-        bool STD_FUNCS;
-    }
-    struct SystemConfig {
-        Logger.Level LOG_LEVEL;
-        uint SCAN_RANGE;
-    }
-    struct NamingConfig {
-        string DICTIONARY;
-        string DICTIONARY_DUPLICATED;
-        string DICTIONARY_MOCK;
-        string PROXY;
-        string PROXY_MOCK;
-        string BUNDLE;
-        string FUNCTION;
-    }
+
+struct SetupConfig {
+    bool STD_FUNCS;
+}
+
+struct SystemConfig {
+    Logger.Level LOG_LEVEL;
+    uint256 SCAN_RANGE;
+}
+
+struct NamingConfig {
+    string DICTIONARY;
+    string DICTIONARY_DUPLICATED;
+    string DICTIONARY_MOCK;
+    string PROXY;
+    string PROXY_MOCK;
+    string BUNDLE;
+    string FUNCTION;
+}
 
 library ConfigLib {
     function load(ConfigState storage config) internal {
@@ -50,6 +60,7 @@ library ConfigLib {
         string memory path = string.concat(vm.projectRoot(), "/lib/mc/mc.toml");
         if (Validator.SHOULD_FileExists(path)) config.loadFrom(path);
     }
+
     function loadFromProjectRoot(ConfigState storage config) internal {
         string memory path = string.concat(vm.projectRoot(), "/mc.toml");
         if (Validator.SHOULD_FileExists(path)) config.loadFrom(path);
@@ -63,13 +74,16 @@ library ConfigLib {
         config.SYSTEM.LOG_LEVEL = toml.readLogLevelOr(".system.LOG_LEVEL", config.SYSTEM.LOG_LEVEL);
         config.SYSTEM.SCAN_RANGE = toml.readUintOr(".system.SCAN_RANGE", config.SYSTEM.SCAN_RANGE);
         // Naming
-        config.DEFAULT_NAME.DICTIONARY = toml.readStringOr(".naming.DEFAULT_DICTIONARY", "config.DEFAULT_NAME.DICTIONARY");
-        config.DEFAULT_NAME.DICTIONARY_DUPLICATED = toml.readStringOr(".naming.DEFAULT_DICTIONARY_DUPLICATED", "config.DEFAULT_NAME.DICTIONARY_DUPLICATED");
-        config.DEFAULT_NAME.DICTIONARY_MOCK = toml.readStringOr(".naming.DEFAULT_DICTIONARY_MOCK", "config.DEFAULT_NAME.DICTIONARY_MOCK");
+        config.DEFAULT_NAME.DICTIONARY =
+            toml.readStringOr(".naming.DEFAULT_DICTIONARY", "config.DEFAULT_NAME.DICTIONARY");
+        config.DEFAULT_NAME.DICTIONARY_DUPLICATED =
+            toml.readStringOr(".naming.DEFAULT_DICTIONARY_DUPLICATED", "config.DEFAULT_NAME.DICTIONARY_DUPLICATED");
+        config.DEFAULT_NAME.DICTIONARY_MOCK =
+            toml.readStringOr(".naming.DEFAULT_DICTIONARY_MOCK", "config.DEFAULT_NAME.DICTIONARY_MOCK");
         config.DEFAULT_NAME.PROXY = toml.readStringOr(".naming.DEFAULT_PROXY", "config.DEFAULT_NAME.PROXY");
-        config.DEFAULT_NAME.PROXY_MOCK = toml.readStringOr(".naming.DEFAULT_PROXY_MOCK", "config.DEFAULT_NAME.PROXY_MOCK");
+        config.DEFAULT_NAME.PROXY_MOCK =
+            toml.readStringOr(".naming.DEFAULT_PROXY_MOCK", "config.DEFAULT_NAME.PROXY_MOCK");
         config.DEFAULT_NAME.BUNDLE = toml.readStringOr(".naming.DEFAULT_BUNDLE", "config.DEFAULT_NAME.BUNDLE");
         config.DEFAULT_NAME.FUNCTION = toml.readStringOr(".naming.DEFAULT_FUNCTION", "config.DEFAULT_NAME.FUNCTION");
     }
-
 }

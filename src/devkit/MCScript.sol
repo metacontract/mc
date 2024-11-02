@@ -23,12 +23,14 @@ abstract contract MCScript is MCScriptBase {
 
         vm.writeLine(
             string.concat(vm.projectRoot(), "/.env"),
+            // forgefmt: disable-start
             string.concat(
                 envKeyBase,
                 _chainIdString,
                 "=",
                 vm.toString(address(addr))
             )
+            // forgefmt: disable-end
         );
     }
 }

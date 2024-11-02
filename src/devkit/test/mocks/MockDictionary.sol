@@ -7,11 +7,11 @@ import {Function} from "@mc-devkit/core/Function.sol";
 import {Dictionary} from "@ucs.mc/dictionary/Dictionary.sol";
 
 /**
-    @title Mock Dictionary Contract
+ * @title Mock Dictionary Contract
  */
 contract MockDictionary is Dictionary {
-    constructor (address owner, Function[] memory functions) Dictionary(owner) {
-        for (uint i; i < functions.length; ++i) {
+    constructor(address owner, Function[] memory functions) Dictionary(owner) {
+        for (uint256 i; i < functions.length; ++i) {
             _setImplementation(functions[i].selector, functions[i].implementation);
         }
     }

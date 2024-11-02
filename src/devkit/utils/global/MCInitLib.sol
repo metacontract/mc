@@ -12,35 +12,44 @@ import {Function} from "@mc-devkit/core/Function.sol";
 import {Bundle} from "@mc-devkit/core/Bundle.sol";
 
 import {NameGenerator} from "@mc-devkit/utils/mapping/NameGenerator.sol";
-    using NameGenerator for mapping(string => Bundle);
 
+using NameGenerator for mapping(string => Bundle);
 
-/**************************************
+/**
+ *
  *  🎁 MC Initial Configuration
  *      🌱 Init Bundle
  *      🔗 Use Function
  *      🪟 Use Facade
  *      🏰 Setup Standard Functions
-***************************************/
+ *
+ */
 library MCInitLib {
-
-    /**--------------------
-        🌱 Init Bundle
-    ----------------------*/
-    function init(MCDevKit storage mc, string memory name) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("init", param(name));
+    /**
+     * --------------------
+     *     🌱 Init Bundle
+     * ----------------------
+     */
+    function init(MCDevKit storage mc, string memory name) internal returns (MCDevKit storage) {
+        uint256 pid = mc.startProcess("init", param(name));
         mc.bundle.init(name);
         return mc.finishProcess(pid);
     }
-    function init(MCDevKit storage mc) internal returns(MCDevKit storage) {
+
+    function init(MCDevKit storage mc) internal returns (MCDevKit storage) {
         return init(mc, mc.bundle.genUniqueName());
     }
 
-    /**---------------------
-        🔗 Use Function
-    -----------------------*/
-    function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("use", param(name, selector, implementation));
+    /**
+     * ---------------------
+     *     🔗 Use Function
+     * -----------------------
+     */
+    function use(MCDevKit storage mc, string memory name, bytes4 selector, address implementation)
+        internal
+        returns (MCDevKit storage)
+    {
+        uint256 pid = mc.startProcess("use", param(name, selector, implementation));
         // Register new function
         Validator.MUST_NotEmptyName(name);
         Validator.SHOULD_NotEmptySelector(selector);
@@ -51,34 +60,40 @@ library MCInitLib {
         mc.bundle.findCurrent().pushFunction(mc.functions.find(name));
         return mc.finishProcess(pid);
     }
-    function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns(MCDevKit storage) {
+
+    function use(MCDevKit storage mc, bytes4 selector, address implementation) internal returns (MCDevKit storage) {
         return use(mc, ForgeHelper.getLabel(implementation), selector, implementation);
     }
-    function use(MCDevKit storage mc, Function storage func) internal returns(MCDevKit storage) {
+
+    function use(MCDevKit storage mc, Function storage func) internal returns (MCDevKit storage) {
         return use(mc, func.name, func.selector, func.implementation);
     }
-    function use(MCDevKit storage mc, string memory functionName) internal returns(MCDevKit storage) {
+
+    function use(MCDevKit storage mc, string memory functionName) internal returns (MCDevKit storage) {
         return use(mc, mc.functions.find(functionName));
     }
 
-    /**------------------
-        🪟 Use Facade
-    --------------------*/
+    /**
+     * ------------------
+     *     🪟 Use Facade
+     * --------------------
+     */
     /// @notice Assign facade address to current bundle
-    function useFacade(MCDevKit storage mc, address facade) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("useFacade", param(facade));
+    function useFacade(MCDevKit storage mc, address facade) internal returns (MCDevKit storage) {
+        uint256 pid = mc.startProcess("useFacade", param(facade));
         mc.bundle.ensureInit();
         mc.bundle.findCurrent().assignFacade(facade);
         return mc.finishProcess(pid);
     }
 
-    /**--------------------------------
-        🏰 Setup Standard Functions
-    ----------------------------------*/
-    function setupStdFunctions(MCDevKit storage mc) internal returns(MCDevKit storage) {
-        uint pid = mc.startProcess("setupStdFunctions");
+    /**
+     * --------------------------------
+     *     🏰 Setup Standard Functions
+     * ----------------------------------
+     */
+    function setupStdFunctions(MCDevKit storage mc) internal returns (MCDevKit storage) {
+        uint256 pid = mc.startProcess("setupStdFunctions");
         mc.std.complete();
         return mc.finishProcess(pid);
     }
-
 }
