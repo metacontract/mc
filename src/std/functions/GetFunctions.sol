@@ -4,7 +4,8 @@ pragma solidity ^0.8.22;
 import {ProxyUtils} from "@ucs.mc/proxy/ProxyUtils.sol";
 import {IDictionary} from "@ucs.mc/dictionary/interfaces/IDictionary.sol";
 
-/** < MC Standard Function >
+/**
+ * < MC Standard Function >
  *  @title GetFunctions
  *  @custom:version v0.1.0
  *  @custom:schema none
@@ -16,11 +17,11 @@ contract GetFunctions {
         address implementation;
     }
 
-    function getFunctions() external view returns(Function[] memory) {
+    function getFunctions() external view returns (Function[] memory) {
         IDictionary dictionary = IDictionary(ProxyUtils.getDictionary());
         bytes4[] memory selectors = dictionary.supportsInterfaces();
         Function[] memory deps = new Function[](selectors.length);
-        for (uint i; i < selectors.length; ++i) {
+        for (uint256 i; i < selectors.length; ++i) {
             deps[i].selector = selectors[i];
             deps[i].implementation = dictionary.getImplementation(selectors[i]);
         }
