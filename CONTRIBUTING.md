@@ -1,14 +1,15 @@
 # Contributing Guideline
 
-Thank you for your interest in contributing to this project! We welcome contributions from everyone, whether it's reporting an issue, submitting a pull request, or suggesting improvements.
-
+Thank you for your interest in contributing to meta contract! We welcome contributions from everyone, whether it's reporting an issue, submitting a pull request, or suggesting improvements.
 
 ## Reporting Issues
+
 If you encounter a bug or have a feature request, please use the provided templates when [opening a new issue](https://github.com/metacontract/mc/issues/new/choose). This helps us address your concerns more effectively.
 
 ## Development Workflow
 
 ### Submitting Pull Requests
+
 When submitting a Pull Request (PR), please keep in mind the following:
 
 - PRs that contain backward-compatible bug fixes or minor changes will generally be merged directly.
@@ -18,63 +19,47 @@ When submitting a Pull Request (PR), please keep in mind the following:
 <details>
 <summary>How to submit PR</summary>
 
-1. Fork the repository and create a new branch for your feature or bug fix.
+1. Fork the repository and create a new branch from the `main` branch for your feature or bug fix.
 2. Make your changes and commit them with descriptive commit messages.
 3. Push your changes to your forked repository.
-4. Open a new pull request against the main repository, describing your changes in detail.
+4. Open a new pull request against the `main` branch of the main repository, describing your changes in detail.
+5. Ensure your branch is up to date with the `main` branch before requesting a review.
+6. Address any review comments and make necessary changes.
+7. Once approved, the PR will be merged into the `main` branch.
+
 </details>
 
 
+### Documentation Style and Format
+
+- Follow the Markdown formatting guidelines as outlined in the [Documentation Guidelines](https://mc-book.ecdysis.xyz/guides/project-management/documentation-guidelines).
+- Use kebab-case for all documentation file names.
+
 ### Coding Style
-We adhere to the [Solidity Style Guide](https://docs.soliditylang.org/en/latest/style-guide.html) for maintaining a consistent and readable codebase. When contributing to this project, please follow the Solidity Style Guide with the exceptions and additions.
 
-To ensure consistent formatting, we use [forge fmt](https://book.getfoundry.sh/reference/forge/forge-fmt), a built-in code formatter for Foundry projects. Please run `forge fmt` before submitting your pull request. Our CI pipeline will check the formatting of your code using `forge fmt --check`.
+- Adhere to the [Solidity Style Guide](https://docs.soliditylang.org/en/latest/style-guide.html) with project-specific additions as outlined in the [Coding Standards](https://mc-book.ecdysis.xyz/guides/project-management/coding-standards).
+- Use `forge fmt` for consistent code formatting.
 
+### Test Strategy
+
+- Follow the comprehensive test strategy outlined in the [Test Strategy](https://mc-book.ecdysis.xyz/guides/project-management/test-strategy).
+- Write unit tests for all functions and ensure high code coverage.
 
 ### Release Process
-This document outlines the release process for our project, including the types of releases, planning, preparation, execution.
 
-- **Major Release**: Includes significant new features or backward-incompatible changes.
-- **Minor Release**: Includes small new features or improvements.
-- **Patch Release**: Includes bug fixes and backward-compatible changes.
-
-#### 1. Create a release branch
-A new release branch is created from the main branch, using the naming convention `release/vX.Y.Z`, where `X.Y.Z` represents the version number.
-
-- Major/Minor Release
-  1. Create a "New Release" issue to clarify the release plan.
-  2. Create a release branch.
-  3. Review and merge related Pull Requests into the release branch.
-- Patch Releases
-  1. Review a related Pull Request.
-  2. A maintainer creates a patch release branch.
-  3. Merge into the patch release branch.
-  - Individual Pull Requests can be merged on an ongoing basis.
-  - Combine multiple PRs into a single _Patch Release Brabch_ if needed.
-  - For critical patches, a "New Release" issue may be created, but generally, a lightweight process will be followed.
-
-  [*] If necessary, create branch and validate a Release Candidate (RC).
-
-#### 2. Preparation
-  1. Update the [CAHNGELOG](./CHANGELOG.md).
-  2. [Create release notes](https://github.com/metacontract/mc/releases/new).
-  3. A new git tag is created and chosen for the release, using the naming convention `vX.Y.Z`.
-
-#### 3. Publication
-  1. Publish release notes.
-  2. Announce the release to the community through our designated communication channels.
-  3. For information about upcoming releases and planned features, please refer to our [GitHub Issues](https://github.com/metacontract/mc/issues).
-
-Please note that only project maintainers have the authority to create releases and merge changes into the main branch.
+- Follow the branching and release strategy as outlined in the [Branching and Release Strategy](https://mc-book.ecdysis.xyz/guides/project-management/branching-and-release-strategy).
+- Use Semantic Versioning for all releases.
 
 
 ### Versioning Policy
+
 This project follows [Semantic Versioning](https://semver.org/) and uses version numbers in the format _MAJOR.MINOR.PATCH_.
 - Version number updates will be determined and applied by the assigned maintainer(s).
 
 * For the initial v0.1.0 release, we expect to make frequent breaking changes.
 
 ### Changelog
+
 A changelog will be maintained in [CHANGELOG.md](./CHANGELOG.md) to document all notable changes in each version.
 
 - Changelog entries should follow the [Keep a Changelog](https://keepachangelog.com/) format.

@@ -1,7 +1,3 @@
----
-labels: "status: in-progress"
----
-
 ## Description
 
 - [link to related issue] or [short description]
