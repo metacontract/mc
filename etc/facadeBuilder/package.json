@@ -5,15 +5,17 @@
       "node_modules/solidity-parser-antlr/**"
     ]
   },
+  "scripts": {
+    "exec": "npx tsc ./facadeBuilder.ts && node ./facadeBuilder.js"
+  },
   "devDependencies": {
+    "@solidity-parser/parser": "^0.19.0",
     "@types/fs-extra": "^11.0.4",
     "@types/js-yaml": "^4.0.9",
-    "@types/solidity-parser-antlr": "^0.4.2",
     "fs-extra": "^11.2.0",
     "js-yaml": "^4.1.0",
     "path": "^0.12.7",
     "pkg": "^5.8.1",
-    "solidity-parser-antlr": "^0.4.11",
     "typescript": "^5.6.2"
   }
 }

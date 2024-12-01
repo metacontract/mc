@@ -1,4 +1,4 @@
-import { parse } from 'solidity-parser-antlr';
+import { parse } from '@solidity-parser/parser';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
@@ -29,6 +29,9 @@ const facadeConfigPath = './facade.yaml'; // Configuration file path
 const outputDir = './generated'; // Output directory for generated files
 
 async function main() {
+    const projectRoot = path.resolve(__dirname, '../../');
+    process.chdir(projectRoot);
+
     // Load facade configuration
     const facadeConfig: FacadeConfig = await loadFacadeConfig();
 
@@ -56,7 +59,7 @@ async function main() {
     const allFiles = await getSolidityFiles(sourceDir);
 
     // Ensure output directory exists
-    await fs.ensureDir(outputDir);
+    await fs.ensureDir(path.resolve(outputDir));
 
     // Process each facade
     for (const facade of facadeConfig.facades) {
