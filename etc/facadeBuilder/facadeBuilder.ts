@@ -32,84 +32,91 @@ async function main() {
     const projectRoot = path.resolve(__dirname, '../../');
     process.chdir(projectRoot);
 
-    // Load facade configuration
-    const facadeConfig: FacadeConfig = await loadFacadeConfig();
-
-    // Ensure required fields are present
-    if (!facadeConfig.bundleName || !facadeConfig.bundleDirName) {
-        console.error('Error: bundleName and bundleDirName are required in facade.yaml');
-        process.exit(1);
-    }
-
-    if (!facadeConfig.facades || facadeConfig.facades.length === 0) {
-        console.error('Error: At least one facade must be defined in facade.yaml');
-        process.exit(1);
-    }
-
-    for (const facade of facadeConfig.facades) {
-        if (!facade.name) {
-            console.error('Error: Each facade must have a name');
-            process.exit(1);
-        }
-    }
-
-    const sourceDir = `./src/${facadeConfig.bundleDirName}/functions`; // Adjust the path as needed
-
-    // Recursively read all Solidity files in the source directory
-    const allFiles = await getSolidityFiles(sourceDir);
-
     // Ensure output directory exists
     await fs.ensureDir(path.resolve(outputDir));
 
-    // Process each facade
-    for (const facade of facadeConfig.facades) {
-        const functionSignatures: FunctionSignature[] = [];
+    // Load facade configuration
+    const facadeConfigs: FacadeConfig[] = await loadFacadeConfig();
 
-        for (const file of allFiles) {
-            const fileName = path.basename(file);
+    for(const facadeConfig of facadeConfigs) {
+        // Ensure required fields are present
+        if (!facadeConfig.bundleName || !facadeConfig.bundleDirName) {
+            console.error('Error: bundleName and bundleDirName are required in facade.yaml');
+            process.exit(1);
+        }
 
-            // Exclude files based on facade configuration
-            if (facade.excludeFileNames.includes(fileName)) {
-                continue;
-            }
+        if (!facadeConfig.facades || facadeConfig.facades.length === 0) {
+            console.error('Error: At least one facade must be defined in facade.yaml');
+            process.exit(1);
+        }
 
-            const content = await fs.readFile(file, 'utf8');
-            try {
-                const ast = parse(content, { tolerant: true });
-
-                // Extract functions from the AST
-                const functions: FunctionSignature[] = [];
-                extractFunctions(ast, functions, fileName, facade);
-
-                if (functions.length > 0) {
-                    functionSignatures.push(...functions);
-                }
-            } catch (err) {
-                console.error(`Error parsing ${file}:`, err);
+        for (const facade of facadeConfig.facades) {
+            if (!facade.name) {
+                console.error('Error: Each facade must have a name');
+                process.exit(1);
             }
         }
 
-        // Generate facade contract
-        await generateFacadeContract(functionSignatures, facade, facadeConfig);
+        const sourceDir = `./src/${facadeConfig.bundleDirName}/functions`; // Adjust the path as needed
+
+        // Recursively read all Solidity files in the source directory
+        const allFiles = await getSolidityFiles(sourceDir);
+
+        // Process each facade
+        for (const facade of facadeConfig.facades) {
+            const functionSignatures: FunctionSignature[] = [];
+
+            for (const file of allFiles) {
+                const fileName = path.basename(file);
+
+                // Exclude files based on facade configuration
+                if (facade.excludeFileNames.includes(fileName)) {
+                    continue;
+                }
+
+                const content = await fs.readFile(file, 'utf8');
+                try {
+                    const ast = parse(content, { tolerant: true });
+
+                    // Extract functions from the AST
+                    const functions: FunctionSignature[] = [];
+                    extractFunctions(ast, functions, fileName, facade);
+
+                    if (functions.length > 0) {
+                        functionSignatures.push(...functions);
+                    }
+                } catch (err) {
+                    console.error(`Error parsing ${file}:`, err);
+                }
+            }
+
+            // Generate facade contract
+            await generateFacadeContract(functionSignatures, facade, facadeConfig);
+        }
     }
 }
 
-async function loadFacadeConfig(): Promise<FacadeConfig> {
+async function loadFacadeConfig(): Promise<FacadeConfig[]> {
     try {
         const configContent = await fs.readFile(facadeConfigPath, 'utf8');
-        const configRaw = yaml.load(configContent) as any;
+        const configRaws = yaml.load(configContent) as any;
 
-        // Ensure excludeFileNames and excludeFunctionNames are arrays
-        for (const facade of configRaw.facades) {
-            if (!facade.excludeFileNames) {
-                facade.excludeFileNames = [];
+        for(let configRaw of configRaws) {
+            if (!configRaw.bundleDirName) {
+                configRaw.bundleDirName = configRaw.bundleName
             }
-            if (!facade.excludeFunctionNames) {
-                facade.excludeFunctionNames = [];
+            // Ensure excludeFileNames and excludeFunctionNames are arrays
+            for (const facade of configRaw.facades) {
+                if (!facade.excludeFileNames) {
+                    facade.excludeFileNames = [];
+                }
+                if (!facade.excludeFunctionNames) {
+                    facade.excludeFunctionNames = [];
+                }
             }
         }
 
-        const config = configRaw as FacadeConfig;
+        const config = configRaws as FacadeConfig[];
         return config;
     } catch (err) {
         console.error(`Could not load facade configuration from ${facadeConfigPath}.`);

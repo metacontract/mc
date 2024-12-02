@@ -1,5 +1,4 @@
-bundleName: "MetacontractStandards"
-bundleDirName: "std"
-facades:
-  - name: "MetacontractStandardFacade"
-
+- bundleName: "MetacontractStandards"
+  bundleDirName: "std"
+  facades:
+    - name: "MetacontractStandardFacade"

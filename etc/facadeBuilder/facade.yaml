@@ -1,8 +1,4 @@
-bundleName: "TextDAO"
-bundleDirName: "textDAO"
-facades:
-  - name: "TextDAOFacade"
-    excludeFileNames:
-      - "OnlyAdminCheats.sol"
-  - name: "TextDAOFacadeWithCheat"
-
+- bundleName: "MetacontractStandards"
+  bundleDirName: "std"
+  facades:
+    - name: "MetacontractStandardFacade"
