@@ -153,10 +153,10 @@ function extractFunctions(
         // Skip functions based on the criteria
         if (
             !ast.name || // Skip unnamed functions (constructor, fallback, receive)
-            ast.visibility === 'internal' ||
-            ast.name.startsWith('_') ||
             ast.name.startsWith('test') ||
             ast.name === 'setUp' ||
+            ast.visibility === 'private' ||
+            ast.visibility === 'internal' ||
             facade.excludeFunctionNames.includes(ast.name)
         ) {
             return;
