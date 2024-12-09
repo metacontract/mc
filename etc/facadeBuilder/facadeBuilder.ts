@@ -16,6 +16,27 @@ interface FacadeDefinition {
     excludeFunctionNames: string[];
 }
 
+interface FacadeObjects {
+    files: FileSignature[],
+    errors: ErrorSignature[],
+    events: EventSignature[],
+    functions: FunctionSignature[],
+}
+
+interface FileSignature {
+    name: string;
+    origin: string; // Name of the origin file
+}
+interface ErrorSignature {
+    name: string;
+    parameters: string;
+    origin: string; // Name of the origin file
+}
+interface EventSignature {
+    name: string;
+    parameters: string;
+    origin: string; // Name of the origin file
+}
 interface FunctionSignature {
     name: string;
     visibility: string;
@@ -38,7 +59,7 @@ async function main() {
     // Load facade configuration
     const facadeConfigs: FacadeConfig[] = await loadFacadeConfig();
 
-    for(const facadeConfig of facadeConfigs) {
+    for (const facadeConfig of facadeConfigs) {
         // Ensure required fields are present
         if (!facadeConfig.bundleName || !facadeConfig.bundleDirName) {
             console.error('Error: bundleName and bundleDirName are required in facade.yaml');
@@ -57,16 +78,31 @@ async function main() {
             }
         }
 
-        const sourceDir = `./src/${facadeConfig.bundleDirName}/functions`; // Adjust the path as needed
-
-        // Recursively read all Solidity files in the source directory
-        const allFiles = await getSolidityFiles(sourceDir);
-
         // Process each facade
         for (const facade of facadeConfig.facades) {
-            const functionSignatures: FunctionSignature[] = [];
+            const facadeObject: FacadeObjects = {
+                files: [],
+                errors: [],
+                events: [],
+                functions: []
+            };
+            const functionDir = `./src/${facadeConfig.bundleDirName}/functions`; // Adjust the path as needed
+            const interfaceDir = `./src/${facadeConfig.bundleDirName}/interfaces`; // Adjust the path as needed
+            // Recursively read all Solidity files in the source directory
+            const functionFiles = await getSolidityFiles(functionDir);
+            const interfaceFiles = await getSolidityFiles(interfaceDir);
 
-            for (const file of allFiles) {
+            const regex = /^(I)?.*(Errors|Events)\.sol$/;
+
+            for (const file of interfaceFiles) {
+                const fileName = path.basename(file);
+
+                if (regex.test(fileName)) {
+                    facadeObject.files.push({ name: fileName.replace(/\.sol$/, ""), origin: file.replace(/\\/g, '/') });
+                }
+            }
+
+            for (const file of functionFiles) {
                 const fileName = path.basename(file);
 
                 // Exclude files based on facade configuration
@@ -79,19 +115,14 @@ async function main() {
                     const ast = parse(content, { tolerant: true });
 
                     // Extract functions from the AST
-                    const functions: FunctionSignature[] = [];
-                    extractFunctions(ast, functions, fileName, facade);
-
-                    if (functions.length > 0) {
-                        functionSignatures.push(...functions);
-                    }
+                    traverseASTs(ast, facadeObject, fileName, facade);
                 } catch (err) {
                     console.error(`Error parsing ${file}:`, err);
                 }
             }
 
             // Generate facade contract
-            await generateFacadeContract(functionSignatures, facade, facadeConfig);
+            await generateFacadeContract(facadeObject, facade, facadeConfig);
         }
     }
 }
@@ -101,7 +132,7 @@ async function loadFacadeConfig(): Promise<FacadeConfig[]> {
         const configContent = await fs.readFile(facadeConfigPath, 'utf8');
         const configRaws = yaml.load(configContent) as any;
 
-        for(let configRaw of configRaws) {
+        for (let configRaw of configRaws) {
             if (!configRaw.bundleDirName) {
                 configRaw.bundleDirName = configRaw.bundleName
             }
@@ -143,60 +174,102 @@ async function getSolidityFiles(dir: string): Promise<string[]> {
     return files;
 }
 
+function traverseASTs(
+    ast: any,
+    facadeObjects: FacadeObjects,
+    origin: string,
+    facade: FacadeDefinition
+) {
+    if (ast.type === 'FunctionDefinition' && ast.isConstructor === false) {
+        extractFunctions(ast, facadeObjects.functions, origin, facade);
+    } else if (ast.type === 'ContractDefinition') {
+        // Traverse contract sub-nodes
+        for (const subNode of ast.subNodes) {
+            traverseASTs(subNode, facadeObjects, origin, facade);
+        }
+    } else if (ast.type === 'SourceUnit') {
+        // Traverse source unit nodes
+        for (const child of ast.children) {
+            traverseASTs(child, facadeObjects, origin, facade);
+        }
+    } else if (ast.type === 'CustomErrorDefinition') {
+        extractErrors(ast, facadeObjects.errors, origin);
+    } else if (ast.type === 'EventDefinition') {
+        extractEvents(ast, facadeObjects.events, origin);
+    }
+}
+
+function extractErrors(
+    ast: any,
+    errors: ErrorSignature[],
+    origin: string
+) {
+    const error: ErrorSignature = {
+        name: ast.name,
+        parameters: ast.parameters
+            .map((param: any) => getParameter(param))
+            .join(', '),
+        origin: origin
+    };
+    errors.push(error);
+}
+
+function extractEvents(
+    ast: any,
+    events: EventSignature[],
+    origin: string
+) {
+    const event: EventSignature = {
+        name: ast.name,
+        parameters: ast.parameters
+            .map((param: any) => getParameter(param))
+            .join(', '),
+        origin: origin
+    };
+    events.push(event);
+}
+
 function extractFunctions(
     ast: any,
     functions: FunctionSignature[],
     origin: string,
     facade: FacadeDefinition
 ) {
-    if (ast.type === 'FunctionDefinition' && ast.isConstructor === false) {
-        // Skip functions based on the criteria
-        if (
-            !ast.name || // Skip unnamed functions (constructor, fallback, receive)
-            ast.name.startsWith('test') ||
-            ast.name === 'setUp' ||
-            ast.visibility === 'private' ||
-            ast.visibility === 'internal' ||
-            facade.excludeFunctionNames.includes(ast.name)
-        ) {
-            return;
-        }
-
-        const func: FunctionSignature = {
-            name: ast.name,
-            visibility: ast.visibility || 'default',
-            stateMutability: ast.stateMutability || '',
-            parameters: ast.parameters
-                .map((param: any) => getParameter(param))
-                .join(', '),
-            returnParameters: ast.returnParameters
-                ? ast.returnParameters
-                      .map((param: any) => getParameter(param))
-                      .join(', ')
-                : '',
-            origin: origin, // Set the origin to the file name
-        };
-
-        // Add to functions array
-        functions.push(func);
-    } else if (ast.type === 'ContractDefinition') {
-        // Traverse contract sub-nodes
-        for (const subNode of ast.subNodes) {
-            extractFunctions(subNode, functions, origin, facade);
-        }
-    } else if (ast.type === 'SourceUnit') {
-        // Traverse source unit nodes
-        for (const child of ast.children) {
-            extractFunctions(child, functions, origin, facade);
-        }
+    // Skip functions based on the criteria
+    if (
+        !ast.name || // Skip unnamed functions (constructor, fallback, receive)
+        ast.name.startsWith('test') ||
+        ast.name === 'setUp' ||
+        ast.visibility === 'private' ||
+        ast.visibility === 'internal' ||
+        facade.excludeFunctionNames.includes(ast.name)
+    ) {
+        return;
     }
+
+    const func: FunctionSignature = {
+        name: ast.name,
+        visibility: ast.visibility || 'default',
+        stateMutability: ast.stateMutability || '',
+        parameters: ast.parameters
+            .map((param: any) => getParameter(param))
+            .join(', '),
+        returnParameters: ast.returnParameters
+            ? ast.returnParameters
+                .map((param: any) => getParameter(param))
+                .join(', ')
+            : '',
+        origin: origin, // Set the origin to the file name
+    };
+
+    // Add to functions array
+    functions.push(func);
 }
 
 function getParameter(param: any): string {
     const typeName = getTypeName(param.typeName);
-    return `${typeName}${param.storageLocation ? ' ' + param.storageLocation : ''}${
-        param.name ? ' ' + param.name : ''
-    }`;
+    return `${typeName}${param.storageLocation ? ' ' + param.storageLocation : ''}${param.name ? ' ' + param.name : ''
+        }`;
 }
 
 function getTypeName(typeName: any): string {
@@ -220,7 +293,7 @@ function getTypeName(typeName: any): string {
 }
 
 async function generateFacadeContract(
-    functionSignatures: FunctionSignature[],
+    objects: FacadeObjects,
     facade: FacadeDefinition,
     config: FacadeConfig
 ) {
@@ -229,12 +302,23 @@ async function generateFacadeContract(
 pragma solidity ^0.8.24;
 
 import {Schema} from "src/${config.bundleDirName}/storage/Schema.sol";
-import {I${config.bundleName}Events} from "src/${config.bundleDirName}/interfaces/I${config.bundleName}Events.sol";
-import {I${config.bundleName}Errors} from "src/${config.bundleDirName}/interfaces/I${config.bundleName}Errors.sol";
+`;
 
-contract ${facade.name} is Schema, I${config.bundleName}Events, I${config.bundleName}Errors {\n`;
+    for (const file of objects.files) {
+        code += `import {${file.name}} from "${file.origin}";\n`;
+    }
 
-    for (const func of functionSignatures) {
+    code += `\ncontract ${facade.name} is Schema, ${objects.files.map((file) => file.name).join(', ')} {\n`;
+
+    for (const error of objects.errors) {
+        code += generateError(error);
+    }
+    code += `\n`;
+    for (const event of objects.events) {
+        code += generateEvent(event);
+    }
+    code += `\n`;
+    for (const func of objects.functions) {
         code += generateFunctionSignature(func);
     }
 
@@ -245,6 +329,12 @@ contract ${facade.name} is Schema, I${config.bundleName}Events, I${config.bundle
     console.log(`Facade contract generated at ${facadeFilePath}`);
 }
 
+function generateError(error: ErrorSignature) {
+    return `    error ${error.name}(${error.parameters});\n`
+}
+function generateEvent(event: EventSignature) {
+    return `    event ${event.name}(${event.parameters});\n`
+}
 function generateFunctionSignature(func: FunctionSignature): string {
     const visibility =
         func.visibility !== 'default' ? func.visibility : 'public';

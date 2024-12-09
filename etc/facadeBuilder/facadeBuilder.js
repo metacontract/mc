@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var solidity_parser_antlr_1 = require("solidity-parser-antlr");
+var parser_1 = require("@solidity-parser/parser");
 var fs = require("fs-extra");
 var path = require("path");
 var yaml = require("js-yaml");
@@ -44,12 +44,25 @@ var facadeConfigPath = './facade.yaml'; // Configuration file path
 var outputDir = './generated'; // Output directory for generated files
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var facadeConfig, _i, _a, facade, sourceDir, allFiles, _b, _c, facade, functionSignatures, _d, allFiles_1, file, fileName, content, ast, functions;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0: return [4 /*yield*/, loadFacadeConfig()];
+        var projectRoot, facadeConfigs, _i, facadeConfigs_1, facadeConfig, _a, _b, facade, _c, _d, facade, facadeObject, functionDir, interfaceDir, functionFiles, interfaceFiles, regex, _e, interfaceFiles_1, file, fileName, _f, functionFiles_1, file, fileName, content, ast;
+        return __generator(this, function (_g) {
+            switch (_g.label) {
+                case 0:
+                    projectRoot = path.resolve(__dirname, '../../');
+                    process.chdir(projectRoot);
+                    // Ensure output directory exists
+                    return [4 /*yield*/, fs.ensureDir(path.resolve(outputDir))];
                 case 1:
-                    facadeConfig = _e.sent();
+                    // Ensure output directory exists
+                    _g.sent();
+                    return [4 /*yield*/, loadFacadeConfig()];
+                case 2:
+                    facadeConfigs = _g.sent();
+                    _i = 0, facadeConfigs_1 = facadeConfigs;
+                    _g.label = 3;
+                case 3:
+                    if (!(_i < facadeConfigs_1.length)) return [3 /*break*/, 14];
+                    facadeConfig = facadeConfigs_1[_i];
                     // Ensure required fields are present
                     if (!facadeConfig.bundleName || !facadeConfig.bundleDirName) {
                         console.error('Error: bundleName and bundleDirName are required in facade.yaml');
@@ -59,96 +72,115 @@ function main() {
                         console.error('Error: At least one facade must be defined in facade.yaml');
                         process.exit(1);
                     }
-                    for (_i = 0, _a = facadeConfig.facades; _i < _a.length; _i++) {
-                        facade = _a[_i];
+                    for (_a = 0, _b = facadeConfig.facades; _a < _b.length; _a++) {
+                        facade = _b[_a];
                         if (!facade.name) {
                             console.error('Error: Each facade must have a name');
                             process.exit(1);
                         }
                     }
-                    sourceDir = "./src/".concat(facadeConfig.bundleDirName, "/functions");
-                    return [4 /*yield*/, getSolidityFiles(sourceDir)];
-                case 2:
-                    allFiles = _e.sent();
-                    // Ensure output directory exists
-                    return [4 /*yield*/, fs.ensureDir(outputDir)];
-                case 3:
-                    // Ensure output directory exists
-                    _e.sent();
-                    _b = 0, _c = facadeConfig.facades;
-                    _e.label = 4;
+                    _c = 0, _d = facadeConfig.facades;
+                    _g.label = 4;
                 case 4:
-                    if (!(_b < _c.length)) return [3 /*break*/, 11];
-                    facade = _c[_b];
-                    functionSignatures = [];
-                    _d = 0, allFiles_1 = allFiles;
-                    _e.label = 5;
+                    if (!(_c < _d.length)) return [3 /*break*/, 13];
+                    facade = _d[_c];
+                    facadeObject = {
+                        files: [],
+                        errors: [],
+                        events: [],
+                        functions: []
+                    };
+                    functionDir = "./src/".concat(facadeConfig.bundleDirName, "/functions");
+                    interfaceDir = "./src/".concat(facadeConfig.bundleDirName, "/interfaces");
+                    return [4 /*yield*/, getSolidityFiles(functionDir)];
                 case 5:
-                    if (!(_d < allFiles_1.length)) return [3 /*break*/, 8];
-                    file = allFiles_1[_d];
+                    functionFiles = _g.sent();
+                    return [4 /*yield*/, getSolidityFiles(interfaceDir)];
+                case 6:
+                    interfaceFiles = _g.sent();
+                    regex = /^(I)?.*(Errors|Events)\.sol$/;
+                    for (_e = 0, interfaceFiles_1 = interfaceFiles; _e < interfaceFiles_1.length; _e++) {
+                        file = interfaceFiles_1[_e];
+                        fileName = path.basename(file);
+                        if (regex.test(fileName)) {
+                            facadeObject.files.push({ name: fileName.replace(/\.sol$/, ""), origin: file.replace(/\\/g, '/') });
+                        }
+                    }
+                    _f = 0, functionFiles_1 = functionFiles;
+                    _g.label = 7;
+                case 7:
+                    if (!(_f < functionFiles_1.length)) return [3 /*break*/, 10];
+                    file = functionFiles_1[_f];
                     fileName = path.basename(file);
                     // Exclude files based on facade configuration
                     if (facade.excludeFileNames.includes(fileName)) {
-                        return [3 /*break*/, 7];
+                        return [3 /*break*/, 9];
                     }
                     return [4 /*yield*/, fs.readFile(file, 'utf8')];
-                case 6:
-                    content = _e.sent();
+                case 8:
+                    content = _g.sent();
                     try {
-                        ast = (0, solidity_parser_antlr_1.parse)(content, { tolerant: true });
-                        functions = [];
-                        extractFunctions(ast, functions, fileName, facade);
-                        if (functions.length > 0) {
-                            functionSignatures.push.apply(functionSignatures, functions);
-                        }
+                        ast = (0, parser_1.parse)(content, { tolerant: true });
+                        // Extract functions from the AST
+                        traverseASTs(ast, facadeObject, fileName, facade);
                     }
                     catch (err) {
                         console.error("Error parsing ".concat(file, ":"), err);
                     }
-                    _e.label = 7;
-                case 7:
-                    _d++;
-                    return [3 /*break*/, 5];
-                case 8: 
-                // Generate facade contract
-                return [4 /*yield*/, generateFacadeContract(functionSignatures, facade, facadeConfig)];
+                    _g.label = 9;
                 case 9:
-                    // Generate facade contract
-                    _e.sent();
-                    _e.label = 10;
+                    _f++;
+                    return [3 /*break*/, 7];
                 case 10:
-                    _b++;
+                    console.log(facadeObject);
+                    // Generate facade contract
+                    return [4 /*yield*/, generateFacadeContract(facadeObject, facade, facadeConfig)];
+                case 11:
+                    // Generate facade contract
+                    _g.sent();
+                    _g.label = 12;
+                case 12:
+                    _c++;
                     return [3 /*break*/, 4];
-                case 11: return [2 /*return*/];
+                case 13:
+                    _i++;
+                    return [3 /*break*/, 3];
+                case 14: return [2 /*return*/];
             }
         });
     });
 }
 function loadFacadeConfig() {
     return __awaiter(this, void 0, void 0, function () {
-        var configContent, configRaw, _i, _a, facade, config, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var configContent, configRaws, _i, configRaws_1, configRaw, _a, _b, facade, config, err_1;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
+                    _c.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, fs.readFile(facadeConfigPath, 'utf8')];
                 case 1:
-                    configContent = _b.sent();
-                    configRaw = yaml.load(configContent);
-                    // Ensure excludeFileNames and excludeFunctionNames are arrays
-                    for (_i = 0, _a = configRaw.facades; _i < _a.length; _i++) {
-                        facade = _a[_i];
-                        if (!facade.excludeFileNames) {
-                            facade.excludeFileNames = [];
+                    configContent = _c.sent();
+                    configRaws = yaml.load(configContent);
+                    for (_i = 0, configRaws_1 = configRaws; _i < configRaws_1.length; _i++) {
+                        configRaw = configRaws_1[_i];
+                        if (!configRaw.bundleDirName) {
+                            configRaw.bundleDirName = configRaw.bundleName;
                         }
-                        if (!facade.excludeFunctionNames) {
-                            facade.excludeFunctionNames = [];
+                        // Ensure excludeFileNames and excludeFunctionNames are arrays
+                        for (_a = 0, _b = configRaw.facades; _a < _b.length; _a++) {
+                            facade = _b[_a];
+                            if (!facade.excludeFileNames) {
+                                facade.excludeFileNames = [];
+                            }
+                            if (!facade.excludeFunctionNames) {
+                                facade.excludeFunctionNames = [];
+                            }
                         }
                     }
-                    config = configRaw;
+                    config = configRaws;
                     return [2 /*return*/, config];
                 case 2:
-                    err_1 = _b.sent();
+                    err_1 = _c.sent();
                     console.error("Could not load facade configuration from ".concat(facadeConfigPath, "."));
                     process.exit(1);
                     return [3 /*break*/, 3];
@@ -195,48 +227,77 @@ function getSolidityFiles(dir) {
         });
     });
 }
-function extractFunctions(ast, functions, origin, facade) {
+function traverseASTs(ast, facadeObjects, origin, facade) {
     if (ast.type === 'FunctionDefinition' && ast.isConstructor === false) {
-        // Skip functions based on the criteria
-        if (!ast.name || // Skip unnamed functions (constructor, fallback, receive)
-            ast.visibility === 'internal' ||
-            ast.name.startsWith('_') ||
-            ast.name.startsWith('test') ||
-            ast.name === 'setUp' ||
-            facade.excludeFunctionNames.includes(ast.name)) {
-            return;
-        }
-        var func = {
-            name: ast.name,
-            visibility: ast.visibility || 'default',
-            stateMutability: ast.stateMutability || '',
-            parameters: ast.parameters
-                .map(function (param) { return getParameter(param); })
-                .join(', '),
-            returnParameters: ast.returnParameters
-                ? ast.returnParameters
-                    .map(function (param) { return getParameter(param); })
-                    .join(', ')
-                : '',
-            origin: origin, // Set the origin to the file name
-        };
-        // Add to functions array
-        functions.push(func);
+        extractFunctions(ast, facadeObjects.functions, origin, facade);
     }
     else if (ast.type === 'ContractDefinition') {
         // Traverse contract sub-nodes
         for (var _i = 0, _a = ast.subNodes; _i < _a.length; _i++) {
             var subNode = _a[_i];
-            extractFunctions(subNode, functions, origin, facade);
+            traverseASTs(subNode, facadeObjects, origin, facade);
         }
     }
     else if (ast.type === 'SourceUnit') {
         // Traverse source unit nodes
         for (var _b = 0, _c = ast.children; _b < _c.length; _b++) {
             var child = _c[_b];
-            extractFunctions(child, functions, origin, facade);
+            traverseASTs(child, facadeObjects, origin, facade);
         }
     }
+    else if (ast.type === 'CustomErrorDefinition') {
+        extractErrors(ast, facadeObjects.errors, origin);
+    }
+    else if (ast.type === 'EventDefinition') {
+        extractEvents(ast, facadeObjects.events, origin);
+    }
+}
+function extractErrors(ast, errors, origin) {
+    var error = {
+        name: ast.name,
+        parameters: ast.parameters
+            .map(function (param) { return getParameter(param); })
+            .join(', '),
+        origin: origin
+    };
+    errors.push(error);
+}
+function extractEvents(ast, events, origin) {
+    var event = {
+        name: ast.name,
+        parameters: ast.parameters
+            .map(function (param) { return getParameter(param); })
+            .join(', '),
+        origin: origin
+    };
+    events.push(event);
+}
+function extractFunctions(ast, functions, origin, facade) {
+    // Skip functions based on the criteria
+    if (!ast.name || // Skip unnamed functions (constructor, fallback, receive)
+        ast.name.startsWith('test') ||
+        ast.name === 'setUp' ||
+        ast.visibility === 'private' ||
+        ast.visibility === 'internal' ||
+        facade.excludeFunctionNames.includes(ast.name)) {
+        return;
+    }
+    var func = {
+        name: ast.name,
+        visibility: ast.visibility || 'default',
+        stateMutability: ast.stateMutability || '',
+        parameters: ast.parameters
+            .map(function (param) { return getParameter(param); })
+            .join(', '),
+        returnParameters: ast.returnParameters
+            ? ast.returnParameters
+                .map(function (param) { return getParameter(param); })
+                .join(', ')
+            : '',
+        origin: origin, // Set the origin to the file name
+    };
+    // Add to functions array
+    functions.push(func);
 }
 function getParameter(param) {
     var typeName = getTypeName(param.typeName);
@@ -265,16 +326,31 @@ function getTypeName(typeName) {
         return 'unknown';
     }
 }
-function generateFacadeContract(functionSignatures, facade, config) {
+function generateFacadeContract(objects, facade, config) {
     return __awaiter(this, void 0, void 0, function () {
-        var facadeFilePath, code, _i, functionSignatures_1, func;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var facadeFilePath, code, _i, _a, file, _b, _c, error, _d, _e, event_1, _f, _g, func;
+        return __generator(this, function (_h) {
+            switch (_h.label) {
                 case 0:
                     facadeFilePath = path.join(outputDir, "".concat(facade.name, ".sol"));
-                    code = "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\nimport {Schema} from \"src/".concat(config.bundleDirName, "/storage/Schema.sol\";\nimport {I").concat(config.bundleName, "Events} from \"src/").concat(config.bundleDirName, "/interfaces/I").concat(config.bundleName, "Events.sol\";\nimport {I").concat(config.bundleName, "Errors} from \"src/").concat(config.bundleDirName, "/interfaces/I").concat(config.bundleName, "Errors.sol\";\n\ncontract ").concat(facade.name, " is Schema, I").concat(config.bundleName, "Events, I").concat(config.bundleName, "Errors {\n");
-                    for (_i = 0, functionSignatures_1 = functionSignatures; _i < functionSignatures_1.length; _i++) {
-                        func = functionSignatures_1[_i];
+                    code = "\n// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\nimport {Schema} from \"src/".concat(config.bundleDirName, "/storage/Schema.sol\";\n");
+                    for (_i = 0, _a = objects.files; _i < _a.length; _i++) {
+                        file = _a[_i];
+                        code += "import {".concat(file.name, "} from \"").concat(file.origin, "\";\n");
+                    }
+                    code += "\ncontract ".concat(facade.name, " is Schema, ").concat(objects.files.map(function (file) { return file.name; }).join(', '), " {\n");
+                    for (_b = 0, _c = objects.errors; _b < _c.length; _b++) {
+                        error = _c[_b];
+                        code += generateError(error);
+                    }
+                    code += "\n";
+                    for (_d = 0, _e = objects.events; _d < _e.length; _d++) {
+                        event_1 = _e[_d];
+                        code += generateEvent(event_1);
+                    }
+                    code += "\n";
+                    for (_f = 0, _g = objects.functions; _f < _g.length; _f++) {
+                        func = _g[_f];
                         code += generateFunctionSignature(func);
                     }
                     code += "}\n";
@@ -282,12 +358,18 @@ function generateFacadeContract(functionSignatures, facade, config) {
                     return [4 /*yield*/, fs.writeFile(facadeFilePath, code)];
                 case 1:
                     // Write the facade contract to the output file
-                    _a.sent();
+                    _h.sent();
                     console.log("Facade contract generated at ".concat(facadeFilePath));
                     return [2 /*return*/];
             }
         });
     });
+}
+function generateError(error) {
+    return "    error ".concat(error.name, "(").concat(error.parameters, ");\n");
+}
+function generateEvent(event) {
+    return "    event ".concat(event.name, "(").concat(event.parameters, ");\n");
 }
 function generateFunctionSignature(func) {
     var visibility = func.visibility !== 'default' ? func.visibility : 'public';
